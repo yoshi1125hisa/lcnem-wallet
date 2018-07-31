@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit {
 
     public async refresh() {
         this.loading = true;
-        
+
         await this.global.refresh();
 
         this.loading = false;
@@ -80,6 +80,10 @@ export class HomeComponent implements OnInit {
         yourAddress: {
             en: "Your address",
             ja: "あなたのアドレス"
+        },
+        terms: {
+          en: "Terms of Service",
+          ja: "利用規約"
         }
     } as {[key: string]: {[key: string]: string}};
 }

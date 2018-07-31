@@ -31,11 +31,10 @@
                     <mat-icon>lock_open</mat-icon>
                     {{translation.logout[global.lang]}}
                 </mat-list-item>
-                <mat-list-item (click)="/rule">
-                    <mat-icon>lock_open</mat-icon>
-                    {{translation.rule[global.lang]}}
+                <mat-list-item routerLink="/accounts/terms">
+                    <mat-icon>center_focus_strong</mat-icon>
+                    {{translation.terms[global.lang]}}
                 </mat-list-item>
-
             </mat-nav-list>
         </div>
     </mat-sidenav>
