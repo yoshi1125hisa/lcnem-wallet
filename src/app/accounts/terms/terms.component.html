@@ -1,3 +1,13 @@
-<p>
-  terms works!
-</p>
+<mat-toolbar color="primary" class="mat-elevation-z4">
+    <button mat-icon-button>
+        <mat-icon>lock_open</mat-icon>
+    </button>
+    <span>{{translation.terms[global.lang]}}</span>
+    <span class="fill-remaining-space"></span>
+</mat-toolbar>
+<div class="out-toolbar">
+    <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
+    <ng-template #loaded>
+        <iframe  [src]="safeSite" fxFill></iframe>
+    </ng-template>
+</div>

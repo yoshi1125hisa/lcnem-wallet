@@ -8,8 +8,9 @@ import { ScanComponent } from './transactions/scan/scan.component';
 import { TransferComponent } from './transactions/transfer/transfer.component';
 import { PageNotFoundComponent } from './error/page-not-found/page-not-found.component';
 import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
-import { DepositComponent } from './accounts/deposit/deposit.component';
 import { TermsComponent } from './accounts/terms/terms.component';
+import { DepositComponent } from './accounts/deposit/deposit.component';
+
 
 const routes: Routes = [
     {path: "", component: HomeComponent},
@@ -20,8 +21,8 @@ const routes: Routes = [
     {path: "transactions/history", component: HistoryComponent},
     {path: "transactions/scan", component: ScanComponent},
     {path: "transactions/transfer", component: TransferComponent},
-    {path: "**", component: PageNotFoundComponent},
-    {path: "accounts/terms", component: TermsComponent}
+    {path: "accounts/terms", component: TermsComponent},
+    {path: "**", component: PageNotFoundComponent}
 ];
 
 @NgModule({
