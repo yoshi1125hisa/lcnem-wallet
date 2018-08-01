@@ -29,5 +29,5 @@ export class TermsComponent implements OnInit {
   } as {
     [key: string]:
       {key: string} : string
-    }
+    };
 }
