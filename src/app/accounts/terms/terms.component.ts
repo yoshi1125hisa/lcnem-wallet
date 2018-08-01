@@ -21,13 +21,10 @@ export class TermsComponent implements OnInit {
   ngOnInit() {
   }
 
-  public translation= {
-    terms: {
-      en: "Terms of Service",
-      ja: "利用規約"
-    }
-  } as {
-    [key: string]:
-      {key: string} : string
-    };
+  public translation = {
+      terms: {
+          en: "Terms of Service",
+          ja: "利用規約"
+      }
+  } as {[key: string]: {[key: string]: string}};
 }
