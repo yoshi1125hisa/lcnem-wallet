@@ -4,6 +4,8 @@ import { GlobalDataService } from '../services/global-data.service';
 import { Invoice } from '../../models/invoice';
 import { nodes } from '../../models/nodes';
 import { ServerConfig, AccountHttp, MosaicHttp, TransactionHttp, NamespaceHttp } from 'nem-library';
+import { MatDialog } from '@angular/material';
+import { DialogComponent } from '../components/dialog/dialog.component';
 
 @Component({
     selector: 'app-home',
@@ -17,7 +19,8 @@ export class HomeComponent implements OnInit {
 
     constructor(
         public global: GlobalDataService,
-        private router: Router
+        private router: Router,
+        private dialog: MatDialog,
     ) { }
 
     ngOnInit() {
@@ -37,7 +40,14 @@ export class HomeComponent implements OnInit {
 
     public async logout() {
         await this.global.logout();
-        this.router.navigate(["/accounts/login"]);
+        this.dialog.open(DialogComponent, {
+          data: {
+              title: this.translation.completed[this.global.lang],
+              content: ""
+          }
+        }).afterClosed().subscribe(() => {
+            this.router.navigate(["/accounts/login"]);
+        });
     }
 
     public async refresh() {
@@ -84,6 +94,10 @@ export class HomeComponent implements OnInit {
         terms: {
           en: "Terms of Service",
           ja: "利用規約"
+        },
+        completed: {
+          en: "Successfully logged out",
+          ja: "正常にログアウトしました。"
         }
     } as {[key: string]: {[key: string]: string}};
 }
