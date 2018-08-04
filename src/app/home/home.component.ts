@@ -96,8 +96,8 @@ export class HomeComponent implements OnInit {
           ja: "利用規約"
         },
         completed: {
-          en: "Logout Done",
-          ja: "ログアウト完了しました"
+          en: "Successfully logged out",
+          ja: "正常にログアウトしました。"
         }
     } as {[key: string]: {[key: string]: string}};
 }
