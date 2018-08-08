@@ -1,5 +1,5 @@
 <mat-sidenav-container>
-    <mat-sidenav #sidenav>
+    <mat-sidenav #sidenav class="mat-elevation-z16">
         <mat-toolbar class="background-contain" [ngStyle]="{'background-image': 'url(favicon.svg)'}">
         </mat-toolbar>
         <div fxLayout="column">
@@ -22,10 +22,6 @@
                     <mat-icon>call_received</mat-icon>
                     {{translation.deposit[global.lang]}}
                 </mat-list-item>
-                <mat-list-item routerLink="/accounts/withdraw">
-                    <mat-icon>call_made</mat-icon>
-                    {{translation.withdraw[global.lang]}}
-                </mat-list-item>
                 <mat-divider></mat-divider>
                 <mat-list-item (click)="logout()">
                     <mat-icon>lock_open</mat-icon>
@@ -36,7 +32,7 @@
     </mat-sidenav>
     <mat-sidenav-content>
         <mat-toolbar color="primary" class="mat-elevation-z4">
-            <button mat-icon-button (click)="sidenav.toggle()">
+            <button mat-icon-button (click)="sidenav.toggle()" fxHide fxShow.xs fxShow.sm>
                 <mat-icon>menu</mat-icon>
             </button>
 

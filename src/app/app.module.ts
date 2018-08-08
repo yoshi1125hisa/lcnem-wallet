@@ -54,7 +54,6 @@ import { PageNotFoundComponent } from './error/page-not-found/page-not-found.com
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
 import { GlobalDataService } from './services/global-data.service';
 import { MosaicListComponent } from './components/mosaic-list/mosaic-list.component';
-import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
 import { DepositComponent } from './accounts/deposit/deposit.component';
 import { DialogComponent } from './components/dialog/dialog.component';
 import { TransferDialogComponent } from './components/transfer-dialog/transfer-dialog.component';
@@ -72,7 +71,6 @@ import { TransferDialogComponent } from './components/transfer-dialog/transfer-d
         PageNotFoundComponent,
         LoadingDialogComponent,
         MosaicListComponent,
-        WithdrawComponent,
         DepositComponent,
         DialogComponent,
         TransferDialogComponent

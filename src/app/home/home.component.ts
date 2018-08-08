@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { GlobalDataService } from '../services/global-data.service';
 import { Invoice } from '../../models/invoice';
 import { nodes } from '../../models/nodes';
 import { ServerConfig, AccountHttp, MosaicHttp, TransactionHttp, NamespaceHttp } from 'nem-library';
+import { MatSidenav } from '../../../node_modules/@angular/material';
+import { MediaChange, ObservableMedia } from '@angular/flex-layout';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-home',
@@ -15,12 +18,31 @@ export class HomeComponent implements OnInit {
     public qrUrl = "";
     public nodes = nodes;
 
+    @ViewChild("sidenav")
+    public sidenav?: MatSidenav;
+
+    watcher?: Subscription;
+
     constructor(
         public global: GlobalDataService,
-        private router: Router
+        private router: Router,
+        private media: ObservableMedia
     ) { }
 
     ngOnInit() {
+        this.watcher = this.media.subscribe((change: MediaChange) => {
+            if(!this.sidenav) {
+                return;
+            }
+            if (change.mqAlias == "xs" || change.mqAlias == "sm") {
+                this.sidenav.mode = "over";
+                this.sidenav.opened = false;
+            } else {
+                this.sidenav.mode = "side";
+                this.sidenav.opened = true;
+            }
+        });
+
         this.global.auth.authState.subscribe((user) => {
             if (user == null) {
                 this.router.navigate(["/accounts/login"]);
@@ -33,6 +55,10 @@ export class HomeComponent implements OnInit {
                 this.loading = false;
             });
         });
+    }
+
+    ngOnDestroy() {
+        this.watcher!.unsubscribe();
     }
 
     public async logout() {
