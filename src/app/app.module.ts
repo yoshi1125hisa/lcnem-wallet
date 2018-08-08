@@ -57,6 +57,7 @@ import { MosaicListComponent } from './components/mosaic-list/mosaic-list.compon
 import { DepositComponent } from './accounts/deposit/deposit.component';
 import { DialogComponent } from './components/dialog/dialog.component';
 import { TransferDialogComponent } from './components/transfer-dialog/transfer-dialog.component';
+import { TermsComponent } from './accounts/terms/terms.component';
 
 @NgModule({
     declarations: [
@@ -73,7 +74,8 @@ import { TransferDialogComponent } from './components/transfer-dialog/transfer-d
         MosaicListComponent,
         DepositComponent,
         DialogComponent,
-        TransferDialogComponent
+        TransferDialogComponent,
+        TermsComponent
     ],
     imports: [
         BrowserModule,

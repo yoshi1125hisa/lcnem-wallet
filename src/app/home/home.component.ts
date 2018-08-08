@@ -7,6 +7,8 @@ import { ServerConfig, AccountHttp, MosaicHttp, TransactionHttp, NamespaceHttp }
 import { MatSidenav } from '../../../node_modules/@angular/material';
 import { MediaChange, ObservableMedia } from '@angular/flex-layout';
 import { Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material';
+import { DialogComponent } from '../components/dialog/dialog.component';
 
 @Component({
     selector: 'app-home',
@@ -26,7 +28,8 @@ export class HomeComponent implements OnInit {
     constructor(
         public global: GlobalDataService,
         private router: Router,
-        private media: ObservableMedia
+        private media: ObservableMedia,
+        private dialog: MatDialog
     ) { }
 
     ngOnInit() {
@@ -63,12 +66,19 @@ export class HomeComponent implements OnInit {
 
     public async logout() {
         await this.global.logout();
-        this.router.navigate(["/accounts/login"]);
+        this.dialog.open(DialogComponent, {
+          data: {
+              title: this.translation.completed[this.global.lang],
+              content: ""
+          }
+        }).afterClosed().subscribe(() => {
+            this.router.navigate(["/accounts/login"]);
+        });
     }
 
     public async refresh() {
         this.loading = true;
-        
+
         await this.global.refresh();
 
         this.loading = false;
@@ -106,6 +116,14 @@ export class HomeComponent implements OnInit {
         yourAddress: {
             en: "Your address",
             ja: "あなたのアドレス"
+        },
+        terms: {
+          en: "Terms of Service",
+          ja: "利用規約"
+        },
+        completed: {
+          en: "Successfully logged out",
+          ja: "正常にログアウトしました。"
         }
     } as {[key: string]: {[key: string]: string}};
 }
