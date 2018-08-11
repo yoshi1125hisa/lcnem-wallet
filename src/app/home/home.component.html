@@ -35,25 +35,24 @@
                 <mat-icon>menu</mat-icon>
             </button>
             <button mat-icon-button class="background-contain" [ngStyle]="{'background-image': 'url(favicon.svg)'}"></button>
-
             <span>LCNEM Wallet</span>
             <span class="fill-remaining-space"></span>
             <button mat-icon-button (click)="refresh()" [disabled]="loading">
                 <mat-icon>refresh</mat-icon>
             </button>
-            <mat-menu #langMenu="matMenu" [overlapTrigger]="false">
-                    <button mat-menu-item (click)="global.lang = 'en'">
-                        English
-                        <mat-icon *ngIf="global.lang == 'en'">check</mat-icon>
-                    </button>
-                    <button mat-menu-item (click)="global.lang = 'ja'">
-                        日本語
-                        <mat-icon *ngIf="global.lang == 'ja'">check</mat-icon>
-                    </button>
+        <mat-menu #langMenu="matMenu" [overlapTrigger]="false">
+            <button mat-menu-item (click)="global.lang = 'en'">
+                English
+                <mat-icon *ngIf="global.lang == 'en'">check</mat-icon>
+            </button>
+            <button mat-menu-item (click)="global.lang = 'ja'">
+                日本語
+                <mat-icon *ngIf="global.lang == 'ja'">check</mat-icon>
+            </button>
                 </mat-menu>
-                <button mat-icon-button [matMenuTriggerFor]="langMenu" yPosition="below">
-                    {{global.lang}}
-                </button>
+            <button mat-icon-button [matMenuTriggerFor]="langMenu" yPosition="below">
+                {{global.lang}}
+             </button>
         </mat-toolbar>
         <div class="out-toolbar">
             <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
