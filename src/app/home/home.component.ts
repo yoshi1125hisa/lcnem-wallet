@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, trigger } from '@angular/core';
 import { Router } from '@angular/router';
 import { GlobalDataService } from '../services/global-data.service';
 import { Invoice } from '../../models/invoice';
 import { nodes } from '../../models/nodes';
 import { ServerConfig, AccountHttp, MosaicHttp, TransactionHttp, NamespaceHttp } from 'nem-library';
-import { MatSidenav } from '../../../node_modules/@angular/material';
+import { MatSidenav, MatMenuTrigger, MatMenu, MatMenuModule } from '../../../node_modules/@angular/material';
 import { MediaChange, ObservableMedia } from '@angular/flex-layout';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material';
