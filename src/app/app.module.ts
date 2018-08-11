@@ -30,7 +30,8 @@ import {
     MatSlideToggleModule,
     MatStepperModule,
     MatCheckboxModule,
-    MatTableModule
+    MatTableModule,
+    MatMenuModule
 } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -109,7 +110,8 @@ import { TermsComponent } from './accounts/terms/terms.component';
         MatListModule,
         MatSlideToggleModule,
         MatStepperModule,
-        MatTableModule
+        MatTableModule,
+        MatMenuModule
     ],
     entryComponents: [
         LoadingDialogComponent,
