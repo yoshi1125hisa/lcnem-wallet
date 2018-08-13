@@ -18,7 +18,6 @@
     </mat-form-field>
     <mat-form-field fxFill>
         <mat-select placeholder="{{translation.type[global.lang]}}" [(ngModel)]="type">
-            <mat-option value="kyash" *ngIf="selectedCurrency == 'JPY'">kyash</mat-option>
             <mat-option value="amazon">{{translation.amazonGift[global.lang]}}</mat-option>
         </mat-select>
     </mat-form-field>

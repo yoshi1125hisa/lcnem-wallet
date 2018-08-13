@@ -3,7 +3,7 @@
         <mat-toolbar class="background-contain" [ngStyle]="{'background-image': 'url(favicon.svg)'}">
         </mat-toolbar>
         <div fxLayout="column">
-                
+
             <mat-nav-list>
                 <mat-list-item routerLink="/transactions/scan">
                     <mat-icon>center_focus_strong</mat-icon>
@@ -44,19 +44,19 @@
             <button mat-icon-button (click)="refresh()" [disabled]="loading">
                 <mat-icon>refresh</mat-icon>
             </button>
-        <mat-menu #langMenu="matMenu" [overlapTrigger]="false">
-            <button mat-menu-item (click)="global.lang = 'en'">
-                English
-                <mat-icon *ngIf="global.lang == 'en'">check</mat-icon>
-            </button>
-            <button mat-menu-item (click)="global.lang = 'ja'">
-                日本語
-                <mat-icon *ngIf="global.lang == 'ja'">check</mat-icon>
-            </button>
-                </mat-menu>
+            <mat-menu #langMenu="matMenu" [overlapTrigger]="false">
+                <button mat-menu-item (click)="global.lang = 'en'">
+                    English
+                    <mat-icon *ngIf="global.lang == 'en'">check</mat-icon>
+                </button>
+                <button mat-menu-item (click)="global.lang = 'ja'">
+                    日本語
+                    <mat-icon *ngIf="global.lang == 'ja'">check</mat-icon>
+                </button>
+            </mat-menu>
             <button mat-icon-button [matMenuTriggerFor]="langMenu" yPosition="below">
                 {{global.lang}}
-             </button>
+            </button>
         </mat-toolbar>
         <div class="out-toolbar">
             <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
