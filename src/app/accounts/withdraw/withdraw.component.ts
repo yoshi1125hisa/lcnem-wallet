@@ -47,7 +47,6 @@ export class WithdrawComponent implements OnInit {
     }
 
     public async withdrawRequest() {
-
         let transaction: TransferTransaction;
         let mosaics: MosaicTransferable[];
         try {
