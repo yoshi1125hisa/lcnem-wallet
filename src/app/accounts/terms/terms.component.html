@@ -6,8 +6,5 @@
     <span class="fill-remaining-space"></span>
 </mat-toolbar>
 <div class="out-toolbar">
-    <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
-    <ng-template #loaded>
-        <iframe  [src]="safeSite" fxFill></iframe>
-    </ng-template>
+    <iframe  [src]="safeSite" fxFill></iframe>
 </div>
