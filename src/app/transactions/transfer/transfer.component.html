@@ -34,7 +34,7 @@
                 </mat-card-title>
             </mat-card-header>
             <mat-form-field fxFill *ngFor="let m of transferMosaics; let i = index">
-                <input matInput placeholder="{{m.name}}" [(ngModel)]="transferMosaics[i].amount" [matTooltip]="translation.inputEmpty[global.lang]">
+                <input matInput type="number" placeholder="{{m.name}}" [(ngModel)]="transferMosaics[i].amount" [matTooltip]="translation.inputEmpty[global.lang]">
             </mat-form-field>
         </mat-card>
         <button fxFill mat-raised-button color="accent" (click)="transfer()">{{translation.submit[global.lang]}}</button>

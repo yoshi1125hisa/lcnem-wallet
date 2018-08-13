@@ -30,7 +30,8 @@ import {
     MatSlideToggleModule,
     MatStepperModule,
     MatCheckboxModule,
-    MatTableModule
+    MatTableModule,
+    MatMenuModule
 } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -54,10 +55,11 @@ import { PageNotFoundComponent } from './error/page-not-found/page-not-found.com
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
 import { GlobalDataService } from './services/global-data.service';
 import { MosaicListComponent } from './components/mosaic-list/mosaic-list.component';
-import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
 import { DepositComponent } from './accounts/deposit/deposit.component';
 import { DialogComponent } from './components/dialog/dialog.component';
 import { TransferDialogComponent } from './components/transfer-dialog/transfer-dialog.component';
+import { TermsComponent } from './accounts/terms/terms.component';
+import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
 
 @NgModule({
     declarations: [
@@ -72,10 +74,11 @@ import { TransferDialogComponent } from './components/transfer-dialog/transfer-d
         PageNotFoundComponent,
         LoadingDialogComponent,
         MosaicListComponent,
-        WithdrawComponent,
         DepositComponent,
         DialogComponent,
-        TransferDialogComponent
+        TransferDialogComponent,
+        TermsComponent,
+        WithdrawComponent
     ],
     imports: [
         BrowserModule,
@@ -109,7 +112,8 @@ import { TransferDialogComponent } from './components/transfer-dialog/transfer-d
         MatListModule,
         MatSlideToggleModule,
         MatStepperModule,
-        MatTableModule
+        MatTableModule,
+        MatMenuModule
     ],
     entryComponents: [
         LoadingDialogComponent,
