@@ -59,6 +59,7 @@ import { DepositComponent } from './accounts/deposit/deposit.component';
 import { DialogComponent } from './components/dialog/dialog.component';
 import { TransferDialogComponent } from './components/transfer-dialog/transfer-dialog.component';
 import { TermsComponent } from './accounts/terms/terms.component';
+import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
 
 @NgModule({
     declarations: [
@@ -76,7 +77,8 @@ import { TermsComponent } from './accounts/terms/terms.component';
         DepositComponent,
         DialogComponent,
         TransferDialogComponent,
-        TermsComponent
+        TermsComponent,
+        WithdrawComponent
     ],
     imports: [
         BrowserModule,
