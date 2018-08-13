@@ -16,5 +16,11 @@
     <mat-form-field fxFill>
         <input matInput type="number" placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="amount" />
     </mat-form-field>
-    <button mat-raised-button color="accent" fxFill [disabled]="amount! <= 0" (click)="deposit()">{{translation.deposit[global.lang]}}</button>
+    <mat-form-field fxFill>
+        <mat-select placeholder="{{translation.mean[global.lang]}}" [(ngModel)]="type">
+            <mat-option value="bank">{{translation.bank[global.lang]}}</mat-option>
+            <mat-option value="credit">{{translation.credit[global.lang]}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <button mat-raised-button color="accent" fxFill [disabled]="!amount || !type" (click)="deposit()">{{translation.deposit[global.lang]}}</button>
 </div>
