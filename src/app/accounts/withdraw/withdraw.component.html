@@ -3,7 +3,7 @@
         <mat-icon>arrow_back</mat-icon>
     </button>
 
-    <span>{{translation.deposit[global.lang]}}</span>
+    <span>{{translation.withdraw[global.lang]}}</span>
     <span class="fill-remaining-space"></span>
 </mat-toolbar>
 <div class="out-toolbar">
@@ -14,7 +14,12 @@
         </mat-select>
     </mat-form-field>
     <mat-form-field fxFill>
-        <input matInput type="number" placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="amount" />
+        <input matInput placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="amount" />
     </mat-form-field>
-    <button mat-raised-button color="accent" fxFill [disabled]="amount! <= 0" (click)="deposit()">{{translation.deposit[global.lang]}}</button>
+    <mat-form-field fxFill>
+        <mat-select placeholder="{{translation.type[global.lang]}}" [(ngModel)]="type">
+            <mat-option value="amazon">{{translation.amazonGift[global.lang]}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <button mat-raised-button color="accent" fxFill [disabled]="!amount || !type" (click)="withdrawRequest()">{{translation.request[global.lang]}}</button>
 </div>
