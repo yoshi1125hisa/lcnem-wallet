@@ -21,8 +21,8 @@ export class DepositComponent implements OnInit {
     public selectedCurrency = "JPY";
 
     public minimum = {
-        "JPY": 1000
-    };
+        JPY: 1000
+    } as { [key: string]: number };
 
     public amount?: number;
     public type?: string;
