@@ -26,5 +26,9 @@
     "montoken:mot": {
         "issuer": "かえもん",
         "unit": null
+    },
+    "ysf:yume-coin": {
+        "issuer": "用賀サマーフェスティバル",
+        "unit": "JPY"
     }
 }
