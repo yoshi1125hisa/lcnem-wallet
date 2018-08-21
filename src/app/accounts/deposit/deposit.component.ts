@@ -20,6 +20,10 @@ export class DepositComponent implements OnInit {
     public supportedCurrencies = supportedCurrencies;
     public selectedCurrency = "JPY";
 
+    public minimum = {
+        JPY: 1000
+    } as { [key: string]: number };
+
     public amount?: number;
     public type?: string;
 
@@ -109,13 +113,9 @@ export class DepositComponent implements OnInit {
             en: "Mean",
             ja: "方法"
         },
-        bank :{
-            en: "Bank",
-            ja: "銀行"
-        },
-        credit: {
-            en: "Credit card",
-            ja: "クレジットカード"
+        paypal :{
+            en: "Paypal",
+            ja: "Paypal"
         }
     } as { [key: string]: { [key: string]: string } };
 }
