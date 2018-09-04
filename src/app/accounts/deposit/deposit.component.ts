@@ -25,7 +25,7 @@ export class DepositComponent implements OnInit {
     } as { [key: string]: number };
 
     public amount?: number;
-    public type?: string;
+    public method?: string;
 
     public safeSite: SafeResourceUrl;
 
@@ -58,12 +58,15 @@ export class DepositComponent implements OnInit {
             await this.http.post(
                 "https://us-central1-lcnem-wallet.cloudfunctions.net/deposit",
                 {
+                    email: this.global.auth.auth.currentUser!.email,
+                    nem: this.global.account!.address.plain(),
                     currency: this.selectedCurrency,
                     amount: this.amount,
-                    email: this.global.auth.auth.currentUser!.email,
-                    nemAddress: this.global.account!.address.pretty(),
-                    type: this.type,
+                    method: this.method,
                     lang: this.global.lang
+                },
+                {
+                    
                 }
             ).toPromise();
         } catch {
