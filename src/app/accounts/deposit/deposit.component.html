@@ -17,9 +17,9 @@
         <input matInput type="number" placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="amount" />
     </mat-form-field>
     <mat-form-field fxFill>
-        <mat-select placeholder="{{translation.mean[global.lang]}}" [(ngModel)]="type">
+        <mat-select placeholder="{{translation.mean[global.lang]}}" [(ngModel)]="method">
             <mat-option value="paypal">{{translation.paypal[global.lang]}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <button mat-raised-button color="accent" fxFill [disabled]="!amount || amount! < minimum[selectedCurrency] || !type" (click)="deposit()">{{translation.deposit[global.lang]}}</button>
+    <button mat-raised-button color="accent" fxFill [disabled]="!amount || amount! < minimum[selectedCurrency] || !method" (click)="deposit()">{{translation.deposit[global.lang]}}</button>
 </div>

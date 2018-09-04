@@ -17,9 +17,9 @@
         <input matInput placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="amount" />
     </mat-form-field>
     <mat-form-field fxFill>
-        <mat-select placeholder="{{translation.type[global.lang]}}" [(ngModel)]="type">
+        <mat-select placeholder="{{translation.type[global.lang]}}" [(ngModel)]="method">
             <mat-option value="amazon">{{translation.amazonGift[global.lang]}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <button mat-raised-button color="accent" fxFill [disabled]="!amount || !type" (click)="withdrawRequest()">{{translation.request[global.lang]}}</button>
+    <button mat-raised-button color="accent" fxFill [disabled]="!amount || !method" (click)="withdrawRequest()">{{translation.request[global.lang]}}</button>
 </div>
