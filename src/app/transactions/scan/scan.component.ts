@@ -65,8 +65,15 @@ export class ScanComponent implements OnInit {
         });
     }
 
-    public isUndefined(value: any) {
-        return value === undefined;
+    public get selectedDevice() {
+        if(this.selected === undefined) {
+            return null;
+        }
+        if(this.availableDevices === undefined) {
+            return null;
+        }
+
+        return this.availableDevices![this.selected!];
     }
 
     public translation = {

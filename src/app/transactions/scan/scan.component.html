@@ -11,7 +11,7 @@
             <mat-option *ngFor="let device of availableDevices; let i = index" [value]="i">{{device.label}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <zxing-scanner fxFill #scanner [device]="!isUndefined(selected) && availableDevices![selected!]" [hidden]="isUndefined(selected) || !availableDevices![selected!]">
+    <zxing-scanner fxFill #scanner [device]="selectedDevice" [hidden]="!selectedDevice">
     </zxing-scanner>
     <mat-form-field fxFill *ngIf="resultText">
         <textarea matInput placeholder="Result" [(ngModel)]="resultText" rows="6"></textarea>
