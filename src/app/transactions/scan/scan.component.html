@@ -14,14 +14,12 @@
     <zxing-scanner fxFill #scanner [device]="!isUndefined(selected) && availableDevices![selected!]" [hidden]="isUndefined(selected) || !availableDevices![selected!]">
     </zxing-scanner>
     <mat-form-field fxFill *ngIf="resultText">
-        <textarea matInput placeholder="Result" [(ngModel)]="resultText"></textarea>
+        <textarea matInput placeholder="Result" [(ngModel)]="resultText" rows="6"></textarea>
     </mat-form-field>
-    <ng-container *ngIf="availableDevices">
-        <p *ngIf="noCamera">
-            {{translation.noCamera[global.lang]}}
-        </p>
-        <p *ngIf="!hasPermission">
-            {{translation.noPermission[global.lang]}}
-        </p>
-    </ng-container>
+    <p *ngIf="noCamera">
+        {{translation.noCamera[global.lang]}}
+    </p>
+    <p *ngIf="!hasPermission">
+        {{translation.noPermission[global.lang]}}
+    </p>
 </div>
