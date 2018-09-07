@@ -8,11 +8,13 @@
 </mat-toolbar>
 <div class="out-toolbar mat-typography">
     <p>{{translation.caution[global.lang]}}</p>
-    <mat-form-field fxFill>
-        <input matInput placeholder="{{translation.callback[global.lang]}}" readonly [value]="callback">
-    </mat-form-field>
-    <mat-form-field fxFill>
-        <input matInput placeholder="{{translation.data[global.lang]}}" readonly [value]="data">
-    </mat-form-field>
-    <button mat-raised-button fxFill color="accent" (click)="sign()">{{translation.sign[global.lang]}}</button>
+    <form (ngSubmit)="sign()">
+        <mat-form-field fxFill>
+            <input matInput placeholder="{{translation.callback[global.lang]}}" readonly [value]="callback" required>
+        </mat-form-field>
+        <mat-form-field fxFill>
+            <input matInput placeholder="{{translation.data[global.lang]}}" readonly [value]="data" required>
+        </mat-form-field>
+        <button mat-raised-button fxFill color="accent">{{translation.sign[global.lang]}}</button>
+    </form>
 </div>

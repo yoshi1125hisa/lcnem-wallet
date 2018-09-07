@@ -8,18 +8,20 @@
 </mat-toolbar>
 <div class="out-toolbar">
     <iframe [src]="safeSite" fxFill></iframe>
-    <mat-form-field fxFill>
-        <mat-select placeholder="{{translation.currency[global.lang]}}" [(ngModel)]="selectedCurrency">
-            <mat-option *ngFor="let c of supportedCurrencies" [value]="c">{{c}}</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <mat-form-field fxFill>
-        <input matInput type="number" placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="amount" />
-    </mat-form-field>
-    <mat-form-field fxFill>
-        <mat-select placeholder="{{translation.mean[global.lang]}}" [(ngModel)]="method">
-            <mat-option value="paypal">{{translation.paypal[global.lang]}}</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <button mat-raised-button color="accent" fxFill [disabled]="!amount || amount! < minimum[selectedCurrency] || !method" (click)="deposit()">{{translation.deposit[global.lang]}}</button>
+    <form #form="ngForm" (ngSubmit)="deposit()">
+        <mat-form-field fxFill>
+            <mat-select placeholder="{{translation.currency[global.lang]}}" [(ngModel)]="selectedCurrency" name="selectedCurrency" required>
+                <mat-option *ngFor="let c of supportedCurrencies" [value]="c">{{c}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field fxFill>
+            <input matInput type="number" placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="amount" name="amount" required [min]="minimum[selectedCurrency]" />
+        </mat-form-field>
+        <mat-form-field fxFill>
+            <mat-select placeholder="{{translation.mean[global.lang]}}" [(ngModel)]="method" name="method" required>
+                <mat-option value="paypal">{{translation.paypal[global.lang]}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="accent" fxFill [disabled]="form.invalid">{{translation.deposit[global.lang]}}</button>
+    </form>
 </div>
