@@ -25,6 +25,7 @@ export class DepositComponent implements OnInit {
     } as { [key: string]: number };
 
     public amount?: number;
+    public address?: string;
     public method?: string;
 
     public safeSite: SafeResourceUrl;
@@ -61,6 +62,7 @@ export class DepositComponent implements OnInit {
                     email: this.global.auth.auth.currentUser!.email,
                     nem: this.global.account!.address.plain(),
                     currency: this.selectedCurrency,
+                    address: this.address,
                     amount: this.amount,
                     method: this.method,
                     lang: this.global.lang
@@ -119,6 +121,10 @@ export class DepositComponent implements OnInit {
         paypal :{
             en: "Paypal",
             ja: "Paypal"
+        },
+        address :{
+            en: "Address",
+            ja: "アドレス"
         }
     } as { [key: string]: { [key: string]: string } };
 }
