@@ -10,7 +10,7 @@
     <iframe [src]="safeSite" fxFill></iframe>
     <form #form="ngForm" (ngSubmit)="deposit()">
         <mat-form-field fxFill>
-            <input matInput type="text" placeholder="{{translation.address[global.lang]}}" [(ngModel)]="address" name="address" required />
+            <input matInput type="text" placeholder="{{translation.address[global.lang]}}" [(ngModel)]="address" name="address" required maxlength="40" minlength="40" />
         </mat-form-field>
         <mat-form-field fxFill>
             <mat-select placeholder="{{translation.currency[global.lang]}}" [(ngModel)]="selectedCurrency" name="selectedCurrency" required >
@@ -19,6 +19,7 @@
         </mat-form-field>
         <mat-form-field fxFill>
             <input matInput type="number" placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="amount" name="amount" required [min]="minimum[selectedCurrency]" />
+            <mat-error>min {{minimum[selectedCurrency]}}</mat-error>
         </mat-form-field>
         
         <mat-form-field fxFill>
