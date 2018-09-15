@@ -10,19 +10,19 @@
     <iframe [src]="safeSite" fxFill></iframe>
     <form #form="ngForm" (ngSubmit)="deposit()">
         <mat-form-field fxFill>
-            <mat-select placeholder="{{translation.currency[global.lang]}}" [(ngModel)]="selectedCurrency" name="selectedCurrency" required>
+            <input matInput type="text" placeholder="{{translation.address[global.lang]}}" [(ngModel)]="address" name="address" required />
+        </mat-form-field>
+        <mat-form-field fxFill>
+            <mat-select placeholder="{{translation.currency[global.lang]}}" [(ngModel)]="selectedCurrency" name="selectedCurrency" required >
                 <mat-option *ngFor="let c of supportedCurrencies" [value]="c">{{c}}</mat-option>
             </mat-select>
         </mat-form-field>
         <mat-form-field fxFill>
             <input matInput type="number" placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="amount" name="amount" required [min]="minimum[selectedCurrency]" />
         </mat-form-field>
-        <mat-form-field fxFill>
-            <input matInput type="text" placeholder="{{translation.address[global.lang]}}" [(ngModel)]="address" name="address" required [min]="minimum[selectedCurrency]"/>
-        </mat-form-field>
         
         <mat-form-field fxFill>
-            <mat-select placeholder="{{translation.mean[global.lang]}}" [(ngModel)]="method" name="method" required>
+            <mat-select placeholder="{{translation.method[global.lang]}}" [(ngModel)]="method" name="method" required >
                 <mat-option value="paypal">{{translation.paypal[global.lang]}}</mat-option>
             </mat-select>
         </mat-form-field>
