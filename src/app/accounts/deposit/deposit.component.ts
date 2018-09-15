@@ -25,6 +25,7 @@ export class DepositComponent implements OnInit {
     } as { [key: string]: number };
 
     public amount?: number;
+    public address?: string;
     public method?: string;
 
     public safeSite: SafeResourceUrl;
@@ -46,7 +47,7 @@ export class DepositComponent implements OnInit {
                 return;
             }
             this.global.initialize().then(() => {
-
+                this.address = this.global.account!.address.plain();
             });
         });
     }
@@ -59,7 +60,7 @@ export class DepositComponent implements OnInit {
                 "https://us-central1-lcnem-wallet.cloudfunctions.net/deposit",
                 {
                     email: this.global.auth.auth.currentUser!.email,
-                    nem: this.global.account!.address.plain(),
+                    nem: this.address,
                     currency: this.selectedCurrency,
                     amount: this.amount,
                     method: this.method,
@@ -112,13 +113,17 @@ export class DepositComponent implements OnInit {
             en: "Deposit",
             ja: "入金"
         },
-        mean :{
-            en: "Mean",
+        method :{
+            en: "Method",
             ja: "方法"
         },
         paypal :{
             en: "Paypal",
             ja: "Paypal"
+        },
+        address :{
+            en: "Address",
+            ja: "アドレス"
         }
     } as { [key: string]: { [key: string]: string } };
 }
