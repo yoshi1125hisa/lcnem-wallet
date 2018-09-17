@@ -81,8 +81,8 @@ export class TransactionComponent implements OnInit {
 
     public translation = {
         mosaics: {
-            en: "Tokens",
-            ja: "トークン"
+            en: "Assets",
+            ja: "アセット"
         }
     } as {[key: string]: {[key: string]: string}};
 }
