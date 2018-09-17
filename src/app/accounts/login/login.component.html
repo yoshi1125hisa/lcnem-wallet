@@ -13,10 +13,10 @@
                 日本語
                 <mat-icon *ngIf="global.lang == 'ja'">check</mat-icon>
             </button>
-            <button mat-icon-button [matMenuTriggerFor]="langMenu" yPosition="below">
-                {{global.lang}}
-            </button>
     </mat-menu>
+    <button mat-icon-button [matMenuTriggerFor]="langMenu" yPosition="below">
+            {{global.lang}}
+        </button>
 </mat-toolbar>
 <div class="out-toolbar">
     <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
