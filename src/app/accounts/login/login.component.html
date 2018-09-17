@@ -9,7 +9,11 @@
     <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
     <ng-template #loaded>
         <iframe [src]="safeSite" fxFill></iframe>
-        <mat-checkbox [(ngModel)]="agree">{{translation.agree[global.lang]}}</mat-checkbox>
-        <button mat-raised-button fxFill color="accent" [disabled]="!agree" (click)="login()">{{translation.login[global.lang]}}</button>
+        <mat-checkbox [(ngModel)]="agree">
+            {{translation.agree[global.lang]}}
+        </mat-checkbox>
+        <button mat-raised-button fxFill color="accent" [disabled]="!agree" (click)="login()">
+                <mat-icon class="background-contain" [ngStyle]="{'background-image': 'url(assets/google_icon.svg)'}"></mat-icon>
+                　{{translation.login[global.lang]}}</button>
     </ng-template>
 </div>
