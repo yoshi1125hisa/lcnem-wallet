@@ -1,83 +1,83 @@
 <mat-sidenav-container>
-    <mat-sidenav #sidenav class="mat-elevation-z16">
-        <mat-toolbar>
-            <a href="https://lcnem.cc" target="_blank" mat-icon-button class="background-contain" [ngStyle]="{'background-image': 'url(favicon.svg)'}"></a>
-            <span>LCNEM</span>
-        </mat-toolbar>
-        <div fxLayout="column">
+  <mat-sidenav #sidenav class="mat-elevation-z16">
+    <mat-toolbar>
+      <a href="https://lcnem.cc" target="_blank" mat-icon-button class="background-contain" [ngStyle]="{'background-image': 'url(favicon.svg)'}"></a>
+      <span>LCNEM</span>
+    </mat-toolbar>
+    <div fxLayout="column">
 
-            <mat-nav-list>
-                <mat-list-item routerLink="/transactions/scan">
-                    <mat-icon>center_focus_strong</mat-icon>
-                    {{translation.scan[global.lang]}}
-                </mat-list-item>
-                <mat-list-item routerLink="/transactions/history">
-                    <mat-icon>history</mat-icon>
-                    {{translation.history[global.lang]}}
-                </mat-list-item>
-                <mat-list-item routerLink="/accounts/deposit">
-                    <mat-icon>call_received</mat-icon>
-                    {{translation.deposit[global.lang]}}
-                </mat-list-item>
-                <mat-list-item routerLink="/accounts/withdraw">
-                    <mat-icon>call_made</mat-icon>
-                    {{translation.withdraw[global.lang]}}
-                </mat-list-item>
-                <mat-divider></mat-divider>
-                <mat-list-item (click)="logout()">
-                    <mat-icon>lock_open</mat-icon>
-                    {{translation.logout[global.lang]}}
-                </mat-list-item>
-                <mat-list-item routerLink="/accounts/terms">
-                    <mat-icon>list_alt</mat-icon>
-                    {{translation.terms[global.lang]}}
-                </mat-list-item>
-            </mat-nav-list>
-        </div>
-    </mat-sidenav>
-    <mat-sidenav-content>
-        <mat-toolbar color="primary" class="mat-elevation-z4">
-            <button mat-icon-button (click)="sidenav.toggle()">
-                <mat-icon>menu</mat-icon>
-            </button>
-            <span>LCNEM Wallet</span>
-            <span class="fill-remaining-space"></span>
-            <button mat-icon-button (click)="refresh()" [disabled]="loading">
-                <mat-icon>refresh</mat-icon>
-            </button>
-            <mat-menu #langMenu="matMenu" [overlapTrigger]="false">
-                <button mat-menu-item (click)="global.lang = 'en'">
-                    English
-                    <mat-icon *ngIf="global.lang == 'en'">check</mat-icon>
-                </button>
-                <button mat-menu-item (click)="global.lang = 'ja'">
-                    日本語
-                    <mat-icon *ngIf="global.lang == 'ja'">check</mat-icon>
-                </button>
-            </mat-menu>
-            <button mat-icon-button [matMenuTriggerFor]="langMenu" yPosition="below">
-                {{global.lang}}
-            </button>
-        </mat-toolbar>
-        <div class="out-toolbar">
-            <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
-            <ng-template #loaded>
-                <mat-card>
-                    <app-mosaic-list [title]="translation.balance[global.lang]" [mosaics]="global.mosaics"></app-mosaic-list>
-                </mat-card>
-                <mat-card>
-                    <mat-card-header>
-                        <mat-card-title>{{translation.yourAddress[global.lang]}}</mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content>
-                        <p style="text-align: center;">{{global.account!.address.pretty()}}</p>
-                        <img class="qr" [src]="qrUrl" />
-                    </mat-card-content>
-                </mat-card>
-                <button mat-fab color="accent" class="transfer-button" routerLink="/transactions/transfer">
-                    <mat-icon>send</mat-icon>
-                </button>
-            </ng-template>
-        </div>
-    </mat-sidenav-content>
+      <mat-nav-list>
+        <mat-list-item routerLink="/transactions/scan">
+          <mat-icon>center_focus_strong</mat-icon>
+          {{translation.scan[global.lang]}}
+        </mat-list-item>
+        <mat-list-item routerLink="/transactions/history">
+          <mat-icon>history</mat-icon>
+          {{translation.history[global.lang]}}
+        </mat-list-item>
+        <mat-list-item routerLink="/accounts/deposit">
+          <mat-icon>call_received</mat-icon>
+          {{translation.deposit[global.lang]}}
+        </mat-list-item>
+        <mat-list-item routerLink="/accounts/withdraw">
+          <mat-icon>call_made</mat-icon>
+          {{translation.withdraw[global.lang]}}
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item (click)="logout()">
+          <mat-icon>lock_open</mat-icon>
+          {{translation.logout[global.lang]}}
+        </mat-list-item>
+        <mat-list-item routerLink="/accounts/terms">
+          <mat-icon>list_alt</mat-icon>
+          {{translation.terms[global.lang]}}
+        </mat-list-item>
+      </mat-nav-list>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="mat-elevation-z4">
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>LCNEM Wallet</span>
+      <span class="fill-remaining-space"></span>
+      <button mat-icon-button (click)="refresh()" [disabled]="loading">
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <mat-menu #langMenu="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item (click)="global.lang = 'en'">
+          English
+          <mat-icon *ngIf="global.lang == 'en'">check</mat-icon>
+        </button>
+        <button mat-menu-item (click)="global.lang = 'ja'">
+          日本語
+          <mat-icon *ngIf="global.lang == 'ja'">check</mat-icon>
+        </button>
+      </mat-menu>
+      <button mat-icon-button [matMenuTriggerFor]="langMenu" yPosition="below">
+        {{global.lang}}
+      </button>
+    </mat-toolbar>
+    <div class="out-toolbar">
+      <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
+      <ng-template #loaded>
+        <mat-card>
+          <app-mosaic-list [title]="translation.balance[global.lang]" [mosaics]="global.mosaics"></app-mosaic-list>
+        </mat-card>
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>{{translation.yourAddress[global.lang]}}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p style="text-align: center;">{{global.account!.address.pretty()}}</p>
+            <img class="qr" [src]="qrUrl" />
+          </mat-card-content>
+        </mat-card>
+        <button mat-fab color="accent" class="transfer-button" routerLink="/transactions/transfer">
+          <mat-icon>send</mat-icon>
+        </button>
+      </ng-template>
+    </div>
+  </mat-sidenav-content>
 </mat-sidenav-container>

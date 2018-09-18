@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalDataService } from '../../services/global-data.service';
 
-import { DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-terms',
@@ -15,16 +15,16 @@ export class TermsComponent implements OnInit {
     public global: GlobalDataService,
     sanitizer: DomSanitizer
   ) {
-      this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/${global.lang}.txt`);
-    }
+    this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/${global.lang}.txt`);
+  }
 
   ngOnInit() {
   }
 
   public translation = {
-      terms: {
-          en: "Terms of Service",
-          ja: "利用規約"
-      }
-  } as {[key: string]: {[key: string]: string}};
+    terms: {
+      en: "Terms of Service",
+      ja: "利用規約"
+    }
+  } as { [key: string]: { [key: string]: string } };
 }

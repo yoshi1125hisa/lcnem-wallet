@@ -13,16 +13,16 @@ import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
 
 
 const routes: Routes = [
-    {path: "", component: HomeComponent},
-    {path: "accounts/login", component: LoginComponent},
-    {path: "accounts/deposit", component: DepositComponent},
-    {path: "accounts/withdraw", component: WithdrawComponent},
-    {path: "accounts/sign", component: SignComponent},
-    {path: "transactions/history", component: HistoryComponent},
-    {path: "transactions/scan", component: ScanComponent},
-    {path: "transactions/transfer", component: TransferComponent},
-    {path: "accounts/terms", component: TermsComponent},
-    {path: "**", component: PageNotFoundComponent}
+  { path: "", component: HomeComponent },
+  { path: "accounts/login", component: LoginComponent },
+  { path: "accounts/deposit", component: DepositComponent },
+  { path: "accounts/withdraw", component: WithdrawComponent },
+  { path: "accounts/sign", component: SignComponent },
+  { path: "transactions/history", component: HistoryComponent },
+  { path: "transactions/scan", component: ScanComponent },
+  { path: "transactions/transfer", component: TransferComponent },
+  { path: "accounts/terms", component: TermsComponent },
+  { path: "**", component: PageNotFoundComponent }
 ];
 
 @NgModule({

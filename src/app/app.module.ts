@@ -10,28 +10,28 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 
 import {
-    MatButtonModule,
-    MatToolbarModule,
-    MatCardModule,
-    MatInputModule,
-    MatSelectModule,
-    MatIconModule,
-    MatTooltipModule,
-    MatFormFieldModule,
-    MatSidenavModule,
-    MatRippleModule,
-    MatGridListModule,
-    MatProgressSpinnerModule,
-    MatTabsModule,
-    MatDividerModule,
-    MatAutocompleteModule,
-    MatDialogModule,
-    MatListModule,
-    MatSlideToggleModule,
-    MatStepperModule,
-    MatCheckboxModule,
-    MatTableModule,
-    MatMenuModule
+  MatButtonModule,
+  MatToolbarModule,
+  MatCardModule,
+  MatInputModule,
+  MatSelectModule,
+  MatIconModule,
+  MatTooltipModule,
+  MatFormFieldModule,
+  MatSidenavModule,
+  MatRippleModule,
+  MatGridListModule,
+  MatProgressSpinnerModule,
+  MatTabsModule,
+  MatDividerModule,
+  MatAutocompleteModule,
+  MatDialogModule,
+  MatListModule,
+  MatSlideToggleModule,
+  MatStepperModule,
+  MatCheckboxModule,
+  MatTableModule,
+  MatMenuModule
 } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -44,7 +44,7 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { environment } from '../environments/environment';
 
-import { HomeComponent} from './home/home.component';
+import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './accounts/login/login.component';
 import { SignComponent } from './accounts/sign/sign.component';
 import { HistoryComponent } from './transactions/history/history.component';
@@ -60,67 +60,69 @@ import { DialogComponent } from './components/dialog/dialog.component';
 import { TransferDialogComponent } from './components/transfer-dialog/transfer-dialog.component';
 import { TermsComponent } from './accounts/terms/terms.component';
 import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
+import { ContactsComponent } from './contacts/contacts.component';
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        HomeComponent,
-        LoginComponent,
-        SignComponent,
-        HistoryComponent,
-        TransactionComponent,
-        ScanComponent,
-        TransferComponent,
-        PageNotFoundComponent,
-        LoadingDialogComponent,
-        MosaicListComponent,
-        DepositComponent,
-        DialogComponent,
-        TransferDialogComponent,
-        TermsComponent,
-        WithdrawComponent
-    ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        FormsModule,
-        BrowserAnimationsModule,
-        ZXingScannerModule.forRoot(),
-        ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
-        AngularFireModule.initializeApp(environment.firebase),
-        AngularFirestoreModule,
-        AngularFireAuthModule,
-        MatButtonModule,
-        MatCheckboxModule,
-        MatToolbarModule,
-        MatCardModule,
-        MatInputModule,
-        MatSelectModule,
-        MatGridListModule,
-        MatIconModule,
-        MatTooltipModule,
-        MatFormFieldModule,
-        FlexLayoutModule,
-        MatSidenavModule,
-        MatRippleModule,
-        HttpClientModule,
-        MatProgressSpinnerModule,
-        MatTabsModule,
-        MatDividerModule,
-        MatAutocompleteModule,
-        MatDialogModule,
-        MatListModule,
-        MatSlideToggleModule,
-        MatStepperModule,
-        MatTableModule,
-        MatMenuModule
-    ],
-    entryComponents: [
-        LoadingDialogComponent,
-        DialogComponent,
-        TransferDialogComponent
-    ],
-    providers: [GlobalDataService],
-    bootstrap: [AppComponent]
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    LoginComponent,
+    SignComponent,
+    HistoryComponent,
+    TransactionComponent,
+    ScanComponent,
+    TransferComponent,
+    PageNotFoundComponent,
+    LoadingDialogComponent,
+    MosaicListComponent,
+    DepositComponent,
+    DialogComponent,
+    TransferDialogComponent,
+    TermsComponent,
+    WithdrawComponent,
+    ContactsComponent
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    BrowserAnimationsModule,
+    ZXingScannerModule.forRoot(),
+    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFirestoreModule,
+    AngularFireAuthModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatToolbarModule,
+    MatCardModule,
+    MatInputModule,
+    MatSelectModule,
+    MatGridListModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatFormFieldModule,
+    FlexLayoutModule,
+    MatSidenavModule,
+    MatRippleModule,
+    HttpClientModule,
+    MatProgressSpinnerModule,
+    MatTabsModule,
+    MatDividerModule,
+    MatAutocompleteModule,
+    MatDialogModule,
+    MatListModule,
+    MatSlideToggleModule,
+    MatStepperModule,
+    MatTableModule,
+    MatMenuModule
+  ],
+  entryComponents: [
+    LoadingDialogComponent,
+    DialogComponent,
+    TransferDialogComponent
+  ],
+  providers: [GlobalDataService],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
