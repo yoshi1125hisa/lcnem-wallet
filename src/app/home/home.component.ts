@@ -108,6 +108,10 @@ export class HomeComponent implements OnInit {
     completed: {
       en: "Successfully logged out",
       ja: "正常にログアウトしました。"
+    },
+    copy: {
+      en: "Copy this Address",
+      ja: "アドレスをコピーする"
     }
   } as { [key: string]: { [key: string]: string } };
 }
