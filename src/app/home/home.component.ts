@@ -35,6 +35,7 @@ export class HomeComponent implements OnInit {
       });
     });
   }
+  
   public async logout() {
     await this.global.logout();
     this.dialog.open(DialogComponent, {
