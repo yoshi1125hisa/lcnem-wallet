@@ -50,10 +50,22 @@ export class HomeComponent implements OnInit {
 
   public async refresh() {
     this.loading = true;
-
     await this.global.refresh();
-
     this.loading = false;
+  }
+
+  copyMessage(val: string){
+    let selBox = document.createElement('textarea');
+    selBox.style.position = 'fixed';
+    selBox.style.left = '0';
+    selBox.style.top = '0';
+    selBox.style.opacity = '0';
+    selBox.value = val;
+    document.body.appendChild(selBox);
+    selBox.focus();
+    selBox.select();
+    document.execCommand('copy');
+    document.body.removeChild(selBox);
   }
 
   public translation = {
