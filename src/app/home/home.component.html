@@ -23,6 +23,10 @@
           <mat-icon>call_made</mat-icon>
           {{translation.withdraw[global.lang]}}
         </mat-list-item>
+        <mat-list-item routerLink="/contacts">
+            <mat-icon>list</mat-icon>
+            {{translation.contacts[global.lang]}}
+          </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item (click)="logout()">
           <mat-icon>lock_open</mat-icon>
