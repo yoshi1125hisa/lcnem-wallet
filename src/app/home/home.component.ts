@@ -112,6 +112,10 @@ export class HomeComponent implements OnInit {
     copy: {
       en: "Copy this Address",
       ja: "アドレスをコピーする"
+    },
+    contacts: {
+      en: "Address book",
+      ja: "アドレス帳"
     }
   } as { [key: string]: { [key: string]: string } };
 }

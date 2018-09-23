@@ -10,6 +10,7 @@ import { PageNotFoundComponent } from './error/page-not-found/page-not-found.com
 import { TermsComponent } from './accounts/terms/terms.component';
 import { DepositComponent } from './accounts/deposit/deposit.component';
 import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
+import { ContactsComponent } from './contacts/contacts.component';
 
 
 const routes: Routes = [
@@ -22,6 +23,7 @@ const routes: Routes = [
   { path: "transactions/scan", component: ScanComponent },
   { path: "transactions/transfer", component: TransferComponent },
   { path: "accounts/terms", component: TermsComponent },
+  { path: "contacts", component: ContactsComponent },
   { path: "**", component: PageNotFoundComponent }
 ];
 
