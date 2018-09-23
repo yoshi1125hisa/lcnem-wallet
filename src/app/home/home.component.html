@@ -73,8 +73,8 @@
             <p style="text-align: center;">{{global.account!.address.pretty()}}
                <button mat-icon-button matTooltip="{{translation.copy[global.lang]}}" (click)="copyMessage(global.account!.address.pretty())" value="click to copy" >
                 <mat-icon>input</mat-icon>
-            </button>
-        </p>
+               </button>
+            </p>
             <img class="qr" [src]="qrUrl" />
           </mat-card-content>
         </mat-card>
