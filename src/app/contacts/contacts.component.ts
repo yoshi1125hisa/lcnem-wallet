@@ -38,9 +38,9 @@ export class ContactsComponent implements OnInit {
 
     let collection = await this.global.firestore.collection("users").doc(this.global.auth.auth.currentUser!.uid).collection("contacts").ref.get();
 
-    for(let i = 0; i < collection.docs.length; i++) {
+    for (let i = 0; i < collection.docs.length; i++) {
       let profileSnapshot = await this.global.firestore.collection("users").doc(collection.docs[i].id).ref.get();
-      if(profileSnapshot.exists) {
+      if (profileSnapshot.exists) {
         let profile = profileSnapshot.data() as any;
         profile.id = collection.docs[i].id;
         this.contacts.push(profile);
@@ -52,7 +52,7 @@ export class ContactsComponent implements OnInit {
 
   public translation = {
     contacts: {
-      en: "Contacts",
+      en: "Contacts book",
       ja: "アドレス帳"
     }
   } as { [key: string]: { [key: string]: string } };
