@@ -80,7 +80,13 @@ export class GlobalDataService {
       let wallet = SimpleWallet.create(uid, password);
       this.account = wallet.open(password);
       await docRef.set({
-        wallet: wallet.writeWLTFile()
+        wallet: wallet.writeWLTFile(),
+        name: this.auth.auth.currentUser!.displayName,
+        nem: wallet.address.plain(),
+        createdAt: Date.now(),
+        secret: {
+          
+        }
       });
     } else {
       this.account = SimpleWallet.readFromWLT(doc.data()!["wallet"]).open(password);

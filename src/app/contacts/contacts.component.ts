@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GlobalDataService } from '../services/global-data.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
-import { Profile } from '../../models/profile';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-contacts',
@@ -11,7 +11,7 @@ import { Profile } from '../../models/profile';
 })
 export class ContactsComponent implements OnInit {
   public loading = true;
-  public contacts: Array<Profile> = [];
+  public contacts: Array<User> = [];
 
   constructor(
     public global: GlobalDataService,
@@ -39,11 +39,10 @@ export class ContactsComponent implements OnInit {
     let collection = await this.global.firestore.collection("users").doc(this.global.auth.auth.currentUser!.uid).collection("contacts").ref.get();
 
     for (let i = 0; i < collection.docs.length; i++) {
-      let profileSnapshot = await this.global.firestore.collection("users").doc(collection.docs[i].id).ref.get();
-      if (profileSnapshot.exists) {
-        let profile = profileSnapshot.data() as any;
-        profile.id = collection.docs[i].id;
-        this.contacts.push(profile);
+      let userSnapshot = await this.global.firestore.collection("users").doc(collection.docs[i].id).ref.get();
+      if (userSnapshot.exists) {
+        let user = userSnapshot.data() as User;
+        this.contacts.push(user);
       }
     }
 
