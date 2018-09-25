@@ -74,22 +74,23 @@ export class GlobalDataService {
     let uid = this.auth.auth.currentUser!.uid;
     let password = new Password(uid);
 
-    let docRef = this.firestore.collection("users").doc(uid).ref;
-    let doc = await docRef.get();
-    if (!doc.exists) {
+    let user = await this.firestore.collection("users").doc(uid).ref.get();
+    if (!user.exists) {
       let wallet = SimpleWallet.create(uid, password);
       this.account = wallet.open(password);
-      await docRef.set({
+
+      await this.firestore.collection("users").doc(uid).set({
         wallet: wallet.writeWLTFile(),
         name: this.auth.auth.currentUser!.displayName,
         nem: wallet.address.plain(),
-        createdAt: Date.now(),
-        secret: {
-          
-        }
+        createdAt: Date.now()
+      });
+
+      await this.firestore.collection("users").doc(uid).collection("secrets").ref.add({
+        password: uid
       });
     } else {
-      this.account = SimpleWallet.readFromWLT(doc.data()!["wallet"]).open(password);
+      this.account = SimpleWallet.readFromWLT(user.data()!["wallet"]).open(password);
     }
 
     await this.refresh();
