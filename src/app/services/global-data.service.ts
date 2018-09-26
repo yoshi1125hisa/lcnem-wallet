@@ -66,31 +66,42 @@ export class GlobalDataService {
     this.initialized = false;
   }
 
+  public async createFirestoreDocument(uid: string, wallet: SimpleWallet) {
+    await this.firestore.collection("users").doc(uid).set({
+      wallet: wallet.writeWLTFile(),
+      name: this.auth.auth.currentUser!.displayName,
+      nem: wallet.address.plain(),
+      createdAt: Date.now()
+    });
+
+    await this.firestore.collection("users").doc(uid).collection("secrets").ref.add({
+      password: uid
+    });
+  }
+
   public async initialize() {
     if (this.initialized) {
       return;
     }
 
     let uid = this.auth.auth.currentUser!.uid;
-    let password = new Password(uid);
-
     let user = await this.firestore.collection("users").doc(uid).ref.get();
+
     if (!user.exists) {
+      let password = new Password(uid);
       let wallet = SimpleWallet.create(uid, password);
+
+      await this.createFirestoreDocument(uid, wallet);
       this.account = wallet.open(password);
-
-      await this.firestore.collection("users").doc(uid).set({
-        wallet: wallet.writeWLTFile(),
-        name: this.auth.auth.currentUser!.displayName,
-        nem: wallet.address.plain(),
-        createdAt: Date.now()
-      });
-
-      await this.firestore.collection("users").doc(uid).collection("secrets").ref.add({
-        password: uid
-      });
     } else {
-      this.account = SimpleWallet.readFromWLT(user.data()!["wallet"]).open(password);
+      let secrets = await this.firestore.collection("users").doc(uid).collection("secrets").ref.get();
+      let wallet = SimpleWallet.readFromWLT(user.data()!.wallet);
+      if(secrets.size == 0) {
+        await this.createFirestoreDocument(uid, wallet);
+      }
+
+      let secret = secrets.docs[0].data();
+      this.account = wallet.open(new Password(secret.password));
     }
 
     await this.refresh();
