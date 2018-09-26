@@ -13,7 +13,6 @@ import {
   MosaicId
 } from 'nem-library';
 import { GlobalDataService } from '../../../services/global-data.service';
-import { MosaicAdditionalDefinition } from '../../../../models/mosaic-additional-definition';
 
 @Component({
   selector: 'app-transaction',
@@ -21,21 +20,21 @@ import { MosaicAdditionalDefinition } from '../../../../models/mosaic-additional
   styleUrls: ['./transaction.component.css']
 })
 export class TransactionComponent implements OnInit {
-  @Input() transaction?: Transaction;
+  @Input() public transaction?: Transaction;
 
   public loading = true;
 
-  public from?: string;
-  public to?: string;
+  public address?: string;
   public mosaics?: Mosaic[];
   public message?: string;
   public date?: any;
   public time?: any;
+  public received = true;
 
   constructor(public global: GlobalDataService) { }
 
   ngOnInit() {
-    if (!this.transaction) {
+    if(!this.transaction) {
       return;
     }
     if (this.transaction.type == TransactionTypes.TRANSFER) {
@@ -49,10 +48,17 @@ export class TransactionComponent implements OnInit {
   }
 
   public async set(transferTransaction: TransferTransaction) {
+    let account = this.global.account!;
+    if (account!.address.plain() == transferTransaction.recipient.plain()) {
+      this.address = transferTransaction.signer!.address.pretty();
+    } else {
+      this.address = transferTransaction.recipient.pretty();
+      this.received = false;
+    }
+
     let message: string;
     if (transferTransaction.message.isEncrypted()) {
-      let account = this.global.account!;
-      if (account!.address.plain() == transferTransaction.recipient.plain()) {
+      if(this.received) {
         message = account!.decryptMessage(transferTransaction.message, transferTransaction.signer!).payload;
       } else {
         let recipient = await this.global.accountHttp.getFromAddress(transferTransaction.recipient).toPromise();
@@ -63,9 +69,6 @@ export class TransactionComponent implements OnInit {
       message = msg.plain();
     }
     this.message = message;
-
-    this.from = transferTransaction.signer!.address.pretty();
-    this.to = transferTransaction.recipient.pretty();
 
     if (transferTransaction.containsMosaics()) {
       this.mosaics = transferTransaction.mosaics();
@@ -83,6 +86,10 @@ export class TransactionComponent implements OnInit {
     mosaics: {
       en: "Assets",
       ja: "アセット"
+    },
+    unconfirmed: {
+      en: "This transaction is not confirmed by the blockchain yet.",
+      ja: "この取引はまだブロックチェーンに承認されていません"
     }
   } as { [key: string]: { [key: string]: string } };
 }

@@ -5,7 +5,6 @@
       <span>LCNEM</span>
     </mat-toolbar>
     <div fxLayout="column">
-
       <mat-nav-list>
         <mat-list-item routerLink="/transactions/scan">
           <mat-icon>center_focus_strong</mat-icon>
@@ -23,10 +22,10 @@
           <mat-icon>call_made</mat-icon>
           {{translation.withdraw[global.lang]}}
         </mat-list-item>
-        <mat-list-item routerLink="/contacts">
-            <mat-icon>list</mat-icon>
-            {{translation.contacts[global.lang]}}
-          </mat-list-item>
+        <mat-list-item routerLink="/accounts/contacts">
+          <mat-icon>contacts</mat-icon>
+          {{translation.contacts[global.lang]}}
+        </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item (click)="logout()">
           <mat-icon>lock_open</mat-icon>
@@ -75,9 +74,9 @@
           </mat-card-header>
           <mat-card-content>
             <p style="text-align: center;">{{global.account!.address.pretty()}}
-               <button mat-icon-button matTooltip="{{translation.copy[global.lang]}}" (click)="copyMessage(global.account!.address.pretty())" value="click to copy" >
+              <button mat-icon-button matTooltip="{{translation.copy[global.lang]}}" (click)="copyMessage(global.account!.address.pretty())">
                 <mat-icon>input</mat-icon>
-               </button>
+              </button>
             </p>
             <img class="qr" [src]="qrUrl" />
           </mat-card-content>

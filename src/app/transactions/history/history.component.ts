@@ -11,9 +11,7 @@ import { GlobalDataService } from '../../services/global-data.service';
 export class HistoryComponent implements OnInit {
   public loading = true;
 
-  public incomingTransactions?: Transaction[];
-  public outgoingTransactions?: Transaction[];
-  public unconfirmedTransactions?: Transaction[];
+  public transactions?: Transaction[];
 
   constructor(
     public global: GlobalDataService,
@@ -34,16 +32,8 @@ export class HistoryComponent implements OnInit {
 
   public async refresh() {
     this.loading = true;
-    this.incomingTransactions = new Array<Transaction>();
-    this.outgoingTransactions = new Array<Transaction>();
-    this.unconfirmedTransactions = new Array<Transaction>();
 
-    this.incomingTransactions = await this.global.accountHttp.incomingTransactions(this.global.account!.address).toPromise();
-
-    this.outgoingTransactions = await this.global.accountHttp.outgoingTransactions(this.global.account!.address).toPromise();
-
-    this.unconfirmedTransactions = await this.global.accountHttp.unconfirmedTransactions(this.global.account!.address).toPromise();
-
+    this.transactions = await this.global.accountHttp.allTransactions(this.global.account!.address).toPromise();
     this.loading = false;
   }
 
@@ -60,21 +50,9 @@ export class HistoryComponent implements OnInit {
       en: "Outgoing",
       ja: "送信"
     },
-    unconfirmed: {
-      en: "Unconfirmed",
-      ja: "未承認"
-    },
-    noIncoming: {
-      en: "There is no incoming transaction.",
-      ja: "受信した取引はありません。"
-    },
-    noOutgoing: {
-      en: "There is no outgoing transaction.",
-      ja: "送信した取引はありません。"
-    },
-    noUnconfirmed: {
-      en: "There is no unconfirmed transaction.",
-      ja: "未承認の取引はありません。"
+    noTransaction: {
+      en: "There is no transaction.",
+      ja: "取引はありません。"
     }
   } as { [key: string]: { [key: string]: string } };
 }

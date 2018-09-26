@@ -5,6 +5,9 @@
 
   <span>{{translation.transfer[global.lang]}}</span>
   <span class="fill-remaining-space"></span>
+  <button mat-icon-button routerLink="/transactions/scan">
+    <mat-icon>center_focus_strong</mat-icon>
+  </button>
 </mat-toolbar>
 <div class="out-toolbar">
   <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
@@ -13,38 +16,44 @@
       <mat-card>
         <mat-form-field fxFill>
           <input matInput placeholder="{{translation.recipient[global.lang]}}" [(ngModel)]="recipient" name="recipient"
-            [matAutocomplete]="auto" required>
-          <button mat-button color="accent" matSuffix type="button" routerLink="/transactions/scan">
-            <mat-icon>center_focus_strong</mat-icon>
-          </button>
+            [matAutocomplete]="auto" (change)="onRecipientChange()" required>
+          <mat-error>{{translation.addressRequired[global.lang]}}</mat-error>
         </mat-form-field>
         <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngIf="recipient" [value]="recipient">{{translation.address[global.lang]}} "{{recipient}}"</mat-option>
-          <mat-option *ngIf="recipient" (click)="resolveNamespace()" [value]="recipient">{{translation.namespace[global.lang]}}
-            "{{recipient}}"</mat-option>
+          <mat-option *ngFor="let autoComplete of autoCompletes" [value]="autoComplete">{{autoComplete}}</mat-option>
         </mat-autocomplete>
       </mat-card>
       <mat-card>
         <mat-form-field fxFill>
-          <input matInput placeholder="{{translation.message[global.lang]}}" [(ngModel)]="message" name="message">
+          <input matInput placeholder="{{translation.message[global.lang]}}" [(ngModel)]="message" name="message"
+            [required]="encrypt">
           <mat-slide-toggle fxFill matSuffix [(ngModel)]="encrypt" name="encrypt">{{translation.encryption[global.lang]}}</mat-slide-toggle>
         </mat-form-field>
       </mat-card>
-      <mat-card>
-        <app-mosaic-list [title]="translation.balance[global.lang]" [mosaics]="global.mosaics"></app-mosaic-list>
-      </mat-card>
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>
-            {{translation.amount[global.lang]}}
-          </mat-card-title>
-        </mat-card-header>
-        <mat-form-field fxFill *ngFor="let m of transferMosaics; let i = index">
-          <input matInput type="number" placeholder="{{m.name}}" [(ngModel)]="transferMosaics[i].amount" name="amount{{i}}"
-            [matTooltip]="translation.inputEmpty[global.lang]" min="0">
-        </mat-form-field>
-      </mat-card>
-      <button fxFill mat-raised-button color="accent" [disabled]="form.invalid">{{translation.submit[global.lang]}}</button>
+      <div fxLayout="row wrap" fxLayoutAlign="center">
+        <ng-container *ngFor="let m of transferMosaics; let i = index">
+          <mat-card *ngIf="m.visible" fxFlex="25" fxFlex.sm="50" fxFlex.xs="100">
+            <mat-card-content>
+              <mat-form-field fxFill>
+                <input matInput type="number" placeholder="{{m.name}}" [(ngModel)]="transferMosaics[i].amount"
+                  name="amount{{i}}" min="0" required>
+              </mat-form-field>
+              <app-mosaic-list [title]="translation.balance[global.lang]" [mosaics]="[m.mosaic]"></app-mosaic-list>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button fxFill color="warn" type="button" (click)="transferMosaics[i].visible = false">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </ng-container>
+        <mat-card fxFlex="100">
+          <button mat-button type="button" color="accent" (click)="changeTransferMosaics()" fxFill>
+            <mat-icon>add</mat-icon>
+          </button>
+        </mat-card>
+      </div>
+      <button fxFill mat-raised-button color="accent" [disabled]="form.invalid">{{translation.transfer[global.lang]}}</button>
     </form>
   </ng-template>
 </div>

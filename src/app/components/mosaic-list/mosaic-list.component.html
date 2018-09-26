@@ -1,4 +1,4 @@
-<mat-nav-list>
+<mat-list>
   <h3 mat-subheader>{{title}}</h3>
   <mat-divider></mat-divider>
   <ng-container *ngFor="let m of _mosaics">
@@ -7,10 +7,8 @@
       <span mat-line>{{m.name}}</span>
       <small mat-line>{{m.issuer}}</small>
       <span class="fill-remaining-space"></span>
-      <span style="text-align: right;">
-        {{m.unit}} {{m.amount}}
-      </span>
+      <span class="right">{{m.amount}}<br />{{m.unit}}</span>
     </mat-list-item>
     <mat-divider></mat-divider>
   </ng-container>
-</mat-nav-list>
+</mat-list>

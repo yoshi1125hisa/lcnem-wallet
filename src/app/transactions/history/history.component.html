@@ -11,38 +11,7 @@
 <div class="out-toolbar">
   <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
   <ng-template #loaded>
-    <div fxLayout="column">
-      <mat-tab-group fxFlex="100">
-        <mat-tab>
-          <ng-template mat-tab-label>
-            {{translation.unconfirmed[global.lang]}}
-          </ng-template>
-          <div class="tab">
-            <app-transaction *ngFor="let t of unconfirmedTransactions" [transaction]="t"></app-transaction>
-            <p class="empty" *ngIf="!unconfirmedTransactions.length">{{translation.noUnconfirmed[global.lang]}}</p>
-          </div>
-        </mat-tab>
-      </mat-tab-group>
-      <mat-tab-group fxFlex="100">
-        <mat-tab label="Incoming">
-          <ng-template mat-tab-label>
-            {{translation.incoming[global.lang]}}
-          </ng-template>
-          <div class="tab">
-            <app-transaction *ngFor="let t of incomingTransactions" [transaction]="t"></app-transaction>
-            <p class="empty" *ngIf="!incomingTransactions.length">{{translation.noIncoming[global.lang]}}</p>
-          </div>
-        </mat-tab>
-        <mat-tab label="Outgoing">
-          <ng-template mat-tab-label>
-            {{translation.outgoing[global.lang]}}
-          </ng-template>
-          <div class="tab">
-            <app-transaction *ngFor="let t of outgoingTransactions" [transaction]="t"></app-transaction>
-            <p class="empty" *ngIf="!outgoingTransactions.length">{{translation.noOutgoing[global.lang]}}</p>
-          </div>
-        </mat-tab>
-      </mat-tab-group>
-    </div>
+    <app-transaction *ngFor="let t of transactions" [transaction]="t"></app-transaction>
+    <p class="empty" *ngIf="!transactions.length">{{translation.noTransaction[global.lang]}}</p>
   </ng-template>
 </div>
