@@ -13,9 +13,6 @@
   </mat-form-field>
   <zxing-scanner fxFill #scanner [device]="selectedDevice" [hidden]="!selectedDevice">
   </zxing-scanner>
-  <mat-form-field fxFill *ngIf="resultText">
-    <textarea matInput placeholder="Result" [(ngModel)]="resultText" rows="6"></textarea>
-  </mat-form-field>
   <p *ngIf="noCamera">
     {{translation.noCamera[global.lang]}}
   </p>

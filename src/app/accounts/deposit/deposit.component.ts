@@ -3,7 +3,7 @@ import { GlobalDataService } from '../../services/global-data.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
-import { DialogComponent } from '../../components/dialog/dialog.component';
+import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { HttpClient } from '@angular/common/http';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -53,7 +53,7 @@ export class DepositComponent implements OnInit {
   }
 
   public async deposit() {
-    let _dialogRef = this.dialog.open(LoadingDialogComponent, { disableClose: true });
+    let dialogRef = this.dialog.open(LoadingDialogComponent, { disableClose: true });
 
     try {
       await this.http.post(
@@ -71,7 +71,7 @@ export class DepositComponent implements OnInit {
         }
       ).toPromise();
     } catch {
-      this.dialog.open(DialogComponent, {
+      this.dialog.open(AlertDialogComponent, {
         data: {
           title: this.translation.error[this.global.lang],
           content: ""
@@ -79,13 +79,13 @@ export class DepositComponent implements OnInit {
       });
       return;
     } finally {
-      _dialogRef.close();
+      dialogRef.close();
     }
 
-    this.dialog.open(DialogComponent, {
+    this.dialog.open(AlertDialogComponent, {
       data: {
         title: this.translation.completed[this.global.lang],
-        content: ""
+        content: this.translation.following[this.global.lang]
       }
     }).afterClosed().subscribe(() => {
       this.router.navigate(["/"]);
@@ -108,6 +108,10 @@ export class DepositComponent implements OnInit {
     completed: {
       en: "Completed",
       ja: "完了"
+    },
+    following: {
+      en: "Please wait for an email.",
+      ja: "メールをお送りしますので少々お待ちください。"
     },
     deposit: {
       en: "Deposit",

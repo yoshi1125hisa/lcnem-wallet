@@ -4,15 +4,15 @@
         "unit": "XEM"
     },
     "lc:jpy": {
-        "issuer": "LCNEM Co.Ltd.",
+        "issuer": "LCNEM, Inc.",
         "unit": "JPY"
     },
     "lc:usd": {
-        "issuer": "LCNEM Co.Ltd.",
+        "issuer": "LCNEM, Inc.",
         "unit": "USD"
     },
     "lc:eur": {
-        "issuer": "LCNEM Co.Ltd.",
+        "issuer": "LCNEM, Inc.",
         "unit": "EUR"
     },
     "oshibori:point2019": {
@@ -25,7 +25,7 @@
     },
     "montoken:mot": {
         "issuer": "かえもん",
-        "unit": null
+        "unit": "JPY"
     },
     "ysf:yume-coin": {
         "issuer": "用賀サマーフェスティバル",

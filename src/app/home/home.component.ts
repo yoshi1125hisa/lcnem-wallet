@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { GlobalDataService } from '../services/global-data.service';
 import { Invoice } from '../../models/invoice';
 import { MatDialog } from '@angular/material';
-import { DialogComponent } from '../components/dialog/dialog.component';
+import { AlertDialogComponent } from '../components/alert-dialog/alert-dialog.component';
 
 @Component({
   selector: 'app-home',
@@ -24,13 +24,13 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.global.auth.authState.subscribe((user) => {
       if (user == null) {
-        this.router.navigate(["/accounts/login"]);
+        this.router.navigate(["accounts", "login"]);
         return;
       }
       this.global.initialize().then(() => {
         let invoice = new Invoice();
         invoice.data.addr = this.global.account!.address.plain();
-        this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + invoice.generate();
+        this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
         this.loading = false;
       });
     });
@@ -38,13 +38,13 @@ export class HomeComponent implements OnInit {
   
   public async logout() {
     await this.global.logout();
-    this.dialog.open(DialogComponent, {
+    this.dialog.open(AlertDialogComponent, {
       data: {
         title: this.translation.completed[this.global.lang],
         content: ""
       }
     }).afterClosed().subscribe(() => {
-      this.router.navigate(["/accounts/login"]);
+      this.router.navigate(["accounts", "login"]);
     });
   }
 

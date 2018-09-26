@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { GlobalDataService } from '../services/global-data.service';
+import { GlobalDataService } from '../../services/global-data.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
-import { User } from '../../models/user';
+import { User } from '../../../models/user';
 
 @Component({
   selector: 'app-contacts',

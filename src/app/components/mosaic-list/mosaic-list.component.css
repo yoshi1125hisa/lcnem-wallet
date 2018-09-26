@@ -1,4 +1,3 @@
-.mat-line {
-    overflow: hidden;
-    text-overflow: ellipsis;
+.right {
+  text-align: right;
 }

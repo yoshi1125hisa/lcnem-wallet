@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { TransferTransaction, Mosaic, MosaicTransferable } from 'nem-library';
-import { GlobalDataService } from '../../services/global-data.service';
+import { GlobalDataService } from '../../../services/global-data.service';
 
 @Component({
   selector: 'app-transfer-dialog',
@@ -10,16 +10,18 @@ import { GlobalDataService } from '../../services/global-data.service';
 })
 export class TransferDialogComponent {
   public transaction: TransferTransaction;
-  public mosaics: MosaicTransferable[];
+  public mosaics: Mosaic[];
   public Math = Math;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, public global: GlobalDataService) {
+  constructor(
+    public global: GlobalDataService,
+    @Inject(MAT_DIALOG_DATA) public data: {
+      transaction: TransferTransaction
+      message: string
+    }
+  ) {
     this.transaction = data.transaction as TransferTransaction;
-    this.mosaics = data.mosaics;
-  }
-
-  public getMosaicName(m: MosaicTransferable) {
-    return m.mosaicId.namespaceId + ":" + m.mosaicId.name;
+    this.mosaics = this.transaction.mosaics();
   }
 
   public translation = {
@@ -31,25 +33,17 @@ export class TransferDialogComponent {
       en: "Encryption",
       ja: "暗号化"
     },
-    expenses: {
-      en: "Expenses",
-      ja: "費用"
+    amount: {
+      en: "Amount",
+      ja: "送信量"
     },
-    fees: {
-      en: "Blockchain fees",
+    fee: {
+      en: "Blockchain fee",
       ja: "ブロックチェーン手数料"
     },
     message: {
       en: "Message",
       ja: "メッセージ"
-    },
-    no: {
-      en: "No",
-      ja: "いいえ"
-    },
-    yes: {
-      en: "Yes",
-      ja: "はい"
     }
   } as { [key: string]: { [key: string]: string } };
 }

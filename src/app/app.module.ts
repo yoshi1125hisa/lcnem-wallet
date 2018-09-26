@@ -19,18 +19,13 @@ import {
   MatTooltipModule,
   MatFormFieldModule,
   MatSidenavModule,
-  MatRippleModule,
-  MatGridListModule,
   MatProgressSpinnerModule,
-  MatTabsModule,
   MatDividerModule,
   MatAutocompleteModule,
   MatDialogModule,
   MatListModule,
   MatSlideToggleModule,
-  MatStepperModule,
   MatCheckboxModule,
-  MatTableModule,
   MatMenuModule
 } from '@angular/material';
 
@@ -56,11 +51,14 @@ import { LoadingDialogComponent } from './components/loading-dialog/loading-dial
 import { GlobalDataService } from './services/global-data.service';
 import { MosaicListComponent } from './components/mosaic-list/mosaic-list.component';
 import { DepositComponent } from './accounts/deposit/deposit.component';
-import { DialogComponent } from './components/dialog/dialog.component';
-import { TransferDialogComponent } from './components/transfer-dialog/transfer-dialog.component';
 import { TermsComponent } from './accounts/terms/terms.component';
 import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
-import { ContactsComponent } from './contacts/contacts.component';
+import { ContactsComponent } from './accounts/contacts/contacts.component';
+import { AlertDialogComponent } from './components/alert-dialog/alert-dialog.component';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
+import { AssetsDialogComponent } from './transactions/transfer/assets-dialog/assets-dialog.component';
+import { TransferDialogComponent } from './transactions/transfer/transfer-dialog/transfer-dialog.component';
 
 @NgModule({
   declarations: [
@@ -76,11 +74,14 @@ import { ContactsComponent } from './contacts/contacts.component';
     LoadingDialogComponent,
     MosaicListComponent,
     DepositComponent,
-    DialogComponent,
-    TransferDialogComponent,
     TermsComponent,
     WithdrawComponent,
-    ContactsComponent
+    ContactsComponent,
+    AlertDialogComponent,
+    ConfirmDialogComponent,
+    PromptDialogComponent,
+    AssetsDialogComponent,
+    TransferDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -92,34 +93,32 @@ import { ContactsComponent } from './contacts/contacts.component';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
+    FlexLayoutModule,
+    HttpClientModule,
     MatButtonModule,
     MatCheckboxModule,
     MatToolbarModule,
     MatCardModule,
     MatInputModule,
     MatSelectModule,
-    MatGridListModule,
     MatIconModule,
     MatTooltipModule,
     MatFormFieldModule,
-    FlexLayoutModule,
     MatSidenavModule,
-    MatRippleModule,
-    HttpClientModule,
     MatProgressSpinnerModule,
-    MatTabsModule,
     MatDividerModule,
     MatAutocompleteModule,
     MatDialogModule,
     MatListModule,
     MatSlideToggleModule,
-    MatStepperModule,
-    MatTableModule,
     MatMenuModule
   ],
   entryComponents: [
     LoadingDialogComponent,
-    DialogComponent,
+    AlertDialogComponent,
+    ConfirmDialogComponent,
+    PromptDialogComponent,
+    AssetsDialogComponent,
     TransferDialogComponent
   ],
   providers: [GlobalDataService],

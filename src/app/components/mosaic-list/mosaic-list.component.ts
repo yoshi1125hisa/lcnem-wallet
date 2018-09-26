@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Mosaic } from 'nem-library';
 import { GlobalDataService } from '../../services/global-data.service';
 import { MosaicAdditionalDefinition } from '../../../models/mosaic-additional-definition';
@@ -11,6 +11,7 @@ import { MosaicAdditionalDefinition } from '../../../models/mosaic-additional-de
 export class MosaicListComponent implements OnInit {
   @Input() public title?: string;
   @Input() public mosaics?: Mosaic[];
+  
   public _mosaics = new Array<{
     name: string,
     amount: number,

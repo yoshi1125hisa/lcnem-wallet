@@ -22,6 +22,7 @@ import {
 } from 'nem-library';
 import { MosaicAdditionalDefinition } from '../../models/mosaic-additional-definition';
 import { nodes } from '../../models/nodes';
+import { User } from '../../models/user';
 
 @Injectable()
 export class GlobalDataService {
@@ -39,6 +40,8 @@ export class GlobalDataService {
   public mosaicHttp: MosaicHttp;
   public namespaceHttp: NamespaceHttp;
   public transactionHttp: TransactionHttp;
+
+  public buffer: any;
 
   constructor(
     public auth: AngularFireAuth,
@@ -94,12 +97,13 @@ export class GlobalDataService {
       await this.createFirestoreDocument(uid, wallet);
       this.account = wallet.open(password);
     } else {
-      let secrets = await this.firestore.collection("users").doc(uid).collection("secrets").ref.get();
-      let wallet = SimpleWallet.readFromWLT(user.data()!.wallet);
-      if(secrets.size == 0) {
+      let userData = user.data() as User;
+      let wallet = SimpleWallet.readFromWLT(userData.wallet);
+      if(!userData.name) {
         await this.createFirestoreDocument(uid, wallet);
       }
 
+      let secrets = await this.firestore.collection("users").doc(uid).collection("secrets").ref.get();
       let secret = secrets.docs[0].data();
       this.account = wallet.open(new Password(secret.password));
     }
