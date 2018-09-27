@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { GlobalDataService } from '../../services/global-data.service';
 import { MatDialog, MatListOption } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Invoice } from '../../../models/invoice';
 import {
   Address,
   PublicAccount,
@@ -21,7 +20,6 @@ import { LoadingDialogComponent } from '../../components/loading-dialog/loading-
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.component';
 import { AssetsDialogComponent } from './assets-dialog/assets-dialog.component';
-import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-transfer',
@@ -95,11 +93,6 @@ export class TransferComponent implements OnInit {
     }
   }
 
-  public async resolveNamespace() {
-    let dialogRef = this.dialog.open(LoadingDialogComponent, { disableClose: true });
-    
-  }
-
   public async changeTransferMosaics() {
     this.dialog.open(AssetsDialogComponent, {
       data: {
@@ -137,6 +130,9 @@ export class TransferComponent implements OnInit {
     if (this.encrypt) {
       try {
         let meta = await this.global.accountHttp.getFromAddress(address).toPromise();
+        if(!meta.publicAccount) {
+          throw Error();
+        }
         message = this.global.account!.encryptMessage(this.message, meta.publicAccount);
       } catch {
         this.dialog.open(AlertDialogComponent, {

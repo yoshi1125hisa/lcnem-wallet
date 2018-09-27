@@ -62,7 +62,7 @@ export class TransactionComponent implements OnInit {
         message = account!.decryptMessage(transferTransaction.message, transferTransaction.signer!).payload;
       } else {
         let recipient = await this.global.accountHttp.getFromAddress(transferTransaction.recipient).toPromise();
-        message = account!.decryptMessage(transferTransaction.message, recipient.publicAccount).payload;
+        message = account!.decryptMessage(transferTransaction.message, recipient.publicAccount!).payload;
       }
     } else {
       let msg = transferTransaction.message as PlainMessage;
@@ -73,7 +73,7 @@ export class TransactionComponent implements OnInit {
     if (transferTransaction.containsMosaics()) {
       this.mosaics = transferTransaction.mosaics();
     } else {
-      this.mosaics = [new Mosaic(new MosaicId("nem", "xem"), transferTransaction.xem().quantity())];
+      this.mosaics = [new Mosaic(new MosaicId("nem", "xem"), transferTransaction.xem().quantity)];
     }
 
     this.date = transferTransaction.timeWindow.timeStamp.toLocalDate();

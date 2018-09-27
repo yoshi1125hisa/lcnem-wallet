@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, trigger } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { GlobalDataService } from '../services/global-data.service';
 import { Invoice } from '../../models/invoice';

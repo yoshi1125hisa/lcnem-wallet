@@ -1,12 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
-import { Result } from '@zxing/library';
-import { MatSnackBar, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { GlobalDataService } from '../../services/global-data.service';
 import { Invoice } from '../../../models/invoice';
-import { Address } from 'nem-library';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
+import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 
 
 @Component({
@@ -55,27 +54,34 @@ export class ScanComponent implements OnInit {
         });
 
         this.scanner.scanSuccess.subscribe((result: string) => {
-          let decoded = decodeURI(result);
-          if(decoded.startsWith("N") && decoded.replace("-", "").length == 40) {
-            this.global.buffer.address = decoded;
-            this.router.navigate(["transactions", "transfer"]);
-            return;
-          }
-          
-          let invoice = Invoice.parse(decoded);
-          if(invoice) {
-            this.global.buffer.address = invoice.data.addr;
-            this.global.buffer.message = invoice.data.msg;
-            this.router.navigate(["transactions", "transfer"]);
-            return;
-          }
+          console.log(result);
+          let dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
 
-          this.dialog.open(AlertDialogComponent, {
-            data: {
-              title: this.translation.unexpected[this.global.lang],
-              content: decoded
+          let decoded = decodeURI(result);
+          try {
+            if (decoded.startsWith("N") && decoded.replace("-", "").length == 40) {
+              this.global.buffer.address = decoded;
+              this.router.navigate(["transactions", "transfer"]);
+              return;
             }
-          });
+
+            let invoice = Invoice.parse(decoded);
+            if (invoice) {
+              this.global.buffer.address = invoice.data.addr;
+              this.global.buffer.message = invoice.data.msg;
+              this.router.navigate(["transactions", "transfer"]);
+              return;
+            }
+          } catch {
+            this.dialog.open(AlertDialogComponent, {
+              data: {
+                title: this.translation.unexpected[this.global.lang],
+                content: decoded
+              }
+            });
+          } finally {
+            dialog.close();
+          }
         });
       });
     });
