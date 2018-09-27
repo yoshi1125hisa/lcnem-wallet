@@ -33,6 +33,8 @@ export class GlobalDataService {
 
   public lang = "en";
 
+  public photoUrl = "";
+
   public account?: Account;
 
   public definitions?: { [key: string]: MosaicDefinition };
@@ -89,6 +91,7 @@ export class GlobalDataService {
     if (this.initialized) {
       return;
     }
+    this.photoUrl = this.auth.auth.currentUser!.photoURL!;
 
     let uid = this.auth.auth.currentUser!.uid;
     let user = await this.firestore.collection("users").doc(uid).ref.get();
