@@ -7,7 +7,7 @@
 </mat-toolbar>
 <div class="out-toolbar">
   <mat-form-field fxFill>
-    <mat-select placeholder="{{translation.selectCamera[global.lang]}}" [(value)]="selected">
+    <mat-select placeholder="{{translation.selectCamera[global.lang]}}" [(ngModel)]="selected">
       <mat-option *ngFor="let device of availableDevices; let i = index" [value]="i">{{device.label}}</mat-option>
     </mat-select>
   </mat-form-field>

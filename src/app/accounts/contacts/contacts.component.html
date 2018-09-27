@@ -30,5 +30,6 @@
         </mat-card>
       </ng-container>
     </div>
+    <p class="empty" *ngIf="!contacts.length">{{translation.empty[global.lang]}}</p>
   </ng-template>
 </div>
