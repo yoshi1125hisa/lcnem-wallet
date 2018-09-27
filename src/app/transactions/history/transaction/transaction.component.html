@@ -4,15 +4,10 @@
     <mat-icon mat-card-avatar class="made" *ngIf="!received">call_made</mat-icon>
     <mat-card-title>{{address}}</mat-card-title>
     <mat-card-subtitle>{{date}} {{time}}</mat-card-subtitle>
+    <mat-icon mat-card-avatar class="unconfirmed" *ngIf="!transaction.isConfirmed()" matTooltip="{{translation.unconfirmed[global.lang]}}">report_problem</mat-icon>
   </mat-card-header>
   <mat-card-content>
     <p class="message">{{message}}</p>
     <app-mosaic-list [title]="translation.mosaics[global.lang]" [mosaics]="mosaics"></app-mosaic-list>
   </mat-card-content>
-  <mat-card-footer>
-    <p class="caution" *ngIf="!transaction.isConfirmed">
-      <mat-icon>report_problem</mat-icon>
-      {{translation.unconfirmed[global.lang]}}
-    </p>
-  </mat-card-footer>
 </mat-card>
