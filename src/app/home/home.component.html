@@ -1,8 +1,9 @@
 <mat-sidenav-container>
   <mat-sidenav #sidenav class="mat-elevation-z16">
     <mat-toolbar>
-      <a href="https://lcnem.cc" target="_blank" mat-icon-button class="background-contain" [ngStyle]="{'background-image': 'url(favicon.svg)'}"></a>
-      <span>LCNEM</span>
+      <button mat-icon-button class="background-contain" [ngStyle]="{'background-image': 'url(favicon.svg)'}"></button>
+      <span class="fill-remaining-space"></span>
+      <button mat-icon-button class="background-contain" [ngStyle]="{'background-image': 'url(' + global.photoUrl + ')'}"></button>
     </mat-toolbar>
     <div fxLayout="column">
       <mat-nav-list>
@@ -35,6 +36,10 @@
           <mat-icon>list_alt</mat-icon>
           {{translation.terms[global.lang]}}
         </mat-list-item>
+        <a mat-list-item href="https://lcnem.cc" target="_blank">
+          <mat-icon mat-list-icon class="background-contain" [ngStyle]="{'background-image': 'url(favicon.svg)'}"></mat-icon>
+          LCNEM
+        </a>
       </mat-nav-list>
     </div>
   </mat-sidenav>
