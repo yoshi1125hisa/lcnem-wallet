@@ -3,8 +3,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { firebase } from '@firebase/app';
-import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFirestore } from 'angularfire2/firestore';
+import '@firebase/auth'
+import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/firestore';
 import {
   Account,
   AccountHttp,
@@ -24,7 +25,9 @@ import { MosaicAdditionalDefinition } from '../../models/mosaic-additional-defin
 import { nodes } from '../../models/nodes';
 import { User } from '../../models/user';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class GlobalDataService {
   private initialized = false;
 

@@ -1,11 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
-import { Result } from '@zxing/library';
-import { MatSnackBar, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { GlobalDataService } from '../../services/global-data.service';
 import { Invoice } from '../../../models/invoice';
-import { Address } from 'nem-library';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 
