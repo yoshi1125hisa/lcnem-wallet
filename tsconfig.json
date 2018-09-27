@@ -15,6 +15,9 @@
       "es2017",
       "dom"
     ],
-    "strict": true
+    "strict": true,
+    "module": "es2015",
+    "baseUrl": "./",
+    "skipLibCheck": true
   }
 }

@@ -10,19 +10,21 @@ import { PageNotFoundComponent } from './error/page-not-found/page-not-found.com
 import { TermsComponent } from './accounts/terms/terms.component';
 import { DepositComponent } from './accounts/deposit/deposit.component';
 import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
+import { ContactsComponent } from './accounts/contacts/contacts.component';
 
 
 const routes: Routes = [
-    {path: "", component: HomeComponent},
-    {path: "accounts/login", component: LoginComponent},
-    {path: "accounts/deposit", component: DepositComponent},
-    {path: "accounts/withdraw", component: WithdrawComponent},
-    {path: "accounts/sign", component: SignComponent},
-    {path: "transactions/history", component: HistoryComponent},
-    {path: "transactions/scan", component: ScanComponent},
-    {path: "transactions/transfer", component: TransferComponent},
-    {path: "accounts/terms", component: TermsComponent},
-    {path: "**", component: PageNotFoundComponent}
+  { path: "", component: HomeComponent },
+  { path: "accounts/login", component: LoginComponent },
+  { path: "accounts/deposit", component: DepositComponent },
+  { path: "accounts/withdraw", component: WithdrawComponent },
+  { path: "accounts/sign", component: SignComponent },
+  { path: "accounts/contacts", component: ContactsComponent },
+  { path: "transactions/history", component: HistoryComponent },
+  { path: "transactions/scan", component: ScanComponent },
+  { path: "transactions/transfer", component: TransferComponent },
+  { path: "accounts/terms", component: TermsComponent },
+  { path: "**", component: PageNotFoundComponent }
 ];
 
 @NgModule({

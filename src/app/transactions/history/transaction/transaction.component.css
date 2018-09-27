@@ -1,11 +1,23 @@
 mat-card {
-    margin: 6px 0;
+  margin: 6px 0;
 }
 
 .message {
-    text-align: center;
+  text-align: center;
 }
 
-.date {
-    text-align: right;
+.unconfirmed {
+  color: red;
+}
+.received {
+  color: green;
+}
+.made {
+  color: blue;
+}
+
+.unconfirmed, .received, .made {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
