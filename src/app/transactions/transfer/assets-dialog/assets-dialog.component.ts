@@ -20,6 +20,7 @@ export class AssetsDialogComponent {
   constructor(
     public global: GlobalDataService,
     @Inject(MAT_DIALOG_DATA) public data: {
+      title: string,
       mosaics: Mosaic[],
       initialSelection: string[]
     }

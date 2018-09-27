@@ -6,20 +6,18 @@ mat-card {
   text-align: center;
 }
 
+.unconfirmed {
+  color: red;
+}
 .received {
-  background-color: red;
+  color: green;
 }
 .made {
-  background-color: greenyellow;
+  color: blue;
 }
-.received, .made {
-  color: white;
+
+.unconfirmed, .received, .made {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.caution {
-  text-align: right;
-  color: red;
 }

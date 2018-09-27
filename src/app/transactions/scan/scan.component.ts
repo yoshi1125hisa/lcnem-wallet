@@ -14,6 +14,8 @@ import { LoadingDialogComponent } from '../../components/loading-dialog/loading-
   styleUrls: ['./scan.component.css']
 })
 export class ScanComponent implements OnInit {
+  public scanning = false;
+
   @ViewChild('scanner')
   scanner?: ZXingScannerComponent;
 
@@ -54,12 +56,17 @@ export class ScanComponent implements OnInit {
         });
 
         this.scanner.scanSuccess.subscribe((result: string) => {
+          if(this.scanning) {
+            return;
+          }
           console.log(result);
+          this.scanning = true;
           let dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
 
           let decoded = decodeURI(result);
           try {
-            if (decoded.startsWith("N") && decoded.replace("-", "").length == 40) {
+            if (decoded[0] == "N" && decoded.replace(/-/g, "").trim().length == 40) {
+              this.global.buffer = {};
               this.global.buffer.address = decoded;
               this.router.navigate(["transactions", "transfer"]);
               return;
@@ -67,6 +74,7 @@ export class ScanComponent implements OnInit {
 
             let invoice = Invoice.parse(decoded);
             if (invoice) {
+              this.global.buffer = {};
               this.global.buffer.address = invoice.data.addr;
               this.global.buffer.message = invoice.data.msg;
               this.router.navigate(["transactions", "transfer"]);
@@ -78,6 +86,8 @@ export class ScanComponent implements OnInit {
                 title: this.translation.unexpected[this.global.lang],
                 content: decoded
               }
+            }).afterClosed().subscribe(() => {
+              this.scanning = false;
             });
           } finally {
             dialog.close();

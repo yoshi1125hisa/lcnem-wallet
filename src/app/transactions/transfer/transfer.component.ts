@@ -14,7 +14,8 @@ import {
   MosaicDefinition,
   TimeWindow,
   MosaicTransferable,
-  XEM
+  XEM,
+  EmptyMessage
 } from 'nem-library';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
@@ -144,7 +145,11 @@ export class TransferComponent implements OnInit {
         return;
       }
     } else {
-      message = PlainMessage.create(this.message);
+      if(!this.message) {
+        message = EmptyMessage;
+      } else {
+        message = PlainMessage.create(this.message);
+      }
     }
 
     let transferMosaics: MosaicTransferable[] = [];
@@ -156,7 +161,8 @@ export class TransferComponent implements OnInit {
       if (m.name == "nem:xem") {
         transferMosaics.push(new XEM(m.amount!));
       } else {
-        transferMosaics.push(MosaicTransferable.createWithMosaicDefinition(this.global.definitions![m.name], m.amount!));
+        let absolute = m.amount! * Math.pow(10, this.global.definitions![m.name].properties.divisibility);
+        transferMosaics.push(MosaicTransferable.createWithMosaicDefinition(this.global.definitions![m.name], absolute));
       }
     };
     if (!transferMosaics.length) {
