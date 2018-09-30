@@ -97,7 +97,7 @@ export class TransferComponent implements OnInit {
   public async changeTransferMosaics() {
     this.dialog.open(AssetsDialogComponent, {
       data: {
-        title: this.translation.changeMosaic[this.global.lang],
+        title: (this.translation.changeMosaic as any)[this.global.lang],
         mosaics: this.transferMosaics.filter(m => !m.visible).map(m => m.mosaic)
       }
     }).afterClosed().subscribe(async (result: MatListOption[]) => {
@@ -120,8 +120,8 @@ export class TransferComponent implements OnInit {
     } catch {
       this.dialog.open(AlertDialogComponent, {
         data: {
-          title: this.translation.error[this.global.lang],
-          content: this.translation.addressRequired[this.global.lang]
+          title: (this.translation.error as any)[this.global.lang],
+          content: (this.translation.addressRequired as any)[this.global.lang]
         }
       });
       return;
@@ -138,8 +138,8 @@ export class TransferComponent implements OnInit {
       } catch {
         this.dialog.open(AlertDialogComponent, {
           data: {
-            title: this.translation.error[this.global.lang],
-            content: this.translation.noPublicKey[this.global.lang]
+            title: (this.translation.error as any)[this.global.lang],
+            content: (this.translation.noPublicKey as any)[this.global.lang]
           }
         });
         return;
@@ -168,8 +168,8 @@ export class TransferComponent implements OnInit {
     if (!transferMosaics.length) {
       this.dialog.open(AlertDialogComponent, {
         data: {
-          title: this.translation.error[this.global.lang],
-          content: this.translation.noMosaic[this.global.lang]
+          title: (this.translation.error as any)[this.global.lang],
+          content: (this.translation.noMosaic as any)[this.global.lang]
         }
       });
       return;
@@ -199,7 +199,7 @@ export class TransferComponent implements OnInit {
       } catch {
         this.dialog.open(AlertDialogComponent, {
           data: {
-            title: this.translation.error[this.global.lang],
+            title: (this.translation.error as any)[this.global.lang],
             content: ""
           }
         });
@@ -210,7 +210,7 @@ export class TransferComponent implements OnInit {
 
       this.dialog.open(AlertDialogComponent, {
         data: {
-          title: this.translation.completed[this.global.lang],
+          title: (this.translation.completed as any)[this.global.lang],
           content: ""
         }
       }).afterClosed().subscribe(() => {
@@ -276,5 +276,5 @@ export class TransferComponent implements OnInit {
       en: "Failed to get the recipient public key for encryption.",
       ja: "暗号化のための宛先の公開鍵取得に失敗しました。"
     }
-  } as { [key: string]: { [key: string]: string } };
+  };
 }

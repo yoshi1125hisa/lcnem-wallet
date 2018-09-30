@@ -83,7 +83,7 @@ export class ScanComponent implements OnInit {
           } catch {
             this.dialog.open(AlertDialogComponent, {
               data: {
-                title: this.translation.unexpected[this.global.lang],
+                title: (this.translation.unexpected as any)[this.global.lang],
                 content: decoded
               }
             }).afterClosed().subscribe(() => {
@@ -129,5 +129,5 @@ export class ScanComponent implements OnInit {
       en: "Unexpected QR-code",
       ja: "予期されないQRコードです"
     }
-  } as { [key: string]: { [key: string]: string } };
+  };
 }

@@ -73,7 +73,7 @@ export class DepositComponent implements OnInit {
     } catch {
       this.dialog.open(AlertDialogComponent, {
         data: {
-          title: this.translation.error[this.global.lang],
+          title: (this.translation.error as any)[this.global.lang],
           content: ""
         }
       });
@@ -84,8 +84,8 @@ export class DepositComponent implements OnInit {
 
     this.dialog.open(AlertDialogComponent, {
       data: {
-        title: this.translation.completed[this.global.lang],
-        content: this.translation.following[this.global.lang]
+        title: (this.translation.completed as any)[this.global.lang],
+        content: (this.translation.following as any)[this.global.lang]
       }
     }).afterClosed().subscribe(() => {
       this.router.navigate(["/"]);
@@ -129,5 +129,5 @@ export class DepositComponent implements OnInit {
       en: "Address",
       ja: "アドレス"
     }
-  } as { [key: string]: { [key: string]: string } };
+  };
 }

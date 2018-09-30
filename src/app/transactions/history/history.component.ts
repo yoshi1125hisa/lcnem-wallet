@@ -57,5 +57,5 @@ export class HistoryComponent implements OnInit {
       en: "There is no transaction.",
       ja: "取引はありません。"
     }
-  } as { [key: string]: { [key: string]: string } };
+  };
 }

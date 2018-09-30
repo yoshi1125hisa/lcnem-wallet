@@ -45,5 +45,5 @@ export class TransferDialogComponent {
       en: "Message",
       ja: "メッセージ"
     }
-  } as { [key: string]: { [key: string]: string } };
+  };
 }

@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit {
     await this.global.logout();
     this.dialog.open(AlertDialogComponent, {
       data: {
-        title: this.translation.completed[this.global.lang],
+        title: (this.translation.completed as any)[this.global.lang],
         content: ""
       }
     }).afterClosed().subscribe(() => {
@@ -117,5 +117,5 @@ export class HomeComponent implements OnInit {
       en: "Address book",
       ja: "アドレス帳"
     }
-  } as { [key: string]: { [key: string]: string } };
+  };
 }

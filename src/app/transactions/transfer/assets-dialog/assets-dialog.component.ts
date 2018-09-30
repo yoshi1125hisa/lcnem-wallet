@@ -41,5 +41,5 @@ export class AssetsDialogComponent {
       en: "Assets",
       ja: "アセット"
     }
-  } as { [key: string]: { [key: string]: string } };
+  };
 }

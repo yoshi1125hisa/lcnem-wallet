@@ -91,5 +91,5 @@ export class TransactionComponent implements OnInit {
       en: "This transaction is not confirmed by the blockchain yet.",
       ja: "この取引はまだブロックチェーンに承認されていません"
     }
-  } as { [key: string]: { [key: string]: string } };
+  };
 }

@@ -58,5 +58,5 @@ export class ContactsComponent implements OnInit {
       en: "There is no contacts.",
       ja: "コンタクトはありません。"
     }
-  } as { [key: string]: { [key: string]: string } };
+  };
 }
