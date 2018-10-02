@@ -9,11 +9,11 @@ import {
   EncryptedMessage,
   Message,
   TransferTransaction,
-  Mosaic,
-  MosaicId,
-  MosaicDefinition,
+  Asset,
+  AssetId,
+  AssetDefinition,
   TimeWindow,
-  MosaicTransferable,
+  AssetTransferable,
   XEM,
   EmptyMessage
 } from 'nem-library';
@@ -35,7 +35,7 @@ export class TransferComponent implements OnInit {
   public encrypt = false;
 
   public autoCompletes: string[] = [];
-  public transferMosaics: { mosaic: Mosaic, visible: boolean, name: string, amount?: number }[] = [];
+  public transferMosaics: { mosaic: Asset, visible: boolean, name: string, amount?: number }[] = [];
 
   constructor(
     public global: GlobalDataService,
@@ -56,7 +56,7 @@ export class TransferComponent implements OnInit {
           return {
             mosaic: m,
             visible: false,
-            name: m.mosaicId.namespaceId + ":" + m.mosaicId.name
+            name: m.assetId.namespaceId + ":" + m.assetId.name
           }
         });
 
@@ -152,7 +152,7 @@ export class TransferComponent implements OnInit {
       }
     }
 
-    let transferMosaics: MosaicTransferable[] = [];
+    let transferMosaics: AssetTransferable[] = [];
     for (let i = 0; i < this.transferMosaics.length; i++) {
       let m = this.transferMosaics[i];
       if (!m.visible) {
@@ -162,7 +162,7 @@ export class TransferComponent implements OnInit {
         transferMosaics.push(new XEM(m.amount!));
       } else {
         let absolute = m.amount! * Math.pow(10, this.global.definitions![m.name].properties.divisibility);
-        transferMosaics.push(MosaicTransferable.createWithMosaicDefinition(this.global.definitions![m.name], absolute));
+        transferMosaics.push(AssetTransferable.createWithAssetDefinition(this.global.definitions![m.name], absolute));
       }
     };
     if (!transferMosaics.length) {

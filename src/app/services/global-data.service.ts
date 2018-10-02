@@ -9,14 +9,14 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import {
   Account,
   AccountHttp,
-  MosaicHttp,
+  AssetHttp,
   NamespaceHttp,
   TransactionHttp,
   Password,
   SimpleWallet,
-  Mosaic,
+  Asset,
   NEMLibrary,
-  MosaicDefinition,
+  AssetDefinition,
   NetworkTypes,
   XEM,
   PublicAccount
@@ -37,12 +37,12 @@ export class GlobalDataService {
 
   public account?: Account;
 
-  public definitions?: { [key: string]: MosaicDefinition };
+  public definitions?: { [key: string]: AssetDefinition };
   public additionalDefinitions?: { [key: string]: MosaicAdditionalDefinition };
-  public mosaics?: Mosaic[];
+  public mosaics?: Asset[];
 
   public accountHttp: AccountHttp;
-  public mosaicHttp: MosaicHttp;
+  public assetHttp: AssetHttp;
   public namespaceHttp: NamespaceHttp;
   public transactionHttp: TransactionHttp;
 
@@ -58,7 +58,7 @@ export class GlobalDataService {
     firestore.firestore.settings(settings);
 
     this.accountHttp = new AccountHttp(nodes);
-    this.mosaicHttp = new MosaicHttp(nodes);
+    this.assetHttp = new AssetHttp(nodes);
     this.transactionHttp = new TransactionHttp(nodes);
     this.namespaceHttp = new NamespaceHttp(nodes);
 
@@ -122,7 +122,7 @@ export class GlobalDataService {
   public async refresh() {
     this.additionalDefinitions = await this.http.get<{ [key: string]: MosaicAdditionalDefinition }>('assets/data/list.json').toPromise();
 
-    this.mosaics = await this.accountHttp.getMosaicOwnedByAddress(this.account!.address).toPromise().catch(() => { throw new Error() });
+    this.mosaics = await this.accountHttp.getAssetsOwnedByAddress(this.account!.address).toPromise().catch(() => { throw new Error() });
     this.definitions = {};
     this.definitions["nem:xem"] = {
       creator: new PublicAccount(),
@@ -137,10 +137,10 @@ export class GlobalDataService {
     };
 
     for (let i = 0; i < this.mosaics!.length; i++) {
-      if (this.mosaics![i].mosaicId.namespaceId == "nem") {
+      if (this.mosaics![i].assetId.namespaceId == "nem") {
         continue;
       }
-      let d = await this.mosaicHttp.getMosaicDefinition(this.mosaics![i].mosaicId).toPromise().catch(() => { throw new Error() });
+      let d = await this.assetHttp.getAssetDefinition(this.mosaics![i].assetId).toPromise().catch(() => { throw new Error() });
       this.definitions![d.id.namespaceId + ":" + d.id.name] = d;
     }
   }

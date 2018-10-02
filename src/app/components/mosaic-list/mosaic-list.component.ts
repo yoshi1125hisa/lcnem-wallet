@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { Mosaic } from 'nem-library';
+import { Asset } from 'nem-library';
 import { GlobalDataService } from '../../services/global-data.service';
 import { MosaicAdditionalDefinition } from '../../../models/mosaic-additional-definition';
 
@@ -10,7 +10,7 @@ import { MosaicAdditionalDefinition } from '../../../models/mosaic-additional-de
 })
 export class MosaicListComponent implements OnInit {
   @Input() public title?: string;
-  @Input() public mosaics?: Mosaic[];
+  @Input() public mosaics?: Asset[];
   
   public _mosaics = new Array<{
     name: string,
@@ -32,10 +32,10 @@ export class MosaicListComponent implements OnInit {
     }
     for (let i = 0; i < this.mosaics.length; i++) {
       try {
-        let name = this.mosaics[i].mosaicId.namespaceId + ":" + this.mosaics[i].mosaicId.name;
+        let name = this.mosaics[i].assetId.namespaceId + ":" + this.mosaics[i].assetId.name;
         let def = this.global.definitions![name];
         if (!def) {
-          def = await this.global.mosaicHttp.getMosaicDefinition(this.mosaics[i].mosaicId).toPromise();
+          def = await this.global.assetHttp.getAssetDefinition(this.mosaics[i].assetId).toPromise();
         }
         let additionalDef = this.global.additionalDefinitions![name];
 

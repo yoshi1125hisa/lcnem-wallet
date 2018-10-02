@@ -8,9 +8,9 @@ import {
   TransferTransaction,
   MultisigTransaction,
   PlainMessage,
-  Mosaic,
+  Asset,
   XEM,
-  MosaicId
+  AssetId
 } from 'nem-library';
 import { GlobalDataService } from '../../../services/global-data.service';
 
@@ -25,7 +25,7 @@ export class TransactionComponent implements OnInit {
   public loading = true;
 
   public address?: string;
-  public mosaics?: Mosaic[];
+  public mosaics?: Asset[];
   public message?: string;
   public date?: any;
   public time?: any;
@@ -73,7 +73,7 @@ export class TransactionComponent implements OnInit {
     if (transferTransaction.containsMosaics()) {
       this.mosaics = transferTransaction.mosaics();
     } else {
-      this.mosaics = [new Mosaic(new MosaicId("nem", "xem"), transferTransaction.xem().quantity)];
+      this.mosaics = [new Asset(new AssetId("nem", "xem"), transferTransaction.xem().quantity)];
     }
 
     this.date = transferTransaction.timeWindow.timeStamp.toLocalDate();

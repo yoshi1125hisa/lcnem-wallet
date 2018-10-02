@@ -38,7 +38,6 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './accounts/login/login.component';
-import { SignComponent } from './accounts/sign/sign.component';
 import { HistoryComponent } from './transactions/history/history.component';
 import { TransactionComponent } from './transactions/history/transaction/transaction.component';
 import { ScanComponent } from './transactions/scan/scan.component';
@@ -61,7 +60,6 @@ import { TransferDialogComponent } from './transactions/transfer/transfer-dialog
     AppComponent,
     HomeComponent,
     LoginComponent,
-    SignComponent,
     HistoryComponent,
     TransactionComponent,
     ScanComponent,

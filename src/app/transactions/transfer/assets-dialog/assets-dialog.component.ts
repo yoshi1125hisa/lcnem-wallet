@@ -1,6 +1,6 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatSelectionList } from '@angular/material';
-import { Mosaic } from 'nem-library';
+import { Asset } from 'nem-library';
 import { GlobalDataService } from '../../../services/global-data.service';
 import { MosaicAdditionalDefinition } from '../../../../models/mosaic-additional-definition';
 @Component({
@@ -21,12 +21,12 @@ export class AssetsDialogComponent {
     public global: GlobalDataService,
     @Inject(MAT_DIALOG_DATA) public data: {
       title: string,
-      mosaics: Mosaic[],
+      mosaics: Asset[],
       initialSelection: string[]
     }
   ) {
     this.mosaics = this.data.mosaics.map(m => {
-      let name = m.mosaicId.namespaceId + ":" + m.mosaicId.name;
+      let name = m.assetId.namespaceId + ":" + m.assetId.name;
       let additionalDef = this.global.additionalDefinitions![name];
       return {
         name: name,
