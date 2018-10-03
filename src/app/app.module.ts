@@ -44,7 +44,7 @@ import { ScanComponent } from './transactions/scan/scan.component';
 import { TransferComponent } from './transactions/transfer/transfer.component';
 import { PageNotFoundComponent } from './error/page-not-found/page-not-found.component';
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
-import { MosaicListComponent } from './components/mosaic-list/mosaic-list.component';
+import { AssetsListComponent } from './components/assets-list/assets-list.component';
 import { DepositComponent } from './accounts/deposit/deposit.component';
 import { TermsComponent } from './accounts/terms/terms.component';
 import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
@@ -66,7 +66,7 @@ import { TransferDialogComponent } from './transactions/transfer/transfer-dialog
     TransferComponent,
     PageNotFoundComponent,
     LoadingDialogComponent,
-    MosaicListComponent,
+    AssetsListComponent,
     DepositComponent,
     TermsComponent,
     WithdrawComponent,

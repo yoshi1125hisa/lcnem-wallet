@@ -25,7 +25,7 @@ export class TransactionComponent implements OnInit {
   public loading = true;
 
   public address?: string;
-  public mosaics?: Asset[];
+  public assets?: Asset[];
   public message?: string;
   public date?: any;
   public time?: any;
@@ -71,9 +71,9 @@ export class TransactionComponent implements OnInit {
     this.message = message;
 
     if (transferTransaction.containsMosaics()) {
-      this.mosaics = transferTransaction.mosaics();
+      this.assets = transferTransaction.mosaics();
     } else {
-      this.mosaics = [new Asset(new AssetId("nem", "xem"), transferTransaction.xem().quantity)];
+      this.assets = [new Asset(new AssetId("nem", "xem"), transferTransaction.xem().quantity)];
     }
 
     this.date = transferTransaction.timeWindow.timeStamp.toLocalDate();
@@ -83,7 +83,7 @@ export class TransactionComponent implements OnInit {
   }
 
   public translation = {
-    mosaics: {
+    assets: {
       en: "Assets",
       ja: "アセット"
     },

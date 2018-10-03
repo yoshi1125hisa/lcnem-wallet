@@ -1,13 +1,13 @@
 <h2 mat-dialog-title>{{data.title}}</h2>
 <mat-dialog-content>
   <mat-selection-list #selectionList>
-    <h3 mat-subheader>{{translation.mosaic[global.lang]}}</h3>
+    <h3 mat-subheader>{{translation.assets[global.lang]}}</h3>
     <mat-divider></mat-divider>
-    <ng-container *ngFor="let m of mosaics">
-      <mat-list-option matTooltip="{{m.name}}" [value]="m.name">
-        <div mat-list-icon class="background-contain" [ngStyle]="{'background-image': 'url(' + m.imageUrl + ')'}"></div>
-        <span mat-line>{{m.name}}</span>
-        <small mat-line>{{m.issuer}}</small>
+    <ng-container *ngFor="let asset of assets">
+      <mat-list-option matTooltip="{{asset.name}}" [value]="asset.name">
+        <div mat-list-icon class="background-contain" [ngStyle]="{'background-image': 'url(' + asset.imageUrl + ')'}"></div>
+        <span mat-line>{{asset.name}}</span>
+        <small mat-line>{{asset.issuer}}</small>
       </mat-list-option>
       <mat-divider></mat-divider>
     </ng-container>

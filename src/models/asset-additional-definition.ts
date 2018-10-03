@@ -1,4 +1,4 @@
-export class MosaicAdditionalDefinition {
+export class AssetAdditionalDefinition {
     constructor(
         public issuer: string,
         public unit?: string

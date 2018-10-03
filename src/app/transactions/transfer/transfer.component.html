@@ -31,24 +31,24 @@
         </mat-form-field>
       </mat-card>
       <div fxLayout="row wrap" fxLayoutAlign="center">
-        <ng-container *ngFor="let m of transferMosaics; let i = index">
-          <mat-card *ngIf="m.visible" fxFlex="25" fxFlex.sm="50" fxFlex.xs="100">
+        <ng-container *ngFor="let asset of transferAssets; let i = index">
+          <mat-card *ngIf="asset.visible" fxFlex="25" fxFlex.sm="50" fxFlex.xs="100">
             <mat-card-content>
               <mat-form-field fxFill>
-                <input matInput type="number" placeholder="{{m.name}}" [(ngModel)]="transferMosaics[i].amount"
+                <input matInput type="number" placeholder="{{asset.name}}" [(ngModel)]="transferAssets[i].amount"
                   name="amount{{i}}" min="0" required>
               </mat-form-field>
-              <app-mosaic-list [title]="translation.balance[global.lang]" [mosaics]="[m.mosaic]"></app-mosaic-list>
+              <app-assets-list [title]="translation.balance[global.lang]" [assets]="[asset.asset]"></app-assets-list>
             </mat-card-content>
             <mat-card-actions>
-              <button mat-button fxFill color="warn" type="button" (click)="transferMosaics[i].visible = false">
+              <button mat-button fxFill color="warn" type="button" (click)="transferAssets[i].visible = false">
                 <mat-icon>close</mat-icon>
               </button>
             </mat-card-actions>
           </mat-card>
         </ng-container>
         <mat-card fxFlex="100">
-          <button mat-button type="button" color="accent" (click)="changeTransferMosaics()" fxFill>
+          <button mat-button type="button" color="accent" (click)="changeTransferAssets()" fxFill>
             <mat-icon>add</mat-icon>
           </button>
         </mat-card>

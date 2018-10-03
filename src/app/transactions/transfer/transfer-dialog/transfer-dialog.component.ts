@@ -10,7 +10,7 @@ import { GlobalDataService } from '../../../services/global-data.service';
 })
 export class TransferDialogComponent {
   public transaction: TransferTransaction;
-  public mosaics: Asset[];
+  public assets: Asset[];
   public Math = Math;
 
   constructor(
@@ -21,7 +21,7 @@ export class TransferDialogComponent {
     }
   ) {
     this.transaction = data.transaction as TransferTransaction;
-    this.mosaics = this.transaction.mosaics();
+    this.assets = this.transaction.mosaics();
   }
 
   public translation = {

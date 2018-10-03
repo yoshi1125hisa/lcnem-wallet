@@ -35,7 +35,7 @@ export class TransferComponent implements OnInit {
   public encrypt = false;
 
   public autoCompletes: string[] = [];
-  public transferMosaics: { mosaic: Asset, visible: boolean, name: string, amount?: number }[] = [];
+  public transferAssets: { asset: Asset, visible: boolean, name: string, amount?: number }[] = [];
 
   constructor(
     public global: GlobalDataService,
@@ -52,11 +52,11 @@ export class TransferComponent implements OnInit {
         return;
       }
       this.global.initialize().then(() => {
-        this.transferMosaics = this.global.mosaics!.map(m => {
+        this.transferAssets = this.global.assets!.map(asset => {
           return {
-            mosaic: m,
+            asset: asset,
             visible: false,
-            name: m.assetId.namespaceId + ":" + m.assetId.name
+            name: asset.assetId.namespaceId + ":" + asset.assetId.name
           }
         });
 
@@ -66,15 +66,15 @@ export class TransferComponent implements OnInit {
         }
         
         if (this.global.buffer && this.global.buffer.mosaics) {
-          this.global.buffer.mosaics.forEach((m: any) => {
-            let index = this.transferMosaics.findIndex(_m => _m.name == m.name);
+          this.global.buffer.assets.forEach((asset: any) => {
+            let index = this.transferAssets.findIndex(_asset => _asset.name == asset.name);
             if (index != -1) {
-              this.transferMosaics[index].visible = true;
-              this.transferMosaics[index].amount = m.amount / Math.pow(10, this.global.definitions![m.name].properties.divisibility);
+              this.transferAssets[index].visible = true;
+              this.transferAssets[index].amount = asset.amount / Math.pow(10, this.global.definitions![asset.name].properties.divisibility);
             }
           })
         } else {
-          this.changeTransferMosaics();
+          this.changeTransferAssets();
         }
         this.global.buffer = null;
 
@@ -94,18 +94,18 @@ export class TransferComponent implements OnInit {
     }
   }
 
-  public async changeTransferMosaics() {
+  public async changeTransferAssets() {
     this.dialog.open(AssetsDialogComponent, {
       data: {
         title: (this.translation.changeMosaic as any)[this.global.lang],
-        mosaics: this.transferMosaics.filter(m => !m.visible).map(m => m.mosaic)
+        assets: this.transferAssets.filter(m => !m.visible).map(m => m.asset)
       }
     }).afterClosed().subscribe(async (result: MatListOption[]) => {
       if (!result) {
         return;
       }
 
-      this.transferMosaics.forEach(m => {
+      this.transferAssets.forEach(m => {
         if (result.find(opt => opt.value == m.name)) {
           m.visible = true;
         }
@@ -153,8 +153,8 @@ export class TransferComponent implements OnInit {
     }
 
     let transferMosaics: AssetTransferable[] = [];
-    for (let i = 0; i < this.transferMosaics.length; i++) {
-      let m = this.transferMosaics[i];
+    for (let i = 0; i < this.transferAssets.length; i++) {
+      let m = this.transferAssets[i];
       if (!m.visible) {
         continue;
       }

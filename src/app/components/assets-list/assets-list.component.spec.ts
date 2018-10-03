@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MosaicListComponent } from './mosaic-list.component';
+import { AssetsListComponent } from './assets-list.component';
 
-describe('MosaicListComponent', () => {
-  let component: MosaicListComponent;
-  let fixture: ComponentFixture<MosaicListComponent>;
+describe('AssetsListComponent', () => {
+  let component: AssetsListComponent;
+  let fixture: ComponentFixture<AssetsListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MosaicListComponent ]
+      declarations: [ AssetsListComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MosaicListComponent);
+    fixture = TestBed.createComponent(AssetsListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

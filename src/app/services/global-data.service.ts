@@ -21,7 +21,7 @@ import {
   XEM,
   PublicAccount
 } from 'nem-library';
-import { MosaicAdditionalDefinition } from '../../models/mosaic-additional-definition';
+import { AssetAdditionalDefinition } from '../../models/asset-additional-definition';
 import { nodes } from '../../models/nodes';
 import { User } from '../../models/user';
 
@@ -38,8 +38,8 @@ export class GlobalDataService {
   public account?: Account;
 
   public definitions?: { [key: string]: AssetDefinition };
-  public additionalDefinitions?: { [key: string]: MosaicAdditionalDefinition };
-  public mosaics?: Asset[];
+  public additionalDefinitions?: { [key: string]: AssetAdditionalDefinition };
+  public assets?: Asset[];
 
   public accountHttp: AccountHttp;
   public assetHttp: AssetHttp;
@@ -120,9 +120,9 @@ export class GlobalDataService {
   }
 
   public async refresh() {
-    this.additionalDefinitions = await this.http.get<{ [key: string]: MosaicAdditionalDefinition }>('assets/data/list.json').toPromise();
+    this.additionalDefinitions = await this.http.get<{ [key: string]: AssetAdditionalDefinition }>('assets/data/list.json').toPromise();
 
-    this.mosaics = await this.accountHttp.getAssetsOwnedByAddress(this.account!.address).toPromise().catch(() => { throw new Error() });
+    this.assets = await this.accountHttp.getAssetsOwnedByAddress(this.account!.address).toPromise().catch(() => { throw new Error() });
     this.definitions = {};
     this.definitions["nem:xem"] = {
       creator: new PublicAccount(),
@@ -136,11 +136,11 @@ export class GlobalDataService {
       }
     };
 
-    for (let i = 0; i < this.mosaics!.length; i++) {
-      if (this.mosaics![i].assetId.namespaceId == "nem") {
+    for (let i = 0; i < this.assets!.length; i++) {
+      if (this.assets![i].assetId.namespaceId == "nem") {
         continue;
       }
-      let d = await this.assetHttp.getAssetDefinition(this.mosaics![i].assetId).toPromise().catch(() => { throw new Error() });
+      let d = await this.assetHttp.getAssetDefinition(this.assets![i].assetId).toPromise().catch(() => { throw new Error() });
       this.definitions![d.id.namespaceId + ":" + d.id.name] = d;
     }
   }

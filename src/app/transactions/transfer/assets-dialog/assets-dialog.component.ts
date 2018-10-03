@@ -2,7 +2,7 @@ import { Component, Inject, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatSelectionList } from '@angular/material';
 import { Asset } from 'nem-library';
 import { GlobalDataService } from '../../../services/global-data.service';
-import { MosaicAdditionalDefinition } from '../../../../models/mosaic-additional-definition';
+import { AssetAdditionalDefinition } from '../../../../models/asset-additional-definition';
 @Component({
   selector: 'app-assets-dialog',
   templateUrl: './assets-dialog.component.html',
@@ -11,7 +11,7 @@ import { MosaicAdditionalDefinition } from '../../../../models/mosaic-additional
 export class AssetsDialogComponent {
   @ViewChild('selectionList') selectionList?: MatSelectionList;
 
-  public mosaics: {
+  public assets: {
     name: string,
     imageUrl: string,
     issuer?: string,
@@ -21,23 +21,23 @@ export class AssetsDialogComponent {
     public global: GlobalDataService,
     @Inject(MAT_DIALOG_DATA) public data: {
       title: string,
-      mosaics: Asset[],
+      assets: Asset[],
       initialSelection: string[]
     }
   ) {
-    this.mosaics = this.data.mosaics.map(m => {
-      let name = m.assetId.namespaceId + ":" + m.assetId.name;
+    this.assets = this.data.assets.map(asset => {
+      let name = asset.assetId.namespaceId + ":" + asset.assetId.name;
       let additionalDef = this.global.additionalDefinitions![name];
       return {
         name: name,
-        imageUrl: additionalDef ? MosaicAdditionalDefinition.getImageUrl(name) : MosaicAdditionalDefinition.getImageUrl(),
+        imageUrl: additionalDef ? AssetAdditionalDefinition.getImageUrl(name) : AssetAdditionalDefinition.getImageUrl(),
         issuer: additionalDef && additionalDef.issuer,
       }
     });
   }
 
   public translation = {
-    mosaic: {
+    assets: {
       en: "Assets",
       ja: "アセット"
     }
