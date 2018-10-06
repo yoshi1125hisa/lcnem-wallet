@@ -73,7 +73,7 @@ export class DepositComponent implements OnInit {
     } catch {
       this.dialog.open(AlertDialogComponent, {
         data: {
-          title: (this.translation.error as any)[this.global.lang],
+          title: this.translation.error[this.global.lang],
           content: ""
         }
       });
@@ -84,8 +84,8 @@ export class DepositComponent implements OnInit {
 
     this.dialog.open(AlertDialogComponent, {
       data: {
-        title: (this.translation.completed as any)[this.global.lang],
-        content: (this.translation.following as any)[this.global.lang]
+        title: this.translation.completed[this.global.lang],
+        content: this.translation.following[this.global.lang]
       }
     }).afterClosed().subscribe(() => {
       this.router.navigate(["/"]);
@@ -96,38 +96,38 @@ export class DepositComponent implements OnInit {
     amount: {
       en: "Amount",
       ja: "金額"
-    },
+    } as any,
     currency: {
       en: "Currency",
       ja: "通貨"
-    },
+    } as any,
     error: {
       en: "Error",
       ja: "エラー"
-    },
+    } as any,
     completed: {
       en: "Completed",
       ja: "完了"
-    },
+    } as any,
     following: {
       en: "Please wait for an email.",
       ja: "メールをお送りしますので少々お待ちください。"
-    },
+    } as any,
     deposit: {
       en: "Deposit",
       ja: "入金"
-    },
+    } as any,
     method: {
       en: "Method",
       ja: "方法"
-    },
+    } as any,
     paypal: {
       en: "Paypal",
       ja: "Paypal"
-    },
+    } as any,
     address: {
       en: "Address",
       ja: "アドレス"
-    }
+    } as any
   };
 }

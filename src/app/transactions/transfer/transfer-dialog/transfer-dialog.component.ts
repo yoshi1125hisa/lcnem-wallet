@@ -28,22 +28,22 @@ export class TransferDialogComponent {
     confirmation: {
       en: "Are you sure?",
       ja: "送信しますか？"
-    },
+    } as any,
     encryption: {
       en: "Encryption",
       ja: "暗号化"
-    },
+    } as any,
     amount: {
       en: "Amount",
       ja: "送信量"
-    },
+    } as any,
     fee: {
       en: "Blockchain fee",
       ja: "ブロックチェーン手数料"
-    },
+    } as any,
     message: {
       en: "Message",
       ja: "メッセージ"
-    }
+    } as any
   };
 }

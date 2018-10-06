@@ -83,7 +83,7 @@ export class ScanComponent implements OnInit {
           } catch {
             this.dialog.open(AlertDialogComponent, {
               data: {
-                title: (this.translation.unexpected as any)[this.global.lang],
+                title: this.translation.unexpected[this.global.lang],
                 content: decoded
               }
             }).afterClosed().subscribe(() => {
@@ -112,22 +112,22 @@ export class ScanComponent implements OnInit {
     noCamera: {
       en: "Cameras not found.",
       ja: "カメラが見つかりません。"
-    },
+    } as any,
     noPermission: {
       en: "Permissions required.",
       ja: "カメラ許可が必要です。"
-    },
+    } as any,
     scan: {
       en: "Scan QR-code",
       ja: "QRコードをスキャン"
-    },
+    } as any,
     selectCamera: {
       en: "Select camera",
       ja: "カメラを選択"
-    },
+    } as any,
     unexpected: {
       en: "Unexpected QR-code",
       ja: "予期されないQRコードです"
-    }
+    } as any
   };
 }
