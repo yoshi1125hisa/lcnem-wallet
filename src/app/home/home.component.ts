@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit {
     await this.global.logout();
     this.dialog.open(AlertDialogComponent, {
       data: {
-        title: (this.translation.completed as any)[this.global.lang],
+        title: this.translation.completed[this.global.lang],
         content: ""
       }
     }).afterClosed().subscribe(() => {
@@ -72,50 +72,50 @@ export class HomeComponent implements OnInit {
     balance: {
       en: "Balance",
       ja: "残高"
-    },
+    } as any,
     deposit: {
       en: "Deposit",
       ja: "入金"
-    },
+    } as any,
     history: {
       en: "History",
       ja: "履歴"
-    },
+    } as any,
     language: {
       en: "Language",
       ja: "言語"
-    },
+    } as any,
     logout: {
       en: "Log out",
       ja: "ログアウト"
-    },
+    } as any,
     scan: {
       en: "Scan QR-code",
       ja: "QRコードをスキャン"
-    },
+    } as any,
     withdraw: {
       en: "Withdraw",
       ja: "出金"
-    },
+    } as any,
     yourAddress: {
       en: "Your address",
       ja: "あなたのアドレス"
-    },
+    } as any,
     terms: {
       en: "Terms of Service",
       ja: "利用規約"
-    },
+    } as any,
     completed: {
       en: "Successfully logged out",
       ja: "正常にログアウトしました。"
-    },
+    } as any,
     copy: {
       en: "Copy this Address",
       ja: "アドレスをコピーする"
-    },
+    } as any,
     contacts: {
       en: "Address book",
       ja: "アドレス帳"
-    }
+    } as any
   };
 }

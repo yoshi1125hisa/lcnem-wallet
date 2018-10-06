@@ -40,6 +40,6 @@ export class AssetsDialogComponent {
     assets: {
       en: "Assets",
       ja: "アセット"
-    }
+    } as any
   };
 }

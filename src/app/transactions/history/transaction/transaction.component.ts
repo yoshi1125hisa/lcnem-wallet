@@ -86,10 +86,10 @@ export class TransactionComponent implements OnInit {
     assets: {
       en: "Assets",
       ja: "アセット"
-    },
+    } as any,
     unconfirmed: {
       en: "This transaction is not confirmed by the blockchain yet.",
       ja: "この取引はまだブロックチェーンに承認されていません"
-    }
+    } as any
   };
 }

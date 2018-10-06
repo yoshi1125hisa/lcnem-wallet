@@ -62,7 +62,7 @@ export class WithdrawComponent implements OnInit {
     } catch {
       this.dialog.open(AlertDialogComponent, {
         data: {
-          title: (this.translation.error as any)[this.global.lang],
+          title: this.translation.error[this.global.lang],
           content: ""
         }
       });
@@ -73,8 +73,8 @@ export class WithdrawComponent implements OnInit {
 
     this.dialog.open(AlertDialogComponent, {
       data: {
-        title: (this.translation.completed as any)[this.global.lang],
-        content: (this.translation.following as any)[this.global.lang]
+        title: this.translation.completed[this.global.lang],
+        content: this.translation.following[this.global.lang]
       }
     }).afterClosed().subscribe(() => {
       this.router.navigate(["/"]);
@@ -85,34 +85,34 @@ export class WithdrawComponent implements OnInit {
     amazonGift: {
       en: "Amazon Gift Card",
       ja: "アマゾンギフトカード"
-    },
+    } as any,
     amount: {
       en: "Amount",
       ja: "金額"
-    },
+    } as any,
     currency: {
       en: "currency",
       ja: "通貨"
-    },
+    } as any,
     completed: {
       en: "Completed",
       ja: "完了"
-    },
+    } as any,
     following: {
       en: "Please wait for an email.",
       ja: "メールをお送りしますので少々お待ちください。"
-    },
+    } as any,
     error: {
       en: "Error",
       ja: "エラー"
-    },
+    } as any,
     type: {
       en: "Type",
       ja: "種類"
-    },
+    } as any,
     withdraw: {
       en: "Withdraw",
       ja: "出金"
-    }
+    } as any
   };
 }

@@ -53,10 +53,10 @@ export class ContactsComponent implements OnInit {
     contacts: {
       en: "Contacts book",
       ja: "アドレス帳"
-    },
+    } as any,
     empty: {
       en: "There is no contacts.",
       ja: "コンタクトはありません。"
-    }
+    } as any
   };
 }

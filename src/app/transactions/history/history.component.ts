@@ -44,18 +44,18 @@ export class HistoryComponent implements OnInit {
     history: {
       en: "History",
       ja: "履歴"
-    },
+    } as any,
     incoming: {
       en: "Incoming",
       ja: "受信"
-    },
+    } as any,
     outgoing: {
       en: "Outgoing",
       ja: "送信"
-    },
+    } as any,
     noTransaction: {
       en: "There is no transaction.",
       ja: "取引はありません。"
-    }
+    } as any
   };
 }
