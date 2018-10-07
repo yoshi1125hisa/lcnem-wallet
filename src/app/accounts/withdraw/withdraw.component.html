@@ -1,4 +1,4 @@
-<mat-toolbar color="primary" class="mat-elevation-z4">
+<mat-toolbar color="primary" class="mat-elevation-z4 top-toolbar">
   <button mat-icon-button routerLink="/">
     <mat-icon>arrow_back</mat-icon>
   </button>
@@ -6,7 +6,7 @@
   <span>{{translation.withdraw[global.lang]}}</span>
   <span class="fill-remaining-space"></span>
 </mat-toolbar>
-<div class="out-toolbar">
+<div class="mat-typography body-container">
   <iframe [src]="safeSite" fxFill></iframe>
   <form #form="ngForm" (ngSubmit)="withdraw()">
     <mat-form-field fxFill>
