@@ -24,6 +24,7 @@ import {
 import { AssetAdditionalDefinition } from '../../models/asset-additional-definition';
 import { nodes } from '../../models/nodes';
 import { User } from '../../models/user';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -51,7 +52,8 @@ export class GlobalDataService {
   constructor(
     public auth: AngularFireAuth,
     public firestore: AngularFirestore,
-    private http: HttpClient
+    private http: HttpClient,
+    private router: Router
   ) {
     NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
     const settings = { timestampsInSnapshots: true };
@@ -63,6 +65,14 @@ export class GlobalDataService {
     this.namespaceHttp = new NamespaceHttp(nodes);
 
     this.lang = window.navigator.language.substr(0, 2) == "ja" ? "ja" : "en";
+  }
+
+  public back() {
+    if (history.length > 1) {
+      history.back();
+      return;
+    }
+    this.router.navigate([""]);
   }
 
   public async login() {
