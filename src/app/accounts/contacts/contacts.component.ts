@@ -3,6 +3,8 @@ import { GlobalDataService } from '../../services/global-data.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { User } from '../../../models/user';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-contacts',
@@ -16,18 +18,19 @@ export class ContactsComponent implements OnInit {
   constructor(
     public global: GlobalDataService,
     private router: Router,
+    private auth: AngularFireAuth,
+    private firestore: AngularFirestore,
     private dialog: MatDialog
   ) { }
 
   ngOnInit() {
-    this.global.auth.authState.subscribe((user) => {
+    this.auth.authState.subscribe(async (user) => {
       if (user == null) {
         this.router.navigate(["/accounts/login"]);
         return;
       }
-      this.global.initialize().then(() => {
-        this.refresh();
-      });
+      await this.global.initialize();
+      await this.refresh();
     });
   }
 
@@ -36,10 +39,10 @@ export class ContactsComponent implements OnInit {
 
     this.contacts = [];
 
-    let collection = await this.global.firestore.collection("users").doc(this.global.auth.auth.currentUser!.uid).collection("contacts").ref.get();
+    let collection = await this.firestore.collection("users").doc(this.auth.auth.currentUser!.uid).collection("contacts").ref.get();
 
     for (let i = 0; i < collection.docs.length; i++) {
-      let userSnapshot = await this.global.firestore.collection("users").doc(collection.docs[i].id).ref.get();
+      let userSnapshot = await this.firestore.collection("users").doc(collection.docs[i].id).ref.get();
       if (userSnapshot.exists) {
         let user = userSnapshot.data() as User;
         this.contacts.push(user);

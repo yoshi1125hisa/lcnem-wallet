@@ -1,9 +1,9 @@
 <mat-sidenav-container>
   <mat-sidenav #sidenav class="mat-elevation-z16" [fixedInViewport]="true">
     <mat-toolbar>
-      <button mat-icon-button class="background-contain" [ngStyle]="{'background-image': 'url(assets/images/lcnem.svg)'}"></button>
+      <button mat-icon-button class="background-contain" [style.background-image]="'url(assets/images/lcnem.svg)'"></button>
       <span class="fill-remaining-space"></span>
-      <button mat-icon-button class="background-contain" [ngStyle]="{'background-image': 'url(' + global.photoUrl + ')'}"></button>
+      <button mat-icon-button class="background-contain" [style.background-image]="'url(' + global.account.photoUrl + ')'"></button>
     </mat-toolbar>
     <div fxLayout="column">
       <mat-nav-list>
@@ -38,7 +38,7 @@
         </mat-list-item>
         <mat-divider></mat-divider>
         <a mat-list-item href="https://lcnem.cc" target="_blank">
-          <mat-icon mat-list-icon class="background-contain" [ngStyle]="{'background-image': 'url(assets/images/lcnem.svg)'}"></mat-icon>
+          <mat-icon mat-list-icon class="background-contain" [style.background-image]="'url(assets/images/lcnem.svg)'"></mat-icon>
           LCNEM
           <mat-icon class="open-in-new">open_in_new</mat-icon>
         </a>
@@ -70,21 +70,19 @@
     <div class="mat-typography body-container">
       <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
       <ng-template #loaded>
+        <h3>{{translation.balance[global.lang]}}</h3>
         <mat-card>
-          <app-assets-list [title]="translation.balance[global.lang]" [assets]="global.assets"></app-assets-list>
+          <app-assets-list [assets]="assets"></app-assets-list>
         </mat-card>
+        <br />
+        <h3>{{translation.yourAddress[global.lang]}}</h3>
         <mat-card>
-          <mat-card-header>
-            <mat-card-title>{{translation.yourAddress[global.lang]}}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p style="text-align: center;">{{global.account!.address.pretty()}}
-              <button mat-icon-button matTooltip="{{translation.copy[global.lang]}}" (click)="copyMessage(global.account!.address.pretty())">
-                <mat-icon>input</mat-icon>
-              </button>
-            </p>
-            <img class="qr" [src]="qrUrl" />
-          </mat-card-content>
+          <p style="text-align: center;">{{global.account.nem.pretty()}}
+            <button mat-icon-button matTooltip="{{translation.copy[global.lang]}}" (click)="copyMessage(global.account.nem.pretty())">
+              <mat-icon>input</mat-icon>
+            </button>
+          </p>
+          <img class="qr" [src]="qrUrl" />
         </mat-card>
         <button mat-fab color="accent" class="transfer-button" routerLink="/transactions/transfer">
           <mat-icon>send</mat-icon>

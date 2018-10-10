@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Transaction } from 'nem-library';
 import { Router } from '@angular/router';
 import { GlobalDataService } from '../../services/global-data.service';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-history',
@@ -15,26 +16,26 @@ export class HistoryComponent implements OnInit {
 
   constructor(
     public global: GlobalDataService,
-    private router: Router
+    private router: Router,
+    private auth: AngularFireAuth
   ) { }
 
   ngOnInit() {
-    this.global.auth.authState.subscribe((user) => {
+    this.auth.authState.subscribe(async (user) => {
       if (user == null) {
         this.router.navigate(["/accounts/login"]);
         return;
       }
-      this.global.initialize().then(() => {
-        this.refresh();
-      });
+      await this.global.initialize();
+      await this.refresh();
     });
   }
 
   public async refresh() {
     this.loading = true;
 
-    let unconfirmedTransactions = await this.global.accountHttp.unconfirmedTransactions(this.global.account!.address).toPromise();
-    let allTransactions = await this.global.accountHttp.allTransactions(this.global.account!.address).toPromise();
+    let unconfirmedTransactions = await this.global.accountHttp.unconfirmedTransactions(this.global.account!.nem).toPromise();
+    let allTransactions = await this.global.accountHttp.allTransactions(this.global.account!.nem).toPromise();
     this.transactions = unconfirmedTransactions.concat(allTransactions);
 
     this.loading = false;

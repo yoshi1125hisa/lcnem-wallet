@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { Asset } from 'nem-library';
+import { Asset, AssetDefinition } from 'nem-library';
 import { GlobalDataService } from '../../services/global-data.service';
-import { AssetAdditionalDefinition } from '../../../models/asset-additional-definition';
+import { assetAdditionalDefinitions, AssetAdditionalDefinition } from '../../../models/asset-additional-definition';
 
 @Component({
   selector: 'app-assets-list',
@@ -9,7 +9,6 @@ import { AssetAdditionalDefinition } from '../../../models/asset-additional-defi
   styleUrls: ['./assets-list.component.css']
 })
 export class AssetsListComponent implements OnInit {
-  @Input() public title?: string;
   @Input() public assets?: Asset[];
   
   public _assets = new Array<{
@@ -30,25 +29,23 @@ export class AssetsListComponent implements OnInit {
     if (!this.assets) {
       return;
     }
-    for (let i = 0; i < this.assets.length; i++) {
-      try {
-        let name = this.assets[i].assetId.namespaceId + ":" + this.assets[i].assetId.name;
-        let def = this.global.definitions![name];
-        if (!def) {
-          def = await this.global.assetHttp.getAssetDefinition(this.assets[i].assetId).toPromise();
-        }
-        let additionalDef = this.global.additionalDefinitions![name];
-
-        this._assets!.push({
-          name: name,
-          amount: this.assets[i].quantity / Math.pow(10, def.properties.divisibility),
-          imageUrl: additionalDef ? AssetAdditionalDefinition.getImageUrl(name) : AssetAdditionalDefinition.getImageUrl(),
-          issuer: additionalDef && additionalDef.issuer,
-          unit: additionalDef && additionalDef.unit
-        });
-      } catch {
-
+    for(let asset of this.assets) {
+      let name = asset.assetId.namespaceId + ":" + asset.assetId.name;
+      let definitions = this.global.account.assets.filter(a => a.name == name).map(a => a.definition);
+      if (!definitions.length) {
+        definitions = [await this.global.assetHttp.getAssetDefinition(asset.assetId).toPromise()];
       }
+      let definition = definitions[0];
+
+      let additionalDefinition = assetAdditionalDefinitions.find(a => a.name == name);
+
+      this._assets!.push({
+        name: name,
+        amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
+        imageUrl: AssetAdditionalDefinition.getImageUrl(name),
+        issuer: additionalDefinition && additionalDefinition.issuer,
+        unit: additionalDefinition && additionalDefinition.unit
+      });
     }
   }
 }

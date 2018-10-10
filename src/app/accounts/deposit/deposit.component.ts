@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { supportedCurrencies } from '../../../models/supported-currencies';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 declare let Stripe: any;
 
@@ -35,20 +36,20 @@ export class DepositComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private http: HttpClient,
+    private auth: AngularFireAuth,
     sanitizer: DomSanitizer
   ) {
     this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${global.lang}.txt`);
   }
 
   ngOnInit() {
-    this.global.auth.authState.subscribe((user) => {
+    this.auth.authState.subscribe(async (user) => {
       if (user == null) {
         this.router.navigate(["/accounts/login"]);
         return;
       }
-      this.global.initialize().then(() => {
-        this.address = this.global.account!.address.plain();
-      });
+      await this.global.initialize();
+      this.address = this.global.account!.nem.plain();
     });
   }
 
@@ -59,7 +60,7 @@ export class DepositComponent implements OnInit {
       await this.http.post(
         "https://us-central1-lcnem-wallet.cloudfunctions.net/deposit",
         {
-          email: this.global.auth.auth.currentUser!.email,
+          email: this.auth.auth.currentUser!.email,
           nem: this.address,
           currency: this.selectedCurrency,
           amount: this.amount,
@@ -82,14 +83,14 @@ export class DepositComponent implements OnInit {
       dialogRef.close();
     }
 
-    this.dialog.open(AlertDialogComponent, {
+    await this.dialog.open(AlertDialogComponent, {
       data: {
         title: this.translation.completed[this.global.lang],
         content: this.translation.following[this.global.lang]
       }
-    }).afterClosed().subscribe(() => {
-      this.router.navigate(["/"]);
-    });
+    }).afterClosed().toPromise();
+    
+    this.router.navigate(["/"]);
   }
 
   public translation = {

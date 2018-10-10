@@ -9,10 +9,6 @@
   z-index: 99;
 }
 
-mat-card {
-  margin: 6px 0;
-}
-
 .qr {
   display: block;
   margin: 0 auto;

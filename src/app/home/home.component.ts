@@ -4,6 +4,8 @@ import { GlobalDataService } from '../services/global-data.service';
 import { Invoice } from '../../models/invoice';
 import { MatDialog } from '@angular/material';
 import { AlertDialogComponent } from '../components/alert-dialog/alert-dialog.component';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { Asset } from 'nem-library';
 
 @Component({
   selector: 'app-home',
@@ -13,27 +15,34 @@ import { AlertDialogComponent } from '../components/alert-dialog/alert-dialog.co
 export class HomeComponent implements OnInit {
   public loading = true;
   public qrUrl = "";
-
+  public assets: Asset[] = [];
 
   constructor(
     public global: GlobalDataService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private auth: AngularFireAuth
   ) { }
 
   ngOnInit() {
-    this.global.auth.authState.subscribe((user) => {
+    this.auth.authState.subscribe(async (user) => {
       if (user == null) {
         this.router.navigate(["accounts", "login"]);
         return;
       }
-      this.global.initialize().then(() => {
-        let invoice = new Invoice();
-        invoice.data.addr = this.global.account!.address.plain();
-        this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
-        this.loading = false;
-      });
+      await this.global.initialize();
+      await this.initialize();
+
+      this.loading = false;
     });
+  }
+
+  public async initialize() {
+    let invoice = new Invoice();
+    invoice.data.addr = this.global.account.nem.plain();
+    this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
+
+    this.assets = this.global.account.assets.map(a => a.asset);
   }
   
   public async logout() {
@@ -50,7 +59,10 @@ export class HomeComponent implements OnInit {
 
   public async refresh() {
     this.loading = true;
+    
     await this.global.refresh();
+    await this.initialize();
+
     this.loading = false;
   }
 
