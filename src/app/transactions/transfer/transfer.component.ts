@@ -35,7 +35,12 @@ export class TransferComponent implements OnInit {
   public encrypt = false;
 
   public autoCompletes: string[] = [];
-  public transferAssets: { asset: Asset, visible: boolean, name: string, amount?: number }[] = [];
+  public transferAssets: {
+    asset: Asset,
+    visible: boolean,
+    name: string,
+    amount?: number
+  }[] = [];
 
   constructor(
     public global: GlobalDataService,

@@ -16,8 +16,8 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field fxFill>
-      <input matInput type="number" placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="amount" name="amount"
-        required min="0" />
+      <input matInput placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="amount" name="amount"
+        required minlength="1" pattern="[1-9][0-9]*" />
     </mat-form-field>
     <mat-form-field fxFill>
       <mat-select placeholder="{{translation.type[global.lang]}}" [(ngModel)]="method" name="method" required>
