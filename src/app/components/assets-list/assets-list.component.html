@@ -1,5 +1,5 @@
 <mat-list>
-  <mat-divider *ngIf="_assets.length"></mat-divider>
+  <mat-divider></mat-divider>
   <ng-container *ngFor="let asset of _assets">
     <mat-list-item matTooltip="{{asset.name}}">
       <div mat-list-icon class="background-contain" [ngStyle]="{'background-image': 'url(' + asset.imageUrl + ')'}"></div>
@@ -8,6 +8,6 @@
       <span class="fill-remaining-space"></span>
       <span class="right">{{asset.amount}}<br />{{asset.unit}}</span>
     </mat-list-item>
-    <mat-divider *ngIf="_assets.length"></mat-divider>
+    <mat-divider></mat-divider>
   </ng-container>
 </mat-list>

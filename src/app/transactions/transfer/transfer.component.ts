@@ -30,12 +30,14 @@ import { AngularFireAuth } from '@angular/fire/auth';
 })
 export class TransferComponent implements OnInit {
   public loading = true;
+  public assets: Asset[] = [];
 
   public forms = {
     recipient: "",
     message: "",
     encrypt: false,
     transferAssets: [{}] as {
+      index?: number,
       name?: string,
       amount?: number
     }[]
@@ -58,30 +60,37 @@ export class TransferComponent implements OnInit {
         return;
       }
       await this.global.initialize();
-      if (this.global.buffer) {
-        this.forms.recipient = this.global.buffer.address;
-        this.forms.message = this.global.buffer.message;
-      }
-
-      if (this.global.buffer && this.global.buffer.mosaics) {
-        this.global.buffer.assets.forEach((bufferAsset: any) => {
-          let index = this.global.account.assets.findIndex(a => a.asset.assetId.namespaceId + ":" + a.asset.assetId.name == bufferAsset.name);
-          if (index != -1) {
-            let amount = bufferAsset.amount / Math.pow(10, this.global.account.assets[index].definition.properties.divisibility);
-            this.forms.transferAssets.push({
-              name: bufferAsset.name,
-              amount: amount
-            })
-          }
-        })
-      }
-      this.global.buffer = null;
-
+      await this.initialize();
+      
       this.loading = false;
     });
   }
 
+  public async initialize() {
+    if (this.global.buffer) {
+      this.forms.recipient = this.global.buffer.address;
+      this.forms.message = this.global.buffer.message;
+    }
+
+    if (this.global.buffer && this.global.buffer.mosaics) {
+      this.global.buffer.assets.forEach((bufferAsset: any) => {
+        let index = this.global.account.assets.findIndex(a => a.asset.assetId.namespaceId + ":" + a.asset.assetId.name == bufferAsset.name);
+        if (index != -1) {
+          let amount = bufferAsset.amount / Math.pow(10, this.global.account.assets[index].definition.properties.divisibility);
+          this.forms.transferAssets.push({
+            name: bufferAsset.name,
+            amount: amount
+          })
+        }
+      })
+    }
+    this.global.buffer = null;
+    this.assets = this.global.account.assets.map(a => a.asset);
+  }
+
   public addAsset(index: number) {
+    this.forms.transferAssets[index].name = this.global.account.assets[this.forms.transferAssets[index].index!].name;
+
     if (index != this.forms.transferAssets.length - 1) {
       return;
     }

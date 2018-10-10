@@ -23,6 +23,7 @@
           <mat-option *ngFor="let autoComplete of autoCompletes" [value]="autoComplete">{{autoComplete}}</mat-option>
         </mat-autocomplete>
       </mat-card>
+      <br />
       <mat-card>
         <mat-form-field fxFill>
           <input matInput placeholder="{{translation.message[global.lang]}}" [(ngModel)]="forms.message" name="message"
@@ -30,22 +31,23 @@
           <mat-slide-toggle fxFill matSuffix [(ngModel)]="forms.encrypt" name="encrypt">{{translation.encryption[global.lang]}}</mat-slide-toggle>
         </mat-form-field>
       </mat-card>
+      <br />
       <mat-card>
+        <app-assets-list [assets]="assets"></app-assets-list>
+        <br />
         <div *ngFor="let asset of forms.transferAssets; let i = index; let l = last" fxLayout="row">
           <mat-form-field fxFlex="50">
-            <mat-select color="accent" placeholder="{{translation.assetName[global.lang]}}" [(ngModel)]="asset.name"
-              name="asset{{i}}-name" required="{{!l || forms.transferAssets.length == 1}}" (focus)="addAsset(i)">
-              <ng-container *ngFor="let a of global.account.assets">
-                <mat-option *ngIf="assetIsNotReady(a.name)" [value]="a.name">
-                  <app-assets-list [assets]="[a.asset]"></app-assets-list>
-                </mat-option>
+            <mat-select color="accent" placeholder="{{translation.assetName[global.lang]}}" [(ngModel)]="asset.index"
+              name="asset{{i}}-name" required="{{!l || forms.transferAssets.length == 1}}" (selectionChange)="addAsset(i)">
+              <ng-container *ngFor="let a of global.account.assets; let j = index">
+                <mat-option *ngIf="assetIsNotReady(a.name) || j == asset.index" [value]="j">{{a.name}}</mat-option>
               </ng-container>
             </mat-select>
           </mat-form-field>
           <ng-container *ngIf="!l">
             <mat-form-field class="fill-remaining-space">
-              <input matInput color="accent" type="number" placeholder="{{translation.amount[global.lang]}}"
-                [(ngModel)]="asset.amount" name="asset{{i}}-capacity" required min="1" minlength="1" pattern="[0-9]*" />
+              <input matInput color="accent" placeholder="{{translation.amount[global.lang]}}"
+                [(ngModel)]="asset.amount" name="asset{{i}}-capacity" required minlength="1" pattern="[0-9]*" />
             </mat-form-field>
             <button mat-icon-button color="warn" type="button" (click)="deleteAsset(i)">
               <mat-icon>clear</mat-icon>
@@ -53,7 +55,11 @@
           </ng-container>
         </div>
       </mat-card>
-      <button fxFill mat-raised-button color="accent" [disabled]="form.invalid">{{translation.transfer[global.lang]}}</button>
+      <br />
+      <div fxLayout="row">
+        <span class="fill-remaining-space"></span>
+        <button mat-raised-button color="accent" [disabled]="form.invalid">{{translation.transfer[global.lang]}}</button>
+      </div>
     </form>
   </ng-template>
 </div>
