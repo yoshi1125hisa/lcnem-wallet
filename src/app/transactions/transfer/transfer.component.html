@@ -35,8 +35,8 @@
           <mat-card *ngIf="asset.visible" fxFlex="25" fxFlex.sm="50" fxFlex.xs="100">
             <mat-card-content>
               <mat-form-field fxFill>
-                <input matInput type="number" placeholder="{{asset.name}}" [(ngModel)]="transferAssets[i].amount"
-                  name="amount{{i}}" min="0" required>
+                <input matInput placeholder="{{asset.name}}" [(ngModel)]="transferAssets[i].amount"
+                  name="amount{{i}}" required minlength="1" pattern="[0-9]*">
               </mat-form-field>
               <app-assets-list [title]="translation.balance[global.lang]" [assets]="[asset.asset]"></app-assets-list>
             </mat-card-content>

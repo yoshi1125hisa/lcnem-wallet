@@ -20,8 +20,8 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field fxFill>
-      <input matInput type="number" placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="amount" name="amount"
-        required [min]="minimum[selectedCurrency]" />
+      <input matInput placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="amount" name="amount"
+        required minlength="{{minimum[selectedCurrency].toString().length}}" pattern="[1-9][0-9]*" />
       <mat-error>min {{minimum[selectedCurrency]}}</mat-error>
     </mat-form-field>
 
