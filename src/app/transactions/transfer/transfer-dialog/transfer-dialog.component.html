@@ -1,11 +1,11 @@
 <h2 mat-dialog-title>{{translation.confirmation[global.lang]}}</h2>
 <mat-dialog-content>
-  <app-mosaic-list [title]="translation.amount[global.lang]" [mosaics]="mosaics"></app-mosaic-list>
+  <app-assets-list [title]="translation.amount[global.lang]" [assets]="assets"></app-assets-list>
   <mat-list>
     <h3 mat-subheader>{{translation.fee[global.lang]}}</h3>
     <mat-divider></mat-divider>
     <mat-list-item matTooltip="nem:xem">
-      <div mat-list-icon class="background-contain" [ngStyle]="{'background-image': 'url(assets/data/nem/xem.svg)'}"></div>
+      <img mat-list-icon src="assets/data/nem/xem.svg" />
       <span mat-line>nem:xem</span>
       <small mat-line></small>
       <span class="fill-remaining-space"></span>

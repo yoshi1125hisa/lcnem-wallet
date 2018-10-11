@@ -19,7 +19,7 @@
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "assets": [
-              "src/favicon.svg",
+              "src/favicon.png",
               "src/assets",
               "src/manifest.json"
             ],
@@ -80,7 +80,7 @@
               "src/theme/nem-theme.scss"
             ],
             "assets": [
-              "src/favicon.svg",
+              "src/favicon.png",
               "src/assets",
               "src/manifest.json"
             ]

@@ -9,18 +9,19 @@ import {
   EncryptedMessage,
   Message,
   TransferTransaction,
-  Mosaic,
-  MosaicId,
-  MosaicDefinition,
+  Asset,
+  AssetId,
+  AssetDefinition,
   TimeWindow,
-  MosaicTransferable,
+  AssetTransferable,
   XEM,
-  EmptyMessage
+  EmptyMessage,
+  Password
 } from 'nem-library';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.component';
-import { AssetsDialogComponent } from './assets-dialog/assets-dialog.component';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-transfer',
@@ -29,94 +30,99 @@ import { AssetsDialogComponent } from './assets-dialog/assets-dialog.component';
 })
 export class TransferComponent implements OnInit {
   public loading = true;
+  public assets: Asset[] = [];
 
-  public recipient = "";
-  public message = "";
-  public encrypt = false;
+  public forms = {
+    recipient: "",
+    message: "",
+    encrypt: false,
+    transferAssets: [{}] as {
+      index?: number,
+      name?: string,
+      amount?: number
+    }[]
+  };
 
   public autoCompletes: string[] = [];
-  public transferMosaics: { mosaic: Mosaic, visible: boolean, name: string, amount?: number }[] = [];
 
   constructor(
     public global: GlobalDataService,
     public dialog: MatDialog,
     private router: Router,
-    private route: ActivatedRoute
+    private auth: AngularFireAuth
   ) {
   }
 
   ngOnInit() {
-    this.global.auth.authState.subscribe((user) => {
+    this.auth.authState.subscribe(async (user) => {
       if (user == null) {
         this.router.navigate(["accounts", "login"]);
         return;
       }
-      this.global.initialize().then(() => {
-        this.transferMosaics = this.global.mosaics!.map(m => {
-          return {
-            mosaic: m,
-            visible: false,
-            name: m.mosaicId.namespaceId + ":" + m.mosaicId.name
-          }
-        });
-
-        if(this.global.buffer) {
-          this.recipient = this.global.buffer.address;
-          this.message = this.global.buffer.message;
-        }
-        
-        if (this.global.buffer && this.global.buffer.mosaics) {
-          this.global.buffer.mosaics.forEach((m: any) => {
-            let index = this.transferMosaics.findIndex(_m => _m.name == m.name);
-            if (index != -1) {
-              this.transferMosaics[index].visible = true;
-              this.transferMosaics[index].amount = m.amount / Math.pow(10, this.global.definitions![m.name].properties.divisibility);
-            }
-          })
-        } else {
-          this.changeTransferMosaics();
-        }
-        this.global.buffer = null;
-
-        this.loading = false;
-      });
+      await this.global.initialize();
+      await this.initialize();
+      
+      this.loading = false;
     });
+  }
+
+  public async initialize() {
+    if (this.global.buffer) {
+      this.forms.recipient = this.global.buffer.address;
+      this.forms.message = this.global.buffer.message;
+    }
+
+    if (this.global.buffer && this.global.buffer.mosaics) {
+      this.global.buffer.assets.forEach((bufferAsset: any) => {
+        let index = this.global.account.assets.findIndex(a => a.asset.assetId.namespaceId + ":" + a.asset.assetId.name == bufferAsset.name);
+        if (index != -1) {
+          let amount = bufferAsset.amount / Math.pow(10, this.global.account.assets[index].definition.properties.divisibility);
+          this.forms.transferAssets.push({
+            name: bufferAsset.name,
+            amount: amount
+          })
+        }
+      })
+    }
+    this.global.buffer = null;
+    this.assets = this.global.account.assets.map(a => a.asset);
+  }
+
+  public addAsset(index: number) {
+    this.forms.transferAssets[index].name = this.global.account.assets[this.forms.transferAssets[index].index!].name;
+
+    if (index != this.forms.transferAssets.length - 1) {
+      return;
+    }
+    this.forms.transferAssets.push({});
+  }
+
+  public deleteAsset(index: number) {
+    this.forms.transferAssets.splice(index, 1);
+  }
+
+  public assetIsNotReady(name: string) {
+    return this.forms.transferAssets.findIndex(a => a.name == name) == -1;
   }
 
   public async onRecipientChange() {
     let resolved = "";
     try {
-      let result = await this.global.namespaceHttp.getNamespace(this.recipient).toPromise();
-      resolved = result.owner.pretty();
-      this.autoCompletes = [resolved];
+      let result = await this.global.namespaceHttp.getNamespace(this.forms.recipient).toPromise();
+      resolved = result.owner.plain();
+      this.autoCompletes = [this.forms.recipient.replace("-", ""), resolved];
     } catch {
-      
+
     }
   }
 
-  public async changeTransferMosaics() {
-    this.dialog.open(AssetsDialogComponent, {
-      data: {
-        title: this.translation.changeMosaic[this.global.lang],
-        mosaics: this.transferMosaics.filter(m => !m.visible).map(m => m.mosaic)
-      }
-    }).afterClosed().subscribe(async (result: MatListOption[]) => {
-      if (!result) {
-        return;
-      }
-
-      this.transferMosaics.forEach(m => {
-        if (result.find(opt => opt.value == m.name)) {
-          m.visible = true;
-        }
-      });
-    });
-  }
-
   public async transfer() {
-    let address: Address;
+    let password = new Password(this.auth.auth.currentUser!.uid);
+    let account = this.global.account.wallet.open(password);
+
+    let recipient: Address;
     try {
-      address = new Address(this.recipient!);
+      recipient = new Address(this.forms.recipient!);
     } catch {
       this.dialog.open(AlertDialogComponent, {
         data: {
@@ -128,14 +134,9 @@ export class TransferComponent implements OnInit {
     }
 
     let message: Message;
-    if (this.encrypt) {
-      try {
-        let meta = await this.global.accountHttp.getFromAddress(address).toPromise();
-        if(!meta.publicAccount) {
-          throw Error();
-        }
-        message = this.global.account!.encryptMessage(this.message, meta.publicAccount);
-      } catch {
+    if (this.forms.encrypt) {
+      let meta = await this.global.accountHttp.getFromAddress(recipient).toPromise();
+      if (!meta.publicAccount) {
         this.dialog.open(AlertDialogComponent, {
           data: {
             title: this.translation.error[this.global.lang],
@@ -144,137 +145,120 @@ export class TransferComponent implements OnInit {
         });
         return;
       }
+      message = account.encryptMessage(this.forms.message, meta.publicAccount);
     } else {
-      if(!this.message) {
+      if (!this.forms.message) {
         message = EmptyMessage;
       } else {
-        message = PlainMessage.create(this.message);
+        message = PlainMessage.create(this.forms.message);
       }
     }
 
-    let transferMosaics: MosaicTransferable[] = [];
-    for (let i = 0; i < this.transferMosaics.length; i++) {
-      let m = this.transferMosaics[i];
-      if (!m.visible) {
-        continue;
+    let transferMosaics: AssetTransferable[] = this.forms.transferAssets.filter(asset => asset.name).map(asset => {
+      if (asset.name == "nem:xem") {
+        return new XEM(asset.amount!);
       }
-      if (m.name == "nem:xem") {
-        transferMosaics.push(new XEM(m.amount!));
-      } else {
-        let absolute = m.amount! * Math.pow(10, this.global.definitions![m.name].properties.divisibility);
-        transferMosaics.push(MosaicTransferable.createWithMosaicDefinition(this.global.definitions![m.name], absolute));
-      }
-    };
-    if (!transferMosaics.length) {
-      this.dialog.open(AlertDialogComponent, {
-        data: {
-          title: this.translation.error[this.global.lang],
-          content: this.translation.noMosaic[this.global.lang]
-        }
-      });
-      return;
-    }
+      let definition = this.global.account.assets.find(a => a.asset.assetId.namespaceId + ":" + a.asset.assetId.name == asset.name)!.definition;
+      let absolute = asset.amount! * Math.pow(10, definition.properties.divisibility);
+      return AssetTransferable.createWithAssetDefinition(definition, absolute);
+    });
 
     let transaction = TransferTransaction.createWithMosaics(
       TimeWindow.createWithDeadline(),
-      address,
+      recipient,
       transferMosaics,
       message
     );
 
-    this.dialog.open(TransferDialogComponent, {
+    let result = await this.dialog.open(TransferDialogComponent, {
       data: {
         transaction: transaction,
-        message: this.message
+        message: this.forms.message
       }
-    }).afterClosed().subscribe(async result => {
-      if (!result) {
-        return;
-      }
-      let dialogRef = this.dialog.open(LoadingDialogComponent, { disableClose: true });
+    }).afterClosed().toPromise();
+    if (!result) {
+      return;
+    }
 
-      let signed = this.global.account!.signTransaction(transaction);
-      try {
-        await this.global.transactionHttp.announceTransaction(signed).toPromise();
-      } catch {
-        this.dialog.open(AlertDialogComponent, {
-          data: {
-            title: this.translation.error[this.global.lang],
-            content: ""
-          }
-        });
-        return;
-      } finally {
-        dialogRef.close();
-      }
+    let dialogRef = this.dialog.open(LoadingDialogComponent, { disableClose: true });
 
+    let signed = account.signTransaction(transaction);
+    try {
+      await this.global.transactionHttp.announceTransaction(signed).toPromise();
+    } catch {
       this.dialog.open(AlertDialogComponent, {
         data: {
-          title: this.translation.completed[this.global.lang],
+          title: this.translation.error[this.global.lang],
           content: ""
         }
-      }).afterClosed().subscribe(() => {
-        this.router.navigate(["/"]);
-      })
-    });
+      });
+      return;
+    } finally {
+      dialogRef.close();
+    }
+
+    await this.dialog.open(AlertDialogComponent, {
+      data: {
+        title: this.translation.completed[this.global.lang],
+        content: ""
+      }
+    }).afterClosed().toPromise();
+
+    this.router.navigate(["/"]);
   }
 
   public translation = {
     recipient: {
       en: "Recipient",
       ja: "宛先"
-    },
+    } as any,
     address: {
       en: "NEM address",
       ja: "NEMアドレス"
-    },
+    } as any,
     addressRequired: {
       en: "An address is required.",
       ja: "アドレスを入力してください。"
-    },
-    invalidNamespace: {
-      en: "Failed to resolve the namespace.",
-      ja: "ネームスペース解決に失敗しました。"
-    },
+    } as any,
     namespace: {
       en: "NEM namespace",
       ja: "NEMネームスペース"
-    },
+    } as any,
     message: {
       en: "Message",
       ja: "メッセージ"
-    },
+    } as any,
     encryption: {
       en: "Encryption",
       ja: "暗号化"
-    },
-    changeMosaic: {
-      en: "Change assets to transfer",
-      ja: "送信するアセットの変更"
-    },
+    } as any,
+    assetName: {
+      en: "Asset name",
+      ja: "アセット名"
+    } as any,
+    amount: {
+      en: "Amount",
+      ja: "量"
+    } as any,
     balance: {
       en: "Balance",
       ja: "残高"
-    },
+    } as any,
     transfer: {
       en: "Transfer",
       ja: "送信"
-    },
+    } as any,
     error: {
       en: "Error",
       ja: "エラー"
-    },
+    } as any,
     completed: {
       en: "Completed",
       ja: "完了"
-    },
-    noMosaic: {
-      en: "There is no asset to transfer.",
-      ja: "送信するアセットがありません。"
-    },
+    } as any,
     noPublicKey: {
       en: "Failed to get the recipient public key for encryption.",
       ja: "暗号化のための宛先の公開鍵取得に失敗しました。"
-    }
-  } as { [key: string]: { [key: string]: string } };
+    } as any
+  };
 }

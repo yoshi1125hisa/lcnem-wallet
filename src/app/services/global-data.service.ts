@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 
-import { HttpClient } from '@angular/common/http';
-
 import * as firebase from 'firebase';
 import 'firebase/auth'
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -9,21 +7,22 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import {
   Account,
   AccountHttp,
-  MosaicHttp,
+  AssetHttp,
   NamespaceHttp,
   TransactionHttp,
   Password,
   SimpleWallet,
-  Mosaic,
+  Asset,
   NEMLibrary,
-  MosaicDefinition,
+  AssetDefinition,
   NetworkTypes,
   XEM,
-  PublicAccount
+  PublicAccount,
+  Address
 } from 'nem-library';
-import { MosaicAdditionalDefinition } from '../../models/mosaic-additional-definition';
 import { nodes } from '../../models/nodes';
 import { User } from '../../models/user';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -33,36 +32,50 @@ export class GlobalDataService {
 
   public lang = "en";
 
-  public photoUrl = "";
-
-  public account?: Account;
-
-  public definitions?: { [key: string]: MosaicDefinition };
-  public additionalDefinitions?: { [key: string]: MosaicAdditionalDefinition };
-  public mosaics?: Mosaic[];
+  public account: {
+    photoUrl: string,
+    wallet: SimpleWallet,
+    nem: Address,
+    assets: {
+      name: string,
+      asset: Asset,
+      definition: AssetDefinition
+    }[]
+  } = {
+    photoUrl: "",
+    assets: []
+  } as any;
 
   public accountHttp: AccountHttp;
-  public mosaicHttp: MosaicHttp;
+  public assetHttp: AssetHttp;
   public namespaceHttp: NamespaceHttp;
   public transactionHttp: TransactionHttp;
 
   public buffer: any;
 
   constructor(
-    public auth: AngularFireAuth,
-    public firestore: AngularFirestore,
-    private http: HttpClient
+    private auth: AngularFireAuth,
+    private firestore: AngularFirestore,
+    private router: Router
   ) {
     NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
     const settings = { timestampsInSnapshots: true };
     firestore.firestore.settings(settings);
 
     this.accountHttp = new AccountHttp(nodes);
-    this.mosaicHttp = new MosaicHttp(nodes);
+    this.assetHttp = new AssetHttp(nodes);
     this.transactionHttp = new TransactionHttp(nodes);
     this.namespaceHttp = new NamespaceHttp(nodes);
 
     this.lang = window.navigator.language.substr(0, 2) == "ja" ? "ja" : "en";
+  }
+
+  public back() {
+    if (history.length > 1) {
+      history.back();
+      return;
+    }
+    this.router.navigate([""]);
   }
 
   public async login() {
@@ -78,12 +91,7 @@ export class GlobalDataService {
     await this.firestore.collection("users").doc(uid).set({
       wallet: wallet.writeWLTFile(),
       name: this.auth.auth.currentUser!.displayName,
-      nem: wallet.address.plain(),
-      createdAt: Date.now()
-    });
-
-    await this.firestore.collection("users").doc(uid).collection("secrets").ref.add({
-      password: uid
+      nem: wallet.address.plain()
     });
   }
 
@@ -91,27 +99,24 @@ export class GlobalDataService {
     if (this.initialized) {
       return;
     }
-    this.photoUrl = this.auth.auth.currentUser!.photoURL!;
+    this.account.photoUrl = this.auth.auth.currentUser!.photoURL!;
 
     let uid = this.auth.auth.currentUser!.uid;
     let user = await this.firestore.collection("users").doc(uid).ref.get();
 
     if (!user.exists) {
       let password = new Password(uid);
-      let wallet = SimpleWallet.create(uid, password);
+      this.account.wallet = SimpleWallet.create(uid, password);
+      this.account.nem = this.account.wallet.address;
 
-      await this.createFirestoreDocument(uid, wallet);
-      this.account = wallet.open(password);
+      await this.createFirestoreDocument(uid, this.account.wallet);
     } else {
       let userData = user.data() as User;
-      let wallet = SimpleWallet.readFromWLT(userData.wallet);
-      if(!userData.name) {
-        await this.createFirestoreDocument(uid, wallet);
+      this.account.wallet = SimpleWallet.readFromWLT(userData.wallet);
+      this.account.nem = this.account.wallet.address;
+      if (!userData.name) {
+        await this.createFirestoreDocument(uid, this.account.wallet);
       }
-
-      let secrets = await this.firestore.collection("users").doc(uid).collection("secrets").ref.get();
-      let secret = secrets.docs[0].data();
-      this.account = wallet.open(new Password(secret.password));
     }
 
     await this.refresh();
@@ -120,28 +125,34 @@ export class GlobalDataService {
   }
 
   public async refresh() {
-    this.additionalDefinitions = await this.http.get<{ [key: string]: MosaicAdditionalDefinition }>('assets/data/list.json').toPromise();
+    this.account.assets = [];
+    let assets = await this.accountHttp.getAssetsOwnedByAddress(this.account.nem).toPromise();
 
-    this.mosaics = await this.accountHttp.getMosaicOwnedByAddress(this.account!.address).toPromise().catch(() => { throw new Error() });
-    this.definitions = {};
-    this.definitions["nem:xem"] = {
-      creator: new PublicAccount(),
-      id: XEM.MOSAICID,
-      description: "",
-      properties: {
-        divisibility: XEM.DIVISIBILITY,
-        initialSupply: XEM.INITIALSUPPLY,
-        supplyMutable: XEM.SUPPLYMUTABLE,
-        transferable: XEM.TRANSFERABLE
-      }
-    };
+    for (let asset of assets) {
+      let name = asset.assetId.namespaceId + ":" + asset.assetId.name;
 
-    for (let i = 0; i < this.mosaics!.length; i++) {
-      if (this.mosaics![i].mosaicId.namespaceId == "nem") {
-        continue;
+      let definition: AssetDefinition;
+      if (asset.assetId.namespaceId == "nem") {
+        definition = {
+          creator: new PublicAccount(),
+          id: XEM.MOSAICID,
+          description: "",
+          properties: {
+            divisibility: XEM.DIVISIBILITY,
+            initialSupply: XEM.INITIALSUPPLY,
+            supplyMutable: XEM.SUPPLYMUTABLE,
+            transferable: XEM.TRANSFERABLE
+          }
+        }
+      } else {
+        definition = await this.assetHttp.getAssetDefinition(asset.assetId).toPromise();
       }
-      let d = await this.mosaicHttp.getMosaicDefinition(this.mosaics![i].mosaicId).toPromise().catch(() => { throw new Error() });
-      this.definitions![d.id.namespaceId + ":" + d.id.name] = d;
+
+      this.account.assets.push({
+        name: name,
+        asset: asset,
+        definition: definition
+      })
     }
   }
 }

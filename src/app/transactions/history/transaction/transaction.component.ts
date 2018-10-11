@@ -2,17 +2,18 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import {
   Address,
-  EncryptedMessage,
   Transaction,
   TransactionTypes,
   TransferTransaction,
   MultisigTransaction,
   PlainMessage,
-  Mosaic,
+  Asset,
   XEM,
-  MosaicId
+  AssetId,
+  Password
 } from 'nem-library';
 import { GlobalDataService } from '../../../services/global-data.service';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-transaction',
@@ -25,13 +26,16 @@ export class TransactionComponent implements OnInit {
   public loading = true;
 
   public address?: string;
-  public mosaics?: Mosaic[];
+  public assets?: Asset[];
   public message?: string;
   public date?: any;
   public time?: any;
   public received = true;
 
-  constructor(public global: GlobalDataService) { }
+  constructor(
+    public global: GlobalDataService,
+    private auth: AngularFireAuth
+  ) { }
 
   ngOnInit() {
     if(!this.transaction) {
@@ -48,8 +52,10 @@ export class TransactionComponent implements OnInit {
   }
 
   public async set(transferTransaction: TransferTransaction) {
-    let account = this.global.account!;
-    if (account!.address.plain() == transferTransaction.recipient.plain()) {
+    let password = new Password(this.auth.auth.currentUser!.uid);
+    let account = this.global.account.wallet.open(password);
+
+    if (account.address.plain() == transferTransaction.recipient.plain()) {
       this.address = transferTransaction.signer!.address.pretty();
     } else {
       this.address = transferTransaction.recipient.pretty();
@@ -71,9 +77,9 @@ export class TransactionComponent implements OnInit {
     this.message = message;
 
     if (transferTransaction.containsMosaics()) {
-      this.mosaics = transferTransaction.mosaics();
+      this.assets = transferTransaction.mosaics();
     } else {
-      this.mosaics = [new Mosaic(new MosaicId("nem", "xem"), transferTransaction.xem().quantity)];
+      this.assets = [new Asset(new AssetId("nem", "xem"), transferTransaction.xem().quantity)];
     }
 
     this.date = transferTransaction.timeWindow.timeStamp.toLocalDate();
@@ -83,13 +89,13 @@ export class TransactionComponent implements OnInit {
   }
 
   public translation = {
-    mosaics: {
+    assets: {
       en: "Assets",
       ja: "アセット"
-    },
+    } as any,
     unconfirmed: {
       en: "This transaction is not confirmed by the blockchain yet.",
       ja: "この取引はまだブロックチェーンに承認されていません"
-    }
-  } as { [key: string]: { [key: string]: string } };
+    } as any
+  };
 }

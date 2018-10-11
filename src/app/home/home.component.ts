@@ -4,6 +4,8 @@ import { GlobalDataService } from '../services/global-data.service';
 import { Invoice } from '../../models/invoice';
 import { MatDialog } from '@angular/material';
 import { AlertDialogComponent } from '../components/alert-dialog/alert-dialog.component';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { Asset } from 'nem-library';
 
 @Component({
   selector: 'app-home',
@@ -13,27 +15,34 @@ import { AlertDialogComponent } from '../components/alert-dialog/alert-dialog.co
 export class HomeComponent implements OnInit {
   public loading = true;
   public qrUrl = "";
-
+  public assets: Asset[] = [];
 
   constructor(
     public global: GlobalDataService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private auth: AngularFireAuth
   ) { }
 
   ngOnInit() {
-    this.global.auth.authState.subscribe((user) => {
+    this.auth.authState.subscribe(async (user) => {
       if (user == null) {
         this.router.navigate(["accounts", "login"]);
         return;
       }
-      this.global.initialize().then(() => {
-        let invoice = new Invoice();
-        invoice.data.addr = this.global.account!.address.plain();
-        this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
-        this.loading = false;
-      });
+      await this.global.initialize();
+      await this.initialize();
+
+      this.loading = false;
     });
+  }
+
+  public async initialize() {
+    let invoice = new Invoice();
+    invoice.data.addr = this.global.account.nem.plain();
+    this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
+
+    this.assets = this.global.account.assets.map(a => a.asset);
   }
   
   public async logout() {
@@ -50,7 +59,10 @@ export class HomeComponent implements OnInit {
 
   public async refresh() {
     this.loading = true;
+    
     await this.global.refresh();
+    await this.initialize();
+
     this.loading = false;
   }
 
@@ -72,50 +84,54 @@ export class HomeComponent implements OnInit {
     balance: {
       en: "Balance",
       ja: "残高"
-    },
-    deposit: {
-      en: "Deposit",
-      ja: "入金"
-    },
-    history: {
-      en: "History",
-      ja: "履歴"
-    },
+    } as any,
     language: {
       en: "Language",
       ja: "言語"
-    },
+    } as any,
     logout: {
       en: "Log out",
       ja: "ログアウト"
-    },
+    } as any,
+    transfer: {
+      en: "Transfer",
+      ja: "送信"
+    } as any,
     scan: {
       en: "Scan QR-code",
       ja: "QRコードをスキャン"
-    },
+    } as any,
+    history: {
+      en: "History",
+      ja: "履歴"
+    } as any,
+    deposit: {
+      en: "Deposit",
+      ja: "入金"
+    } as any,
     withdraw: {
       en: "Withdraw",
       ja: "出金"
-    },
+    } as any,
     yourAddress: {
       en: "Your address",
       ja: "あなたのアドレス"
-    },
+    } as any,
     terms: {
       en: "Terms of Service",
       ja: "利用規約"
-    },
+    } as any,
     completed: {
       en: "Successfully logged out",
       ja: "正常にログアウトしました。"
-    },
+    } as any,
     copy: {
       en: "Copy this Address",
       ja: "アドレスをコピーする"
-    },
+    } as any,
     contacts: {
       en: "Address book",
       ja: "アドレス帳"
-    }
-  } as { [key: string]: { [key: string]: string } };
+    } as any
+  };
 }

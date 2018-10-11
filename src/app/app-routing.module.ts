@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './accounts/login/login.component';
-import { SignComponent } from './accounts/sign/sign.component';
 import { HistoryComponent } from './transactions/history/history.component';
 import { ScanComponent } from './transactions/scan/scan.component';
 import { TransferComponent } from './transactions/transfer/transfer.component';
@@ -18,7 +17,6 @@ const routes: Routes = [
   { path: "accounts/login", component: LoginComponent },
   { path: "accounts/deposit", component: DepositComponent },
   { path: "accounts/withdraw", component: WithdrawComponent },
-  { path: "accounts/sign", component: SignComponent },
   { path: "accounts/contacts", component: ContactsComponent },
   { path: "transactions/history", component: HistoryComponent },
   { path: "transactions/scan", component: ScanComponent },
@@ -28,7 +26,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true })],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

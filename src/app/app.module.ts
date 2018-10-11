@@ -38,14 +38,13 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './accounts/login/login.component';
-import { SignComponent } from './accounts/sign/sign.component';
 import { HistoryComponent } from './transactions/history/history.component';
 import { TransactionComponent } from './transactions/history/transaction/transaction.component';
 import { ScanComponent } from './transactions/scan/scan.component';
 import { TransferComponent } from './transactions/transfer/transfer.component';
 import { PageNotFoundComponent } from './error/page-not-found/page-not-found.component';
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
-import { MosaicListComponent } from './components/mosaic-list/mosaic-list.component';
+import { AssetsListComponent } from './components/assets-list/assets-list.component';
 import { DepositComponent } from './accounts/deposit/deposit.component';
 import { TermsComponent } from './accounts/terms/terms.component';
 import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
@@ -53,7 +52,6 @@ import { ContactsComponent } from './accounts/contacts/contacts.component';
 import { AlertDialogComponent } from './components/alert-dialog/alert-dialog.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
-import { AssetsDialogComponent } from './transactions/transfer/assets-dialog/assets-dialog.component';
 import { TransferDialogComponent } from './transactions/transfer/transfer-dialog/transfer-dialog.component';
 
 @NgModule({
@@ -61,14 +59,13 @@ import { TransferDialogComponent } from './transactions/transfer/transfer-dialog
     AppComponent,
     HomeComponent,
     LoginComponent,
-    SignComponent,
     HistoryComponent,
     TransactionComponent,
     ScanComponent,
     TransferComponent,
     PageNotFoundComponent,
     LoadingDialogComponent,
-    MosaicListComponent,
+    AssetsListComponent,
     DepositComponent,
     TermsComponent,
     WithdrawComponent,
@@ -76,7 +73,6 @@ import { TransferDialogComponent } from './transactions/transfer/transfer-dialog
     AlertDialogComponent,
     ConfirmDialogComponent,
     PromptDialogComponent,
-    AssetsDialogComponent,
     TransferDialogComponent
   ],
   imports: [
@@ -114,7 +110,6 @@ import { TransferDialogComponent } from './transactions/transfer/transfer-dialog
     AlertDialogComponent,
     ConfirmDialogComponent,
     PromptDialogComponent,
-    AssetsDialogComponent,
     TransferDialogComponent
   ],
   providers: [],

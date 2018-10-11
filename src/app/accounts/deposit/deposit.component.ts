@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { supportedCurrencies } from '../../../models/supported-currencies';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 declare let Stripe: any;
 
@@ -35,20 +36,20 @@ export class DepositComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private http: HttpClient,
+    private auth: AngularFireAuth,
     sanitizer: DomSanitizer
   ) {
     this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${global.lang}.txt`);
   }
 
   ngOnInit() {
-    this.global.auth.authState.subscribe((user) => {
+    this.auth.authState.subscribe(async (user) => {
       if (user == null) {
         this.router.navigate(["/accounts/login"]);
         return;
       }
-      this.global.initialize().then(() => {
-        this.address = this.global.account!.address.plain();
-      });
+      await this.global.initialize();
+      this.address = this.global.account!.nem.plain();
     });
   }
 
@@ -57,9 +58,9 @@ export class DepositComponent implements OnInit {
 
     try {
       await this.http.post(
-        "https://us-central1-lcnem-wallet.cloudfunctions.net/deposit",
+        "/api/v1/deposit",
         {
-          email: this.global.auth.auth.currentUser!.email,
+          email: this.auth.auth.currentUser!.email,
           nem: this.address,
           currency: this.selectedCurrency,
           amount: this.amount,
@@ -82,52 +83,52 @@ export class DepositComponent implements OnInit {
       dialogRef.close();
     }
 
-    this.dialog.open(AlertDialogComponent, {
+    await this.dialog.open(AlertDialogComponent, {
       data: {
         title: this.translation.completed[this.global.lang],
         content: this.translation.following[this.global.lang]
       }
-    }).afterClosed().subscribe(() => {
-      this.router.navigate(["/"]);
-    });
+    }).afterClosed().toPromise();
+    
+    this.router.navigate(["/"]);
   }
 
   public translation = {
     amount: {
       en: "Amount",
       ja: "金額"
-    },
+    } as any,
     currency: {
       en: "Currency",
       ja: "通貨"
-    },
+    } as any,
     error: {
       en: "Error",
       ja: "エラー"
-    },
+    } as any,
     completed: {
       en: "Completed",
       ja: "完了"
-    },
+    } as any,
     following: {
       en: "Please wait for an email.",
       ja: "メールをお送りしますので少々お待ちください。"
-    },
+    } as any,
     deposit: {
       en: "Deposit",
       ja: "入金"
-    },
+    } as any,
     method: {
       en: "Method",
       ja: "方法"
-    },
+    } as any,
     paypal: {
       en: "Paypal",
       ja: "Paypal"
-    },
+    } as any,
     address: {
       en: "Address",
       ja: "アドレス"
-    }
-  } as { [key: string]: { [key: string]: string } };
+    } as any
+  };
 }
