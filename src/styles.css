@@ -42,3 +42,11 @@ mat-spinner {
   line-height: 40px;
   border-radius: 50%;
 }
+
+.mat-fab.floating-action-button {
+  position: -webkit-sticky;
+  position: sticky;
+  left: 16px;
+  bottom: 16px;
+  z-index: 1;
+}

@@ -2,14 +2,6 @@
   text-align: center;
 }
 
-.transfer-button {
-  position: -webkit-sticky;
-  position: sticky;
-  left: 16px;
-  bottom: 16px;
-  z-index: 1;
-}
-
 .qr {
   display: block;
   margin: 0 auto;
