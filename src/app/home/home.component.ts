@@ -85,14 +85,6 @@ export class HomeComponent implements OnInit {
       en: "Balance",
       ja: "残高"
     } as any,
-    deposit: {
-      en: "Deposit",
-      ja: "入金"
-    } as any,
-    history: {
-      en: "History",
-      ja: "履歴"
-    } as any,
     language: {
       en: "Language",
       ja: "言語"
@@ -101,9 +93,21 @@ export class HomeComponent implements OnInit {
       en: "Log out",
       ja: "ログアウト"
     } as any,
+    transfer: {
+      en: "Transfer",
+      ja: "送信"
+    } as any,
     scan: {
       en: "Scan QR-code",
       ja: "QRコードをスキャン"
+    } as any,
+    history: {
+      en: "History",
+      ja: "履歴"
+    } as any,
+    deposit: {
+      en: "Deposit",
+      ja: "入金"
     } as any,
     withdraw: {
       en: "Withdraw",
