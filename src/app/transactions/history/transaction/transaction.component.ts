@@ -2,7 +2,6 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import {
   Address,
-  EncryptedMessage,
   Transaction,
   TransactionTypes,
   TransferTransaction,
@@ -10,9 +9,11 @@ import {
   PlainMessage,
   Asset,
   XEM,
-  AssetId
+  AssetId,
+  Password
 } from 'nem-library';
 import { GlobalDataService } from '../../../services/global-data.service';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-transaction',
@@ -31,7 +32,10 @@ export class TransactionComponent implements OnInit {
   public time?: any;
   public received = true;
 
-  constructor(public global: GlobalDataService) { }
+  constructor(
+    public global: GlobalDataService,
+    private auth: AngularFireAuth
+  ) { }
 
   ngOnInit() {
     if(!this.transaction) {
@@ -48,8 +52,10 @@ export class TransactionComponent implements OnInit {
   }
 
   public async set(transferTransaction: TransferTransaction) {
-    let account = this.global.account!;
-    if (account!.address.plain() == transferTransaction.recipient.plain()) {
+    let password = new Password(this.auth.auth.currentUser!.uid);
+    let account = this.global.account.wallet.open(password);
+
+    if (account.address.plain() == transferTransaction.recipient.plain()) {
       this.address = transferTransaction.signer!.address.pretty();
     } else {
       this.address = transferTransaction.recipient.pretty();

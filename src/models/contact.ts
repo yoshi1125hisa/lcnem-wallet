@@ -1,6 +1,4 @@
-import { firestore } from 'firebase';
-
 export interface Contact {
-  userId: string,
-  createdAt: firestore.Timestamp
+  name: string,
+  nem: string
 }

@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 
-import { HttpClient } from '@angular/common/http';
-
 import * as firebase from 'firebase';
 import 'firebase/auth'
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -19,9 +17,9 @@ import {
   AssetDefinition,
   NetworkTypes,
   XEM,
-  PublicAccount
+  PublicAccount,
+  Address
 } from 'nem-library';
-import { AssetAdditionalDefinition } from '../../models/asset-additional-definition';
 import { nodes } from '../../models/nodes';
 import { User } from '../../models/user';
 import { Router } from '@angular/router';
@@ -34,13 +32,19 @@ export class GlobalDataService {
 
   public lang = "en";
 
-  public photoUrl = "";
-
-  public account?: Account;
-
-  public definitions?: { [key: string]: AssetDefinition };
-  public additionalDefinitions?: { [key: string]: AssetAdditionalDefinition };
-  public assets?: Asset[];
+  public account: {
+    photoUrl: string,
+    wallet: SimpleWallet,
+    nem: Address,
+    assets: {
+      name: string,
+      asset: Asset,
+      definition: AssetDefinition
+    }[]
+  } = {
+    photoUrl: "",
+    assets: []
+  } as any;
 
   public accountHttp: AccountHttp;
   public assetHttp: AssetHttp;
@@ -50,9 +54,8 @@ export class GlobalDataService {
   public buffer: any;
 
   constructor(
-    public auth: AngularFireAuth,
-    public firestore: AngularFirestore,
-    private http: HttpClient,
+    private auth: AngularFireAuth,
+    private firestore: AngularFirestore,
     private router: Router
   ) {
     NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
@@ -88,12 +91,7 @@ export class GlobalDataService {
     await this.firestore.collection("users").doc(uid).set({
       wallet: wallet.writeWLTFile(),
       name: this.auth.auth.currentUser!.displayName,
-      nem: wallet.address.plain(),
-      createdAt: Date.now()
-    });
-
-    await this.firestore.collection("users").doc(uid).collection("secrets").ref.add({
-      password: uid
+      nem: wallet.address.plain()
     });
   }
 
@@ -101,27 +99,24 @@ export class GlobalDataService {
     if (this.initialized) {
       return;
     }
-    this.photoUrl = this.auth.auth.currentUser!.photoURL!;
+    this.account.photoUrl = this.auth.auth.currentUser!.photoURL!;
 
     let uid = this.auth.auth.currentUser!.uid;
     let user = await this.firestore.collection("users").doc(uid).ref.get();
 
     if (!user.exists) {
       let password = new Password(uid);
-      let wallet = SimpleWallet.create(uid, password);
+      this.account.wallet = SimpleWallet.create(uid, password);
+      this.account.nem = this.account.wallet.address;
 
-      await this.createFirestoreDocument(uid, wallet);
-      this.account = wallet.open(password);
+      await this.createFirestoreDocument(uid, this.account.wallet);
     } else {
       let userData = user.data() as User;
-      let wallet = SimpleWallet.readFromWLT(userData.wallet);
-      if(!userData.name) {
-        await this.createFirestoreDocument(uid, wallet);
+      this.account.wallet = SimpleWallet.readFromWLT(userData.wallet);
+      this.account.nem = this.account.wallet.address;
+      if (!userData.name) {
+        await this.createFirestoreDocument(uid, this.account.wallet);
       }
-
-      let secrets = await this.firestore.collection("users").doc(uid).collection("secrets").ref.get();
-      let secret = secrets.docs[0].data();
-      this.account = wallet.open(new Password(secret.password));
     }
 
     await this.refresh();
@@ -130,28 +125,34 @@ export class GlobalDataService {
   }
 
   public async refresh() {
-    this.additionalDefinitions = await this.http.get<{ [key: string]: AssetAdditionalDefinition }>('assets/data/list.json').toPromise();
+    this.account.assets = [];
+    let assets = await this.accountHttp.getAssetsOwnedByAddress(this.account.nem).toPromise();
 
-    this.assets = await this.accountHttp.getAssetsOwnedByAddress(this.account!.address).toPromise().catch(() => { throw new Error() });
-    this.definitions = {};
-    this.definitions["nem:xem"] = {
-      creator: new PublicAccount(),
-      id: XEM.MOSAICID,
-      description: "",
-      properties: {
-        divisibility: XEM.DIVISIBILITY,
-        initialSupply: XEM.INITIALSUPPLY,
-        supplyMutable: XEM.SUPPLYMUTABLE,
-        transferable: XEM.TRANSFERABLE
-      }
-    };
+    for (let asset of assets) {
+      let name = asset.assetId.namespaceId + ":" + asset.assetId.name;
 
-    for (let i = 0; i < this.assets!.length; i++) {
-      if (this.assets![i].assetId.namespaceId == "nem") {
-        continue;
+      let definition: AssetDefinition;
+      if (asset.assetId.namespaceId == "nem") {
+        definition = {
+          creator: new PublicAccount(),
+          id: XEM.MOSAICID,
+          description: "",
+          properties: {
+            divisibility: XEM.DIVISIBILITY,
+            initialSupply: XEM.INITIALSUPPLY,
+            supplyMutable: XEM.SUPPLYMUTABLE,
+            transferable: XEM.TRANSFERABLE
+          }
+        }
+      } else {
+        definition = await this.assetHttp.getAssetDefinition(asset.assetId).toPromise();
       }
-      let d = await this.assetHttp.getAssetDefinition(this.assets![i].assetId).toPromise().catch(() => { throw new Error() });
-      this.definitions![d.id.namespaceId + ":" + d.id.name] = d;
+
+      this.account.assets.push({
+        name: name,
+        asset: asset,
+        definition: definition
+      })
     }
   }
 }

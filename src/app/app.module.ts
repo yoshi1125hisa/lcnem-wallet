@@ -52,7 +52,6 @@ import { ContactsComponent } from './accounts/contacts/contacts.component';
 import { AlertDialogComponent } from './components/alert-dialog/alert-dialog.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
-import { AssetsDialogComponent } from './transactions/transfer/assets-dialog/assets-dialog.component';
 import { TransferDialogComponent } from './transactions/transfer/transfer-dialog/transfer-dialog.component';
 
 @NgModule({
@@ -74,7 +73,6 @@ import { TransferDialogComponent } from './transactions/transfer/transfer-dialog
     AlertDialogComponent,
     ConfirmDialogComponent,
     PromptDialogComponent,
-    AssetsDialogComponent,
     TransferDialogComponent
   ],
   imports: [
@@ -112,7 +110,6 @@ import { TransferDialogComponent } from './transactions/transfer/transfer-dialog
     AlertDialogComponent,
     ConfirmDialogComponent,
     PromptDialogComponent,
-    AssetsDialogComponent,
     TransferDialogComponent
   ],
   providers: [],

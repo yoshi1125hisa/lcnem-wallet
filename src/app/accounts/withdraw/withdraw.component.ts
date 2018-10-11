@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-withdraw',
@@ -28,19 +29,19 @@ export class WithdrawComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private http: HttpClient,
+    private auth: AngularFireAuth,
     sanitizer: DomSanitizer
   ) {
     this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${global.lang}.txt`);
   }
 
   ngOnInit() {
-    this.global.auth.authState.subscribe((user) => {
+    this.auth.authState.subscribe(async (user) => {
       if (user == null) {
         this.router.navigate(["/accounts/login"]);
         return;
       }
-      this.global.initialize().then(() => {
-      });
+      await this.global.initialize();
     });
   }
 
@@ -51,8 +52,8 @@ export class WithdrawComponent implements OnInit {
       await this.http.post(
         "https://us-central1-lcnem-wallet.cloudfunctions.net/withdraw",
         {
-          email: this.global.auth.auth.currentUser!.email,
-          nem: this.global.account!.address.plain(),
+          email: this.auth.auth.currentUser!.email,
+          nem: this.global.account!.nem.plain(),
           currency: this.selectedCurrency,
           amount: this.amount,
           method: this.method,
@@ -71,14 +72,14 @@ export class WithdrawComponent implements OnInit {
       dialogRef.close();
     }
 
-    this.dialog.open(AlertDialogComponent, {
+    await this.dialog.open(AlertDialogComponent, {
       data: {
         title: this.translation.completed[this.global.lang],
         content: this.translation.following[this.global.lang]
       }
-    }).afterClosed().subscribe(() => {
-      this.router.navigate(["/"]);
-    });
+    }).afterClosed().toPromise();
+    
+    this.router.navigate(["/"]);
   }
 
   public translation = {

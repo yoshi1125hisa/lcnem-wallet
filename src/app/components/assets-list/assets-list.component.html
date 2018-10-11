@@ -1,9 +1,8 @@
 <mat-list>
-  <h3 mat-subheader>{{title}}</h3>
   <mat-divider></mat-divider>
   <ng-container *ngFor="let asset of _assets">
     <mat-list-item matTooltip="{{asset.name}}">
-      <div mat-list-icon class="background-contain" [ngStyle]="{'background-image': 'url(' + asset.imageUrl + ')'}"></div>
+      <img mat-list-icon src="{{asset.imageUrl}}" />
       <span mat-line>{{asset.name}}</span>
       <small mat-line>{{asset.issuer}}</small>
       <span class="fill-remaining-space"></span>
