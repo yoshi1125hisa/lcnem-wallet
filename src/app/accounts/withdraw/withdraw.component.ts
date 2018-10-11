@@ -50,7 +50,7 @@ export class WithdrawComponent implements OnInit {
 
     try {
       await this.http.post(
-        "https://us-central1-lcnem-wallet.cloudfunctions.net/withdraw",
+        "/api/v1/withdraw",
         {
           email: this.auth.auth.currentUser!.email,
           nem: this.global.account!.nem.plain(),

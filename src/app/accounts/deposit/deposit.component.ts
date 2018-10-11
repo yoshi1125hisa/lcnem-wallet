@@ -58,7 +58,7 @@ export class DepositComponent implements OnInit {
 
     try {
       await this.http.post(
-        "https://us-central1-lcnem-wallet.cloudfunctions.net/deposit",
+        "/api/v1/deposit",
         {
           email: this.auth.auth.currentUser!.email,
           nem: this.address,

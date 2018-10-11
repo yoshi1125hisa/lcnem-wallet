@@ -109,8 +109,8 @@ export class TransferComponent implements OnInit {
     let resolved = "";
     try {
       let result = await this.global.namespaceHttp.getNamespace(this.forms.recipient).toPromise();
-      resolved = result.owner.pretty();
-      this.autoCompletes = [resolved];
+      resolved = result.owner.plain();
+      this.autoCompletes = [this.forms.recipient.replace("-", ""), resolved];
     } catch {
 
     }
