@@ -217,8 +217,8 @@ export class TransferComponent implements OnInit {
       ja: "NEMアドレス"
     } as any,
     addressRequired: {
-      en: "An address is required.",
-      ja: "アドレスを入力してください。"
+      en: "An address without hyphen is required.",
+      ja: "アドレスをハイフンなしで入力してください。NEMネームスペースを入力することもできます。"
     } as any,
     namespace: {
       en: "NEM namespace",
