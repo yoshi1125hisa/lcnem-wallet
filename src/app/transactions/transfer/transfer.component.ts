@@ -16,7 +16,8 @@ import {
   AssetTransferable,
   XEM,
   EmptyMessage,
-  Password
+  Password,
+  AssetLevyType
 } from 'nem-library';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
@@ -154,12 +155,24 @@ export class TransferComponent implements OnInit {
       }
     }
 
+    let levy: Asset[] = [];
+
     let transferMosaics: AssetTransferable[] = this.forms.transferAssets.filter(asset => asset.name).map(asset => {
       if (asset.name == "nem:xem") {
         return new XEM(asset.amount!);
       }
       let definition = this.global.account.assets.find(a => a.asset.assetId.namespaceId + ":" + a.asset.assetId.name == asset.name)!.definition;
+
       let absolute = asset.amount! * Math.pow(10, definition.properties.divisibility);
+      
+      if(definition.levy) {
+        if(definition.levy.type == AssetLevyType.Absolute) {
+          levy.push(new Asset(definition.levy.assetId, definition.levy.fee));
+        } else if(definition.levy.type == AssetLevyType.Percentil) {
+          levy.push(new Asset(definition.levy.assetId, definition.levy.fee * absolute / 10000));
+        }
+      }
+
       return AssetTransferable.createWithAssetDefinition(definition, absolute);
     });
 
@@ -173,7 +186,8 @@ export class TransferComponent implements OnInit {
     let result = await this.dialog.open(TransferDialogComponent, {
       data: {
         transaction: transaction,
-        message: this.forms.message
+        message: this.forms.message,
+        levy: levy
       }
     }).afterClosed().toPromise();
     if (!result) {
