@@ -11,17 +11,20 @@ import { GlobalDataService } from '../../../services/global-data.service';
 export class TransferDialogComponent {
   public transaction: TransferTransaction;
   public assets: Asset[];
+  public levy: Asset[];
   public Math = Math;
 
   constructor(
     public global: GlobalDataService,
     @Inject(MAT_DIALOG_DATA) public data: {
       transaction: TransferTransaction
-      message: string
+      message: string,
+      levy: Asset[]
     }
   ) {
     this.transaction = data.transaction as TransferTransaction;
     this.assets = this.transaction.mosaics();
+    this.levy = data.levy;
   }
 
   public translation = {
@@ -44,6 +47,10 @@ export class TransferDialogComponent {
     message: {
       en: "Message",
       ja: "メッセージ"
+    } as any,
+    levy: {
+      en: "Levy",
+      ja: "徴収"
     } as any
   };
 }

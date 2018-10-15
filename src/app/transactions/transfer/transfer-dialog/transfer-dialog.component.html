@@ -27,6 +27,7 @@
       <p class="message">{{data.message}}</p>
     </ng-container>
   </mat-list>
+  <app-assets-list [title]="translation.levy[global.lang]" [assets]="levy" *ngIf="levy && levy.length"></app-assets-list>
 </mat-dialog-content>
 <mat-dialog-actions>
   <span class="fill-remaining-space"></span>
