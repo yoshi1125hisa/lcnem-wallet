@@ -16,6 +16,7 @@ export class HomeComponent implements OnInit {
   public loading = true;
   public qrUrl = "";
   public assets: Asset[] = [];
+  public progress = 0;
 
   constructor(
     public global: GlobalDataService,
@@ -30,10 +31,7 @@ export class HomeComponent implements OnInit {
         this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.initialize();
-      await this.initialize();
-
-      this.loading = false;
+      await this.refresh();
     });
   }
 
@@ -60,10 +58,14 @@ export class HomeComponent implements OnInit {
   public async refresh() {
     this.loading = true;
 
+    this.progress = 20;
     await this.global.refresh();
+    this.progress = 60;
     await this.initialize();
+    this.progress = 100;
 
     this.loading = false;
+    this.progress = 0;
   }
 
   copyMessage(val: string) {
