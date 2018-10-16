@@ -44,7 +44,7 @@ export class HomeComponent implements OnInit {
 
     this.assets = this.global.account.assets.map(a => a.asset);
   }
-  
+
   public async logout() {
     await this.global.logout();
     this.dialog.open(AlertDialogComponent, {
@@ -59,14 +59,14 @@ export class HomeComponent implements OnInit {
 
   public async refresh() {
     this.loading = true;
-    
+
     await this.global.refresh();
     await this.initialize();
 
     this.loading = false;
   }
 
-  copyMessage(val: string){
+  copyMessage(val: string) {
     let selBox = document.createElement('textarea');
     selBox.style.position = 'fixed';
     selBox.style.left = '0';
@@ -120,6 +120,10 @@ export class HomeComponent implements OnInit {
     terms: {
       en: "Terms of Service",
       ja: "利用規約"
+    } as any,
+    privacyPolicy: {
+      en: "Privacy Policy",
+      ja: "プライバシーポリシー"
     } as any,
     completed: {
       en: "Successfully logged out",
