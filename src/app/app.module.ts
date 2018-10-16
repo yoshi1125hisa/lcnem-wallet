@@ -28,7 +28,8 @@ import {
   MatListModule,
   MatSlideToggleModule,
   MatCheckboxModule,
-  MatMenuModule
+  MatMenuModule,
+  MatProgressBarModule
 } from '@angular/material';
 
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
@@ -89,6 +90,7 @@ import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.co
     AngularFirestoreModule,
     AngularFireAuthModule,
     HttpClientModule,
+    MatProgressBarModule,
     MatButtonModule,
     MatCheckboxModule,
     MatToolbarModule,

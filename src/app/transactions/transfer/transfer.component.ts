@@ -107,11 +107,16 @@ export class TransferComponent implements OnInit {
   }
 
   public async onRecipientChange() {
-    let resolved = "";
+    if(this.forms.recipient.replace(/-/g, "").trim().toUpperCase().match(/^N[A-Z2-7]{39}$/)) {
+      this.forms.recipient = this.forms.recipient.replace(/-/g, "");
+    }
+
+    this.autoCompletes = [];
+
     try {
       let result = await this.global.namespaceHttp.getNamespace(this.forms.recipient).toPromise();
-      resolved = result.owner.plain();
-      this.autoCompletes = [this.forms.recipient.replace("-", ""), resolved];
+      let resolved = result.owner.plain();
+      this.autoCompletes.push(resolved);
     } catch {
 
     }
@@ -231,8 +236,8 @@ export class TransferComponent implements OnInit {
       ja: "NEMアドレス"
     } as any,
     addressRequired: {
-      en: "An address without hyphen is required.",
-      ja: "アドレスをハイフンなしで入力してください。NEMネームスペースを入力することもできます。"
+      en: "An address is required. You can also enter any NEM namespace.",
+      ja: "アドレスを入力してください。NEMネームスペースを入力することもできます。"
     } as any,
     namespace: {
       en: "NEM namespace",
