@@ -28,7 +28,8 @@ import {
   MatListModule,
   MatSlideToggleModule,
   MatCheckboxModule,
-  MatMenuModule
+  MatMenuModule,
+  MatProgressBarModule
 } from '@angular/material';
 
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
@@ -46,13 +47,14 @@ import { PageNotFoundComponent } from './error/page-not-found/page-not-found.com
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
 import { AssetsListComponent } from './components/assets-list/assets-list.component';
 import { DepositComponent } from './accounts/deposit/deposit.component';
-import { TermsComponent } from './accounts/terms/terms.component';
+import { TermsComponent } from './terms/terms/terms.component';
 import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
 import { ContactsComponent } from './accounts/contacts/contacts.component';
 import { AlertDialogComponent } from './components/alert-dialog/alert-dialog.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
 import { TransferDialogComponent } from './transactions/transfer/transfer-dialog/transfer-dialog.component';
+import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +75,8 @@ import { TransferDialogComponent } from './transactions/transfer/transfer-dialog
     AlertDialogComponent,
     ConfirmDialogComponent,
     PromptDialogComponent,
-    TransferDialogComponent
+    TransferDialogComponent,
+    PrivacyPolicyComponent
   ],
   imports: [
     BrowserModule,
@@ -87,6 +90,7 @@ import { TransferDialogComponent } from './transactions/transfer/transfer-dialog
     AngularFirestoreModule,
     AngularFireAuthModule,
     HttpClientModule,
+    MatProgressBarModule,
     MatButtonModule,
     MatCheckboxModule,
     MatToolbarModule,

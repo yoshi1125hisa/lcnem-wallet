@@ -16,6 +16,7 @@ export class HomeComponent implements OnInit {
   public loading = true;
   public qrUrl = "";
   public assets: Asset[] = [];
+  public progress = 0;
 
   constructor(
     public global: GlobalDataService,
@@ -30,10 +31,8 @@ export class HomeComponent implements OnInit {
         this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.initialize();
-      await this.initialize();
-
-      this.loading = false;
+      await this.global.initialize((progress) => this.progress = progress);
+      await this.refresh();
     });
   }
 
@@ -44,7 +43,7 @@ export class HomeComponent implements OnInit {
 
     this.assets = this.global.account.assets.map(a => a.asset);
   }
-  
+
   public async logout() {
     await this.global.logout();
     this.dialog.open(AlertDialogComponent, {
@@ -59,14 +58,14 @@ export class HomeComponent implements OnInit {
 
   public async refresh() {
     this.loading = true;
-    
-    await this.global.refresh();
+
+    await this.global.refresh((progress) => this.progress = progress);
     await this.initialize();
 
     this.loading = false;
   }
 
-  copyMessage(val: string){
+  copyMessage(val: string) {
     let selBox = document.createElement('textarea');
     selBox.style.position = 'fixed';
     selBox.style.left = '0';
@@ -120,6 +119,10 @@ export class HomeComponent implements OnInit {
     terms: {
       en: "Terms of Service",
       ja: "利用規約"
+    } as any,
+    privacyPolicy: {
+      en: "Privacy Policy",
+      ja: "プライバシーポリシー"
     } as any,
     completed: {
       en: "Successfully logged out",

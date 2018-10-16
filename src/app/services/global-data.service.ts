@@ -23,6 +23,8 @@ import {
 import { nodes } from '../../models/nodes';
 import { User } from '../../models/user';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
+import { AlertDialogComponent } from '../components/alert-dialog/alert-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -56,7 +58,8 @@ export class GlobalDataService {
   constructor(
     private auth: AngularFireAuth,
     private firestore: AngularFirestore,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {
     NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
     const settings = { timestampsInSnapshots: true };
@@ -95,10 +98,14 @@ export class GlobalDataService {
     });
   }
 
-  public async initialize() {
+  public async initialize(callback?: (progress: number) => void) {
     if (this.initialized) {
       return;
     }
+    if(callback) {
+      callback(0);
+    }
+
     this.account.photoUrl = this.auth.auth.currentUser!.photoURL!;
 
     let uid = this.auth.auth.currentUser!.uid;
@@ -124,35 +131,67 @@ export class GlobalDataService {
     this.initialized = true;
   }
 
-  public async refresh() {
-    this.account.assets = [];
-    let assets = await this.accountHttp.getAssetsOwnedByAddress(this.account.nem).toPromise();
-
-    for (let asset of assets) {
-      let name = asset.assetId.namespaceId + ":" + asset.assetId.name;
-
-      let definition: AssetDefinition;
-      if (asset.assetId.namespaceId == "nem") {
-        definition = {
-          creator: new PublicAccount(),
-          id: XEM.MOSAICID,
-          description: "",
-          properties: {
-            divisibility: XEM.DIVISIBILITY,
-            initialSupply: XEM.INITIALSUPPLY,
-            supplyMutable: XEM.SUPPLYMUTABLE,
-            transferable: XEM.TRANSFERABLE
+  public async refresh(callback?: (progress: number) => void) {
+    try {
+      if(callback) {
+        callback(20);
+      }
+      let assets = await this.accountHttp.getAssetsOwnedByAddress(this.account.nem).toPromise();
+      let accountAssets = [];
+  
+      if(callback) {
+        callback(40);
+      }
+  
+      for (let asset of assets) {
+        let name = asset.assetId.namespaceId + ":" + asset.assetId.name;
+  
+        let definition: AssetDefinition;
+        if (asset.assetId.namespaceId == "nem") {
+          definition = {
+            creator: new PublicAccount(),
+            id: XEM.MOSAICID,
+            description: "",
+            properties: {
+              divisibility: XEM.DIVISIBILITY,
+              initialSupply: XEM.INITIALSUPPLY,
+              supplyMutable: XEM.SUPPLYMUTABLE,
+              transferable: XEM.TRANSFERABLE
+            }
           }
+        } else {
+          definition = await this.assetHttp.getAssetDefinition(asset.assetId).toPromise();
         }
-      } else {
-        definition = await this.assetHttp.getAssetDefinition(asset.assetId).toPromise();
+  
+        accountAssets.push({
+          name: name,
+          asset: asset,
+          definition: definition
+        });
+  
+        if(callback) {
+          callback(40 + (60 / assets.length));
+        }
       }
 
-      this.account.assets.push({
-        name: name,
-        asset: asset,
-        definition: definition
-      })
+      this.account.assets = accountAssets;
+    } catch {
+      this.dialog.open(AlertDialogComponent, {
+        data: {
+          title: this.translation.error[this.lang]
+        }
+      });
+    } finally {
+      if(callback) {
+        callback(100);
+      }
     }
   }
+
+  public translation = {
+    error: {
+      en: "Error",
+      ja: "エラーが発生しました。"
+    } as any
+  };
 }

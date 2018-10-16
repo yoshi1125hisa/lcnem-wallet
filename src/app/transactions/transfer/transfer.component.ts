@@ -16,7 +16,8 @@ import {
   AssetTransferable,
   XEM,
   EmptyMessage,
-  Password
+  Password,
+  AssetLevyType
 } from 'nem-library';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
@@ -106,11 +107,16 @@ export class TransferComponent implements OnInit {
   }
 
   public async onRecipientChange() {
-    let resolved = "";
+    if(this.forms.recipient.replace(/-/g, "").trim().toUpperCase().match(/^N[A-Z2-7]{39}$/)) {
+      this.forms.recipient = this.forms.recipient.replace(/-/g, "");
+    }
+
+    this.autoCompletes = [];
+
     try {
       let result = await this.global.namespaceHttp.getNamespace(this.forms.recipient).toPromise();
-      resolved = result.owner.plain();
-      this.autoCompletes = [this.forms.recipient.replace("-", ""), resolved];
+      let resolved = result.owner.plain();
+      this.autoCompletes.push(resolved);
     } catch {
 
     }
@@ -154,12 +160,24 @@ export class TransferComponent implements OnInit {
       }
     }
 
+    let levy: Asset[] = [];
+
     let transferMosaics: AssetTransferable[] = this.forms.transferAssets.filter(asset => asset.name).map(asset => {
       if (asset.name == "nem:xem") {
         return new XEM(asset.amount!);
       }
       let definition = this.global.account.assets.find(a => a.asset.assetId.namespaceId + ":" + a.asset.assetId.name == asset.name)!.definition;
+
       let absolute = asset.amount! * Math.pow(10, definition.properties.divisibility);
+      
+      if(definition.levy) {
+        if(definition.levy.type == AssetLevyType.Absolute) {
+          levy.push(new Asset(definition.levy.assetId, definition.levy.fee));
+        } else if(definition.levy.type == AssetLevyType.Percentil) {
+          levy.push(new Asset(definition.levy.assetId, definition.levy.fee * absolute / 10000));
+        }
+      }
+
       return AssetTransferable.createWithAssetDefinition(definition, absolute);
     });
 
@@ -173,7 +191,8 @@ export class TransferComponent implements OnInit {
     let result = await this.dialog.open(TransferDialogComponent, {
       data: {
         transaction: transaction,
-        message: this.forms.message
+        message: this.forms.message,
+        levy: levy
       }
     }).afterClosed().toPromise();
     if (!result) {
@@ -217,8 +236,8 @@ export class TransferComponent implements OnInit {
       ja: "NEMアドレス"
     } as any,
     addressRequired: {
-      en: "An address without hyphen is required.",
-      ja: "アドレスをハイフンなしで入力してください。NEMネームスペースを入力することもできます。"
+      en: "An address is required. You can also enter any NEM namespace.",
+      ja: "アドレスを入力してください。NEMネームスペースを入力することもできます。"
     } as any,
     namespace: {
       en: "NEM namespace",

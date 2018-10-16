@@ -6,10 +6,11 @@ import { HistoryComponent } from './transactions/history/history.component';
 import { ScanComponent } from './transactions/scan/scan.component';
 import { TransferComponent } from './transactions/transfer/transfer.component';
 import { PageNotFoundComponent } from './error/page-not-found/page-not-found.component';
-import { TermsComponent } from './accounts/terms/terms.component';
+import { TermsComponent } from './terms/terms/terms.component';
 import { DepositComponent } from './accounts/deposit/deposit.component';
 import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
 import { ContactsComponent } from './accounts/contacts/contacts.component';
+import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.component';
 
 
 const routes: Routes = [
@@ -21,7 +22,8 @@ const routes: Routes = [
   { path: "transactions/history", component: HistoryComponent },
   { path: "transactions/scan", component: ScanComponent },
   { path: "transactions/transfer", component: TransferComponent },
-  { path: "accounts/terms", component: TermsComponent },
+  { path: "terms/terms", component: TermsComponent },
+  { path: "terms/privacy-policy", component: PrivacyPolicyComponent },
   { path: "**", component: PageNotFoundComponent }
 ];
 
