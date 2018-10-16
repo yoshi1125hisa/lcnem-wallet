@@ -72,7 +72,9 @@
         {{global.lang}}
       </button>
     </mat-toolbar>
-    <mat-progress-bar mode="determinate" value="{{progress}}"></mat-progress-bar>
+    <div [class]="progress == 100 ? 'opacity hide' : 'opacity'">
+      <mat-progress-bar mode="determinate" value="{{progress}}"></mat-progress-bar>
+    </div>
     <div class="mat-typography body-container">
       <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
       <ng-template #loaded>
