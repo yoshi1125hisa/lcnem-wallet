@@ -31,6 +31,7 @@ export class HomeComponent implements OnInit {
         this.router.navigate(["accounts", "login"]);
         return;
       }
+      await this.global.initialize((progress) => this.progress = progress);
       await this.refresh();
     });
   }
@@ -58,14 +59,10 @@ export class HomeComponent implements OnInit {
   public async refresh() {
     this.loading = true;
 
-    this.progress = 20;
-    await this.global.refresh();
-    this.progress = 60;
+    await this.global.refresh((progress) => this.progress = progress);
     await this.initialize();
-    this.progress = 100;
 
     this.loading = false;
-    this.progress = 0;
   }
 
   copyMessage(val: string) {

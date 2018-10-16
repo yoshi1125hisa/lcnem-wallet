@@ -19,7 +19,7 @@
           <mat-card>
             <mat-form-field fxFill>
               <input matInput placeholder="{{translation.recipient[global.lang]}}" [(ngModel)]="forms.recipient" name="recipient"
-                [matAutocomplete]="auto" (change)="onRecipientChange()" required minlength="40" maxlength="40" pattern="N.*">
+                [matAutocomplete]="auto" (change)="onRecipientChange()" required minlength="40" pattern="N[A-Z2-7]{39}">
               <mat-error>{{translation.addressRequired[global.lang]}}</mat-error>
             </mat-form-field>
             <mat-autocomplete #auto="matAutocomplete">
