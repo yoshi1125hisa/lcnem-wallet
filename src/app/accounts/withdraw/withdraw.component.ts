@@ -53,7 +53,7 @@ export class WithdrawComponent implements OnInit {
         "/api/v1/withdraw",
         {
           email: this.auth.auth.currentUser!.email,
-          nem: this.global.account!.nem.plain(),
+          nem: this.global.account.currentWallet.wallet.address.plain(),
           currency: this.selectedCurrency,
           amount: this.amount,
           method: this.method,

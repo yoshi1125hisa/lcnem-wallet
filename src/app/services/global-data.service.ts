@@ -25,6 +25,7 @@ import { User } from '../../models/user';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { AlertDialogComponent } from '../components/alert-dialog/alert-dialog.component';
+import { Wallet } from '../../models/wallet';
 
 @Injectable({
   providedIn: 'root'
@@ -34,19 +35,18 @@ export class GlobalDataService {
 
   public lang = "en";
 
-  public account: {
+  public account = {} as {
     photoUrl: string,
-    wallet: SimpleWallet,
-    nem: Address,
-    assets: {
-      name: string,
-      asset: Asset,
-      definition: AssetDefinition
-    }[]
-  } = {
-    photoUrl: "",
-    assets: []
-  } as any;
+    wallets: Wallet[],
+    currentWallet: {
+      wallet: SimpleWallet,
+      assets: {
+        name: string,
+        asset: Asset,
+        definition: AssetDefinition
+      }[]
+    }
+  };
 
   public accountHttp: AccountHttp;
   public assetHttp: AssetHttp;
@@ -90,20 +90,9 @@ export class GlobalDataService {
     this.initialized = false;
   }
 
-  public async createFirestoreDocument(uid: string, wallet: SimpleWallet) {
-    await this.firestore.collection("users").doc(uid).set({
-      wallet: wallet.writeWLTFile(),
-      name: this.auth.auth.currentUser!.displayName,
-      nem: wallet.address.plain()
-    });
-  }
-
-  public async initialize(callback?: (progress: number) => void) {
+  public async initialize() {
     if (this.initialized) {
       return;
-    }
-    if(callback) {
-      callback(0);
     }
 
     this.account.photoUrl = this.auth.auth.currentUser!.photoURL!;
@@ -112,40 +101,36 @@ export class GlobalDataService {
     let user = await this.firestore.collection("users").doc(uid).ref.get();
 
     if (!user.exists) {
-      let password = new Password(uid);
-      this.account.wallet = SimpleWallet.create(uid, password);
-      this.account.nem = this.account.wallet.address;
-
-      await this.createFirestoreDocument(uid, this.account.wallet);
+      await user.ref.set({
+        name: this.auth.auth.currentUser!.displayName
+      } as User);
     } else {
-      let userData = user.data() as User;
-      this.account.wallet = SimpleWallet.readFromWLT(userData.wallet);
-      this.account.nem = this.account.wallet.address;
-      if (!userData.name) {
-        await this.createFirestoreDocument(uid, this.account.wallet);
+      //legacy
+      let userData = user.data() as any;
+      if(userData.wallet) {
+        let tempWallet = SimpleWallet.readFromWLT(userData.wallet);
+        user.ref.collection("wallets").add({
+          nem: tempWallet.address.plain(),
+          wallet: userData.wallet
+        })
       }
     }
+    let wallets = await user.ref.collection("wallets").get();
+    this.account.wallets = wallets.docs.map(doc => doc.data() as Wallet);
 
     await this.refresh();
 
     this.initialized = true;
   }
 
-  public async refresh(callback?: (progress: number) => void) {
+  public async refresh() {
     try {
-      if(callback) {
-        callback(20);
-      }
-      let assets = await this.accountHttp.getAssetsOwnedByAddress(this.account.nem).toPromise();
+      let assets = await this.accountHttp.getAssetsOwnedByAddress(this.account.currentWallet.wallet.address).toPromise();
       let accountAssets = [];
-  
-      if(callback) {
-        callback(40);
-      }
-  
+
       for (let asset of assets) {
         let name = asset.assetId.namespaceId + ":" + asset.assetId.name;
-  
+
         let definition: AssetDefinition;
         if (asset.assetId.namespaceId == "nem") {
           definition = {
@@ -162,29 +147,21 @@ export class GlobalDataService {
         } else {
           definition = await this.assetHttp.getAssetDefinition(asset.assetId).toPromise();
         }
-  
+
         accountAssets.push({
           name: name,
           asset: asset,
           definition: definition
         });
-  
-        if(callback) {
-          callback(40 + (60 / assets.length));
-        }
       }
 
-      this.account.assets = accountAssets;
+      this.account.currentWallet.assets = accountAssets;
     } catch {
       this.dialog.open(AlertDialogComponent, {
         data: {
           title: this.translation.error[this.lang]
         }
       });
-    } finally {
-      if(callback) {
-        callback(100);
-      }
     }
   }
 

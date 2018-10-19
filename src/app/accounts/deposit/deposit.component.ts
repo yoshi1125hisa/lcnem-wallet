@@ -26,7 +26,6 @@ export class DepositComponent implements OnInit {
   } as { [key: string]: number };
 
   public amount?: number;
-  public address?: string;
   public method?: string;
 
   public safeSite: SafeResourceUrl;
@@ -49,7 +48,6 @@ export class DepositComponent implements OnInit {
         return;
       }
       await this.global.initialize();
-      this.address = this.global.account!.nem.plain();
     });
   }
 
@@ -61,7 +59,7 @@ export class DepositComponent implements OnInit {
         "/api/v1/deposit",
         {
           email: this.auth.auth.currentUser!.email,
-          nem: this.address,
+          nem: this.global.account.currentWallet.wallet.address.plain(),
           currency: this.selectedCurrency,
           amount: this.amount,
           method: this.method,

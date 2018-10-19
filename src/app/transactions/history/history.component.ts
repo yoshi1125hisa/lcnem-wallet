@@ -34,8 +34,8 @@ export class HistoryComponent implements OnInit {
   public async refresh() {
     this.loading = true;
 
-    let unconfirmedTransactions = await this.global.accountHttp.unconfirmedTransactions(this.global.account!.nem).toPromise();
-    let allTransactions = await this.global.accountHttp.allTransactions(this.global.account!.nem).toPromise();
+    let unconfirmedTransactions = await this.global.accountHttp.unconfirmedTransactions(this.global.account.currentWallet.wallet.address).toPromise();
+    let allTransactions = await this.global.accountHttp.allTransactions(this.global.account.currentWallet.wallet.address).toPromise();
     this.transactions = unconfirmedTransactions.concat(allTransactions);
 
     this.loading = false;

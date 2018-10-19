@@ -55,6 +55,8 @@ import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dial
 import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
 import { TransferDialogComponent } from './transactions/transfer/transfer-dialog/transfer-dialog.component';
 import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.component';
+import { PlanComponent } from './accounts/plan/plan.component';
+import { WalletsComponent } from './accounts/wallets/wallets.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +78,9 @@ import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.co
     ConfirmDialogComponent,
     PromptDialogComponent,
     TransferDialogComponent,
-    PrivacyPolicyComponent
+    PrivacyPolicyComponent,
+    WalletsComponent,
+    PlanComponent
   ],
   imports: [
     BrowserModule,

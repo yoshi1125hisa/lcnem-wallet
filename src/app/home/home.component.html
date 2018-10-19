@@ -85,8 +85,8 @@
         <br />
         <h3>{{translation.yourAddress[global.lang]}}</h3>
         <mat-card>
-          <p style="text-align: center;">{{global.account.nem.pretty()}}
-            <button mat-icon-button matTooltip="{{translation.copy[global.lang]}}" (click)="copyMessage(global.account.nem.pretty())">
+          <p style="text-align: center;">{{address}}
+            <button mat-icon-button matTooltip="{{translation.copy[global.lang]}}" (click)="copyMessage(address)">
               <mat-icon>input</mat-icon>
             </button>
           </p>

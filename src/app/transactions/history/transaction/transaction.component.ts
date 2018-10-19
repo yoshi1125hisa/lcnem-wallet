@@ -53,7 +53,7 @@ export class TransactionComponent implements OnInit {
 
   public async set(transferTransaction: TransferTransaction) {
     let password = new Password(this.auth.auth.currentUser!.uid);
-    let account = this.global.account.wallet.open(password);
+    let account = this.global.account.currentWallet.wallet.open(password);
 
     if (account.address.plain() == transferTransaction.recipient.plain()) {
       this.address = transferTransaction.signer!.address.pretty();

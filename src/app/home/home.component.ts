@@ -14,6 +14,7 @@ import { Asset } from 'nem-library';
 })
 export class HomeComponent implements OnInit {
   public loading = true;
+  public address = "";
   public qrUrl = "";
   public assets: Asset[] = [];
   public progress = 0;
@@ -31,17 +32,18 @@ export class HomeComponent implements OnInit {
         this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.initialize((progress) => this.progress = progress);
+      await this.global.initialize();
       await this.refresh();
     });
   }
 
   public async initialize() {
     let invoice = new Invoice();
-    invoice.data.addr = this.global.account.nem.plain();
+    invoice.data.addr = this.global.account.currentWallet.wallet.address.plain();
     this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
+    this.address = this.global.account.currentWallet.wallet.address.pretty();
 
-    this.assets = this.global.account.assets.map(a => a.asset);
+    this.assets = this.global.account.currentWallet.assets.map(a => a.asset);
   }
 
   public async logout() {
@@ -59,7 +61,7 @@ export class HomeComponent implements OnInit {
   public async refresh() {
     this.loading = true;
 
-    await this.global.refresh((progress) => this.progress = progress);
+    await this.global.refresh();
     await this.initialize();
 
     this.loading = false;

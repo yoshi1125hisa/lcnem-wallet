@@ -11,11 +11,15 @@ import { DepositComponent } from './accounts/deposit/deposit.component';
 import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
 import { ContactsComponent } from './accounts/contacts/contacts.component';
 import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.component';
+import { PlanComponent } from './accounts/plan/plan.component';
+import { WalletsComponent } from './accounts/wallets/wallets.component';
 
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
   { path: "accounts/login", component: LoginComponent },
+  { path: "accounts/wallets", component: WalletsComponent },
+  { path: "accounts/plan", component: PlanComponent },
   { path: "accounts/deposit", component: DepositComponent },
   { path: "accounts/withdraw", component: WithdrawComponent },
   { path: "accounts/contacts", component: ContactsComponent },
