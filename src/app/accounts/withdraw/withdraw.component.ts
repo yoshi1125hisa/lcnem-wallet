@@ -9,6 +9,7 @@ import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Address } from 'nem-library';
 
 @Component({
   selector: 'app-withdraw',
@@ -16,6 +17,8 @@ import { AngularFireAuth } from '@angular/fire/auth';
   styleUrls: ['./withdraw.component.css']
 })
 export class WithdrawComponent implements OnInit {
+  public address?: Address;
+
   public supportedCurrencies = supportedCurrencies;
   public selectedCurrency = "JPY";
 
@@ -38,10 +41,12 @@ export class WithdrawComponent implements OnInit {
   ngOnInit() {
     this.auth.authState.subscribe(async (user) => {
       if (user == null) {
-        this.router.navigate(["/accounts/login"]);
+        this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.initialize();
+      await this.global.checkRefresh();
+      
+      this.address = this.global.account.currentWallet!.wallet.address;
     });
   }
 
@@ -53,7 +58,7 @@ export class WithdrawComponent implements OnInit {
         "/api/v1/withdraw",
         {
           email: this.auth.auth.currentUser!.email,
-          nem: this.global.account.currentWallet.wallet.address.plain(),
+          nem: this.address!.plain(),
           currency: this.selectedCurrency,
           amount: this.amount,
           method: this.method,

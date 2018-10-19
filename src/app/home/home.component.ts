@@ -32,22 +32,14 @@ export class HomeComponent implements OnInit {
         this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.initialize();
       await this.refresh();
     });
   }
 
-  public async initialize() {
-    let invoice = new Invoice();
-    invoice.data.addr = this.global.account.currentWallet.wallet.address.plain();
-    this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
-    this.address = this.global.account.currentWallet.wallet.address.pretty();
-
-    this.assets = this.global.account.currentWallet.assets.map(a => a.asset);
-  }
-
   public async logout() {
-    await this.global.logout();
+    await this.auth.auth.signOut();
+    this.global.refreshed = false;
+
     this.dialog.open(AlertDialogComponent, {
       data: {
         title: this.translation.completed[this.global.lang],
@@ -61,8 +53,14 @@ export class HomeComponent implements OnInit {
   public async refresh() {
     this.loading = true;
 
-    await this.global.refresh();
-    await this.initialize();
+    await this.global.checkRefresh();
+    
+    let invoice = new Invoice();
+    invoice.data.addr = this.global.account.currentWallet!.wallet.address.plain();
+    this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
+    this.address = this.global.account.currentWallet!.wallet.address.pretty();
+
+    this.assets = this.global.account.currentWallet!.assets.map(a => a.asset);
 
     this.loading = false;
   }

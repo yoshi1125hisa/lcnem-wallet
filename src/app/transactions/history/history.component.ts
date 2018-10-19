@@ -23,10 +23,9 @@ export class HistoryComponent implements OnInit {
   ngOnInit() {
     this.auth.authState.subscribe(async (user) => {
       if (user == null) {
-        this.router.navigate(["/accounts/login"]);
+        this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.initialize();
       await this.refresh();
     });
   }
@@ -34,8 +33,12 @@ export class HistoryComponent implements OnInit {
   public async refresh() {
     this.loading = true;
 
-    let unconfirmedTransactions = await this.global.accountHttp.unconfirmedTransactions(this.global.account.currentWallet.wallet.address).toPromise();
-    let allTransactions = await this.global.accountHttp.allTransactions(this.global.account.currentWallet.wallet.address).toPromise();
+    await this.global.checkRefresh();
+
+    let currentWallet = this.global.account.currentWallet!;
+
+    let unconfirmedTransactions = await this.global.accountHttp.unconfirmedTransactions(currentWallet.wallet.address).toPromise();
+    let allTransactions = await this.global.accountHttp.allTransactions(currentWallet.wallet.address).toPromise();
     this.transactions = unconfirmedTransactions.concat(allTransactions);
 
     this.loading = false;

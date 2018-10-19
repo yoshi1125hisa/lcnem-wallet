@@ -2,8 +2,8 @@
   <mat-sidenav></mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar class="mat-elevation-z4 top-toolbar">
-      <button mat-icon-button (click)="global.back()">
-        <mat-icon>arrow_back</mat-icon>
+      <button mat-icon-button>
+        <mat-icon>wallet</mat-icon>
       </button>
       <span>{{translation.wallets[global.lang]}}</span>
       <span class="fill-remaining-space"></span>
@@ -11,6 +11,26 @@
     <div class="mat-typography body-container">
       <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
       <ng-template #loaded>
+        <div fxLayout="row" fxLayoutAlign="center">
+          <mat-card fxFlex="50">
+            <mat-nav-list>
+              <mat-divider></mat-divider>
+              <ng-container *ngFor="let wallet of wallets">
+                <mat-list-item>
+                  <mat-icon mat-list-icon>
+                    <ng-container *ngIf="wallet.wallet">cloud_done</ng-container>
+                    <ng-container *ngIf="!wallet.wallet">cloud_off</ng-container>
+                  </mat-icon>
+                  <span matLine>{{wallet.name}}</span>
+                  <span matLine>{{wallet.nem}}</span>
+                  <span class="fill-remaining-space"></span>
+                  <span></span>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+              </ng-container>
+            </mat-nav-list>
+          </mat-card>
+        </div>
       </ng-template>
     </div>
   </mat-sidenav-content>

@@ -30,13 +30,14 @@ export class ContactsComponent implements OnInit {
         this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.initialize();
       await this.refresh();
     });
   }
 
   public async refresh() {
     this.loading = true;
+
+    await this.global.checkRefresh();
 
     let contacts = await this.firestore.collection("users").doc(this.auth.auth.currentUser!.uid).collection("contacts").ref.get();
 

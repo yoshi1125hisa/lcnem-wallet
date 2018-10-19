@@ -9,6 +9,8 @@ import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { supportedCurrencies } from '../../../models/supported-currencies';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Wallet } from '../../../models/wallet';
+import { Address } from 'nem-library';
 
 declare let Stripe: any;
 
@@ -18,6 +20,8 @@ declare let Stripe: any;
   styleUrls: ['./deposit.component.css']
 })
 export class DepositComponent implements OnInit {
+  public address?: Address;
+
   public supportedCurrencies = supportedCurrencies;
   public selectedCurrency = "JPY";
 
@@ -47,7 +51,9 @@ export class DepositComponent implements OnInit {
         this.router.navigate(["/accounts/login"]);
         return;
       }
-      await this.global.initialize();
+      await this.global.checkRefresh();
+      
+      this.address = this.global.account.currentWallet!.wallet.address;
     });
   }
 
@@ -59,7 +65,7 @@ export class DepositComponent implements OnInit {
         "/api/v1/deposit",
         {
           email: this.auth.auth.currentUser!.email,
-          nem: this.global.account.currentWallet.wallet.address.plain(),
+          nem: this.address!.plain(),
           currency: this.selectedCurrency,
           amount: this.amount,
           method: this.method,
