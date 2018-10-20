@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>{{translation.create[global.lang]}}</h2>
+<mat-dialog-content>
+  <mat-radio-group [(ngModel)]="forms.local">
+    <mat-radio-button value="0">{{translation.cloud[global.lang]}}</mat-radio-button>
+    <mat-radio-button value="1">{{translation.local[global.lang]}}</mat-radio-button>
+  </mat-radio-group>
+  <mat-divider></mat-divider>
+  <mat-radio-group [(ngModel)]="forms.import">
+    <mat-radio-button value="0">{{translation.generate[global.lang]}}</mat-radio-button>
+    <mat-radio-button value="1">{{translation.import[global.lang]}}</mat-radio-button>
+  </mat-radio-group>
+  <mat-form-field fxFill *ngIf="forms.import">
+    <input matInput placeholder="{{translation.privateKey[global.lang]}}" [(ngModel)]="forms.privateKey" name="privateKey"
+      required pattern="[0-9a-f]{64}" />
+  </mat-form-field>
+  <mat-divider></mat-divider>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="fill-remaining-space"></span>
+  <button mat-raised-button mat-dialog-close color="accent">OK</button>
+</mat-dialog-actions>

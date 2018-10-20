@@ -36,14 +36,14 @@ export class GlobalDataService {
     wallets: Wallet[],
     currentWallet: {
       wallet: SimpleWallet,
-      assets: {
+      assets?: {
         name: string,
         asset: Asset,
         definition: AssetDefinition
       }[],
       refreshed: boolean
     } | null,
-    localWallets: SimpleWallet[]
+    localWallets: string[]
   } = {} as any;
 
   public accountHttp: AccountHttp;
@@ -105,25 +105,32 @@ export class GlobalDataService {
 
     let localWallet = localStorage.getItem("wallets");
     if (localWallet) {
-      let localWallets = JSON.parse(localWallet) as string[];
-      this.account.localWallets = localWallets.map(w => SimpleWallet.readFromWLT(w));
+      this.account.localWallets = JSON.parse(localWallet) as string[];
     }
 
-    let currentWallet = localStorage.getItem("currentWallet");
-    if(currentWallet) {
-      
+    let currentWallet = Number(localStorage.getItem("currentWallet"));
+    if (!Number.isNaN(currentWallet)) {
+      this.changeWallet(currentWallet);
     }
 
     this.refreshed = true;
   }
 
-  public async changeWallet() {
-    this.account.currentWallet!.refreshed = false;
+  public async changeWallet(index: number) {
+    let wallet = this.account.wallets[index].wallet;
+    if(!wallet) {
+      return;
+    }
+    this.account.currentWallet = {
+      wallet: SimpleWallet.readFromWLT(wallet),
+      refreshed: false
+    }
+    localStorage.setItem("currentWallet", index.toString());
   }
 
   public async refreshWallet() {
     let currentWallet = this.account.currentWallet;
-    if(!currentWallet) {
+    if (!currentWallet) {
       return;
     }
 
@@ -163,14 +170,14 @@ export class GlobalDataService {
   }
 
   public async checkRefresh() {
-    if(!this.refreshed) {
+    if (!this.refreshed) {
       await this.refresh();
     }
-    if(!this.account.currentWallet) {
+    if (!this.account.currentWallet) {
       this.router.navigate(["accounts", "wallets"]);
       return;
     }
-    if(!this.account.currentWallet.refreshed) {
+    if (!this.account.currentWallet.refreshed) {
       await this.refreshWallet();
     }
   }

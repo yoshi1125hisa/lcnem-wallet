@@ -29,7 +29,8 @@ import {
   MatSlideToggleModule,
   MatCheckboxModule,
   MatMenuModule,
-  MatProgressBarModule
+  MatProgressBarModule,
+  MatRadioModule
 } from '@angular/material';
 
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
@@ -57,6 +58,7 @@ import { TransferDialogComponent } from './transactions/transfer/transfer-dialog
 import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.component';
 import { PlanComponent } from './accounts/plan/plan.component';
 import { WalletsComponent } from './accounts/wallets/wallets.component';
+import { CreateDialogComponent } from './accounts/wallets/create-dialog/create-dialog.component';
 
 @NgModule({
   declarations: [
@@ -80,7 +82,8 @@ import { WalletsComponent } from './accounts/wallets/wallets.component';
     TransferDialogComponent,
     PrivacyPolicyComponent,
     WalletsComponent,
-    PlanComponent
+    PlanComponent,
+    CreateDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -111,14 +114,16 @@ import { WalletsComponent } from './accounts/wallets/wallets.component';
     MatDialogModule,
     MatListModule,
     MatSlideToggleModule,
-    MatMenuModule
+    MatMenuModule,
+    MatRadioModule
   ],
   entryComponents: [
     LoadingDialogComponent,
     AlertDialogComponent,
     ConfirmDialogComponent,
     PromptDialogComponent,
-    TransferDialogComponent
+    TransferDialogComponent,
+    CreateDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

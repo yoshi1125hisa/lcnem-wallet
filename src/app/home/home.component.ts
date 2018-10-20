@@ -54,13 +54,13 @@ export class HomeComponent implements OnInit {
     this.loading = true;
 
     await this.global.checkRefresh();
-    
+
     let invoice = new Invoice();
     invoice.data.addr = this.global.account.currentWallet!.wallet.address.plain();
     this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
     this.address = this.global.account.currentWallet!.wallet.address.pretty();
 
-    this.assets = this.global.account.currentWallet!.assets.map(a => a.asset);
+    this.assets = this.global.account.currentWallet!.assets!.map(a => a.asset);
 
     this.loading = false;
   }
@@ -87,6 +87,10 @@ export class HomeComponent implements OnInit {
     language: {
       en: "Language",
       ja: "言語"
+    } as any,
+    wallets: {
+      en: "Wallets",
+      ja: "ウォレット"
     } as any,
     logout: {
       en: "Log out",

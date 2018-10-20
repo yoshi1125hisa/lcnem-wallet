@@ -3,10 +3,21 @@
   <mat-sidenav-content>
     <mat-toolbar class="mat-elevation-z4 top-toolbar">
       <button mat-icon-button>
-        <mat-icon>wallet</mat-icon>
+        <mat-icon>account_balance_wallet</mat-icon>
       </button>
       <span>{{translation.wallets[global.lang]}}</span>
       <span class="fill-remaining-space"></span>
+      <mat-menu #langMenu="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item (click)="global.lang = 'en'">
+          English
+        </button>
+        <button mat-menu-item (click)="global.lang = 'ja'">
+          日本語
+        </button>
+      </mat-menu>
+      <button mat-icon-button [matMenuTriggerFor]="langMenu" yPosition="below">
+        {{global.lang}}
+      </button>
     </mat-toolbar>
     <div class="mat-typography body-container">
       <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
@@ -24,7 +35,19 @@
                   <span matLine>{{wallet.name}}</span>
                   <span matLine>{{wallet.nem}}</span>
                   <span class="fill-remaining-space"></span>
-                  <span></span>
+                  <span>
+                    <mat-menu #walletMenu="matMenu" [overlapTrigger]="false">
+                      <button mat-menu-item>
+                        {{translation.backup[global.lang]}}
+                      </button>
+                      <button mat-menu-item>
+                        {{translation.delete[global.lang]}}
+                      </button>
+                    </mat-menu>
+                    <button mat-icon-button>
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                  </span>
                 </mat-list-item>
                 <mat-divider></mat-divider>
               </ng-container>
