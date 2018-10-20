@@ -44,7 +44,7 @@ export class WithdrawComponent implements OnInit {
         this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.checkRefresh();
+      await this.global.refreshWallet();
       
       this.address = this.global.account.currentWallet!.wallet.address;
     });

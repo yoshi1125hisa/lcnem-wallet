@@ -48,10 +48,10 @@ export class DepositComponent implements OnInit {
   ngOnInit() {
     this.auth.authState.subscribe(async (user) => {
       if (user == null) {
-        this.router.navigate(["/accounts/login"]);
+        this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.checkRefresh();
+      await this.global.refreshWallet();
       
       this.address = this.global.account.currentWallet!.wallet.address;
     });

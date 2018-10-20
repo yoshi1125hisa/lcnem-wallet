@@ -50,10 +50,10 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  public async refresh() {
+  public async refresh(force?: boolean) {
     this.loading = true;
 
-    await this.global.checkRefresh();
+    await this.global.refreshWallet(force);
 
     let invoice = new Invoice();
     invoice.data.addr = this.global.account.currentWallet!.wallet.address.plain();

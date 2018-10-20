@@ -37,7 +37,7 @@ export class ContactsComponent implements OnInit {
   public async refresh() {
     this.loading = true;
 
-    await this.global.checkRefresh();
+    await this.global.refreshWallet();
 
     let contacts = await this.firestore.collection("users").doc(this.auth.auth.currentUser!.uid).collection("contacts").ref.get();
 

@@ -33,7 +33,7 @@ export class HistoryComponent implements OnInit {
   public async refresh() {
     this.loading = true;
 
-    await this.global.checkRefresh();
+    await this.global.refreshWallet();
 
     let currentWallet = this.global.account.currentWallet!;
 

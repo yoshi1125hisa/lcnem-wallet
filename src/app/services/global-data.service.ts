@@ -78,7 +78,10 @@ export class GlobalDataService {
     this.router.navigate([""]);
   }
 
-  public async refresh() {
+  public async refresh(force?: boolean) {
+    if (this.refreshed && !force) {
+      return;
+    }
     this.account.photoUrl = this.auth.auth.currentUser!.photoURL!;
 
     let uid = this.auth.auth.currentUser!.uid;
@@ -128,9 +131,15 @@ export class GlobalDataService {
     localStorage.setItem("currentWallet", index.toString());
   }
 
-  public async refreshWallet() {
+  public async refreshWallet(force?: boolean) {
+    await this.refresh();
+    
     let currentWallet = this.account.currentWallet;
     if (!currentWallet) {
+      this.router.navigate(["accounts", "wallets"]);
+      return;
+    }
+    if(currentWallet.refreshed && !force) {
       return;
     }
 
@@ -167,18 +176,5 @@ export class GlobalDataService {
     currentWallet.assets = accountAssets;
 
     currentWallet.refreshed = true;
-  }
-
-  public async checkRefresh() {
-    if (!this.refreshed) {
-      await this.refresh();
-    }
-    if (!this.account.currentWallet) {
-      this.router.navigate(["accounts", "wallets"]);
-      return;
-    }
-    if (!this.account.currentWallet.refreshed) {
-      await this.refreshWallet();
-    }
   }
 }

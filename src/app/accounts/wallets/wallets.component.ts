@@ -38,15 +38,14 @@ export class WalletsComponent implements OnInit {
   async refresh() {
     this.loading = true;
 
-    if(!this.global.refreshed) {
-      await this.global.refresh();
-    }
+    await this.global.refresh();
+
     this.wallets = this.global.account.wallets;
 
-    for(let localWallet of this.global.account.localWallets) {
+    for (let localWallet of this.global.account.localWallets) {
       let simpleWallet = SimpleWallet.readFromWLT(localWallet);
       let sameWallet = this.wallets.find(w => w.nem == simpleWallet.address.plain());
-      if(sameWallet) {
+      if (sameWallet) {
         sameWallet.wallet = localWallet;
       }
     }
@@ -85,6 +84,6 @@ export class WalletsComponent implements OnInit {
       en: "Delete",
       ja: "削除"
     } as any,
-    
+
   }
 }

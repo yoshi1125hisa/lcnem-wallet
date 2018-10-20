@@ -39,7 +39,7 @@ export class ScanComponent implements OnInit {
         this.router.navigate(["/login"]);
         return;
       }
-      await this.global.checkRefresh();
+      await this.global.refreshWallet();
       
       if (!this.scanner) {
         return;
