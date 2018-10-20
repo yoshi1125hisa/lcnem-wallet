@@ -6,7 +6,6 @@ import { LoadingDialogComponent } from '../../components/loading-dialog/loading-
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { HttpClient } from '@angular/common/http';
 
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { supportedCurrencies } from '../../../models/supported-currencies';
 import { AngularFireAuth } from '@angular/fire/auth';
 
@@ -29,17 +28,13 @@ export class DepositComponent implements OnInit {
   public address?: string;
   public method?: string;
 
-  public safeSite: SafeResourceUrl;
-
   constructor(
     public global: GlobalDataService,
     private router: Router,
     private dialog: MatDialog,
     private http: HttpClient,
-    private auth: AngularFireAuth,
-    sanitizer: DomSanitizer
+    private auth: AngularFireAuth
   ) {
-    this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${global.lang}.txt`);
   }
 
   ngOnInit() {
