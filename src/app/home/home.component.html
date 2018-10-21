@@ -81,7 +81,6 @@
       </button>
     </mat-toolbar>
     <div class="mat-typography body-container">
-      <mat-progress-bar mode="determinate" value="{{progress}}"></mat-progress-bar>
       <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
       <ng-template #loaded>
         <h3>{{translation.balance[global.lang]}}</h3>

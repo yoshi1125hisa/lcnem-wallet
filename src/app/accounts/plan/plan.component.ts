@@ -22,7 +22,7 @@ export class PlanComponent implements OnInit {
         this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.checkRefresh();
+      await this.global.refreshWallet();
     });
   }
 

@@ -11,6 +11,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 })
 export class HistoryComponent implements OnInit {
   public loading = true;
+  public progress = 0;
 
   public transactions?: Transaction[];
 
@@ -31,16 +32,19 @@ export class HistoryComponent implements OnInit {
   }
 
   public async refresh() {
+    this.progress = 0;
     this.loading = true;
-
+    this.progress = 10;
     await this.global.refreshWallet();
-
+    this.progress = 40;
     let currentWallet = this.global.account.currentWallet!;
-
+    this.progress = 50;
     let unconfirmedTransactions = await this.global.accountHttp.unconfirmedTransactions(currentWallet.wallet.address).toPromise();
+    this.progress = 70;
     let allTransactions = await this.global.accountHttp.allTransactions(currentWallet.wallet.address).toPromise();
+    this.progress = 90;
     this.transactions = unconfirmedTransactions.concat(allTransactions);
-
+    this.progress = 100;
     this.loading = false;
   }
 
