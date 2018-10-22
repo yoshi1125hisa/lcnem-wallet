@@ -19,9 +19,9 @@ import {
   Address
 } from 'nem-library';
 import { nodes } from '../../models/nodes';
-import { User } from '../../models/user';
+import { User } from '../../../models/user';
 import { Router } from '@angular/router';
-import { Wallet } from '../../models/wallet';
+import { Wallet } from '../../../models/wallet';
 
 @Injectable({
   providedIn: 'root'
@@ -92,7 +92,7 @@ export class GlobalDataService {
         name: this.auth.auth.currentUser!.displayName
       } as User);
     } else {
-      //legacy
+      //互換性
       let userData = user.data() as any;
       if (userData.wallet) {
         let tempWallet = SimpleWallet.readFromWLT(userData.wallet);

@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { supportedCurrencies } from '../../../models/supported-currencies';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { Wallet } from '../../../models/wallet';
+import { Wallet } from '../../../../models/wallet';
 import { Address } from 'nem-library';
 
 declare let Stripe: any;

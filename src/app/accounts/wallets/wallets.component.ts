@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { GlobalDataService } from '../../services/global-data.service';
-import { Wallet } from '../../../models/wallet';
+import { Wallet } from '../../../../models/wallet';
 import { SimpleWallet } from 'nem-library';
 import { MatDialog } from '@angular/material';
 import { CreateDialogComponent } from './create-dialog/create-dialog.component';

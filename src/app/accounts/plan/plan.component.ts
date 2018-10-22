@@ -9,6 +9,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
   styleUrls: ['./plan.component.css']
 })
 export class PlanComponent implements OnInit {
+  public loading = true;
 
   constructor(
     public global: GlobalDataService,
@@ -22,8 +23,18 @@ export class PlanComponent implements OnInit {
         this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.checkRefresh();
+      await this.refresh();
     });
+  }
+  
+  async refresh() {
+    this.loading = true;
+
+    await this.global.refresh();
+
+    
+
+    this.loading = false;
   }
 
   public translation = {
