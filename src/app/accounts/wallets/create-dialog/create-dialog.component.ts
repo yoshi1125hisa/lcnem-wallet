@@ -27,22 +27,35 @@ export class CreateDialogComponent implements OnInit {
 
   translation = {
     create: {
-      
+
     } as any,
     cloud: {
-
+      en: "Cloud",
+      ja: "クラウド"
     } as any,
     local: {
-
+      en: "Local",
+      ja: "ローカル"
     } as any,
     generate: {
-
+      en: "Generate",
+      ja: "生成"
     } as any,
     import: {
-
+      en: "Import",
+      ja: "インポート"
     } as any,
     privateKey: {
-
+      en: "Private key",
+      ja: "秘密鍵"
+    } as any,
+    cloudDescription: {
+      en: "",
+      ja: "秘密鍵をこちらで保管します"
+    } as any,
+    localDescription: {
+      en: "",
+      ja: "秘密鍵は、お客様管理となります"
     } as any
   }
 }

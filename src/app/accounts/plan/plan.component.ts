@@ -32,8 +32,6 @@ export class PlanComponent implements OnInit {
 
     await this.global.refresh();
 
-    
-
     this.loading = false;
   }
 
