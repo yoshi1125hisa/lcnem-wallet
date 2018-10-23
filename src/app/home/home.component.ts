@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material';
 import { AlertDialogComponent } from '../components/alert-dialog/alert-dialog.component';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Asset } from 'nem-library';
+import { Share } from '../../models/share';
 
 @Component({
   selector: 'app-home',
@@ -71,17 +72,7 @@ export class HomeComponent implements OnInit {
   }
 
   copyMessage(val: string) {
-    let selBox = document.createElement('textarea');
-    selBox.style.position = 'fixed';
-    selBox.style.left = '0';
-    selBox.style.top = '0';
-    selBox.style.opacity = '0';
-    selBox.value = val;
-    document.body.appendChild(selBox);
-    selBox.focus();
-    selBox.select();
-    document.execCommand('copy');
-    document.body.removeChild(selBox);
+    Share.copyMessage(val);
   }
 
   public translation = {

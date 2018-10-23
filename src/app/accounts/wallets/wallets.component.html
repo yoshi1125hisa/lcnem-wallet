@@ -22,38 +22,41 @@
     <div class="mat-typography body-container">
       <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
       <ng-template #loaded>
-        <div fxLayout="row" fxLayoutAlign="center">
-          <mat-card fxFlex="50">
-            <mat-nav-list>
-              <mat-divider></mat-divider>
-              <ng-container *ngFor="let wallet of wallets">
-                <mat-list-item>
-                  <mat-icon mat-list-icon>
-                    <ng-container *ngIf="wallet.wallet">cloud_done</ng-container>
-                    <ng-container *ngIf="!wallet.wallet">cloud_off</ng-container>
-                  </mat-icon>
-                  <span matLine>{{wallet.name}}</span>
-                  <span matLine>{{wallet.nem}}</span>
-                  <span class="fill-remaining-space"></span>
-                  <span>
-                    <mat-menu #walletMenu="matMenu" [overlapTrigger]="false">
-                      <button mat-menu-item>
-                        {{translation.backup[global.lang]}}
-                      </button>
-                      <button mat-menu-item>
-                        {{translation.delete[global.lang]}}
-                      </button>
-                    </mat-menu>
-                    <button mat-icon-button>
-                      <mat-icon>more_vert</mat-icon>
+        <mat-card>
+          <mat-list>
+            <mat-divider></mat-divider>
+            <ng-container *ngFor="let wallet of wallets; let i = index">
+              <mat-list-item>
+                <mat-icon mat-list-icon>
+                  <ng-container *ngIf="wallet.wallet">cloud_done</ng-container>
+                  <ng-container *ngIf="!wallet.wallet">cloud_off</ng-container>
+                </mat-icon>
+                <span matLine>{{wallet.name}}</span>
+                <span matLine>{{wallet.nem}}</span>
+                <span class="fill-remaining-space"></span>
+                <span>
+                  <button mat-icon-button (click)="enterWallet(i)">
+                    <mat-icon>forward</mat-icon>
+                  </button>
+                </span>
+                <span>
+                  <mat-menu #walletMenu="matMenu" [overlapTrigger]="false">
+                    <button mat-menu-item (click)="backupWallet(i)">
+                      {{translation.backup[global.lang]}}
                     </button>
-                  </span>
-                </mat-list-item>
-                <mat-divider></mat-divider>
-              </ng-container>
-            </mat-nav-list>
-          </mat-card>
-        </div>
+                    <button mat-menu-item (click)="deleteWallet(i)">
+                      {{translation.delete[global.lang]}}
+                    </button>
+                  </mat-menu>
+                  <button mat-icon-button [matMenuTriggerFor]="walletMenu" yPosition="below">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                </span>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+            </ng-container>
+          </mat-list>
+        </mat-card>
       </ng-template>
     </div>
   </mat-sidenav-content>

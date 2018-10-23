@@ -66,6 +66,14 @@ export class WalletsComponent implements OnInit {
     }).afterClosed().toPromise();
   }
 
+  enterWallet(index: number) {
+    
+  }
+
+  backupWallet(index: number) {
+
+  }
+
   deleteWallet(index: number) {
 
     localStorage.removeItem("currentWallet");
