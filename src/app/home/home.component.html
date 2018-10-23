@@ -31,10 +31,15 @@
           {{translation.contacts[global.lang]}}
         </mat-list-item>
         <mat-divider></mat-divider>
+        <mat-list-item routerLink="/accounts/wallets">
+          <mat-icon mat-list-icon>account_balance_wallet</mat-icon>
+          {{translation.wallets[global.lang]}}
+        </mat-list-item>
         <mat-list-item (click)="logout()">
-          <mat-icon mat-list-icon>lock_open</mat-icon>
+          <mat-icon mat-list-icon>lock</mat-icon>
           {{translation.logout[global.lang]}}
         </mat-list-item>
+        <mat-divider></mat-divider>
         <mat-list-item routerLink="/terms/terms">
           <mat-icon mat-list-icon>list_alt</mat-icon>
           {{translation.terms[global.lang]}}
@@ -53,11 +58,14 @@
     </div>
   </mat-sidenav>
   <mat-sidenav-content>
+    <div [class]="progress != 100 ? 'top-progressbar' : 'top-progressbar hide'">
+      <mat-progress-bar mode="determinate" value="{{progress}}"></mat-progress-bar>
+    </div>
     <mat-toolbar class="mat-elevation-z4 top-toolbar">
       <img class="icon" src="assets/images/lcnem.svg" />
       <span>LCNEM Wallet</span>
       <span class="fill-remaining-space"></span>
-      <button mat-icon-button (click)="refresh()" [disabled]="loading">
+      <button mat-icon-button (click)="refresh(true)" [disabled]="loading">
         <mat-icon>refresh</mat-icon>
       </button>
       <mat-menu #langMenu="matMenu" [overlapTrigger]="false">
@@ -72,9 +80,6 @@
         {{global.lang}}
       </button>
     </mat-toolbar>
-    <div [class]="progress == 100 ? 'opacity hide' : 'opacity'">
-      <mat-progress-bar mode="determinate" value="{{progress}}"></mat-progress-bar>
-    </div>
     <div class="mat-typography body-container">
       <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
       <ng-template #loaded>
@@ -85,8 +90,8 @@
         <br />
         <h3>{{translation.yourAddress[global.lang]}}</h3>
         <mat-card>
-          <p style="text-align: center;">{{global.account.nem.pretty()}}
-            <button mat-icon-button matTooltip="{{translation.copy[global.lang]}}" (click)="copyMessage(global.account.nem.pretty())">
+          <p style="text-align: center;">{{address}}
+            <button mat-icon-button matTooltip="{{translation.copy[global.lang]}}" (click)="copyMessage(address)">
               <mat-icon>input</mat-icon>
             </button>
           </p>

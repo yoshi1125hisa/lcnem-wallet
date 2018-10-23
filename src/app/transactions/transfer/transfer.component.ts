@@ -60,14 +60,17 @@ export class TransferComponent implements OnInit {
         this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.initialize();
-      await this.initialize();
-      
-      this.loading = false;
+      await this.refresh();
     });
   }
 
-  public async initialize() {
+  public async refresh() {
+    this.loading = true;
+
+    await this.global.refreshWallet();
+
+    let currentWallet = this.global.account.currentWallet!;
+
     if (this.global.buffer) {
       this.forms.recipient = this.global.buffer.address;
       this.forms.message = this.global.buffer.message;
@@ -75,9 +78,9 @@ export class TransferComponent implements OnInit {
 
     if (this.global.buffer && this.global.buffer.mosaics) {
       this.global.buffer.assets.forEach((bufferAsset: any) => {
-        let index = this.global.account.assets.findIndex(a => a.asset.assetId.namespaceId + ":" + a.asset.assetId.name == bufferAsset.name);
+        let index = currentWallet.assets!.findIndex(a => a.asset.assetId.namespaceId + ":" + a.asset.assetId.name == bufferAsset.name);
         if (index != -1) {
-          let amount = bufferAsset.amount / Math.pow(10, this.global.account.assets[index].definition.properties.divisibility);
+          let amount = bufferAsset.amount / Math.pow(10, currentWallet.assets![index].definition.properties.divisibility);
           this.forms.transferAssets.push({
             name: bufferAsset.name,
             amount: amount
@@ -86,11 +89,13 @@ export class TransferComponent implements OnInit {
       })
     }
     this.global.buffer = null;
-    this.assets = this.global.account.assets.map(a => a.asset);
+    this.assets = currentWallet.assets!.map(a => a.asset);
+    
+    this.loading = false;
   }
 
   public addAsset(index: number) {
-    this.forms.transferAssets[index].name = this.global.account.assets[this.forms.transferAssets[index].index!].name;
+    this.forms.transferAssets[index].name = this.global.account.currentWallet!.assets![this.forms.transferAssets[index].index!].name;
 
     if (index != this.forms.transferAssets.length - 1) {
       return;
@@ -124,7 +129,7 @@ export class TransferComponent implements OnInit {
 
   public async transfer() {
     let password = new Password(this.auth.auth.currentUser!.uid);
-    let account = this.global.account.wallet.open(password);
+    let account = this.global.account.currentWallet!.wallet.open(password);
 
     let recipient: Address;
     try {
@@ -166,7 +171,7 @@ export class TransferComponent implements OnInit {
       if (asset.name == "nem:xem") {
         return new XEM(asset.amount!);
       }
-      let definition = this.global.account.assets.find(a => a.asset.assetId.namespaceId + ":" + a.asset.assetId.name == asset.name)!.definition;
+      let definition = this.global.account.currentWallet!.assets!.find(a => a.asset.assetId.namespaceId + ":" + a.asset.assetId.name == asset.name)!.definition;
 
       let absolute = asset.amount! * Math.pow(10, definition.properties.divisibility);
       

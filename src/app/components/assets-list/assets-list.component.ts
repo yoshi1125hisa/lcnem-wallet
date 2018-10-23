@@ -31,7 +31,7 @@ export class AssetsListComponent implements OnInit {
     }
     for(let asset of this.assets) {
       let name = asset.assetId.namespaceId + ":" + asset.assetId.name;
-      let definitions = this.global.account.assets.filter(a => a.name == name).map(a => a.definition);
+      let definitions = this.global.account.currentWallet!.assets!.filter(a => a.name == name).map(a => a.definition);
       if (!definitions.length) {
         definitions = [await this.global.assetHttp.getAssetDefinition(asset.assetId).toPromise()];
       }

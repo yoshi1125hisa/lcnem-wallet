@@ -14,6 +14,7 @@ import { Asset } from 'nem-library';
 })
 export class HomeComponent implements OnInit {
   public loading = true;
+  public address = "";
   public qrUrl = "";
   public assets: Asset[] = [];
   public progress = 0;
@@ -31,21 +32,14 @@ export class HomeComponent implements OnInit {
         this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.initialize((progress) => this.progress = progress);
       await this.refresh();
     });
   }
 
-  public async initialize() {
-    let invoice = new Invoice();
-    invoice.data.addr = this.global.account.nem.plain();
-    this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
-
-    this.assets = this.global.account.assets.map(a => a.asset);
-  }
-
   public async logout() {
-    await this.global.logout();
+    await this.auth.auth.signOut();
+    this.global.refreshed = false;
+
     this.dialog.open(AlertDialogComponent, {
       data: {
         title: this.translation.completed[this.global.lang],
@@ -56,11 +50,22 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  public async refresh() {
+  public async refresh(force?: boolean) {
     this.loading = true;
+    this.progress = 0
+    await this.global.refreshWallet(force);
+    this.progress = 30;
+    let invoice = new Invoice();
+    this.progress = 40;
+    invoice.data.addr = this.global.account.currentWallet!.wallet.address.plain();
+    this.progress = 50;
+    this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
+    this.progress = 60;
+    this.address = this.global.account.currentWallet!.wallet.address.pretty();
+    this.progress = 70;
 
-    await this.global.refresh((progress) => this.progress = progress);
-    await this.initialize();
+    this.assets = this.global.account.currentWallet!.assets!.map(a => a.asset);
+    this.progress = 100;
 
     this.loading = false;
   }
@@ -87,6 +92,10 @@ export class HomeComponent implements OnInit {
     language: {
       en: "Language",
       ja: "言語"
+    } as any,
+    wallets: {
+      en: "Wallets",
+      ja: "ウォレット"
     } as any,
     logout: {
       en: "Log out",

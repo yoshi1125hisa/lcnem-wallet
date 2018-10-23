@@ -8,6 +8,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { supportedCurrencies } from '../../../models/supported-currencies';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Wallet } from '../../../../models/wallet';
+import { Address } from 'nem-library';
 
 declare let Stripe: any;
 
@@ -25,7 +27,6 @@ export class DepositComponent implements OnInit {
   } as { [key: string]: number };
 
   public amount?: number;
-  public address?: string;
   public method?: string;
 
   constructor(
@@ -40,11 +41,10 @@ export class DepositComponent implements OnInit {
   ngOnInit() {
     this.auth.authState.subscribe(async (user) => {
       if (user == null) {
-        this.router.navigate(["/accounts/login"]);
+        this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.initialize();
-      this.address = this.global.account!.nem.plain();
+      await this.global.refreshWallet();
     });
   }
 
@@ -56,7 +56,7 @@ export class DepositComponent implements OnInit {
         "/api/v1/deposit",
         {
           email: this.auth.auth.currentUser!.email,
-          nem: this.address,
+          nem: this.global.account.currentWallet!.wallet.address.plain(),
           currency: this.selectedCurrency,
           amount: this.amount,
           method: this.method,

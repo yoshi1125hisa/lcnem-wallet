@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 
-import * as firebase from 'firebase';
-import 'firebase/auth'
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import {
@@ -21,32 +19,32 @@ import {
   Address
 } from 'nem-library';
 import { nodes } from '../../models/nodes';
-import { User } from '../../models/user';
+import { User } from '../../../models/user';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
-import { AlertDialogComponent } from '../components/alert-dialog/alert-dialog.component';
+import { Wallet } from '../../../models/wallet';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GlobalDataService {
-  private initialized = false;
-
   public lang = "en";
+
+  public refreshed = false;
 
   public account: {
     photoUrl: string,
-    wallet: SimpleWallet,
-    nem: Address,
-    assets: {
-      name: string,
-      asset: Asset,
-      definition: AssetDefinition
-    }[]
-  } = {
-    photoUrl: "",
-    assets: []
-  } as any;
+    wallets: Wallet[],
+    currentWallet: {
+      wallet: SimpleWallet,
+      assets?: {
+        name: string,
+        asset: Asset,
+        definition: AssetDefinition
+      }[],
+      refreshed: boolean
+    } | null,
+    localWallets: string[]
+  } = {} as any;
 
   public accountHttp: AccountHttp;
   public assetHttp: AssetHttp;
@@ -58,8 +56,7 @@ export class GlobalDataService {
   constructor(
     private auth: AngularFireAuth,
     private firestore: AngularFirestore,
-    private router: Router,
-    private dialog: MatDialog
+    private router: Router
   ) {
     NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
     const settings = { timestampsInSnapshots: true };
@@ -81,117 +78,103 @@ export class GlobalDataService {
     this.router.navigate([""]);
   }
 
-  public async login() {
-    await this.auth.auth.signInWithPopup(new firebase.auth!.GoogleAuthProvider);
-  }
-
-  public async logout() {
-    await this.auth.auth.signOut();
-    this.initialized = false;
-  }
-
-  public async createFirestoreDocument(uid: string, wallet: SimpleWallet) {
-    await this.firestore.collection("users").doc(uid).set({
-      wallet: wallet.writeWLTFile(),
-      name: this.auth.auth.currentUser!.displayName,
-      nem: wallet.address.plain()
-    });
-  }
-
-  public async initialize(callback?: (progress: number) => void) {
-    if (this.initialized) {
+  public async refresh(force?: boolean) {
+    if (this.refreshed && !force) {
       return;
     }
-    if(callback) {
-      callback(0);
-    }
-
     this.account.photoUrl = this.auth.auth.currentUser!.photoURL!;
 
     let uid = this.auth.auth.currentUser!.uid;
     let user = await this.firestore.collection("users").doc(uid).ref.get();
 
     if (!user.exists) {
-      let password = new Password(uid);
-      this.account.wallet = SimpleWallet.create(uid, password);
-      this.account.nem = this.account.wallet.address;
-
-      await this.createFirestoreDocument(uid, this.account.wallet);
+      await user.ref.set({
+        name: this.auth.auth.currentUser!.displayName
+      } as User);
     } else {
-      let userData = user.data() as User;
-      this.account.wallet = SimpleWallet.readFromWLT(userData.wallet);
-      this.account.nem = this.account.wallet.address;
-      if (!userData.name) {
-        await this.createFirestoreDocument(uid, this.account.wallet);
+      //互換性
+      let userData = user.data() as any;
+      if (userData.wallet) {
+        let tempWallet = SimpleWallet.readFromWLT(userData.wallet);
+        user.ref.collection("wallets").add({
+          name: "1",
+          nem: tempWallet.address.plain(),
+          wallet: userData.wallet
+        } as Wallet)
       }
     }
+    let wallets = await user.ref.collection("wallets").get();
+    this.account.wallets = wallets.docs.map(doc => doc.data() as Wallet);
 
+    let localWallet = localStorage.getItem("wallets");
+    if (localWallet) {
+      this.account.localWallets = JSON.parse(localWallet) as string[];
+    }
+
+    let currentWallet = Number(localStorage.getItem("currentWallet"));
+    if (!Number.isNaN(currentWallet)) {
+      this.changeWallet(currentWallet);
+    }
+
+    this.refreshed = true;
+  }
+
+  public async changeWallet(index: number) {
+    let wallet = this.account.wallets[index].wallet;
+    if(!wallet) {
+      return;
+    }
+    this.account.currentWallet = {
+      wallet: SimpleWallet.readFromWLT(wallet),
+      refreshed: false
+    }
+    localStorage.setItem("currentWallet", index.toString());
+  }
+
+  public async refreshWallet(force?: boolean) {
     await this.refresh();
-
-    this.initialized = true;
-  }
-
-  public async refresh(callback?: (progress: number) => void) {
-    try {
-      if(callback) {
-        callback(20);
-      }
-      let assets = await this.accountHttp.getAssetsOwnedByAddress(this.account.nem).toPromise();
-      let accountAssets = [];
-  
-      if(callback) {
-        callback(40);
-      }
-  
-      for (let asset of assets) {
-        let name = asset.assetId.namespaceId + ":" + asset.assetId.name;
-  
-        let definition: AssetDefinition;
-        if (asset.assetId.namespaceId == "nem") {
-          definition = {
-            creator: new PublicAccount(),
-            id: XEM.MOSAICID,
-            description: "",
-            properties: {
-              divisibility: XEM.DIVISIBILITY,
-              initialSupply: XEM.INITIALSUPPLY,
-              supplyMutable: XEM.SUPPLYMUTABLE,
-              transferable: XEM.TRANSFERABLE
-            }
-          }
-        } else {
-          definition = await this.assetHttp.getAssetDefinition(asset.assetId).toPromise();
-        }
-  
-        accountAssets.push({
-          name: name,
-          asset: asset,
-          definition: definition
-        });
-  
-        if(callback) {
-          callback(40 + (60 / assets.length));
-        }
-      }
-
-      this.account.assets = accountAssets;
-    } catch {
-      this.dialog.open(AlertDialogComponent, {
-        data: {
-          title: this.translation.error[this.lang]
-        }
-      });
-    } finally {
-      if(callback) {
-        callback(100);
-      }
+    
+    let currentWallet = this.account.currentWallet;
+    if (!currentWallet) {
+      this.router.navigate(["accounts", "wallets"]);
+      return;
     }
-  }
+    if(currentWallet.refreshed && !force) {
+      return;
+    }
 
-  public translation = {
-    error: {
-      en: "Error",
-      ja: "エラーが発生しました。"
-    } as any
-  };
+    let assets = await this.accountHttp.getAssetsOwnedByAddress(currentWallet.wallet.address).toPromise();
+    let accountAssets = [];
+
+    for (let asset of assets) {
+      let name = asset.assetId.namespaceId + ":" + asset.assetId.name;
+
+      let definition: AssetDefinition;
+      if (asset.assetId.namespaceId == "nem") {
+        definition = {
+          creator: new PublicAccount(),
+          id: XEM.MOSAICID,
+          description: "",
+          properties: {
+            divisibility: XEM.DIVISIBILITY,
+            initialSupply: XEM.INITIALSUPPLY,
+            supplyMutable: XEM.SUPPLYMUTABLE,
+            transferable: XEM.TRANSFERABLE
+          }
+        }
+      } else {
+        definition = await this.assetHttp.getAssetDefinition(asset.assetId).toPromise();
+      }
+
+      accountAssets.push({
+        name: name,
+        asset: asset,
+        definition: definition
+      });
+    }
+
+    currentWallet.assets = accountAssets;
+
+    currentWallet.refreshed = true;
+  }
 }

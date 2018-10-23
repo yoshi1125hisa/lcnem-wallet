@@ -29,7 +29,8 @@ import {
   MatSlideToggleModule,
   MatCheckboxModule,
   MatMenuModule,
-  MatProgressBarModule
+  MatProgressBarModule,
+  MatRadioModule
 } from '@angular/material';
 
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
@@ -55,6 +56,9 @@ import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dial
 import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
 import { TransferDialogComponent } from './transactions/transfer/transfer-dialog/transfer-dialog.component';
 import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.component';
+import { PlanComponent } from './accounts/plan/plan.component';
+import { WalletsComponent } from './accounts/wallets/wallets.component';
+import { CreateDialogComponent } from './accounts/wallets/create-dialog/create-dialog.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +80,10 @@ import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.co
     ConfirmDialogComponent,
     PromptDialogComponent,
     TransferDialogComponent,
-    PrivacyPolicyComponent
+    PrivacyPolicyComponent,
+    WalletsComponent,
+    PlanComponent,
+    CreateDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -107,14 +114,16 @@ import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.co
     MatDialogModule,
     MatListModule,
     MatSlideToggleModule,
-    MatMenuModule
+    MatMenuModule,
+    MatRadioModule
   ],
   entryComponents: [
     LoadingDialogComponent,
     AlertDialogComponent,
     ConfirmDialogComponent,
     PromptDialogComponent,
-    TransferDialogComponent
+    TransferDialogComponent,
+    CreateDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -31,6 +31,19 @@ mat-sidenav {
   padding: 16px;
 }
 
+.top-progressbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  opacity: 1;
+  transition: 1s;
+  z-index: 5;
+}
+.top-progressbar.hide {
+  opacity: 0;
+}
+
 mat-spinner {
   margin: 0 auto;
 }
@@ -45,9 +58,12 @@ mat-spinner {
   border-radius: 50%;
 }
 
-.mat-fab.floating-action-button {
-  position: fixed;
-  left: 16px;
+.floating-action-button.mat-fab {
+  position: -webkit-sticky;
+  position: sticky;
   bottom: 16px;
+  display: block;
+  margin: 16px;
+  margin-left: auto;
   z-index: 1;
 }

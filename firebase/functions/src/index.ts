@@ -1,4 +1,5 @@
 import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
 import {
   Account,
   SimpleWallet,
@@ -10,10 +11,12 @@ import {
   NEMLibrary,
   NetworkTypes,
   Password,
+  Address,
 } from 'nem-library';
 import * as request from 'request';
-
-//const cors = require('cors')({ origin: true });
+import { Contact } from '../../../models/contact';
+import { User } from '../../../models/user';
+import { Wallet } from '../../../models/wallet';
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -21,16 +24,20 @@ import * as request from 'request';
 // export const helloWorld = functions.https.onRequest((request, response) => {
 //  response.send("Hello from Firebase!");
 // });
+admin.initializeApp({
+  credential: admin.credential.cert(JSON.parse(JSON.stringify(functions.config().service_account).replace(/\\\\n/g, "\\n"))),
+  databaseURL: "https://ticket-p2p.firebaseio.com"
+});
+
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
-export const onCreate = functions.firestore.document("users/{user}").onCreate(async event => {
+export const onCreate = functions.firestore.document("users/{user}/wallets/{wallet}").onCreate(async event => {
   try {
     const doc = await event.ref.get();
-    const wallet = SimpleWallet.readFromWLT(doc.data()["wallet"]);
     const account = Account.createWithPrivateKey(functions.config().nem.private_key);
     const signed = account.signTransaction(TransferTransaction.create(
       TimeWindow.createWithDeadline(),
-      wallet.address,
+      new Address((doc.data()! as Wallet).nem),
       new XEM(1),
       PlainMessage.create("Thanks! LCNEM")
     ))
@@ -106,3 +113,20 @@ export const withdrawV1 = functions.https.onRequest((req, res) => {
     res.status(400).send(e.message);
   }
 })
+
+const payPlanV1 = functions.https.onRequest(async (req, res) => {
+  try {
+    const plan = req.body.plan as string;
+    const signedTransaction = req.body.signedTransaction as string;
+
+    if(!plan || !signedTransaction) {
+      throw Error("INVALID_PARAMETERS");
+    }
+
+    if(plan != "Standard") {
+      throw Error("INVALID_PLAN");
+    }
+  } catch(e) {
+    res.status(400).send(e.message);
+  }
+});
