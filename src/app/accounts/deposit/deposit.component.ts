@@ -6,7 +6,6 @@ import { LoadingDialogComponent } from '../../components/loading-dialog/loading-
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { HttpClient } from '@angular/common/http';
 
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { supportedCurrencies } from '../../../models/supported-currencies';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Wallet } from '../../../../models/wallet';
@@ -20,8 +19,6 @@ declare let Stripe: any;
   styleUrls: ['./deposit.component.css']
 })
 export class DepositComponent implements OnInit {
-  public address?: Address;
-
   public supportedCurrencies = supportedCurrencies;
   public selectedCurrency = "JPY";
 
@@ -32,17 +29,13 @@ export class DepositComponent implements OnInit {
   public amount?: number;
   public method?: string;
 
-  public safeSite: SafeResourceUrl;
-
   constructor(
     public global: GlobalDataService,
     private router: Router,
     private dialog: MatDialog,
     private http: HttpClient,
-    private auth: AngularFireAuth,
-    sanitizer: DomSanitizer
+    private auth: AngularFireAuth
   ) {
-    this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${global.lang}.txt`);
   }
 
   ngOnInit() {
@@ -52,8 +45,6 @@ export class DepositComponent implements OnInit {
         return;
       }
       await this.global.refreshWallet();
-      
-      this.address = this.global.account.currentWallet!.wallet.address;
     });
   }
 
@@ -65,7 +56,7 @@ export class DepositComponent implements OnInit {
         "/api/v1/deposit",
         {
           email: this.auth.auth.currentUser!.email,
-          nem: this.address!.plain(),
+          nem: this.global.account.currentWallet!.wallet.address.plain(),
           currency: this.selectedCurrency,
           amount: this.amount,
           method: this.method,

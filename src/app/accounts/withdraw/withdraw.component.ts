@@ -17,8 +17,6 @@ import { Address } from 'nem-library';
   styleUrls: ['./withdraw.component.css']
 })
 export class WithdrawComponent implements OnInit {
-  public address?: Address;
-
   public supportedCurrencies = supportedCurrencies;
   public selectedCurrency = "JPY";
 
@@ -45,8 +43,6 @@ export class WithdrawComponent implements OnInit {
         return;
       }
       await this.global.refreshWallet();
-      
-      this.address = this.global.account.currentWallet!.wallet.address;
     });
   }
 
@@ -58,7 +54,7 @@ export class WithdrawComponent implements OnInit {
         "/api/v1/withdraw",
         {
           email: this.auth.auth.currentUser!.email,
-          nem: this.address!.plain(),
+          nem: this.global.account.currentWallet!.wallet.address.plain(),
           currency: this.selectedCurrency,
           amount: this.amount,
           method: this.method,
