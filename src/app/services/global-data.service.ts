@@ -89,20 +89,25 @@ export class GlobalDataService {
       await user.ref.set({
         name: this.auth.auth.currentUser!.displayName
       } as User);
-    } else {
+    }
+    
+    let wallets = await user.ref.collection("wallets").get();
+    this.account.wallets = wallets.docs.map(doc => doc.data() as Wallet);
+
+    if(user.exists && wallets.empty) {
       //互換性
       let userData = user.data() as any;
       if (userData.wallet) {
         let tempWallet = SimpleWallet.readFromWLT(userData.wallet);
-        user.ref.collection("wallets").add({
+        let data = {
           name: "1",
           nem: tempWallet.address.plain(),
           wallet: userData.wallet
-        } as Wallet)
+        } as Wallet;
+        user.ref.collection("wallets").add(data);
+        this.account.wallets = [data];
       }
     }
-    let wallets = await user.ref.collection("wallets").get();
-    this.account.wallets = wallets.docs.map(doc => doc.data() as Wallet);
 
     let localWallet = localStorage.getItem("wallets");
     if (localWallet) {
@@ -120,6 +125,10 @@ export class GlobalDataService {
   }
 
   public async changeWallet(index: number) {
+    if(this.account.wallets.length - 1 < index) {
+      return;
+    }
+
     let wallet = this.account.wallets[index].wallet;
     if(!wallet) {
       return;
