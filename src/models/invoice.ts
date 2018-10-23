@@ -5,7 +5,11 @@ export class Invoice {
     addr: "",
     msg: "",
     name: "LCNEM Wallet",
-    amount: 0
+    amount: 0,
+    assets: [] as {
+      id: string,
+      amount: number
+    }[]
   }
 
   public stringify() {

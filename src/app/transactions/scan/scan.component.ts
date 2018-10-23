@@ -68,20 +68,19 @@ export class ScanComponent implements OnInit {
 
         let decoded = decodeURI(result);
         try {
-          if (decoded[0] == "N" && decoded.replace(/-/g, "").trim().length == 40) {
-            this.global.buffer = {};
-            this.global.buffer.address = decoded;
-            this.router.navigate(["transactions", "transfer"]);
-            return;
+          let invoice = Invoice.parse(decoded);
+          if (!invoice && decoded[0] == "N" && decoded.replace(/-/g, "").trim().length == 40) {
+            let invoiceData =new Invoice();
+            invoiceData.data.addr = decoded;
+            result = encodeURI(invoiceData.stringify());
           }
 
-          let invoice = Invoice.parse(decoded);
-          if (invoice) {
-            this.global.buffer = {};
-            this.global.buffer.address = invoice.data.addr;
-            this.global.buffer.message = invoice.data.msg;
-            this.router.navigate(["transactions", "transfer"]);
-            return;
+          if(invoice) {
+            this.router.navigate(["transactions", "transfer"], {
+              queryParams: {
+                invoice: result
+              }
+            });
           }
         } catch {
           this.dialog.open(AlertDialogComponent, {

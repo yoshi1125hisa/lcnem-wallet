@@ -51,8 +51,6 @@ export class GlobalDataService {
   public namespaceHttp: NamespaceHttp;
   public transactionHttp: TransactionHttp;
 
-  public buffer: any;
-
   constructor(
     private auth: AngularFireAuth,
     private firestore: AngularFirestore,
@@ -109,6 +107,8 @@ export class GlobalDataService {
     let localWallet = localStorage.getItem("wallets");
     if (localWallet) {
       this.account.localWallets = JSON.parse(localWallet) as string[];
+    } else {
+      this.account.localWallets = [];
     }
 
     let currentWallet = Number(localStorage.getItem("currentWallet"));

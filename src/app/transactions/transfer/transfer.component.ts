@@ -23,6 +23,7 @@ import { LoadingDialogComponent } from '../../components/loading-dialog/loading-
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.component';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Invoice } from '../../../models/invoice';
 
 @Component({
   selector: 'app-transfer',
@@ -50,6 +51,7 @@ export class TransferComponent implements OnInit {
     public global: GlobalDataService,
     public dialog: MatDialog,
     private router: Router,
+    private route: ActivatedRoute,
     private auth: AngularFireAuth
   ) {
   }
@@ -71,24 +73,23 @@ export class TransferComponent implements OnInit {
 
     let currentWallet = this.global.account.currentWallet!;
 
-    if (this.global.buffer) {
-      this.forms.recipient = this.global.buffer.address;
-      this.forms.message = this.global.buffer.message;
+    let invoice = this.route.snapshot.paramMap.get('invoice') || "";
+    let invoiceData = Invoice.parse(decodeURI(invoice));
+
+    if(invoiceData) {
+      this.forms.recipient = invoiceData.data.addr;
+      this.forms.message = invoiceData.data.msg;
+      if(invoiceData.data.assets) {
+        for(let asset of invoiceData.data.assets) {
+          let index = this.global.account.currentWallet!.assets!.findIndex(a => a.name == asset.id);
+          if(index == -1 || !this.assetIsNotReady(asset.id)) {
+            continue;
+          }
+          this.addAsset(index);
+        }
+      }
     }
 
-    if (this.global.buffer && this.global.buffer.mosaics) {
-      this.global.buffer.assets.forEach((bufferAsset: any) => {
-        let index = currentWallet.assets!.findIndex(a => a.asset.assetId.namespaceId + ":" + a.asset.assetId.name == bufferAsset.name);
-        if (index != -1) {
-          let amount = bufferAsset.amount / Math.pow(10, currentWallet.assets![index].definition.properties.divisibility);
-          this.forms.transferAssets.push({
-            name: bufferAsset.name,
-            amount: amount
-          })
-        }
-      })
-    }
-    this.global.buffer = null;
     this.assets = currentWallet.assets!.map(a => a.asset);
     
     this.loading = false;
@@ -125,6 +126,48 @@ export class TransferComponent implements OnInit {
     } catch {
 
     }
+  }
+
+  public async share() {
+    let invoice = new Invoice();
+    invoice.data.addr = this.forms.recipient;
+    invoice.data.msg = this.forms.message;
+    invoice.data.assets = this.getTransferMosaics().mosaics.map(m => {
+      return { id: m.assetId.toString(), amount: m.absoluteQuantity() }}
+    );
+
+    (navigator as any).share({
+      title: "LCNEM Wallet",
+      url: location.href + "?invoice=" + encodeURI(invoice.stringify())
+    })
+  }
+
+  getTransferMosaics() {
+    let levy: Asset[] = [];
+
+    let transferMosaics: AssetTransferable[] = this.forms.transferAssets.filter(asset => asset.name).map(asset => {
+      if (asset.name == "nem:xem") {
+        return new XEM(asset.amount!);
+      }
+      let definition = this.global.account.currentWallet!.assets!.find(a => a.asset.assetId.namespaceId + ":" + a.asset.assetId.name == asset.name)!.definition;
+
+      let absolute = asset.amount! * Math.pow(10, definition.properties.divisibility);
+      
+      if(definition.levy) {
+        if(definition.levy.type == AssetLevyType.Absolute) {
+          levy.push(new Asset(definition.levy.assetId, definition.levy.fee));
+        } else if(definition.levy.type == AssetLevyType.Percentil) {
+          levy.push(new Asset(definition.levy.assetId, definition.levy.fee * absolute / 10000));
+        }
+      }
+
+      return AssetTransferable.createWithAssetDefinition(definition, absolute);
+    });
+
+    return {
+      mosaics: transferMosaics,
+      levy: levy
+    };
   }
 
   public async transfer() {
@@ -165,31 +208,12 @@ export class TransferComponent implements OnInit {
       }
     }
 
-    let levy: Asset[] = [];
-
-    let transferMosaics: AssetTransferable[] = this.forms.transferAssets.filter(asset => asset.name).map(asset => {
-      if (asset.name == "nem:xem") {
-        return new XEM(asset.amount!);
-      }
-      let definition = this.global.account.currentWallet!.assets!.find(a => a.asset.assetId.namespaceId + ":" + a.asset.assetId.name == asset.name)!.definition;
-
-      let absolute = asset.amount! * Math.pow(10, definition.properties.divisibility);
-      
-      if(definition.levy) {
-        if(definition.levy.type == AssetLevyType.Absolute) {
-          levy.push(new Asset(definition.levy.assetId, definition.levy.fee));
-        } else if(definition.levy.type == AssetLevyType.Percentil) {
-          levy.push(new Asset(definition.levy.assetId, definition.levy.fee * absolute / 10000));
-        }
-      }
-
-      return AssetTransferable.createWithAssetDefinition(definition, absolute);
-    });
+    let transferMosaics = this.getTransferMosaics();
 
     let transaction = TransferTransaction.createWithMosaics(
       TimeWindow.createWithDeadline(),
       recipient,
-      transferMosaics,
+      transferMosaics.mosaics,
       message
     );
 
@@ -197,7 +221,7 @@ export class TransferComponent implements OnInit {
       data: {
         transaction: transaction,
         message: this.forms.message,
-        levy: levy
+        levy: transferMosaics.levy
       }
     }).afterClosed().toPromise();
     if (!result) {
@@ -267,6 +291,10 @@ export class TransferComponent implements OnInit {
     balance: {
       en: "Balance",
       ja: "残高"
+    } as any,
+    share: {
+      en: "Create an invoice without transfer",
+      ja: "送信せずに請求書を作る"
     } as any,
     transfer: {
       en: "Transfer",

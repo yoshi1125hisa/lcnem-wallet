@@ -1,7 +1,7 @@
 <mat-list>
   <mat-divider></mat-divider>
   <ng-container *ngFor="let asset of _assets">
-    <mat-list-item matTooltip="{{asset.name}}">
+    <mat-list-item>
       <img mat-list-icon src="{{asset.imageUrl}}" />
       <span mat-line>{{asset.name}}</span>
       <small mat-line>{{asset.issuer}}</small>
