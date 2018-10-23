@@ -1,26 +1,21 @@
-<form #form="ngForm">
-  <h2 mat-dialog-title>{{translation.create[global.lang]}}</h2>
-  <mat-dialog-content>
-    <mat-form-field fxFill>
-      <input matInput placeholder="{{translation.name[global.lang]}}" [(ngModel)]="forms.name" name="namey" required />
-    </mat-form-field>
-    <p>{{translation.localOrCloud[global.lang]}}</p>
-    <mat-radio-group [(ngModel)]="forms.local" name="local">
-      <mat-radio-button matTooltip="{{translation.cloudDescription[global.lang]}}" value="0">{{translation.cloud[global.lang]}}</mat-radio-button>
-      <mat-radio-button matTooltip="{{translation.localDescription[global.lang]}}" value="1">{{translation.local[global.lang]}}</mat-radio-button>
-    </mat-radio-group>
-    <p>{{translation.privateKey[global.lang]}}</p>
-    <mat-radio-group [(ngModel)]="forms.import" name="import">
-      <mat-radio-button value="0">{{translation.generate[global.lang]}}</mat-radio-button>
-      <mat-radio-button value="1">{{translation.import[global.lang]}}</mat-radio-button>
-    </mat-radio-group>
-    <mat-form-field fxFill>
-      <input matInput placeholder="{{translation.privateKey[global.lang]}}" [(ngModel)]="forms.privateKey" name="privateKey"
-        required="{{forms.import == 1}}" disabled="{{forms.import == 0}}" pattern="[0-9a-f]{64}" />
-    </mat-form-field>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <span class="fill-remaining-space"></span>
-    <button mat-raised-button [mat-dialog-close]="forms" color="accent" [disabled]="form.invalid">OK</button>
-  </mat-dialog-actions>
-</form>
+<h2 mat-dialog-title>{{translation.create[global.lang]}}</h2>
+<mat-dialog-content>
+  <mat-radio-group [(ngModel)]="forms.local">
+    <mat-radio-button matTooltip="{{translation.cloudDescription[global.lang]}}" value="0">{{translation.cloud[global.lang]}}</mat-radio-button>
+    <mat-radio-button matTooltip="{{translation.localDescription[global.lang]}}" value="1">{{translation.local[global.lang]}}</mat-radio-button>
+  </mat-radio-group>
+  <mat-divider></mat-divider>
+  <mat-radio-group [(ngModel)]="forms.import">
+    <mat-radio-button value="0">{{translation.generate[global.lang]}}</mat-radio-button>
+    <mat-radio-button value="1">{{translation.import[global.lang]}}</mat-radio-button>
+  </mat-radio-group>
+  <mat-form-field fxFill *ngIf="forms.import">
+    <input matInput placeholder="{{translation.privateKey[global.lang]}}" [(ngModel)]="forms.privateKey" name="privateKey"
+      required pattern="[0-9a-f]{64}" />
+  </mat-form-field>
+  <mat-divider></mat-divider>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="fill-remaining-space"></span>
+  <button mat-raised-button mat-dialog-close color="accent">OK</button>
+</mat-dialog-actions>

@@ -3,14 +3,9 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { GlobalDataService } from '../../services/global-data.service';
 import { Wallet } from '../../../../models/wallet';
-import { SimpleWallet, Password } from 'nem-library';
+import { SimpleWallet } from 'nem-library';
 import { MatDialog } from '@angular/material';
 import { CreateDialogComponent } from './create-dialog/create-dialog.component';
-import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
-import { PromptDialogComponent } from '../../components/prompt-dialog/prompt-dialog.component';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { AnyKindOfDictionary } from 'lodash';
-import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-wallets',
@@ -24,7 +19,6 @@ export class WalletsComponent implements OnInit {
   constructor(
     public global: GlobalDataService,
     private router: Router,
-    private firestore: AngularFirestore,
     private auth: AngularFireAuth,
     private dialog: MatDialog
   ) {
@@ -41,124 +35,48 @@ export class WalletsComponent implements OnInit {
     });
   }
 
-  async refresh(force?: boolean) {
+  async refresh() {
     this.loading = true;
 
-    localStorage.removeItem("currentWallet");
+    await this.global.refresh();
 
-    await this.global.refresh(force);
+    this.wallets = this.global.account.wallets;
 
-    this.wallets = this.global.account.wallets.concat();
-    let localWallets = this.global.account.localWallets;
-    let length = localWallets.length;
-
-    for (let i = length - 1; i >= 0; i--) {
-      let simpleWallet = SimpleWallet.readFromWLT(localWallets[i]);
+    for (let localWallet of this.global.account.localWallets) {
+      let simpleWallet = SimpleWallet.readFromWLT(localWallet);
       let sameWallet = this.wallets.find(w => w.nem == simpleWallet.address.plain());
       if (sameWallet) {
-        sameWallet.wallet = localWallets[i];
-      } else {
-        localWallets.splice(i, 1);
+        sameWallet.wallet = localWallet;
       }
-    }
-    if (length != localWallets.length) {
-      localStorage.setItem("wallets", JSON.stringify(this.global.account.localWallets));
     }
 
     this.loading = false;
   }
 
-  async addWallet() {
-    let result = await this.dialog.open(CreateDialogComponent).afterClosed().toPromise();
-
-    if (!result) {
-      return;
-    }
-    let uid = this.auth.auth.currentUser!.uid;
-
-    let wallet: SimpleWallet;
-
-    if (result.import) {
-      wallet = SimpleWallet.createWithPrivateKey(uid, new Password(uid), result.privateKey);
-
-      //アドレス重複対策
-      if (this.wallets.find(w => w.nem == wallet.address.plain())) {
-        return;
-      }
-    } else {
-      wallet = SimpleWallet.create(uid, new Password(uid));
-    }
-
-    let firestoreObject: Wallet = {
-      name: result.name,
-      nem: wallet.address.plain()
-    };
-
-    if (result.local) {
-      this.global.account.localWallets.push(wallet.writeWLTFile());
-      localStorage.setItem("wallets", JSON.stringify(this.global.account.localWallets));
-    } else {
-      firestoreObject.wallet = wallet.writeWLTFile();
-    }
-
-    await this.firestore.collection("users").doc(uid).collection("wallets").add(firestoreObject);
-
-    await this.refresh();
-  }
-
-  public async enterWallet(index: number) {
-    await this.global.changeWallet(index);
+  changeWallet(index: number) {
+    this.global.changeWallet(index);
     this.router.navigate([""]);
   }
 
-  public async importPrivateKey() {
-    let pk = await this.dialog.open(PromptDialogComponent, {
+  async addWallet() {
+    let result = await this.dialog.open(CreateDialogComponent, {
       data: {
-        title: this.translation.importPrivateKey[this.global.lang],
-        placeholder: this.translation.privateKey[this.global.lang],
-        pattern: "[0-9a-f]{64}"
+
       }
     }).afterClosed().toPromise();
-
-    let uid = this.auth.auth.currentUser!.uid;
-    let wallet = SimpleWallet.createWithPrivateKey(uid, new Password(uid), pk);
-    this.global.account.localWallets.push(wallet.writeWLTFile());
-    localStorage.setItem("wallets", JSON.stringify(this.global.account.localWallets));
-
-    await this.refresh(true);
   }
 
-  public async backupWallet(index: number) {
-    let wallet = SimpleWallet.readFromWLT(this.wallets[index].wallet!);
-    let account = wallet.open(new Password(this.auth.auth.currentUser!.uid));
-
-    await this.dialog.open(AlertDialogComponent, {
-      data: {
-        title: this.translation.backup[this.global.lang],
-        content: account.privateKey
-      }
-    });
+  enterWallet(index: number) {
+    
   }
 
-  public async deleteWallet(index: number) {
-    let result = await this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: this.translation.deleteConfirm[this.global.lang],
-        content: ""
-      }
-    }).afterClosed().toPromise();
+  backupWallet(index: number) {
 
-    if (!result) {
-      return;
-    }
+  }
 
-    let uid = this.auth.auth.currentUser!.uid;
-    let nem = this.wallets[index].nem;
+  deleteWallet(index: number) {
 
-    let wallet = await this.firestore.collection("users").doc(uid).collection("wallets").ref.where("nem", "==", nem).get();
-    await wallet.docs[0].ref.delete();
-
-    await this.refresh(true);
+    localStorage.removeItem("currentWallet");
   }
 
   public translation = {
@@ -174,21 +92,6 @@ export class WalletsComponent implements OnInit {
       en: "Delete",
       ja: "削除"
     } as any,
-    importPrivateKey: {
-      en: "Import your private key",
-      ja: "秘密鍵をインポート"
-    } as any,
-    privateKey: {
-      en: "Private key",
-      ja: "秘密鍵"
-    } as any,
-    deleteConfirm: {
-      en: "Are you sure to delete the wallet?",
-      ja: "ウォレットを削除しますか？"
-    } as any,
-    addWallet: {
-      en: "Add a wallet",
-      ja: "ウォレットを追加"
-    } as any
+
   }
 }

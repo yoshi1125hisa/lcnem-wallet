@@ -9,13 +9,16 @@ import { GlobalDataService } from '../../../../app/services/global-data.service'
 })
 export class CreateDialogComponent implements OnInit {
   forms = {
-    name: "",
     local: 0,
     import: 0,
     privateKey: "",
   }
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: {
+      title: string,
+      content: string
+    },
     public global: GlobalDataService
   ) { }
 
@@ -24,16 +27,7 @@ export class CreateDialogComponent implements OnInit {
 
   translation = {
     create: {
-      en: "Create a new wallet",
-      ja: "新しいウォレットを作成"
-    } as any,
-    name: {
-      en: "Name",
-      ja: "名前"
-    } as any,
-    localOrCloud: {
-      en: "",
-      ja: "秘密鍵の管理"
+
     } as any,
     cloud: {
       en: "Cloud",
@@ -57,11 +51,11 @@ export class CreateDialogComponent implements OnInit {
     } as any,
     cloudDescription: {
       en: "",
-      ja: "秘密鍵はこちらで保管します(初心者向け)。"
+      ja: "秘密鍵をこちらで保管します"
     } as any,
     localDescription: {
       en: "",
-      ja: "秘密鍵はお客様管理となります(上級者向け)。リスクが低いです。"
+      ja: "秘密鍵は、お客様管理となります"
     } as any
   }
 }

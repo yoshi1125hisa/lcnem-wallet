@@ -27,22 +27,21 @@
             <mat-divider></mat-divider>
             <ng-container *ngFor="let wallet of wallets; let i = index">
               <mat-list-item>
-                <mat-icon mat-list-icon *ngIf="wallet.wallet" color="primary">cloud_done</mat-icon>
-                <mat-icon mat-list-icon *ngIf="!wallet.wallet" color="warn">cloud_off</mat-icon>
+                <mat-icon mat-list-icon>
+                  <ng-container *ngIf="wallet.wallet">cloud_done</ng-container>
+                  <ng-container *ngIf="!wallet.wallet">cloud_off</ng-container>
+                </mat-icon>
                 <span matLine>{{wallet.name}}</span>
                 <span matLine>{{wallet.nem}}</span>
                 <span class="fill-remaining-space"></span>
                 <span>
-                  <button mat-icon-button color="accent" (click)="enterWallet(i)" *ngIf="wallet.wallet">
+                  <button mat-icon-button (click)="enterWallet(i)">
                     <mat-icon>forward</mat-icon>
-                  </button>
-                  <button mat-icon-button color="warn" (click)="importPrivateKey()" *ngIf="!wallet.wallet">
-                    <mat-icon>warning</mat-icon>
                   </button>
                 </span>
                 <span>
                   <mat-menu #walletMenu="matMenu" [overlapTrigger]="false">
-                    <button mat-menu-item (click)="backupWallet(i)" [disabled]="!wallet.wallet">
+                    <button mat-menu-item (click)="backupWallet(i)">
                       {{translation.backup[global.lang]}}
                     </button>
                     <button mat-menu-item (click)="deleteWallet(i)">
@@ -58,11 +57,6 @@
             </ng-container>
           </mat-list>
         </mat-card>
-        <br />
-        <div fxLayout="row">
-          <span class="fill-remaining-space"></span>
-          <button mat-raised-button color="accent" (click)="addWallet()">{{translation.addWallet[global.lang]}}</button>
-        </div>
       </ng-template>
     </div>
   </mat-sidenav-content>

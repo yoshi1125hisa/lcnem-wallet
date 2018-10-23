@@ -15,12 +15,12 @@
     ],
     "rewrites": [
       {
-        "source": "/api/deposit",
-        "function": "deposit"
+        "source": "/api/v1/deposit",
+        "function": "depositV1"
       },
       {
-        "source": "/api/withdraw",
-        "function": "withdraw"
+        "source": "/api/v1/withdraw",
+        "function": "withdrawV1"
       },
       {
         "source": "**",
