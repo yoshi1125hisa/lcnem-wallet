@@ -18,7 +18,6 @@ import {
   MatInputModule,
   MatSelectModule,
   MatIconModule,
-  MatTooltipModule,
   MatFormFieldModule,
   MatSidenavModule,
   MatProgressSpinnerModule,
@@ -30,7 +29,9 @@ import {
   MatCheckboxModule,
   MatMenuModule,
   MatProgressBarModule,
-  MatRadioModule
+  MatRadioModule,
+  MatSnackBarModule,
+  MatTooltipModule
 } from '@angular/material';
 
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
@@ -105,7 +106,6 @@ import { CreateDialogComponent } from './accounts/wallets/create-dialog/create-d
     MatInputModule,
     MatSelectModule,
     MatIconModule,
-    MatTooltipModule,
     MatFormFieldModule,
     MatSidenavModule,
     MatProgressSpinnerModule,
@@ -115,7 +115,9 @@ import { CreateDialogComponent } from './accounts/wallets/create-dialog/create-d
     MatListModule,
     MatSlideToggleModule,
     MatMenuModule,
-    MatRadioModule
+    MatRadioModule,
+    MatSnackBarModule,
+    MatTooltipModule
   ],
   entryComponents: [
     LoadingDialogComponent,

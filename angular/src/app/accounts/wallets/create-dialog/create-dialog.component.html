@@ -6,12 +6,12 @@
     </mat-form-field>
     <p>{{translation.localOrCloud[global.lang]}}</p>
     <mat-radio-group [(ngModel)]="forms.local" name="local" required>
-      <mat-radio-button matTooltip="{{translation.cloudDescription[global.lang]}}" [value]="0" [checked]="true">{{translation.cloud[global.lang]}}</mat-radio-button>
+      <mat-radio-button matTooltip="{{translation.cloudDescription[global.lang]}}" [value]="0">{{translation.cloud[global.lang]}}</mat-radio-button>
       <mat-radio-button matTooltip="{{translation.localDescription[global.lang]}}" [value]="1">{{translation.local[global.lang]}}</mat-radio-button>
     </mat-radio-group>
     <p>{{translation.privateKey[global.lang]}}</p>
     <mat-radio-group [(ngModel)]="forms.import" name="import" required>
-      <mat-radio-button [value]="0" [checked]="true">{{translation.generate[global.lang]}}</mat-radio-button>
+      <mat-radio-button [value]="0">{{translation.generate[global.lang]}}</mat-radio-button>
       <mat-radio-button [value]="1">{{translation.import[global.lang]}}</mat-radio-button>
     </mat-radio-group>
     <mat-form-field fxFill>

@@ -33,18 +33,17 @@
                 <span matLine>{{wallet.nem}}</span>
                 <span class="fill-remaining-space"></span>
                 <span>
-                  <button mat-icon-button color="warn" matTooltip="{{translation.localNotFound[global.lang]}}" (click)="importPrivateKey()"
-                    *ngIf="!wallet.wallet">
+                  <button mat-icon-button color="warn" (click)="openSnackBar('import')" *ngIf="!wallet.wallet">
                     <mat-icon>warning</mat-icon>
                   </button>
                 </span>
                 <span>
-                  <button mat-icon-button color="warn" matTooltip="{{translation.unavailablePlan[global.lang]}}" *ngIf="clouds > 1 && !plan">
+                  <button mat-icon-button color="warn" (click)="openSnackBar('plan')" *ngIf="!wallet.local && clouds > 1 && !plan">
                     <mat-icon>warning</mat-icon>
                   </button>
                 </span>
                 <span>
-                  <button mat-icon-button color="accent" (click)="enterWallet(i)" *ngIf="clouds == 1 || plan">
+                  <button mat-icon-button color="accent" (click)="enterWallet(i)" *ngIf="wallet.local || clouds == 1 || plan">
                     <mat-icon>launch</mat-icon>
                   </button>
                 </span>
@@ -53,8 +52,11 @@
                     <button mat-menu-item (click)="renameWallet(i)">
                       {{translation.rename[global.lang]}}
                     </button>
-                    <button mat-menu-item (click)="backupWallet(i)" [disabled]="!wallet.wallet">
+                    <button mat-menu-item (click)="backupWallet(i)" *ngIf="wallet.wallet">
                       {{translation.backup[global.lang]}}
+                    </button>
+                    <button mat-menu-item (click)="importPrivateKey()" *ngIf="!wallet.wallet">
+                      {{translation.importPrivateKey[global.lang]}}
                     </button>
                     <button mat-menu-item (click)="deleteWallet(i)">
                       {{translation.delete[global.lang]}}

@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { GlobalDataService } from '../../../../app/services/global-data.service';
+import { Plan } from '../../../../../../models/plan';
 
 @Component({
   selector: 'app-create-dialog',
@@ -13,10 +14,11 @@ export class CreateDialogComponent implements OnInit {
     import: 0,
     privateKey: "",
   }
-
+  
   constructor(
     public global: GlobalDataService
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
   }
