@@ -75,6 +75,8 @@ export class TransferComponent implements OnInit {
 
     let currentWallet = this.global.account.currentWallet!;
 
+    this.assets = currentWallet.assets!.map(a => a.asset);
+
     let invoice = this.route.snapshot.queryParamMap.get('invoice') || "";
     let invoiceData = Invoice.parse(decodeURI(invoice));
 
@@ -84,18 +86,23 @@ export class TransferComponent implements OnInit {
 
       if(invoiceData.data.assets) {
         for(let asset of invoiceData.data.assets) {
-          let index = this.global.account.currentWallet!.assets!.findIndex(a => a.name == asset.id);
-          if(index == -1 || !this.assetIsNotReady(asset.id)) {
-            continue;
-          }
-          this.addAsset(index);
+          this.setAsset(asset.id, asset.amount);
         }
       }
     }
 
-    this.assets = currentWallet.assets!.map(a => a.asset);
-    
     this.loading = false;
+  }
+
+  public setAsset(name: string, amountAbsolute: number) {
+    let asset = this.global.account.currentWallet!.assets!.find(a => a.name == name);
+    if(!asset || !this.assetIsNotReady(name)) {
+      return
+    }
+    let index = this.forms.transferAssets.length - 1;
+    this.forms.transferAssets[index].index = index;
+    this.forms.transferAssets[index].amount = amountAbsolute / Math.pow(10, asset.definition.properties.divisibility);
+    this.addAsset(index);
   }
 
   public addAsset(index: number) {
