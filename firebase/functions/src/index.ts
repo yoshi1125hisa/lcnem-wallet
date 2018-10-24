@@ -1,10 +1,10 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
-import { onCreate } from './on-create';
-import { deposit } from './deposit';
-import { withdraw } from './withdraw';
-import { payPlan } from './pay-plan';
+import { _onCreate } from './on-create';
+import { _deposit } from './deposit';
+import { _withdraw } from './withdraw';
+import { _payPlan } from './pay-plan';
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -17,14 +17,17 @@ admin.initializeApp({
   databaseURL: "https://ticket-p2p.firebaseio.com"
 });
 
-exports.onCreate = onCreate;
+export const onCreate = _onCreate;
+export let deposit: functions.HttpsFunction;
+export let withdraw: functions.HttpsFunction;
+export let payPlan: functions.HttpsFunction;
 
 if (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "deposit") {
-  exports.deposit = deposit;
+  deposit = _deposit;
 }
 if (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "withdraw") {
-  exports.withdraw = withdraw;
+  withdraw = _withdraw;
 }
 if (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "payPlan") {
-  exports.payPlan = payPlan;
+  payPlan = _payPlan;
 }

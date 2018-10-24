@@ -37,9 +37,13 @@
                     *ngIf="!wallet.wallet">
                     <mat-icon>warning</mat-icon>
                   </button>
+                </span>
+                <span>
                   <button mat-icon-button color="warn" matTooltip="{{translation.unavailablePlan[global.lang]}}" *ngIf="clouds > 1 && !plan">
-                      <mat-icon>warning</mat-icon>
-                    </button>
+                    <mat-icon>warning</mat-icon>
+                  </button>
+                </span>
+                <span>
                   <button mat-icon-button color="accent" (click)="enterWallet(i)" *ngIf="clouds == 1 || plan">
                     <mat-icon>launch</mat-icon>
                   </button>

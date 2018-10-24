@@ -3,17 +3,17 @@ import { Wallet } from '../../../models/wallet';
 
 import {
   Account,
-  TransactionHttp,
   TransferTransaction,
   PlainMessage,
   TimeWindow,
-  XEM,
   NEMLibrary,
   NetworkTypes,
   Address,
+  XEM,
+  TransactionHttp
 } from 'nem-library';
 
-export const onCreate = functions.firestore.document("users/{user}/wallets/{wallet}").onCreate(async event => {
+export const _onCreate = functions.firestore.document("users/{user}/wallets/{wallet}").onCreate(async event => {
   try {
     NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
   } catch {}
@@ -26,7 +26,7 @@ export const onCreate = functions.firestore.document("users/{user}/wallets/{wall
       new Address((doc.data() as Wallet).nem),
       new XEM(1),
       PlainMessage.create("Thanks! LCNEM")
-    ))
+    ));
     await new TransactionHttp().announceTransaction(signed).toPromise();
   } catch {
   }

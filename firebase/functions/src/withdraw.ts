@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 
 import * as request from 'request';
 
-export const withdraw = functions.https.onRequest((req, res) => {
+export const _withdraw = functions.https.onRequest((req, res) => {
   try {
     const email = req.body.email as string;
     const nem = req.body.nem as string;
