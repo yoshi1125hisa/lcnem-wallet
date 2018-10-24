@@ -1,0 +1,23 @@
+.amount {
+  text-align: center;
+}
+
+.qr {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 300px;
+  max-height: 300px;
+}
+
+mat-sidenav mat-nav-list mat-icon {
+  color: gray;
+}
+.mat-list-icon {
+  margin-right: 1em;
+}
+.open-in-new {
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+}

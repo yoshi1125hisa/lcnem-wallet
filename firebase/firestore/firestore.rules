@@ -1,11 +1,19 @@
 service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{user} {
-      allow update: if request.auth.uid == user
-      allow read, create: if request.auth.uid != null;
+      allow read, update: if request.auth.uid == user;
+      allow create: if request.auth.uid != null;
 
       match /contacts/{contact} {
-        allow read, write: if request.auth.uid == user
+        allow read, write: if request.auth.uid == user;
+      }
+
+      match /wallets/{wallet} {
+        allow read, write: if request.auth.uid == user;
+      }
+
+      match /plans/{plan} {
+        allow read: if request.auth.uid == user;
       }
     }
   }
