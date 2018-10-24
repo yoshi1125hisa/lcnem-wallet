@@ -50,6 +50,9 @@
                 </span>
                 <span>
                   <mat-menu #walletMenu="matMenu" [overlapTrigger]="false">
+                    <button mat-menu-item (click)="renameWallet(i)">
+                      {{translation.rename[global.lang]}}
+                    </button>
                     <button mat-menu-item (click)="backupWallet(i)" [disabled]="!wallet.wallet">
                       {{translation.backup[global.lang]}}
                     </button>

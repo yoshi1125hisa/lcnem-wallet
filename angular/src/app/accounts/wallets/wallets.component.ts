@@ -129,10 +129,42 @@ export class WalletsComponent implements OnInit {
       }
     }).afterClosed().toPromise();
 
+    if(!pk) {
+      return;
+    }
+
     let uid = this.auth.auth.currentUser!.uid;
     let wallet = SimpleWallet.createWithPrivateKey(uid, new Password(uid), pk);
     this.global.account.localWallets.push(wallet.writeWLTFile());
     localStorage.setItem("wallets", JSON.stringify(this.global.account.localWallets));
+
+    await this.refresh(true);
+  }
+
+  public async renameWallet(index: number) {
+    let name = await this.dialog.open(PromptDialogComponent, {
+      data: {
+        title: this.translation.rename[this.global.lang],
+        input: {
+          placeholder: this.translation.walletName[this.global.lang],
+          value: this.wallets[index].name
+        }
+      }
+    }).afterClosed().toPromise();
+
+    if(!name) {
+      return;
+    }
+
+    let uid = this.auth.auth.currentUser!.uid;
+    let nem = this.wallets[index].nem;
+
+    let wallet = await this.firestore.collection("users").doc(uid).collection("wallets").ref.where("nem", "==", nem).get();
+    await wallet.docs[0].ref.set({
+      name: name
+    }, {
+      merge: true
+    })
 
     await this.refresh(true);
   }
@@ -175,6 +207,10 @@ export class WalletsComponent implements OnInit {
       en: "Wallets",
       ja: "ウォレット"
     } as any,
+    rename: {
+      en: "Rename",
+      ja: "名前を変更"
+    } as any,
     backup: {
       en: "Back up",
       ja: "バックアップ"
@@ -190,6 +226,10 @@ export class WalletsComponent implements OnInit {
     privateKey: {
       en: "Private key",
       ja: "秘密鍵"
+    } as any,
+    walletName: {
+      en: "Wallet name",
+      ja: "ウォレット名"
     } as any,
     deleteConfirm: {
       en: "Are you sure to delete the wallet?",

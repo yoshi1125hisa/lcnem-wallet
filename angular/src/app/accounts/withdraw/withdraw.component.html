@@ -10,7 +10,6 @@
       <span class="fill-remaining-space"></span>
     </mat-toolbar>
     <div class="mat-typography body-container">
-      <iframe [src]="safeSite" fxFill></iframe>
       <form #form="ngForm" (ngSubmit)="withdraw()">
         <mat-form-field fxFill>
           <mat-select placeholder="{{translation.currency[global.lang]}}" [(ngModel)]="selectedCurrency" name="selectedCurrency"
@@ -29,6 +28,7 @@
         </mat-form-field>
         <button mat-raised-button color="accent" fxFill [disabled]="form.invalid">{{translation.withdraw[global.lang]}}</button>
       </form>
+      <iframe [src]="safeSite"  class="mat-elevation-z1"></iframe>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

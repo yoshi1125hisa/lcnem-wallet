@@ -10,6 +10,7 @@ import { supportedCurrencies } from '../../../models/supported-currencies';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Wallet } from '../../../../../models/wallet';
 import { Address } from 'nem-library';
+import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 
 declare let Stripe: any;
 
@@ -29,13 +30,17 @@ export class DepositComponent implements OnInit {
   public amount?: number;
   public method?: string;
 
+  public safeSite: SafeResourceUrl;
+
   constructor(
     public global: GlobalDataService,
     private router: Router,
     private dialog: MatDialog,
     private http: HttpClient,
-    private auth: AngularFireAuth
+    private auth: AngularFireAuth,
+    sanitizer: DomSanitizer
   ) {
+    this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${global.lang}.txt`);
   }
 
   ngOnInit() {
