@@ -37,8 +37,9 @@ export class GlobalDataService {
     wallets: Wallet[],
     plan?: Plan,
     currentWallet: {
-      wallet: SimpleWallet,
-      assets?: {
+      address: Address,
+      wallet?: SimpleWallet,
+      assets: {
         name: string,
         asset: Asset,
         definition: AssetDefinition
@@ -103,6 +104,7 @@ export class GlobalDataService {
         let tempWallet = SimpleWallet.readFromWLT(userData.wallet);
         let data = {
           name: "1",
+          local: false,
           nem: tempWallet.address.plain(),
           wallet: userData.wallet
         } as Wallet;
@@ -115,7 +117,7 @@ export class GlobalDataService {
     let plan = await user.ref.collection("plans").where("year", "==", now.getFullYear()).where("month", "==", now.getMonth() + 1).get();
 
     if(!plan.empty) {
-      
+
     }
 
     let localWallet = localStorage.getItem("wallets");
@@ -137,15 +139,18 @@ export class GlobalDataService {
     if(this.account.wallets.length - 1 < index) {
       return;
     }
+    let wallet = this.account.wallets[index];
 
-    let wallet = this.account.wallets[index].wallet;
-    if(!wallet) {
-      return;
-    }
     this.account.currentWallet = {
-      wallet: SimpleWallet.readFromWLT(wallet),
+      address: new Address(wallet.nem),
+      assets: [],
       refreshed: false
+    };
+
+    if(wallet.wallet) {
+      this.account.currentWallet!.wallet = SimpleWallet.readFromWLT(wallet.wallet)
     }
+    
     localStorage.setItem("currentWallet", index.toString());
   }
 
@@ -161,7 +166,7 @@ export class GlobalDataService {
       return;
     }
 
-    let assets = await this.accountHttp.getAssetsOwnedByAddress(currentWallet.wallet.address).toPromise();
+    let assets = await this.accountHttp.getAssetsOwnedByAddress(currentWallet.address).toPromise();
     let accountAssets = [];
 
     for (let asset of assets) {

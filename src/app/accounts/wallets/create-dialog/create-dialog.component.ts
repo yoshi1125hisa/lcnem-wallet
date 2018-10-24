@@ -1,5 +1,4 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material';
 import { GlobalDataService } from '../../../../app/services/global-data.service';
 
 @Component({

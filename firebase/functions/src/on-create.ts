@@ -23,7 +23,7 @@ export const onCreate = functions.firestore.document("users/{user}/wallets/{wall
     const account = Account.createWithPrivateKey(functions.config().nem.private_key);
     const signed = account.signTransaction(TransferTransaction.create(
       TimeWindow.createWithDeadline(),
-      new Address((doc.data()! as Wallet).nem),
+      new Address((doc.data() as Wallet).nem),
       new XEM(1),
       PlainMessage.create("Thanks! LCNEM")
     ))

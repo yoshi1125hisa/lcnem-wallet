@@ -51,10 +51,10 @@ export class WithdrawComponent implements OnInit {
 
     try {
       await this.http.post(
-        "/api/v1/withdraw",
+        "/api/withdraw",
         {
           email: this.auth.auth.currentUser!.email,
-          nem: this.global.account.currentWallet!.wallet.address.plain(),
+          nem: this.global.account.currentWallet!.address.plain(),
           currency: this.selectedCurrency,
           amount: this.amount,
           method: this.method,

@@ -5,18 +5,18 @@
       <input matInput placeholder="{{translation.name[global.lang]}}" [(ngModel)]="forms.name" name="namey" required />
     </mat-form-field>
     <p>{{translation.localOrCloud[global.lang]}}</p>
-    <mat-radio-group [(ngModel)]="forms.local" name="local">
-      <mat-radio-button matTooltip="{{translation.cloudDescription[global.lang]}}" value="0">{{translation.cloud[global.lang]}}</mat-radio-button>
-      <mat-radio-button matTooltip="{{translation.localDescription[global.lang]}}" value="1">{{translation.local[global.lang]}}</mat-radio-button>
+    <mat-radio-group [(ngModel)]="forms.local" name="local" required>
+      <mat-radio-button matTooltip="{{translation.cloudDescription[global.lang]}}" [value]="0" [checked]="true">{{translation.cloud[global.lang]}}</mat-radio-button>
+      <mat-radio-button matTooltip="{{translation.localDescription[global.lang]}}" [value]="1">{{translation.local[global.lang]}}</mat-radio-button>
     </mat-radio-group>
     <p>{{translation.privateKey[global.lang]}}</p>
-    <mat-radio-group [(ngModel)]="forms.import" name="import">
-      <mat-radio-button value="0">{{translation.generate[global.lang]}}</mat-radio-button>
-      <mat-radio-button value="1">{{translation.import[global.lang]}}</mat-radio-button>
+    <mat-radio-group [(ngModel)]="forms.import" name="import" required>
+      <mat-radio-button [value]="0" [checked]="true">{{translation.generate[global.lang]}}</mat-radio-button>
+      <mat-radio-button [value]="1">{{translation.import[global.lang]}}</mat-radio-button>
     </mat-radio-group>
     <mat-form-field fxFill>
       <input matInput placeholder="{{translation.privateKey[global.lang]}}" [(ngModel)]="forms.privateKey" name="privateKey"
-        required="{{forms.import == 1}}" disabled="{{forms.import == 0}}" pattern="[0-9a-f]{64}" />
+        required="{{forms.import}}" disabled="{{!forms.import}}" pattern="[0-9a-f]{64}" />
     </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions>
