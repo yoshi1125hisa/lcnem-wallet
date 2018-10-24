@@ -85,8 +85,8 @@ export class HomeComponent implements OnInit {
       ja: "言語"
     } as any,
     wallets: {
-      en: "Wallets",
-      ja: "ウォレット"
+      en: "Change the wallet",
+      ja: "ウォレットの切り替え"
     } as any,
     logout: {
       en: "Log out",

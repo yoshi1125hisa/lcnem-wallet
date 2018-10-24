@@ -19,12 +19,12 @@ admin.initializeApp({
 
 exports.onCreate = onCreate;
 
-if (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === 'deposit') {
+if (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "deposit") {
   exports.deposit = deposit;
 }
-if (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === 'withdraw') {
+if (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "withdraw") {
   exports.withdraw = withdraw;
 }
-if (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === 'payPlan') {
+if (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "payPlan") {
   exports.payPlan = payPlan;
 }

@@ -22,6 +22,7 @@ import { nodes } from '../../models/nodes';
 import { User } from '../../../models/user';
 import { Router } from '@angular/router';
 import { Wallet } from '../../../models/wallet';
+import { Plan } from '../../../models/plan';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +35,7 @@ export class GlobalDataService {
   public account: {
     photoUrl: string,
     wallets: Wallet[],
+    plan?: Plan,
     currentWallet: {
       wallet: SimpleWallet,
       assets?: {
@@ -107,6 +109,13 @@ export class GlobalDataService {
         user.ref.collection("wallets").add(data);
         this.account.wallets = [data];
       }
+    }
+
+    let now = new Date(Date.now());
+    let plan = await user.ref.collection("plans").where("year", "==", now.getFullYear()).where("month", "==", now.getMonth() + 1).get();
+
+    if(!plan.empty) {
+      
     }
 
     let localWallet = localStorage.getItem("wallets");

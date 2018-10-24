@@ -1,3 +1,6 @@
+import { PlanType } from "./plan";
+
 export interface User {
-  name: string
+  name: string,
+  plan?: PlanType
 }
