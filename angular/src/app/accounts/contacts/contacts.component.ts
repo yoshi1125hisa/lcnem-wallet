@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { GlobalDataService } from '../../services/global-data.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
-import { User } from '../../../../models/user';
+import { User } from '../../../../../models/user';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Contact } from '../../../../models/contact';
+import { Contact } from '../../../../../models/contact';
 
 @Component({
   selector: 'app-contacts',

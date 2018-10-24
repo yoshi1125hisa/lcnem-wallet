@@ -1,7 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
-import { _onCreate } from './on-create';
 import { _deposit } from './deposit';
 import { _withdraw } from './withdraw';
 import { _payPlan } from './pay-plan';
@@ -17,7 +16,6 @@ admin.initializeApp({
   databaseURL: "https://ticket-p2p.firebaseio.com"
 });
 
-export const onCreate = _onCreate;
 export let deposit: functions.HttpsFunction;
 export let withdraw: functions.HttpsFunction;
 export let payPlan: functions.HttpsFunction;
@@ -31,3 +29,14 @@ if (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "withdraw") {
 if (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "payPlan") {
   payPlan = _payPlan;
 }
+
+/*
+ const account = Account.createWithPrivateKey(functions.config().nem.private_key);
+    const signed = account.signTransaction(TransferTransaction.create(
+      TimeWindow.createWithDeadline(),
+      new Address((doc.data() as Wallet).nem),
+      new XEM(1),
+      PlainMessage.create("Thanks! LCNEM")
+    ));
+    await new TransactionHttp().announceTransaction(signed).toPromise();
+*/

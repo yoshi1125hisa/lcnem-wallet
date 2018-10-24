@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { GlobalDataService } from '../../services/global-data.service';
-import { Wallet } from '../../../../models/wallet';
+import { Wallet } from '../../../../../models/wallet';
 import { SimpleWallet, Password } from 'nem-library';
 import { MatDialog } from '@angular/material';
 import { CreateDialogComponent } from './create-dialog/create-dialog.component';
@@ -11,7 +11,7 @@ import { PromptDialogComponent } from '../../components/prompt-dialog/prompt-dia
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AnyKindOfDictionary } from 'lodash';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
-import { Plan } from '../../../../models/plan';
+import { Plan } from '../../../../../models/plan';
 
 @Component({
   selector: 'app-wallets',
