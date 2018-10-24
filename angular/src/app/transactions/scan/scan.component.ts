@@ -70,7 +70,7 @@ export class ScanComponent implements OnInit {
         try {
           let invoice = Invoice.parse(decoded);
           if (!invoice && decoded[0] == "N" && decoded.replace(/-/g, "").trim().length == 40) {
-            let invoiceData =new Invoice();
+            let invoiceData = new Invoice();
             invoiceData.data.addr = decoded;
             result = encodeURI(invoiceData.stringify());
           }

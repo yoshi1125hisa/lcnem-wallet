@@ -75,12 +75,13 @@ export class TransferComponent implements OnInit {
 
     let currentWallet = this.global.account.currentWallet!;
 
-    let invoice = this.route.snapshot.paramMap.get('invoice') || "";
+    let invoice = this.route.snapshot.queryParamMap.get('invoice') || "";
     let invoiceData = Invoice.parse(decodeURI(invoice));
 
     if(invoiceData) {
       this.forms.recipient = invoiceData.data.addr;
       this.forms.message = invoiceData.data.msg;
+
       if(invoiceData.data.assets) {
         for(let asset of invoiceData.data.assets) {
           let index = this.global.account.currentWallet!.assets!.findIndex(a => a.name == asset.id);
