@@ -47,6 +47,8 @@ export class TransferComponent implements OnInit {
 
   public autoCompletes: string[] = [];
 
+  public navigatorShare = (navigator as any).share;
+
   constructor(
     public global: GlobalDataService,
     public dialog: MatDialog,

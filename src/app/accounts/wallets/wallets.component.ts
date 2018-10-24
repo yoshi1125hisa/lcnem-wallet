@@ -11,6 +11,7 @@ import { PromptDialogComponent } from '../../components/prompt-dialog/prompt-dia
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AnyKindOfDictionary } from 'lodash';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+import { Plan } from '../../../../models/plan';
 
 @Component({
   selector: 'app-wallets',
@@ -19,7 +20,8 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
 })
 export class WalletsComponent implements OnInit {
   public loading = true;
-  public wallets: Wallet[];
+  public wallets!: Wallet[];
+  public plan?: Plan;
 
   constructor(
     public global: GlobalDataService,
@@ -28,7 +30,6 @@ export class WalletsComponent implements OnInit {
     private auth: AngularFireAuth,
     private dialog: MatDialog
   ) {
-    this.wallets = global.account.wallets;
   }
 
   ngOnInit() {
@@ -64,6 +65,8 @@ export class WalletsComponent implements OnInit {
     if (length != localWallets.length) {
       localStorage.setItem("wallets", JSON.stringify(this.global.account.localWallets));
     }
+
+    this.plan = this.global.account.plan;
 
     this.loading = false;
   }
@@ -189,6 +192,14 @@ export class WalletsComponent implements OnInit {
     addWallet: {
       en: "Add a wallet",
       ja: "ウォレットを追加"
+    } as any,
+    localNotFound: {
+      en: "",
+      ja: "秘密鍵がインポートされていません。"
+    } as any,
+    unavailablePlan: {
+      en: "",
+      ja: "Freeプランでは、複数のクラウド秘密鍵はサポートされていません。"
     } as any
   }
 }

@@ -61,7 +61,7 @@
           <br />
           <div fxLayout="row">
             <span class="fill-remaining-space"></span>
-            <button mat-raised-button type="button" [disabled]="form.invalid" (click)="share()">{{translation.share[global.lang]}}</button>
+            <button mat-raised-button type="button" [disabled]="form.invalid" (click)="share()" *ngIf="navigatorShare">{{translation.share[global.lang]}}</button>
             <button mat-raised-button color="accent" [disabled]="form.invalid">{{translation.transfer[global.lang]}}</button>
           </div>
         </form>
