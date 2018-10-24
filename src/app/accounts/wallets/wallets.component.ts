@@ -22,6 +22,7 @@ export class WalletsComponent implements OnInit {
   public loading = true;
   public wallets!: Wallet[];
   public plan?: Plan;
+  public clouds = 0;
 
   constructor(
     public global: GlobalDataService,
@@ -50,6 +51,8 @@ export class WalletsComponent implements OnInit {
     await this.global.refresh(force);
 
     this.wallets = this.global.account.wallets.concat();
+    this.clouds = this.wallets.filter(w => !w.local).length;
+
     let localWallets = this.global.account.localWallets;
     let length = localWallets.length;
 
@@ -94,6 +97,7 @@ export class WalletsComponent implements OnInit {
 
     let firestoreObject: Wallet = {
       name: result.name,
+      local: result.local == 1 ? true: false,
       nem: wallet.address.plain()
     };
 
@@ -106,7 +110,7 @@ export class WalletsComponent implements OnInit {
 
     await this.firestore.collection("users").doc(uid).collection("wallets").add(firestoreObject);
 
-    await this.refresh();
+    await this.refresh(true);
   }
 
   public async enterWallet(index: number) {
@@ -118,8 +122,10 @@ export class WalletsComponent implements OnInit {
     let pk = await this.dialog.open(PromptDialogComponent, {
       data: {
         title: this.translation.importPrivateKey[this.global.lang],
-        placeholder: this.translation.privateKey[this.global.lang],
-        pattern: "[0-9a-f]{64}"
+        input: {
+          placeholder: this.translation.privateKey[this.global.lang],
+          pattern: "[0-9a-f]{64}"
+        }
       }
     }).afterClosed().toPromise();
 

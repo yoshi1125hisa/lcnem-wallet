@@ -58,11 +58,11 @@ export class HomeComponent implements OnInit {
     this.progress = 30;
     let invoice = new Invoice();
     this.progress = 40;
-    invoice.data.addr = this.global.account.currentWallet!.wallet.address.plain();
+    invoice.data.addr = this.global.account.currentWallet!.address.plain();
     this.progress = 50;
     this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
     this.progress = 60;
-    this.address = this.global.account.currentWallet!.wallet.address.pretty();
+    this.address = this.global.account.currentWallet!.address.pretty();
     this.progress = 70;
 
     this.assets = this.global.account.currentWallet!.assets!.map(a => a.asset);

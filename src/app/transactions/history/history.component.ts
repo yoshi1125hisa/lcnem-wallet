@@ -39,9 +39,9 @@ export class HistoryComponent implements OnInit {
     this.progress = 40;
     let currentWallet = this.global.account.currentWallet!;
     this.progress = 50;
-    let unconfirmedTransactions = await this.global.accountHttp.unconfirmedTransactions(currentWallet.wallet.address).toPromise();
+    let unconfirmedTransactions = await this.global.accountHttp.unconfirmedTransactions(currentWallet.address).toPromise();
     this.progress = 70;
-    let allTransactions = await this.global.accountHttp.allTransactions(currentWallet.wallet.address).toPromise();
+    let allTransactions = await this.global.accountHttp.allTransactions(currentWallet.address).toPromise();
     this.progress = 90;
     this.transactions = unconfirmedTransactions.concat(allTransactions);
     this.progress = 100;

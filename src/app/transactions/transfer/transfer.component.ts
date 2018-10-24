@@ -173,8 +173,18 @@ export class TransferComponent implements OnInit {
   }
 
   public async transfer() {
+    if(!this.global.account.currentWallet!.wallet) {
+      this.dialog.open(AlertDialogComponent, {
+        data: {
+          title: this.translation.error[this.global.lang],
+          content: this.translation.importRequired[this.global.lang]
+        }
+      });
+      return;
+    }
+
     let password = new Password(this.auth.auth.currentUser!.uid);
-    let account = this.global.account.currentWallet!.wallet.open(password);
+    let account = this.global.account.currentWallet!.wallet!.open(password);
 
     let recipient: Address;
     try {
@@ -265,6 +275,10 @@ export class TransferComponent implements OnInit {
     address: {
       en: "NEM address",
       ja: "NEMアドレス"
+    } as any,
+    importRequired: {
+      en: "Importing the private key is required.",
+      ja: "秘密鍵のインポートが必要です。"
     } as any,
     addressRequired: {
       en: "An address is required. You can also enter any NEM namespace.",

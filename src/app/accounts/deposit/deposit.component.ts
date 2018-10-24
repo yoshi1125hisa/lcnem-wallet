@@ -53,17 +53,14 @@ export class DepositComponent implements OnInit {
 
     try {
       await this.http.post(
-        "/api/v1/deposit",
+        "/api/deposit",
         {
           email: this.auth.auth.currentUser!.email,
-          nem: this.global.account.currentWallet!.wallet.address.plain(),
+          nem: this.global.account.currentWallet!.address.plain(),
           currency: this.selectedCurrency,
           amount: this.amount,
           method: this.method,
           lang: this.global.lang
-        },
-        {
-
         }
       ).toPromise();
     } catch {

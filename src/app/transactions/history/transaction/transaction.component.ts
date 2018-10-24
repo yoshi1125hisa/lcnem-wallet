@@ -38,7 +38,7 @@ export class TransactionComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if(!this.transaction) {
+    if (!this.transaction) {
       return;
     }
     if (this.transaction.type == TransactionTypes.TRANSFER) {
@@ -52,10 +52,7 @@ export class TransactionComponent implements OnInit {
   }
 
   public async set(transferTransaction: TransferTransaction) {
-    let password = new Password(this.auth.auth.currentUser!.uid);
-    let account = this.global.account.currentWallet!.wallet.open(password);
-
-    if (account.address.plain() == transferTransaction.recipient.plain()) {
+    if (this.global.account.currentWallet!.address.plain() == transferTransaction.recipient.plain()) {
       this.address = transferTransaction.signer!.address.pretty();
     } else {
       this.address = transferTransaction.recipient.pretty();
@@ -64,11 +61,17 @@ export class TransactionComponent implements OnInit {
 
     let message: string;
     if (transferTransaction.message.isEncrypted()) {
-      if(this.received) {
-        message = account!.decryptMessage(transferTransaction.message, transferTransaction.signer!).payload;
+      if (this.global.account.currentWallet!.wallet) {
+        message = "";
       } else {
-        let recipient = await this.global.accountHttp.getFromAddress(transferTransaction.recipient).toPromise();
-        message = account!.decryptMessage(transferTransaction.message, recipient.publicAccount!).payload;
+        let password = new Password(this.auth.auth.currentUser!.uid);
+        let account = this.global.account.currentWallet!.wallet!.open(password);
+        if (this.received) {
+          message = account!.decryptMessage(transferTransaction.message, transferTransaction.signer!).payload;
+        } else {
+          let recipient = await this.global.accountHttp.getFromAddress(transferTransaction.recipient).toPromise();
+          message = account!.decryptMessage(transferTransaction.message, recipient.publicAccount!).payload;
+        }
       }
     } else {
       let msg = transferTransaction.message as PlainMessage;
@@ -96,6 +99,10 @@ export class TransactionComponent implements OnInit {
     unconfirmed: {
       en: "This transaction is not confirmed by the blockchain yet.",
       ja: "この取引はまだブロックチェーンに承認されていません"
+    } as any,
+    importRequired: {
+      en: "To decrypt an encrypted message, importing the private key is required.",
+      ja: "暗号化メッセージを復号するには、秘密鍵のインポートが必要です。"
     } as any
   };
 }

@@ -25,22 +25,23 @@
         <mat-card>
           <mat-list>
             <mat-divider></mat-divider>
-            <ng-container *ngFor="let wallet of wallets; let i = index; let f = first">
+            <ng-container *ngFor="let wallet of wallets; let i = index">
               <mat-list-item>
-                <mat-icon mat-list-icon *ngIf="wallet.wallet" color="primary">cloud_done</mat-icon>
-                <mat-icon mat-list-icon *ngIf="!wallet.wallet" color="warn">cloud_off</mat-icon>
+                <mat-icon mat-list-icon *ngIf="!wallet.local" color="primary">cloud_done</mat-icon>
+                <mat-icon mat-list-icon *ngIf="wallet.local" color="warn">cloud_off</mat-icon>
                 <span matLine>{{wallet.name}}</span>
                 <span matLine>{{wallet.nem}}</span>
                 <span class="fill-remaining-space"></span>
                 <span>
-                  <button mat-icon-button color="accent" (click)="enterWallet(i)" *ngIf="wallet.wallet && (f || plan)">
-                    <mat-icon>forward</mat-icon>
-                  </button>
-                  <button mat-icon-button color="warn" matTooltip="" (click)="importPrivateKey()" *ngIf="!wallet.wallet">
+                  <button mat-icon-button color="warn" matTooltip="{{translation.localNotFound[global.lang]}}" (click)="importPrivateKey()"
+                    *ngIf="!wallet.wallet">
                     <mat-icon>warning</mat-icon>
                   </button>
-                  <button mat-icon-button color="warn" matTooltip="" *ngIf="wallet.wallet && (!f && !plan)">
-                    <mat-icon>warning</mat-icon>
+                  <button mat-icon-button color="warn" matTooltip="{{translation.unavailablePlan[global.lang]}}" *ngIf="clouds > 1 && !plan">
+                      <mat-icon>warning</mat-icon>
+                    </button>
+                  <button mat-icon-button color="accent" (click)="enterWallet(i)" *ngIf="clouds == 1 || plan">
+                    <mat-icon>launch</mat-icon>
                   </button>
                 </span>
                 <span>
