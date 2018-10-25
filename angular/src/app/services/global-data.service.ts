@@ -19,10 +19,10 @@ import {
   Address
 } from 'nem-library';
 import { nodes } from '../../models/nodes';
-import { User } from '../../../../models/user';
+import { User } from '../../../../firebase/functions/src/models/user';
 import { Router } from '@angular/router';
-import { Wallet } from '../../../../models/wallet';
-import { Plan } from '../../../../models/plan';
+import { Wallet } from '../../../../firebase/functions/src/models/wallet';
+import { Plan } from '../../../../firebase/functions/src/models/plan';
 
 @Injectable({
   providedIn: 'root'
