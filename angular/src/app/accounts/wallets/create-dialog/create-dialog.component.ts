@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { GlobalDataService } from '../../../../app/services/global-data.service';
-import { Plan } from '../../../../../../models/plan';
+import { Plan } from '../../../../../../firebase/functions/src/models/plan';
 
 @Component({
   selector: 'app-create-dialog',
