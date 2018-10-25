@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { GlobalDataService } from '../../services/global-data.service';
 import { Wallet } from '../../../../../models/wallet';
 import { SimpleWallet, Password } from 'nem-library';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { CreateDialogComponent } from './create-dialog/create-dialog.component';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { PromptDialogComponent } from '../../components/prompt-dialog/prompt-dialog.component';
@@ -29,7 +29,8 @@ export class WalletsComponent implements OnInit {
     private router: Router,
     private firestore: AngularFirestore,
     private auth: AngularFireAuth,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
   }
 
@@ -202,6 +203,14 @@ export class WalletsComponent implements OnInit {
     await this.refresh(true);
   }
 
+  public async openSnackBar(type: "import" | "plan") {
+    if(type == "import") {
+      this.snackBar.open(this.translation.localNotFound[this.global.lang], undefined, { duration: 3000 });
+    } else if (type == "plan") {
+      this.snackBar.open(this.translation.unavailablePlan[this.global.lang], undefined, { duration: 3000 });
+    }
+  }
+
   public translation = {
     wallets: {
       en: "Wallets",
@@ -240,11 +249,11 @@ export class WalletsComponent implements OnInit {
       ja: "ウォレットを追加"
     } as any,
     localNotFound: {
-      en: "",
-      ja: "秘密鍵がインポートされていません。"
+      en: "The private key is not imported so some functions which require the private key are not available.",
+      ja: "秘密鍵がインポートされていないため、秘密鍵が必要な一部の機能が制限されます。"
     } as any,
     unavailablePlan: {
-      en: "",
+      en: "More than one private key in Free plan is not supported.",
       ja: "Freeプランでは、複数のクラウド秘密鍵はサポートされていません。"
     } as any
   }

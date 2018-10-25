@@ -50,7 +50,7 @@
               <ng-container *ngIf="!l">
                 <mat-form-field class="fill-remaining-space">
                   <input matInput color="accent" placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="asset.amount"
-                    name="asset{{i}}-capacity" required minlength="1" pattern="[0-9]*" />
+                    name="asset{{i}}-amount" required minlength="1" pattern="\d+(\.\d+)?" />
                 </mat-form-field>
                 <button mat-icon-button color="warn" type="button" (click)="deleteAsset(i)">
                   <mat-icon>clear</mat-icon>
