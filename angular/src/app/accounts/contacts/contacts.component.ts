@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { GlobalDataService } from '../../services/global-data.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
-import { User } from '../../../../../firebase/functions/src/models/user';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { Contact } from '../../../../../firebase/functions/src/models/contact';
+import { ContactsService } from 'src/app/services/contacts.service';
+import { back } from 'src/models/back';
+import { lang } from 'src/models/lang';
 
 @Component({
   selector: 'app-contacts',
@@ -14,13 +14,13 @@ import { Contact } from '../../../../../firebase/functions/src/models/contact';
 })
 export class ContactsComponent implements OnInit {
   public loading = true;
+  get lang() { return lang; }
   public contacts: Contact[] = [];
 
   constructor(
-    public global: GlobalDataService,
     private router: Router,
     private auth: AngularFireAuth,
-    private firestore: AngularFirestore,
+    private contact: ContactsService,
     private dialog: MatDialog
   ) { }
 
@@ -37,13 +37,11 @@ export class ContactsComponent implements OnInit {
   public async refresh() {
     this.loading = true;
 
-    await this.global.refreshWallet();
-
-    let contacts = await this.firestore.collection("users").doc(this.auth.auth.currentUser!.uid).collection("contacts").ref.get();
-
-    this.contacts = contacts.docs.map(doc => doc.data() as Contact);
-
     this.loading = false;
+  }
+
+  public back() {
+    back(() => this.router.navigate([""]));
   }
 
   public translation = {

@@ -14,6 +14,7 @@ import {
 } from 'nem-library';
 import { GlobalDataService } from '../../../services/global-data.service';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { lang } from 'src/models/lang';
 
 @Component({
   selector: 'app-transaction',
@@ -21,9 +22,9 @@ import { AngularFireAuth } from '@angular/fire/auth';
   styleUrls: ['./transaction.component.css']
 })
 export class TransactionComponent implements OnInit {
-  @Input() public transaction?: Transaction;
+  get lang() { return lang; }
 
-  public loading = true;
+  @Input() public transaction?: Transaction;
 
   public address?: string;
   public assets?: Asset[];
@@ -87,8 +88,6 @@ export class TransactionComponent implements OnInit {
 
     this.date = transferTransaction.timeWindow.timeStamp.toLocalDate();
     this.time = transferTransaction.timeWindow.timeStamp.toLocalTime();
-
-    this.loading = false;
   }
 
   public translation = {

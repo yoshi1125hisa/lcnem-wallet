@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { GlobalDataService } from '../services/global-data.service';
 import { Invoice } from '../../models/invoice';
 import { MatDialog } from '@angular/material';
-import { AlertDialogComponent } from '../components/alert-dialog/alert-dialog.component';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { Asset } from 'nem-library';
+import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { Share } from '../../models/share';
+import { lang, setLang } from 'src/models/lang';
+import { WalletsService } from '../services/wallets.service';
+import { AlertDialogComponent } from '../components/alert-dialog/alert-dialog.component';
+
+NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
 @Component({
   selector: 'app-home',
@@ -15,16 +18,18 @@ import { Share } from '../../models/share';
 })
 export class HomeComponent implements OnInit {
   public loading = true;
+  get lang() { return lang; }
+  set lang(value: string) { setLang(value); }
   public address = "";
   public qrUrl = "";
   public assets: Asset[] = [];
-  public progress = 0;
+  public photoUrl = "";
 
   constructor(
-    public global: GlobalDataService,
     private router: Router,
     private dialog: MatDialog,
-    private auth: AngularFireAuth
+    private auth: AngularFireAuth,
+    private wallet: WalletsService
   ) { }
 
   ngOnInit() {
@@ -39,34 +44,20 @@ export class HomeComponent implements OnInit {
 
   public async logout() {
     await this.auth.auth.signOut();
-    this.global.refreshed = false;
+    this.wallet.deleteCurrentWallet();
 
-    this.dialog.open(AlertDialogComponent, {
-      data: {
-        title: this.translation.completed[this.global.lang],
-        content: ""
-      }
-    }).afterClosed().subscribe(() => {
-      this.router.navigate(["accounts", "login"]);
-    });
+    this.router.navigate(["accounts", "login"]);
   }
 
   public async refresh(force?: boolean) {
     this.loading = true;
-    this.progress = 0
-    await this.global.refreshWallet(force);
-    this.progress = 30;
-    let invoice = new Invoice();
-    this.progress = 40;
-    invoice.data.addr = this.global.account.currentWallet!.address.plain();
-    this.progress = 50;
-    this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
-    this.progress = 60;
-    this.address = this.global.account.currentWallet!.address.pretty();
-    this.progress = 70;
 
-    this.assets = this.global.account.currentWallet!.assets!.map(a => a.asset);
-    this.progress = 100;
+    this.photoUrl = this.auth.auth.currentUser!.photoURL!;
+
+    let invoice = new Invoice();
+    invoice.data.addr = this.wallet.currentWallet!.address.plain();
+    this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
+    this.address = this.wallet.currentWallet!.address.pretty();
 
     this.loading = false;
   }

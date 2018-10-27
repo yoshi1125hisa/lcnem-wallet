@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { TransferTransaction, Asset, AssetTransferable } from 'nem-library';
-import { GlobalDataService } from '../../../services/global-data.service';
+import { lang } from 'src/models/lang';
 
 @Component({
   selector: 'app-transfer-dialog',
@@ -9,13 +9,13 @@ import { GlobalDataService } from '../../../services/global-data.service';
   styleUrls: ['./transfer-dialog.component.css']
 })
 export class TransferDialogComponent {
+  get lang() { return lang; }
   public transaction: TransferTransaction;
   public assets: Asset[];
   public levy: Asset[];
   public Math = Math;
 
   constructor(
-    public global: GlobalDataService,
     @Inject(MAT_DIALOG_DATA) public data: {
       transaction: TransferTransaction
       message: string,

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { GlobalDataService } from '../../services/global-data.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
@@ -8,11 +7,10 @@ import { HttpClient } from '@angular/common/http';
 
 import { supportedCurrencies } from '../../../models/supported-currencies';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
-import { Address } from 'nem-library';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
-
-declare let Stripe: any;
+import { lang } from 'src/models/lang';
+import { WalletsService } from 'src/app/services/wallets.service';
+import { back } from 'src/models/back';
 
 @Component({
   selector: 'app-deposit',
@@ -20,6 +18,8 @@ declare let Stripe: any;
   styleUrls: ['./deposit.component.css']
 })
 export class DepositComponent implements OnInit {
+  public loading = true;
+  get lang() { return lang; }
   public supportedCurrencies = supportedCurrencies;
   public selectedCurrency = "JPY";
 
@@ -33,14 +33,14 @@ export class DepositComponent implements OnInit {
   public safeSite: SafeResourceUrl;
 
   constructor(
-    public global: GlobalDataService,
     private router: Router,
     private dialog: MatDialog,
     private http: HttpClient,
     private auth: AngularFireAuth,
+    private wallet: WalletsService,
     sanitizer: DomSanitizer
   ) {
-    this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${global.lang}.txt`);
+    this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${this.lang}.txt`);
   }
 
   ngOnInit() {
@@ -49,7 +49,10 @@ export class DepositComponent implements OnInit {
         this.router.navigate(["accounts", "login"]);
         return;
       }
-      await this.global.refreshWallet();
+      if(!this.wallet.currentWallet) {
+        this.router.navigate(["accounts", "wallets"]);
+        return;
+      }
     });
   }
 
@@ -61,17 +64,17 @@ export class DepositComponent implements OnInit {
         "/api/deposit",
         {
           email: this.auth.auth.currentUser!.email,
-          nem: this.global.account.currentWallet!.address.plain(),
+          nem: this.wallet.currentWallet!.address.plain(),
           currency: this.selectedCurrency,
           amount: this.amount,
           method: this.method,
-          lang: this.global.lang
+          lang: this.lang
         }
       ).toPromise();
     } catch {
       this.dialog.open(AlertDialogComponent, {
         data: {
-          title: this.translation.error[this.global.lang],
+          title: this.translation.error[this.lang],
           content: ""
         }
       });
@@ -82,12 +85,16 @@ export class DepositComponent implements OnInit {
 
     await this.dialog.open(AlertDialogComponent, {
       data: {
-        title: this.translation.completed[this.global.lang],
-        content: this.translation.following[this.global.lang]
+        title: this.translation.completed[this.lang],
+        content: this.translation.following[this.lang]
       }
     }).afterClosed().toPromise();
     
-    this.router.navigate(["/"]);
+    this.router.navigate([""]);
+  }
+
+  public back() {
+    back(() => this.router.navigate([""]));
   }
 
   public translation = {

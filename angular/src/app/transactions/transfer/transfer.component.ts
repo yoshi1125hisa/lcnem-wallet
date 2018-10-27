@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GlobalDataService } from '../../services/global-data.service';
 import { MatDialog, MatListOption } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
@@ -17,13 +16,22 @@ import {
   XEM,
   EmptyMessage,
   Password,
-  AssetLevyType
+  AssetLevyType,
+  SimpleWallet,
+  NamespaceHttp,
+  AccountHttp,
+  TransactionHttp
 } from 'nem-library';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.component';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Invoice } from '../../../models/invoice';
+import { lang } from 'src/models/lang';
+import { WalletsService } from 'src/app/services/wallets.service';
+import { BalanceService } from 'src/app/services/balance.service';
+import { nodes } from 'src/models/nodes';
+import { back } from 'src/models/back';
 
 @Component({
   selector: 'app-transfer',
@@ -32,7 +40,9 @@ import { Invoice } from '../../../models/invoice';
 })
 export class TransferComponent implements OnInit {
   public loading = true;
-  public assets: Asset[] = [];
+  get lang() { return lang; }
+  public currentWallet!: SimpleWallet;
+  public assets: string[] = [];
 
   public forms = {
     recipient: "",
@@ -50,11 +60,12 @@ export class TransferComponent implements OnInit {
   public navigatorShare = (navigator as any).share;
 
   constructor(
-    public global: GlobalDataService,
     public dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
-    private auth: AngularFireAuth
+    private auth: AngularFireAuth,
+    private wallet: WalletsService,
+    private balance: BalanceService
   ) {
   }
 
@@ -64,6 +75,10 @@ export class TransferComponent implements OnInit {
         this.router.navigate(["accounts", "login"]);
         return;
       }
+      if(!this.wallet.currentWallet) {
+        this.router.navigate(["accounts", "wallets"]);
+        return;
+      }
       await this.refresh();
     });
   }
@@ -71,11 +86,10 @@ export class TransferComponent implements OnInit {
   public async refresh() {
     this.loading = true;
 
-    await this.global.refreshWallet();
+    await this.balance.readAssets();
 
-    let currentWallet = this.global.account.currentWallet!;
-
-    this.assets = currentWallet.assets!.map(a => a.asset);
+    this.currentWallet = this.wallet.currentWallet!;
+    this.assets = this.balance.assets!.map(a => a.assetId.namespaceId + ":" + a.assetId.name);
 
     let invoice = this.route.snapshot.queryParamMap.get('invoice') || "";
     let invoiceData = Invoice.parse(decodeURI(invoice));
@@ -94,19 +108,23 @@ export class TransferComponent implements OnInit {
     this.loading = false;
   }
 
-  public setAsset(name: string, amountAbsolute: number) {
-    let asset = this.global.account.currentWallet!.assets!.find(a => a.name == name);
-    if(!asset || !this.assetIsNotReady(name)) {
+  public back() {
+    back(() => this.router.navigate([""]));
+  }
+
+  public async setAsset(id: string, amountAbsolute: number) {
+    let asset = this.assets.find(a => a == id);
+    if(!asset || !this.assetIsNotReady(id)) {
       return
     }
     let index = this.forms.transferAssets.length - 1;
     this.forms.transferAssets[index].index = index;
-    this.forms.transferAssets[index].amount = amountAbsolute / Math.pow(10, asset.definition.properties.divisibility);
+    this.forms.transferAssets[index].amount = amountAbsolute / Math.pow(10, (await this.balance.readDefinition(id)).properties.divisibility);
     this.addAsset(index);
   }
 
   public addAsset(index: number) {
-    this.forms.transferAssets[index].name = this.global.account.currentWallet!.assets![this.forms.transferAssets[index].index!].name;
+    this.forms.transferAssets[index].name = this.assets![this.forms.transferAssets[index].index!];
 
     if (index != this.forms.transferAssets.length - 1) {
       return;
@@ -118,8 +136,8 @@ export class TransferComponent implements OnInit {
     this.forms.transferAssets.splice(index, 1);
   }
 
-  public assetIsNotReady(name: string) {
-    return this.forms.transferAssets.findIndex(a => a.name == name) == -1;
+  public assetIsNotReady(id: string) {
+    return this.forms.transferAssets.findIndex(a => a.name == id) == -1;
   }
 
   public async onRecipientChange() {
@@ -129,8 +147,10 @@ export class TransferComponent implements OnInit {
 
     this.autoCompletes = [];
 
+    let namespaceHttp = new NamespaceHttp(nodes);
+
     try {
-      let result = await this.global.namespaceHttp.getNamespace(this.forms.recipient).toPromise();
+      let result = await namespaceHttp.getNamespace(this.forms.recipient).toPromise();
       let resolved = result.owner.plain();
       this.autoCompletes.push(resolved);
     } catch {
@@ -142,8 +162,8 @@ export class TransferComponent implements OnInit {
     let invoice = new Invoice();
     invoice.data.addr = this.forms.recipient;
     invoice.data.msg = this.forms.message;
-    invoice.data.assets = this.getTransferMosaics().mosaics.map(m => {
-      return { id: m.assetId.toString(), amount: m.absoluteQuantity() }}
+    invoice.data.assets = (await this.getTransferMosaics()).assets.map(asset => {
+      return { id: asset.assetId.toString(), amount: asset.absoluteQuantity() }}
     );
 
     (navigator as any).share({
@@ -152,14 +172,17 @@ export class TransferComponent implements OnInit {
     })
   }
 
-  getTransferMosaics() {
+  public async getTransferMosaics() {
     let levy: Asset[] = [];
 
-    let transferMosaics: AssetTransferable[] = this.forms.transferAssets.filter(asset => asset.name).map(asset => {
+    let transferAssets: AssetTransferable[] = [];
+
+    let filtered = this.forms.transferAssets.filter(asset => asset.name);
+    for(let asset of filtered){
       if (asset.name == "nem:xem") {
-        return new XEM(asset.amount!);
+        transferAssets.push(new XEM(asset.amount!));
       }
-      let definition = this.global.account.currentWallet!.assets!.find(a => a.asset.assetId.namespaceId + ":" + a.asset.assetId.name == asset.name)!.definition;
+      let definition = await this.balance.readDefinition(asset.name!);
 
       let absolute = asset.amount! * Math.pow(10, definition.properties.divisibility);
       
@@ -171,28 +194,28 @@ export class TransferComponent implements OnInit {
         }
       }
 
-      return AssetTransferable.createWithAssetDefinition(definition, absolute);
-    });
+      transferAssets.push(AssetTransferable.createWithAssetDefinition(definition, absolute));
+    };
 
     return {
-      mosaics: transferMosaics,
+      assets: transferAssets,
       levy: levy
     };
   }
 
   public async transfer() {
-    if(!this.global.account.currentWallet!.wallet) {
+    if(!this.currentWallet) {
       this.dialog.open(AlertDialogComponent, {
         data: {
-          title: this.translation.error[this.global.lang],
-          content: this.translation.importRequired[this.global.lang]
+          title: this.translation.error[this.lang],
+          content: this.translation.importRequired[this.lang]
         }
       });
       return;
     }
 
     let password = new Password(this.auth.auth.currentUser!.uid);
-    let account = this.global.account.currentWallet!.wallet!.open(password);
+    let account = this.currentWallet.open(password);
 
     let recipient: Address;
     try {
@@ -200,8 +223,8 @@ export class TransferComponent implements OnInit {
     } catch {
       this.dialog.open(AlertDialogComponent, {
         data: {
-          title: this.translation.error[this.global.lang],
-          content: this.translation.addressRequired[this.global.lang]
+          title: this.translation.error[this.lang],
+          content: this.translation.addressRequired[this.lang]
         }
       });
       return;
@@ -209,12 +232,13 @@ export class TransferComponent implements OnInit {
 
     let message: Message;
     if (this.forms.encrypt) {
-      let meta = await this.global.accountHttp.getFromAddress(recipient).toPromise();
+      let accountHttp = new AccountHttp(nodes);
+      let meta = await accountHttp.getFromAddress(recipient).toPromise();
       if (!meta.publicAccount) {
         this.dialog.open(AlertDialogComponent, {
           data: {
-            title: this.translation.error[this.global.lang],
-            content: this.translation.noPublicKey[this.global.lang]
+            title: this.translation.error[this.lang],
+            content: this.translation.noPublicKey[this.lang]
           }
         });
         return;
@@ -228,12 +252,12 @@ export class TransferComponent implements OnInit {
       }
     }
 
-    let transferMosaics = this.getTransferMosaics();
+    let transferMosaics = await this.getTransferMosaics();
 
     let transaction = TransferTransaction.createWithMosaics(
       TimeWindow.createWithDeadline(),
       recipient,
-      transferMosaics.mosaics,
+      transferMosaics.assets,
       message
     );
 
@@ -252,11 +276,12 @@ export class TransferComponent implements OnInit {
 
     let signed = account.signTransaction(transaction);
     try {
-      await this.global.transactionHttp.announceTransaction(signed).toPromise();
+      let transactionHttp = new TransactionHttp(nodes);
+      await transactionHttp.announceTransaction(signed).toPromise();
     } catch {
       this.dialog.open(AlertDialogComponent, {
         data: {
-          title: this.translation.error[this.global.lang],
+          title: this.translation.error[this.lang],
           content: ""
         }
       });
@@ -267,12 +292,12 @@ export class TransferComponent implements OnInit {
 
     await this.dialog.open(AlertDialogComponent, {
       data: {
-        title: this.translation.completed[this.global.lang],
+        title: this.translation.completed[this.lang],
         content: ""
       }
     }).afterClosed().toPromise();
 
-    this.router.navigate(["/"]);
+    this.router.navigate([""]);
   }
 
   public translation = {

@@ -2,11 +2,12 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
-import { GlobalDataService } from '../../services/global-data.service';
 import { Invoice } from '../../../models/invoice';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { lang } from 'src/models/lang';
+import { back } from 'src/models/back';
 
 
 @Component({
@@ -16,6 +17,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 })
 export class ScanComponent implements OnInit {
   public scanning = false;
+  get lang() { return lang; }
 
   @ViewChild('scanner')
   scanner?: ZXingScannerComponent;
@@ -27,7 +29,6 @@ export class ScanComponent implements OnInit {
   selected?: number;
 
   constructor(
-    public global: GlobalDataService,
     private router: Router,
     public dialog: MatDialog,
     private auth: AngularFireAuth
@@ -36,11 +37,9 @@ export class ScanComponent implements OnInit {
   ngOnInit() {
     this.auth.authState.subscribe(async (user) => {
       if (user == null) {
-        this.router.navigate(["/login"]);
+        this.router.navigate(["login"]);
         return;
       }
-      await this.global.refreshWallet();
-      
       if (!this.scanner) {
         return;
       }
@@ -62,7 +61,6 @@ export class ScanComponent implements OnInit {
         if (this.scanning) {
           return;
         }
-        console.log(result);
         this.scanning = true;
         let dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
 
@@ -85,7 +83,7 @@ export class ScanComponent implements OnInit {
         } catch {
           this.dialog.open(AlertDialogComponent, {
             data: {
-              title: this.translation.unexpected[this.global.lang],
+              title: this.translation.unexpected[this.lang],
               content: decoded
             }
           }).afterClosed().subscribe(() => {
@@ -96,6 +94,10 @@ export class ScanComponent implements OnInit {
         }
       });
     });
+  }
+
+  public back() {
+    back(() => this.router.navigate([""]));
   }
 
   public get selectedDevice() {

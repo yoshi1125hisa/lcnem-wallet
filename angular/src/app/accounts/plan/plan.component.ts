@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { GlobalDataService } from '../../services/global-data.service';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { lang } from 'src/models/lang';
+import { back } from 'src/models/back';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-plan',
@@ -10,9 +12,9 @@ import { AngularFireAuth } from '@angular/fire/auth';
 })
 export class PlanComponent implements OnInit {
   public loading = true;
+  get lang() { return lang; }
 
   constructor(
-    public global: GlobalDataService,
     private router: Router,
     private auth: AngularFireAuth
   ) { }
@@ -27,12 +29,16 @@ export class PlanComponent implements OnInit {
     });
   }
   
-  async refresh() {
+  public async refresh() {
     this.loading = true;
 
-    await this.global.refresh();
+    
 
     this.loading = false;
+  }
+
+  public back() {
+    back(() => this.router.navigate([""]));
   }
 
   public translation = {

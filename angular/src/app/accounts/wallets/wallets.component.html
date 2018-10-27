@@ -5,18 +5,18 @@
       <button mat-icon-button>
         <mat-icon>account_balance_wallet</mat-icon>
       </button>
-      <span>{{translation.wallets[global.lang]}}</span>
+      <span>{{translation.wallets[lang]}}</span>
       <span class="fill-remaining-space"></span>
       <mat-menu #langMenu="matMenu" [overlapTrigger]="false">
-        <button mat-menu-item (click)="global.lang = 'en'">
+        <button mat-menu-item (click)="lang = 'en'">
           English
         </button>
-        <button mat-menu-item (click)="global.lang = 'ja'">
+        <button mat-menu-item (click)="lang = 'ja'">
           日本語
         </button>
       </mat-menu>
       <button mat-icon-button [matMenuTriggerFor]="langMenu" yPosition="below">
-        {{global.lang}}
+        {{lang}}
       </button>
     </mat-toolbar>
     <div class="mat-typography body-container">
@@ -50,16 +50,16 @@
                 <span>
                   <mat-menu #walletMenu="matMenu" [overlapTrigger]="false">
                     <button mat-menu-item (click)="renameWallet(i)">
-                      {{translation.rename[global.lang]}}
+                      {{translation.rename[lang]}}
                     </button>
                     <button mat-menu-item (click)="backupWallet(i)" *ngIf="wallet.wallet">
-                      {{translation.backup[global.lang]}}
+                      {{translation.backup[lang]}}
                     </button>
                     <button mat-menu-item (click)="importPrivateKey()" *ngIf="!wallet.wallet">
-                      {{translation.importPrivateKey[global.lang]}}
+                      {{translation.importPrivateKey[lang]}}
                     </button>
                     <button mat-menu-item (click)="deleteWallet(i)">
-                      {{translation.delete[global.lang]}}
+                      {{translation.delete[lang]}}
                     </button>
                   </mat-menu>
                   <button mat-icon-button [matMenuTriggerFor]="walletMenu" yPosition="below">
@@ -74,7 +74,7 @@
         <br />
         <div fxLayout="row">
           <span class="fill-remaining-space"></span>
-          <button mat-raised-button color="accent" (click)="addWallet()">{{translation.addWallet[global.lang]}}</button>
+          <button mat-raised-button color="accent" (click)="addWallet()">{{translation.addWallet[lang]}}</button>
         </div>
       </ng-template>
     </div>

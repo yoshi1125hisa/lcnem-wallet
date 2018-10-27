@@ -1,6 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { GlobalDataService } from '../../../../app/services/global-data.service';
-import { Plan } from '../../../../../../firebase/functions/src/models/plan';
+import { lang } from 'src/models/lang';
 
 @Component({
   selector: 'app-create-dialog',
@@ -8,6 +7,8 @@ import { Plan } from '../../../../../../firebase/functions/src/models/plan';
   styleUrls: ['./create-dialog.component.css']
 })
 export class CreateDialogComponent implements OnInit {
+  get lang() { return lang; }
+
   forms = {
     name: "",
     local: 0,
@@ -16,7 +17,6 @@ export class CreateDialogComponent implements OnInit {
   }
   
   constructor(
-    public global: GlobalDataService
   ) {
   }
 
