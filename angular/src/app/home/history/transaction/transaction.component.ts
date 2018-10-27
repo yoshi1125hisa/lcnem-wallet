@@ -10,10 +10,14 @@ import {
   Asset,
   XEM,
   AssetId,
-  Password
+  Password,
+  SimpleWallet,
+  AccountHttp
 } from 'nem-library';
-import { GlobalDataService } from '../../../services/global-data.service';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { lang } from '../../../../models/lang';
+import { WalletsService } from '../../../services/wallets.service';
+import { nodes } from '../../../../models/nodes';
 
 @Component({
   selector: 'app-transaction',
@@ -21,9 +25,9 @@ import { AngularFireAuth } from '@angular/fire/auth';
   styleUrls: ['./transaction.component.css']
 })
 export class TransactionComponent implements OnInit {
-  @Input() public transaction?: Transaction;
+  get lang() { return lang; }
 
-  public loading = true;
+  @Input() public transaction?: Transaction;
 
   public address?: string;
   public assets?: Asset[];
@@ -33,8 +37,8 @@ export class TransactionComponent implements OnInit {
   public received = true;
 
   constructor(
-    public global: GlobalDataService,
-    private auth: AngularFireAuth
+    private auth: AngularFireAuth,
+    private wallet: WalletsService
   ) { }
 
   ngOnInit() {
@@ -52,7 +56,11 @@ export class TransactionComponent implements OnInit {
   }
 
   public async set(transferTransaction: TransferTransaction) {
-    if (this.global.account.currentWallet!.address.plain() == transferTransaction.recipient.plain()) {
+    let address = new Address(this.wallet.wallets![this.wallet.currentWallet!].nem);
+    let wallet = this.wallet.wallets![this.wallet.currentWallet!].wallet;
+    let accountHttp = new AccountHttp(nodes);
+
+    if (address.plain() == transferTransaction.recipient.plain()) {
       this.address = transferTransaction.signer!.address.pretty();
     } else {
       this.address = transferTransaction.recipient.pretty();
@@ -61,15 +69,15 @@ export class TransactionComponent implements OnInit {
 
     let message: string;
     if (transferTransaction.message.isEncrypted()) {
-      if (this.global.account.currentWallet!.wallet) {
+      if (!wallet) {
         message = "";
       } else {
         let password = new Password(this.auth.auth.currentUser!.uid);
-        let account = this.global.account.currentWallet!.wallet!.open(password);
+        let account = SimpleWallet.readFromWLT(wallet).open(password);
         if (this.received) {
           message = account!.decryptMessage(transferTransaction.message, transferTransaction.signer!).payload;
         } else {
-          let recipient = await this.global.accountHttp.getFromAddress(transferTransaction.recipient).toPromise();
+          let recipient = await accountHttp.getFromAddress(transferTransaction.recipient).toPromise();
           message = account!.decryptMessage(transferTransaction.message, recipient.publicAccount!).payload;
         }
       }
@@ -87,8 +95,6 @@ export class TransactionComponent implements OnInit {
 
     this.date = transferTransaction.timeWindow.timeStamp.toLocalDate();
     this.time = transferTransaction.timeWindow.timeStamp.toLocalTime();
-
-    this.loading = false;
   }
 
   public translation = {

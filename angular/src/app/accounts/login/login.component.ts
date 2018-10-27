@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { GlobalDataService } from '../../services/global-data.service';
 import { Router } from '@angular/router';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { AngularFireAuth } from '@angular/fire/auth';
-
-import * as firebase from 'firebase';
-import 'firebase/auth';
+import { back } from '../../../models/back';
+import { lang, setLang } from '../../../models/lang';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -14,32 +12,28 @@ import 'firebase/auth';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  public loading = true;
+  get lang() { return lang; }
+  set lang(value: string) { setLang(value); }
   public agree = false;
   public safeSite: SafeResourceUrl;
 
   constructor(
-    public global: GlobalDataService,
     public router: Router,
-    private auth: AngularFireAuth,
+    private user: UserService,
     sanitizer: DomSanitizer
   ) {
-    this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/terms/${global.lang}.txt`);
+    this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/terms/${this.lang}.txt`);
   }
 
   ngOnInit() {
-    this.auth.authState.subscribe((user) => {
-      if (user) {
-        this.router.navigate([""]);
-        return;
-      }
-      this.loading = false;
-    });
+  }
+
+  public back() {
+    back(() => this.router.navigate([""]));
   }
 
   public async login() {
-    await this.auth.auth.signInWithPopup(new firebase.auth!.GoogleAuthProvider);
-    this.router.navigate(["/"]);
+    await this.user.login();
   }
 
   public translation = {

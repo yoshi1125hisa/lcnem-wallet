@@ -2,11 +2,11 @@
   <mat-sidenav></mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar class="mat-elevation-z4 top-toolbar">
-      <button mat-icon-button (click)="global.back()">
+      <button mat-icon-button (click)="back()">
         <mat-icon>arrow_back</mat-icon>
       </button>
 
-      <span>{{translation.contacts[global.lang]}}</span>
+      <span>{{translation.contacts[lang]}}</span>
       <span class="fill-remaining-space"></span>
     </mat-toolbar>
     <div class="mat-typography body-container">
@@ -31,7 +31,7 @@
             </mat-card>
           </ng-container>
         </div>
-        <p class="empty" *ngIf="!contacts.length">{{translation.empty[global.lang]}}</p>
+        <p class="empty" *ngIf="!contacts.length">{{translation.empty[lang]}}</p>
       </ng-template>
     </div>
   </mat-sidenav-content>
