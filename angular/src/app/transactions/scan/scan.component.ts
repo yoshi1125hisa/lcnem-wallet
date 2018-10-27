@@ -6,9 +6,9 @@ import { Invoice } from '../../../models/invoice';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { lang } from 'src/models/lang';
-import { back } from 'src/models/back';
-
+import { lang } from '../../../models/lang';
+import { back } from '../../../models/back';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-scan',
@@ -30,69 +30,62 @@ export class ScanComponent implements OnInit {
 
   constructor(
     private router: Router,
-    public dialog: MatDialog,
-    private auth: AngularFireAuth
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
-    this.auth.authState.subscribe(async (user) => {
-      if (user == null) {
-        this.router.navigate(["login"]);
+    if (!this.scanner) {
+      return;
+    }
+
+    this.scanner.camerasFound.subscribe((devices: MediaDeviceInfo[]) => {
+      this.availableDevices = devices;
+      this.selected = 0;
+    });
+
+    this.scanner.camerasNotFound.subscribe(() => {
+      this.noCamera = true;
+    });
+
+    this.scanner.permissionResponse.subscribe((answer: boolean) => {
+      this.hasPermission = answer;
+    });
+
+    this.scanner.scanSuccess.subscribe((result: string) => {
+      if (this.scanning) {
         return;
       }
-      if (!this.scanner) {
-        return;
-      }
+      this.scanning = true;
+      let dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
 
-      this.scanner.camerasFound.subscribe((devices: MediaDeviceInfo[]) => {
-        this.availableDevices = devices;
-        this.selected = 0;
-      });
-
-      this.scanner.camerasNotFound.subscribe(() => {
-        this.noCamera = true;
-      });
-
-      this.scanner.permissionResponse.subscribe((answer: boolean) => {
-        this.hasPermission = answer;
-      });
-
-      this.scanner.scanSuccess.subscribe((result: string) => {
-        if (this.scanning) {
-          return;
+      let decoded = decodeURI(result);
+      try {
+        let invoice = Invoice.parse(decoded);
+        if (!invoice && decoded[0] == "N" && decoded.replace(/-/g, "").trim().length == 40) {
+          let invoiceData = new Invoice();
+          invoiceData.data.addr = decoded;
+          result = encodeURI(invoiceData.stringify());
         }
-        this.scanning = true;
-        let dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
 
-        let decoded = decodeURI(result);
-        try {
-          let invoice = Invoice.parse(decoded);
-          if (!invoice && decoded[0] == "N" && decoded.replace(/-/g, "").trim().length == 40) {
-            let invoiceData = new Invoice();
-            invoiceData.data.addr = decoded;
-            result = encodeURI(invoiceData.stringify());
-          }
-
-          if(invoice) {
-            this.router.navigate(["transactions", "transfer"], {
-              queryParams: {
-                invoice: result
-              }
-            });
-          }
-        } catch {
-          this.dialog.open(AlertDialogComponent, {
-            data: {
-              title: this.translation.unexpected[this.lang],
-              content: decoded
+        if (invoice) {
+          this.router.navigate(["transactions", "transfer"], {
+            queryParams: {
+              invoice: result
             }
-          }).afterClosed().subscribe(() => {
-            this.scanning = false;
           });
-        } finally {
-          dialog.close();
         }
-      });
+      } catch {
+        this.dialog.open(AlertDialogComponent, {
+          data: {
+            title: this.translation.unexpected[this.lang],
+            content: decoded
+          }
+        }).afterClosed().subscribe(() => {
+          this.scanning = false;
+        });
+      } finally {
+        dialog.close();
+      }
     });
   }
 

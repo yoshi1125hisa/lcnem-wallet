@@ -16,21 +16,18 @@
         </button>
       </mat-menu>
       <button mat-icon-button [matMenuTriggerFor]="langMenu" yPosition="below">
-        {{global.lang}}
+        {{lang}}
       </button>
     </mat-toolbar>
     <div class="mat-typography body-container">
-      <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
-      <ng-template #loaded>
-        <iframe [src]="safeSite" fxFill></iframe>
-        <mat-checkbox [(ngModel)]="agree">
-          {{translation.agree[lang]}}
-        </mat-checkbox>
-        <button mat-raised-button fxFill color="accent" [disabled]="!agree" (click)="login()">
-          <img class="icon" src="assets/images/google.svg" />
-          　{{translation.login[lang]}}
-        </button>
-      </ng-template>
+      <iframe [src]="safeSite" class="mat-elevation-z1"></iframe>
+      <mat-checkbox [(ngModel)]="agree">
+        {{translation.agree[lang]}}
+      </mat-checkbox>
+      <button mat-raised-button fxFill color="accent" [disabled]="!agree" (click)="login()">
+        <mat-icon><img src="assets/images/google.svg" /></mat-icon>
+        {{translation.login[lang]}}
+      </button>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

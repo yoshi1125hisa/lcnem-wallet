@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Transaction, AccountHttp } from 'nem-library';
-import { nodes } from 'src/models/nodes';
+import { Transaction, AccountHttp, Address } from 'nem-library';
+import { nodes } from '../../models/nodes';
 import { WalletsService } from './wallets.service';
 
 @Injectable({
@@ -22,9 +22,10 @@ export class HistoryService {
     }
 
     let accountHttp = new AccountHttp(nodes);
+    let address = new Address(this.wallet.wallets![this.wallet.currentWallet!].nem);
 
-    let unconfirmedTransactions = await accountHttp.unconfirmedTransactions(this.wallet.currentWallet.address).toPromise();
-    let allTransactions = await accountHttp.allTransactions(this.wallet.currentWallet.address).toPromise();
+    let unconfirmedTransactions = await accountHttp.unconfirmedTransactions(address).toPromise();
+    let allTransactions = await accountHttp.allTransactions(address).toPromise();
     
     this.transactions = unconfirmedTransactions.concat(allTransactions);
   }

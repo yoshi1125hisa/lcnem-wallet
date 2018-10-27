@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { supportedCurrencies } from '../../../models/supported-currencies';
 import { MatDialog } from '@angular/material';
-import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { HttpClient } from '@angular/common/http';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { Address } from 'nem-library';
-import { lang } from 'src/models/lang';
-import { WalletsService } from 'src/app/services/wallets.service';
-import { back } from 'src/models/back';
+import { supportedCurrencies } from '../../../models/supported-currencies';
+import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
+import { lang } from '../../../models/lang';
+import { WalletsService } from '../../../app/services/wallets.service';
+import { back } from '../../../models/back';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-withdraw',
@@ -33,6 +33,7 @@ export class WithdrawComponent implements OnInit {
     private dialog: MatDialog,
     private http: HttpClient,
     private auth: AngularFireAuth,
+    private user: UserService,
     private wallet: WalletsService,
     sanitizer: DomSanitizer
   ) {
@@ -40,15 +41,8 @@ export class WithdrawComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.auth.authState.subscribe(async (user) => {
-      if (user == null) {
-        this.router.navigate(["accounts", "login"]);
-        return;
-      }
-      if(!this.wallet.currentWallet) {
-        this.router.navigate(["accounts", "wallets"]);
-        return;
-      }
+    this.user.checkLogin().then(async () => {
+      await this.wallet.checkWallets();
     });
   }
 
@@ -60,7 +54,7 @@ export class WithdrawComponent implements OnInit {
         "/api/withdraw",
         {
           email: this.auth.auth.currentUser!.email,
-          nem: this.wallet.currentWallet!.address.plain(),
+          nem: this.wallet.wallets![this.wallet.currentWallet!].nem,
           currency: this.selectedCurrency,
           amount: this.amount,
           method: this.method,

@@ -5,9 +5,10 @@ import { MatDialog } from '@angular/material';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { Share } from '../../models/share';
-import { lang, setLang } from 'src/models/lang';
+import { lang, setLang } from '../../models/lang';
 import { WalletsService } from '../services/wallets.service';
-import { AlertDialogComponent } from '../components/alert-dialog/alert-dialog.component';
+import { BalanceService } from '../services/balance.service';
+import { UserService } from '../services/user.service';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
@@ -29,35 +30,34 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private auth: AngularFireAuth,
-    private wallet: WalletsService
+    private user: UserService,
+    private wallet: WalletsService,
+    private balance: BalanceService
   ) { }
 
   ngOnInit() {
-    this.auth.authState.subscribe(async (user) => {
-      if (user == null) {
-        this.router.navigate(["accounts", "login"]);
-        return;
-      }
+    this.user.checkLogin().then(async () => {
+      await this.wallet.checkWallets();
       await this.refresh();
     });
   }
 
   public async logout() {
-    await this.auth.auth.signOut();
-    this.wallet.deleteCurrentWallet();
-
-    this.router.navigate(["accounts", "login"]);
+    await this.user.logout();
   }
 
   public async refresh(force?: boolean) {
     this.loading = true;
 
+    await this.balance.readAssets(force);
+
     this.photoUrl = this.auth.auth.currentUser!.photoURL!;
+    this.assets = this.balance.assets!;
 
     let invoice = new Invoice();
-    invoice.data.addr = this.wallet.currentWallet!.address.plain();
+    invoice.data.addr = this.wallet.wallets![this.wallet.currentWallet!].nem;
     this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
-    this.address = this.wallet.currentWallet!.address.pretty();
+    this.address = invoice.data.addr;
 
     this.loading = false;
   }

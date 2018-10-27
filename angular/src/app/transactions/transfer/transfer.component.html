@@ -42,8 +42,8 @@
               <mat-form-field fxFlex="50">
                 <mat-select color="accent" placeholder="{{translation.assetName[lang]}}" [(ngModel)]="asset.index"
                   name="asset{{i}}-name" required="{{!l || forms.transferAssets.length == 1}}" (selectionChange)="addAsset(i)">
-                  <ng-container *ngFor="let a of global.account.currentWallet!.assets; let j = index">
-                    <mat-option *ngIf="assetIsNotReady(a.name) || j == asset.index" [value]="j">{{a.name}}</mat-option>
+                  <ng-container *ngFor="let a of assetIds; let j = index">
+                    <mat-option *ngIf="assetIsNotReady(a) || j == asset.index" [value]="j">{{a}}</mat-option>
                   </ng-container>
                 </mat-select>
               </mat-form-field>

@@ -27,11 +27,12 @@ import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog
 import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.component';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Invoice } from '../../../models/invoice';
-import { lang } from 'src/models/lang';
-import { WalletsService } from 'src/app/services/wallets.service';
-import { BalanceService } from 'src/app/services/balance.service';
-import { nodes } from 'src/models/nodes';
-import { back } from 'src/models/back';
+import { lang } from '../../../models/lang';
+import { WalletsService } from '../../../app/services/wallets.service';
+import { BalanceService } from '../../../app/services/balance.service';
+import { nodes } from '../../../models/nodes';
+import { back } from '../../../models/back';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-transfer',
@@ -41,8 +42,9 @@ import { back } from 'src/models/back';
 export class TransferComponent implements OnInit {
   public loading = true;
   get lang() { return lang; }
-  public currentWallet!: SimpleWallet;
-  public assets: string[] = [];
+  public address!: Address;
+  public assets: Asset[] = [];
+  public assetIds: string[] = [];
 
   public forms = {
     recipient: "",
@@ -64,21 +66,15 @@ export class TransferComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private auth: AngularFireAuth,
+    private user: UserService,
     private wallet: WalletsService,
     private balance: BalanceService
   ) {
   }
 
   ngOnInit() {
-    this.auth.authState.subscribe(async (user) => {
-      if (user == null) {
-        this.router.navigate(["accounts", "login"]);
-        return;
-      }
-      if(!this.wallet.currentWallet) {
-        this.router.navigate(["accounts", "wallets"]);
-        return;
-      }
+    this.user.checkLogin().then(async () => {
+      await this.wallet.checkWallets();
       await this.refresh();
     });
   }
@@ -88,8 +84,9 @@ export class TransferComponent implements OnInit {
 
     await this.balance.readAssets();
 
-    this.currentWallet = this.wallet.currentWallet!;
-    this.assets = this.balance.assets!.map(a => a.assetId.namespaceId + ":" + a.assetId.name);
+    this.address = new Address(this.wallet.wallets![this.wallet.currentWallet!].nem);
+    this.assets = this.balance.assets!;
+    this.assetIds = this.balance.assets!.map(a => a.assetId.namespaceId + ":" + a.assetId.name);
 
     let invoice = this.route.snapshot.queryParamMap.get('invoice') || "";
     let invoiceData = Invoice.parse(decodeURI(invoice));
@@ -113,7 +110,7 @@ export class TransferComponent implements OnInit {
   }
 
   public async setAsset(id: string, amountAbsolute: number) {
-    let asset = this.assets.find(a => a == id);
+    let asset = this.assetIds.find(a => a == id);
     if(!asset || !this.assetIsNotReady(id)) {
       return
     }
@@ -124,7 +121,7 @@ export class TransferComponent implements OnInit {
   }
 
   public addAsset(index: number) {
-    this.forms.transferAssets[index].name = this.assets![this.forms.transferAssets[index].index!];
+    this.forms.transferAssets[index].name = this.assetIds![this.forms.transferAssets[index].index!];
 
     if (index != this.forms.transferAssets.length - 1) {
       return;
@@ -204,7 +201,8 @@ export class TransferComponent implements OnInit {
   }
 
   public async transfer() {
-    if(!this.currentWallet) {
+    let wallet = this.wallet.wallets![this.wallet.currentWallet!].wallet;
+    if(!wallet) {
       this.dialog.open(AlertDialogComponent, {
         data: {
           title: this.translation.error[this.lang],
@@ -215,7 +213,7 @@ export class TransferComponent implements OnInit {
     }
 
     let password = new Password(this.auth.auth.currentUser!.uid);
-    let account = this.currentWallet.open(password);
+    let account = SimpleWallet.readFromWLT(wallet).open(password);
 
     let recipient: Address;
     try {

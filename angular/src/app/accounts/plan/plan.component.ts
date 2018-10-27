@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { lang } from 'src/models/lang';
-import { back } from 'src/models/back';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { lang } from '../../../models/lang';
+import { back } from '../../../models/back';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-plan',
@@ -16,15 +16,11 @@ export class PlanComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private auth: AngularFireAuth
+    private user: UserService
   ) { }
 
   ngOnInit() {
-    this.auth.authState.subscribe(async (user) => {
-      if (user == null) {
-        this.router.navigate(["accounts", "login"]);
-        return;
-      }
+    this.user.checkLogin().then(async () => {
       await this.refresh();
     });
   }

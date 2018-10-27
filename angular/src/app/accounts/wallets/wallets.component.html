@@ -25,40 +25,40 @@
         <mat-card>
           <mat-list>
             <mat-divider></mat-divider>
-            <ng-container *ngFor="let wallet of wallets; let i = index">
+            <ng-container *ngFor="let id of walletIds">
               <mat-list-item>
-                <mat-icon mat-list-icon *ngIf="!wallet.local" color="primary">cloud_done</mat-icon>
-                <mat-icon mat-list-icon *ngIf="wallet.local" color="warn">cloud_off</mat-icon>
-                <span matLine>{{wallet.name}}</span>
-                <span matLine>{{wallet.nem}}</span>
+                <mat-icon mat-list-icon *ngIf="!wallets[id].local" color="primary">cloud_done</mat-icon>
+                <mat-icon mat-list-icon *ngIf="wallets[id].local" color="warn">cloud_off</mat-icon>
+                <span matLine>{{wallets[id].name}}</span>
+                <span matLine>{{wallets[id].nem}}</span>
                 <span class="fill-remaining-space"></span>
                 <span>
-                  <button mat-icon-button color="warn" (click)="openSnackBar('import')" *ngIf="!wallet.wallet">
+                  <button mat-icon-button color="warn" (click)="openSnackBar('import')" *ngIf="!wallets[id].wallet">
                     <mat-icon>warning</mat-icon>
                   </button>
                 </span>
                 <span>
-                  <button mat-icon-button color="warn" (click)="openSnackBar('plan')" *ngIf="!wallet.local && clouds > 1 && !plan">
+                  <button mat-icon-button color="warn" (click)="openSnackBar('plan')" *ngIf="!wallets[id].local && clouds > 1 && !plan">
                     <mat-icon>warning</mat-icon>
                   </button>
                 </span>
                 <span>
-                  <button mat-icon-button color="accent" (click)="enterWallet(i)" *ngIf="wallet.local || clouds == 1 || plan">
+                  <button mat-icon-button color="accent" (click)="enterWallet(id)" *ngIf="wallets[id].local || clouds == 1 || plan">
                     <mat-icon>launch</mat-icon>
                   </button>
                 </span>
                 <span>
                   <mat-menu #walletMenu="matMenu" [overlapTrigger]="false">
-                    <button mat-menu-item (click)="renameWallet(i)">
+                    <button mat-menu-item (click)="renameWallet(id)">
                       {{translation.rename[lang]}}
                     </button>
-                    <button mat-menu-item (click)="backupWallet(i)" *ngIf="wallet.wallet">
+                    <button mat-menu-item (click)="backupWallet(id)" *ngIf="wallets[id].wallet">
                       {{translation.backup[lang]}}
                     </button>
-                    <button mat-menu-item (click)="importPrivateKey()" *ngIf="!wallet.wallet">
+                    <button mat-menu-item (click)="importPrivateKey()" *ngIf="!wallets[id].wallet">
                       {{translation.importPrivateKey[lang]}}
                     </button>
-                    <button mat-menu-item (click)="deleteWallet(i)">
+                    <button mat-menu-item (click)="deleteWallet(id)">
                       {{translation.delete[lang]}}
                     </button>
                   </mat-menu>

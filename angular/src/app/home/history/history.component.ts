@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Transaction } from 'nem-library';
-import { lang } from 'src/models/lang';
-import { HistoryService } from 'src/app/services/history.service';
+import { lang } from '../../../models/lang';
+import { HistoryService } from '../../services/history.service';
 
 @Component({
   selector: 'app-history',
@@ -26,6 +26,7 @@ export class HistoryComponent implements OnInit {
     this.loading = true;
     
     await this.history.readTransactions(force);
+    this.transactions = this.history.transactions;
 
     this.loading = false;
   }

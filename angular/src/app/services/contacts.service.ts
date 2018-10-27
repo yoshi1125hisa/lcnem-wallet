@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Contact } from 'src/../../firebase/functions/src/models/contact';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { Contact } from '../../../../firebase/functions/src/models/contact';
 
 @Injectable({
   providedIn: 'root'

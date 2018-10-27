@@ -1,5 +1,5 @@
 <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
 <ng-template #loaded>
   <app-transaction *ngFor="let t of transactions" [transaction]="t"></app-transaction>
-  <p class="empty" *ngIf="!transactions.length">{{translation.noTransaction[global.lang]}}</p>
+  <p class="empty" *ngIf="transactions && !transactions.length">{{translation.noTransaction[lang]}}</p>
 </ng-template>

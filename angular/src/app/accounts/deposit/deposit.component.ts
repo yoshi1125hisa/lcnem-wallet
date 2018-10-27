@@ -8,9 +8,10 @@ import { HttpClient } from '@angular/common/http';
 import { supportedCurrencies } from '../../../models/supported-currencies';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
-import { lang } from 'src/models/lang';
-import { WalletsService } from 'src/app/services/wallets.service';
-import { back } from 'src/models/back';
+import { lang } from '../../../models/lang';
+import { WalletsService } from '../../services/wallets.service';
+import { back } from '../../../models/back';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-deposit',
@@ -37,6 +38,7 @@ export class DepositComponent implements OnInit {
     private dialog: MatDialog,
     private http: HttpClient,
     private auth: AngularFireAuth,
+    private user: UserService,
     private wallet: WalletsService,
     sanitizer: DomSanitizer
   ) {
@@ -44,15 +46,8 @@ export class DepositComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.auth.authState.subscribe(async (user) => {
-      if (user == null) {
-        this.router.navigate(["accounts", "login"]);
-        return;
-      }
-      if(!this.wallet.currentWallet) {
-        this.router.navigate(["accounts", "wallets"]);
-        return;
-      }
+    this.user.checkLogin().then(async () => {
+      await this.wallet.checkWallets();
     });
   }
 
@@ -64,7 +59,7 @@ export class DepositComponent implements OnInit {
         "/api/deposit",
         {
           email: this.auth.auth.currentUser!.email,
-          nem: this.wallet.currentWallet!.address.plain(),
+          nem: this.wallet.wallets![this.wallet.currentWallet!].nem,
           currency: this.selectedCurrency,
           amount: this.amount,
           method: this.method,

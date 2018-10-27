@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { Contact } from '../../../../../firebase/functions/src/models/contact';
-import { ContactsService } from 'src/app/services/contacts.service';
-import { back } from 'src/models/back';
-import { lang } from 'src/models/lang';
+import { ContactsService } from '../../services/contacts.service';
+import { back } from '../../../models/back';
+import { lang } from '../../../models/lang';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-contacts',
@@ -19,17 +19,13 @@ export class ContactsComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private auth: AngularFireAuth,
+    private user: UserService,
     private contact: ContactsService,
     private dialog: MatDialog
   ) { }
 
   ngOnInit() {
-    this.auth.authState.subscribe(async (user) => {
-      if (user == null) {
-        this.router.navigate(["accounts", "login"]);
-        return;
-      }
+    this.user.checkLogin().then(async () => {
       await this.refresh();
     });
   }

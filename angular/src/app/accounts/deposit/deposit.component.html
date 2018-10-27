@@ -22,7 +22,6 @@
             minlength="{{minimum[selectedCurrency].toString().length}}" pattern="[1-9][0-9]*" />
           <mat-error>min {{minimum[selectedCurrency]}}</mat-error>
         </mat-form-field>
-
         <mat-form-field fxFill>
           <mat-select placeholder="{{translation.method[lang]}}" [(ngModel)]="method" name="method" required>
             <mat-option value="paypal">{{translation.paypal[lang]}}</mat-option>
@@ -30,6 +29,7 @@
         </mat-form-field>
         <button mat-raised-button color="accent" fxFill [disabled]="form.invalid">{{translation.deposit[lang]}}</button>
       </form>
+      <br />
       <iframe [src]="safeSite" class="mat-elevation-z1"></iframe>
     </div>
   </mat-sidenav-content>

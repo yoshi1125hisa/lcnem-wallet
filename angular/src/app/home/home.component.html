@@ -14,10 +14,6 @@
           <mat-icon mat-list-icon>center_focus_strong</mat-icon>
           {{translation.scan[lang]}}
         </mat-list-item>
-        <mat-list-item routerLink="/transactions/history">
-          <mat-icon mat-list-icon>history</mat-icon>
-          {{translation.history[lang]}}
-        </mat-list-item>
         <mat-list-item routerLink="/accounts/deposit">
           <mat-icon mat-list-icon>call_received</mat-icon>
           {{translation.deposit[lang]}}
@@ -78,23 +74,24 @@
       </button>
     </mat-toolbar>
     <div class="mat-typography body-container">
-      <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
-      <ng-template #loaded>
-        <h3>{{translation.balance[lang]}}</h3>
-        <mat-card>
-          <app-assets-list [assets]="assets"></app-assets-list>
-        </mat-card>
-        <br />
-        <h3>{{translation.yourAddress[lang]}}</h3>
-        <mat-card>
-          <p style="text-align: center;">{{address}}
-            <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyMessage(address)">
-              <mat-icon>input</mat-icon>
-            </button>
-          </p>
-          <img class="qr" [src]="qrUrl" />
-        </mat-card>
-      </ng-template>
+      <h3>{{translation.balance[lang]}}</h3>
+      <mat-card>
+        <mat-spinner *ngIf="loading"></mat-spinner>
+        <app-assets-list [assets]="assets" *ngIf="!loading"></app-assets-list>
+      </mat-card>
+      <br />
+      <h3>{{translation.yourAddress[lang]}}</h3>
+      <mat-card>
+        <p style="text-align: center;">{{address}}
+          <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyMessage(address)">
+            <mat-icon>input</mat-icon>
+          </button>
+        </p>
+        <img class="qr" [src]="qrUrl" />
+      </mat-card>
+      <br />
+      <h3>{{translation.history[lang]}}</h3>
+      <app-history></app-history>
     </div>
     <button mat-fab color="accent" class="floating-action-button" (click)="sidenav.toggle()">
       <mat-icon>menu</mat-icon>

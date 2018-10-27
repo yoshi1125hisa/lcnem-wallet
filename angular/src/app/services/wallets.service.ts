@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { SimpleWallet, Password } from 'nem-library';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { User } from 'src/../../firebase/functions/src/models/user';
-import { Wallet } from 'src/../../firebase/functions/src/models/wallet';
-import { Plan } from 'src/../../firebase/functions/src/models/plan';
+import { User } from '../../../../firebase/functions/src/models/user';
+import { Wallet } from '../../../../firebase/functions/src/models/wallet';
+import { Plan } from '../../../../firebase/functions/src/models/plan';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -18,12 +19,27 @@ export class WalletsService {
     [id: string]: string
   } = {};
 
-  public currentWallet?: SimpleWallet;
+  public currentWallet?: string;
 
   constructor(
+    private router: Router,
     private auth: AngularFireAuth,
     private firestore: AngularFirestore
   ) {
+  }
+
+  public initialize() {
+    this.wallets = undefined;
+    this.plan = undefined;
+    this.localWallets = {};
+    this.deleteCurrentWallet();
+  }
+
+  public async checkWallets() {
+    await this.readWallets();
+    if(!this.currentWallet) {
+      this.router.navigate(["accounts", "wallets"]);
+    }
   }
 
   public async createWallet(wallet: Wallet) {
@@ -86,8 +102,12 @@ export class WalletsService {
     }
 
     for(let id in this.localWallets) {
-      this.wallets[id].wallet = this.localWallets[id];
+      if(this.wallets[id]) {
+        this.wallets[id].wallet = this.localWallets[id];
+      }
     }
+
+    this.currentWallet = localStorage.getItem("currentWallet") || "";
   }
 
   public async updateWallet(id: string, data: any) {
@@ -143,7 +163,7 @@ export class WalletsService {
     if(!this.wallets || !this.wallets[id].wallet) {
       return;
     }
-    this.currentWallet = SimpleWallet.readFromWLT(this.wallets[id].wallet!);
+    this.currentWallet = id;
     localStorage.setItem("currentWallet", id);
   }
 

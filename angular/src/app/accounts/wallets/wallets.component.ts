@@ -3,16 +3,16 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { SimpleWallet, Password } from 'nem-library';
 import { MatDialog, MatSnackBar } from '@angular/material';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { CreateDialogComponent } from './create-dialog/create-dialog.component';
-import { AlertDialogComponent } from 'src/app/components/alert-dialog/alert-dialog.component';
-import { PromptDialogComponent } from 'src/app/components/prompt-dialog/prompt-dialog.component';
+import { AlertDialogComponent } from '../../../app/components/alert-dialog/alert-dialog.component';
+import { PromptDialogComponent } from '../../../app/components/prompt-dialog/prompt-dialog.component';
 
-import { ConfirmDialogComponent } from 'src/app/components/confirm-dialog/confirm-dialog.component';
-import { WalletsService } from 'src/app/services/wallets.service';
-import { Wallet } from 'src/../../firebase/functions/src/models/wallet';
-import { Plan } from 'src/../../firebase/functions/src/models/plan';
-import { lang } from 'src/models/lang';
+import { ConfirmDialogComponent } from '../../../app/components/confirm-dialog/confirm-dialog.component';
+import { WalletsService } from '../../../app/services/wallets.service';
+import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
+import { Plan } from '../../../../../firebase/functions/src/models/plan';
+import { lang } from '../../../models/lang';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-wallets',
@@ -22,7 +22,10 @@ import { lang } from 'src/models/lang';
 export class WalletsComponent implements OnInit {
   public loading = true;
   get lang() { return lang; }
-  public wallets!: Wallet[];
+  public wallets!: {
+    [id: string]: Wallet
+  };
+  public walletIds: string[] = [];
   public plan?: Plan;
   public clouds = 0;
 
@@ -31,16 +34,13 @@ export class WalletsComponent implements OnInit {
     private auth: AngularFireAuth,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
+    private user: UserService,
     private wallet: WalletsService
   ) {
   }
 
   ngOnInit() {
-    this.auth.authState.subscribe(async (user) => {
-      if (user == null) {
-        this.router.navigate(["accounts", "login"]);
-        return;
-      }
+    this.user.checkLogin().then(async () => {
       await this.refresh();
     });
   }
@@ -48,8 +48,15 @@ export class WalletsComponent implements OnInit {
   async refresh(force?: boolean) {
     this.loading = true;
 
-    await this.wallet.readWallets()
-
+    await this.wallet.readWallets(force);
+    this.wallets = this.wallet.wallets!;
+    this.walletIds = Object.keys(this.wallet.wallets!);
+    this.clouds = 0;
+    for(let id of this.walletIds) {
+      if(!this.wallets[id].local) {
+        this.clouds++;
+      }
+    }
 
     this.loading = false;
   }
