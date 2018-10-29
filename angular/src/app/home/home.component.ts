@@ -124,8 +124,8 @@ export class HomeComponent implements OnInit {
       ja: "アドレスをコピーする"
     } as any,
     contacts: {
-      en: "Address book",
-      ja: "アドレス帳"
+      en: "Contact list",
+      ja: "コンタクトリスト"
     } as any
   };
 }

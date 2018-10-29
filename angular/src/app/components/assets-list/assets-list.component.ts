@@ -31,6 +31,8 @@ export class AssetsListComponent implements OnInit {
     if (!this.assets) {
       return;
     }
+
+    await Promise.all(this.assets.map(asset => this.balance.readDefinition(asset.assetId.namespaceId + ":" + asset.assetId.name)));
     
     for(let asset of this.assets) {
       let id = asset.assetId.namespaceId + ":" + asset.assetId.name;
