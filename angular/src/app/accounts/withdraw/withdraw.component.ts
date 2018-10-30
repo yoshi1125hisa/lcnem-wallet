@@ -6,7 +6,6 @@ import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { supportedCurrencies } from '../../../models/supported-currencies';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { lang } from '../../../models/lang';
 import { WalletsService } from '../../../app/services/wallets.service';
@@ -20,7 +19,7 @@ import { UserService } from '../../services/user.service';
 })
 export class WithdrawComponent implements OnInit {
   get lang() { return lang; }
-  public supportedCurrencies = supportedCurrencies;
+  public supportedCurrencies = ["JPY"];
   public selectedCurrency = "JPY";
 
   public amount?: number;

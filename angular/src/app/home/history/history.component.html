@@ -1,5 +1,42 @@
-<mat-spinner *ngIf="loading; else loaded"></mat-spinner>
-<ng-template #loaded>
-  <app-transaction *ngFor="let t of transactions" [transaction]="t"></app-transaction>
-  <p class="empty" *ngIf="transactions && !transactions.length">{{translation.noTransaction[lang]}}</p>
-</ng-template>
+<mat-paginator [pageSizeOptions]="[10, 20]" (page)="onPageChanged($event)"></mat-paginator>
+<mat-spinner *ngIf="loading"></mat-spinner>
+<div class="table-container">
+  <table mat-table [dataSource]="dataSource" [hidden]="loading">
+    <ng-container matColumnDef="confirmed">
+      <th mat-header-cell *matHeaderCellDef>{{translation.confirmed[lang]}}</th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon *ngIf="element.confirmed">done</mat-icon>
+        <button mat-icon-button color="warn" (click)="openSnackBar('unconfirmed')" *ngIf="!element.confirmed">
+          <mat-icon>report_problem</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef>{{translation.type[lang]}}</th>
+      <td mat-cell *matCellDef="let element">{{element.type}}</td>
+    </ng-container>
+    <ng-container matColumnDef="from">
+      <th mat-header-cell *matHeaderCellDef>{{translation.from[lang]}}</th>
+      <td mat-cell *matCellDef="let element">{{element.from}}</td>
+    </ng-container>
+    <ng-container matColumnDef="to">
+      <th mat-header-cell *matHeaderCellDef>{{translation.to[lang]}}</th>
+      <td mat-cell *matCellDef="let element">{{element.to}}</td>
+    </ng-container>
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef>{{translation.date[lang]}}</th>
+      <td mat-cell *matCellDef="let element">{{element.date}}</td>
+    </ng-container>
+    <ng-container matColumnDef="action" stickyEnd>
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-icon-button color="accent" [disabled]="!element.action" (click)="openTransaction(element.transaction)">
+          <mat-icon>launch</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+<p *ngIf="!dataSource || !dataSource.data.length" class="empty">{{translation.noTransaction[lang]}}</p>

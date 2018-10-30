@@ -31,7 +31,9 @@ import {
   MatProgressBarModule,
   MatRadioModule,
   MatSnackBarModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatTableModule,
+  MatPaginatorModule
 } from '@angular/material';
 
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
@@ -119,7 +121,9 @@ import { ContactDialogComponent } from './accounts/contacts/contact-dialog/conta
     MatMenuModule,
     MatRadioModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatTableModule,
+    MatPaginatorModule
   ],
   entryComponents: [
     LoadingDialogComponent,
@@ -128,7 +132,8 @@ import { ContactDialogComponent } from './accounts/contacts/contact-dialog/conta
     PromptDialogComponent,
     TransferDialogComponent,
     CreateDialogComponent,
-    ContactDialogComponent
+    ContactDialogComponent,
+    TransactionComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

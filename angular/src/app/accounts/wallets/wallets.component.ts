@@ -156,7 +156,7 @@ export class WalletsComponent implements OnInit {
     await this.wallet.deleteWallet(id);
   }
 
-  public async openSnackBar(type: "import" | "plan") {
+  public async openSnackBar(type: string) {
     if(type == "import") {
       this.snackBar.open(this.translation.localNotFound[this.lang], undefined, { duration: 3000 });
     } else if (type == "plan") {

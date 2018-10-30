@@ -43,7 +43,7 @@
                 <mat-select color="accent" placeholder="{{translation.assetName[lang]}}" [(ngModel)]="asset.index" name="asset{{i}}-name"
                   required>
                   <ng-container *ngFor="let assetId of assetIds; let j = index">
-                    <mat-option *ngIf="assetIsNotReady(assetId)" [value]="j">{{assetId}}</mat-option>
+                    <mat-option *ngIf="assetIsNotReady(assetId) || asset.index == j" [value]="j">{{assetId}}</mat-option>
                   </ng-container>
                 </mat-select>
               </mat-form-field>

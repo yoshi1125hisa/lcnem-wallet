@@ -5,7 +5,6 @@ import { LoadingDialogComponent } from '../../components/loading-dialog/loading-
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { HttpClient } from '@angular/common/http';
 
-import { supportedCurrencies } from '../../../models/supported-currencies';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { lang } from '../../../models/lang';
@@ -21,7 +20,7 @@ import { UserService } from '../../services/user.service';
 export class DepositComponent implements OnInit {
   public loading = true;
   get lang() { return lang; }
-  public supportedCurrencies = supportedCurrencies;
+  public supportedCurrencies = ["JPY"];
   public selectedCurrency = "JPY";
 
   public minimum = {

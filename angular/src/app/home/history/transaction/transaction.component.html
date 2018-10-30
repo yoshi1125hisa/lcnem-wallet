@@ -1,13 +1,9 @@
-<mat-card *ngIf="!loading">
-  <mat-card-header>
-    <mat-icon mat-card-avatar class="received" *ngIf="received">call_received</mat-icon>
-    <mat-icon mat-card-avatar class="made" *ngIf="!received">call_made</mat-icon>
-    <mat-card-title>{{address}}</mat-card-title>
-    <mat-card-subtitle>{{date}} {{time}}</mat-card-subtitle>
-    <mat-icon mat-card-avatar class="unconfirmed" *ngIf="!transaction.isConfirmed()" matTooltip="{{translation.unconfirmed[lang]}}">report_problem</mat-icon>
-  </mat-card-header>
-  <mat-card-content>
-    <p class="message">{{message}}</p>
-    <app-assets-list [title]="translation.assets[lang]" [assets]="assets"></app-assets-list>
-  </mat-card-content>
-</mat-card>
+<mat-spinner *ngIf="loading; else loaded"></mat-spinner>
+<ng-template #loaded>
+  <pre><code>{{message}}</code></pre>
+  <app-assets-list [title]="translation.assets[lang]" [assets]="assets"></app-assets-list>
+  <mat-dialog-actions>
+    <span class="fill-remaining-space"></span>
+    <button mat-raised-button mat-dialog-close color="accent">OK</button>
+  </mat-dialog-actions>
+</ng-template>

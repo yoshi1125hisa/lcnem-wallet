@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 
 import {
   Address,
@@ -18,16 +18,15 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { lang } from '../../../../models/lang';
 import { WalletsService } from '../../../services/wallets.service';
 import { nodes } from '../../../../models/nodes';
+import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'app-transaction',
   templateUrl: './transaction.component.html',
   styleUrls: ['./transaction.component.css']
 })
-export class TransactionComponent implements OnInit {
+export class TransactionComponent {
   get lang() { return lang; }
-
-  @Input() public transaction?: Transaction;
 
   public address?: string;
   public assets?: Asset[];
@@ -38,24 +37,25 @@ export class TransactionComponent implements OnInit {
 
   constructor(
     private auth: AngularFireAuth,
-    private wallet: WalletsService
-  ) { }
-
-  ngOnInit() {
-    if (!this.transaction) {
+    private wallet: WalletsService,
+    @Inject(MAT_DIALOG_DATA) data: {
+      transaction: Transaction
+    }
+  ) {
+    if (!data.transaction) {
       return;
     }
-    if (this.transaction.type == TransactionTypes.TRANSFER) {
-      this.set(this.transaction as TransferTransaction);
-    } else if (this.transaction.type == TransactionTypes.MULTISIG) {
-      let mt = this.transaction as MultisigTransaction;
+    if (data.transaction.type == TransactionTypes.TRANSFER) {
+      this.refresh(data.transaction as TransferTransaction);
+    } else if (data.transaction.type == TransactionTypes.MULTISIG) {
+      let mt = data.transaction as MultisigTransaction;
       if (mt.otherTransaction.type == TransactionTypes.TRANSFER) {
-        this.set(mt.otherTransaction as TransferTransaction);
+        this.refresh(mt.otherTransaction as TransferTransaction);
       }
     }
   }
 
-  public async set(transferTransaction: TransferTransaction) {
+  public async refresh(transferTransaction: TransferTransaction) {
     let address = new Address(this.wallet.wallets![this.wallet.currentWallet!].nem);
     let wallet = this.wallet.wallets![this.wallet.currentWallet!].wallet;
     let accountHttp = new AccountHttp(nodes);

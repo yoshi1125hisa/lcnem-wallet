@@ -91,7 +91,10 @@
       </mat-card>
       <br />
       <h3>{{translation.history[lang]}}</h3>
-      <app-history></app-history>
+      <mat-card>
+        <mat-spinner *ngIf="loading"></mat-spinner>
+        <app-history *ngIf="!loading"></app-history>
+      </mat-card>
     </div>
     <button mat-fab color="accent" class="floating-action-button" (click)="sidenav.toggle()">
       <mat-icon>menu</mat-icon>

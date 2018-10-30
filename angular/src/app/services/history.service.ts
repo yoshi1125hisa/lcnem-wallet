@@ -25,7 +25,7 @@ export class HistoryService {
     let address = new Address(this.wallet.wallets![this.wallet.currentWallet!].nem);
 
     let unconfirmedTransactions = await accountHttp.unconfirmedTransactions(address).toPromise();
-    let allTransactions = await accountHttp.allTransactions(address).toPromise();
+    let allTransactions = await accountHttp.allTransactions(address, { pageSize: 25 }).toPromise();
     
     this.transactions = unconfirmedTransactions.concat(allTransactions);
   }
