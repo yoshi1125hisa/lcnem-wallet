@@ -1,8 +1,7 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { Contact } from '../../../../../../firebase/functions/src/models/contact';
+import { Component, OnInit } from '@angular/core';
 import { lang } from '../../../../models/lang';
-import { MAT_DIALOG_DATA } from '@angular/material';
 import { NemAddress } from '../../../../models/nem-address';
+import { ContactsService } from '../../../services/contacts.service';
 
 @Component({
   selector: 'app-contact-dialog',
@@ -12,41 +11,51 @@ import { NemAddress } from '../../../../models/nem-address';
 export class ContactDialogComponent implements OnInit {
   get lang() { return lang; }
 
-  public contact: Contact;
+  public ret: {
+    type: string,
+    value: string
+  } = {
+      type: "nem",
+      value: ""
+    };
   public suggests: string[] = [];
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {
-      contact: Contact
-    }
+    private contact: ContactsService
   ) {
-    this.contact = Object.assign({}, data.contact);
-    if(!this.contact.nem || !this.contact.name.length) {
-      this.contact.nem = [""];
-    } else {
-      this.contact.nem = data.contact.nem.concat();
-    }
   }
 
   ngOnInit() {
   }
 
-  public spliceNem(index: number) {
-    this.contact.nem.splice(index, 1);
+  public pattern: {
+    [type: string]: string
+  } = {
+      nem: "N[A-Z2-7]{39}"
+    }
+
+  public async onChange() {
+    if (this.ret.type == "nem") {
+      this.suggests = await NemAddress.suggest(this.ret.value, this.contact);
+    }
   }
 
-  public pushNem() {
-    this.contact.nem.push("");
-  }
-
-  public onNemChange(index: number) {
-    NemAddress.format({input: this.contact.nem[index]});
-  }
-  
   public translation = {
+    type: {
+      en: "Type",
+      ja: "種類"
+    } as any,
     name: {
       en: "Name",
       ja: "名前"
-    } as any
+    } as any,
+    addAddress: {
+      en: "Add an address",
+      ja: "アドレスを追加"
+    },
+    address: {
+      en: "Address",
+      ja: "アドレス"
+    }
   }
 }

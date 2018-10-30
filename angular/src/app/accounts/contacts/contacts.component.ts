@@ -9,6 +9,7 @@ import { UserService } from '../../services/user.service';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { ContactDialogComponent } from './contact-dialog/contact-dialog.component';
 import { Invoice } from '../../../models/invoice';
+import { PromptDialogComponent } from '../../components/prompt-dialog/prompt-dialog.component';
 
 @Component({
   selector: 'app-contacts',
@@ -51,23 +52,18 @@ export class ContactsComponent implements OnInit {
   }
 
   public async createContact() {
-    let result = await this.dialog.open(ContactDialogComponent, {
-      data: {
-        contact: {}
-      }
-    }).afterClosed().toPromise();
-
-    if(!result) {
-      return;
-    }
-
-    await this.contact.createContact(result);
+    await this.updateContact();
   }
 
-  public async editContact(id: string) {
-    let result = await this.dialog.open(ContactDialogComponent, {
+  public async updateContact(id?: string) {
+    let result = await this.dialog.open(PromptDialogComponent, {
       data: {
-        contact: this.contacts[id]
+        title: this.translation.createContact[this.lang],
+        input: {
+          placeholder: this.translation.name[this.lang],
+          pattern: "\\S+",
+          value: id ? this.contact.contacts![id].name : ""
+        }
       }
     }).afterClosed().toPromise();
 
@@ -75,7 +71,8 @@ export class ContactsComponent implements OnInit {
       return;
     }
 
-    await this.contact.updateContact(id, result);
+    id ? await this.contact.updateContact(id, { name: result }) : await this.contact.createContact({ name: result, nem: []});
+    this.contactIds = Object.keys(this.contact.contacts!);
   }
 
   public async deleteContact(id: string) {
@@ -90,6 +87,30 @@ export class ContactsComponent implements OnInit {
     }
 
     await this.contact.deleteContact(id);
+    this.contactIds = Object.keys(this.contact.contacts!);
+  }
+
+  public async createContactElement(id: string) {
+    let result: {
+      type: string,
+      value: string
+    } = await this.dialog.open(ContactDialogComponent).afterClosed().toPromise();
+
+    if(!result) {
+      return;
+    }
+
+    if(result.type == "nem") {
+      this.contact.contacts![id].nem.push(result.value);
+    }
+    await this.contact.updateContact(id, this.contact.contacts![id])
+  }
+
+  public async deleteContactElement(type: string, id: string, index: number) {
+    if(type == "nem") {
+      this.contact.contacts![id].nem.splice(index, 1);
+    }
+    await this.contact.updateContact(id, this.contact.contacts![id])
   }
 
   public sendNem(nem: string) {
@@ -118,6 +139,14 @@ export class ContactsComponent implements OnInit {
     confirm: {
       en: "Are you sure?",
       ja: "削除しますか？"
+    } as any,
+    createContact: {
+      en: "Create new contact",
+      ja: "新しいコンタクトを作成"
+    } as any,
+    name: {
+      en: "Name",
+      ja: "名前"
     } as any
   };
 }

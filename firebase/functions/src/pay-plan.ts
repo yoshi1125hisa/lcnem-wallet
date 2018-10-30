@@ -13,6 +13,7 @@ export const _payPlan = functions.https.onRequest(async (req, res) => {
       throw Error("INVALID_PLAN");
     }
   } catch(e) {
+    console.error(e);
     res.status(400).send(e.message);
   }
 });

@@ -109,7 +109,6 @@ export class TransferComponent implements OnInit {
   }
 
   public async onRecipientChange() {
-    NemAddress.format({input: this.forms.recipient});
     this.suggests = await NemAddress.suggest(this.forms.recipient, this.contact);
   }
 

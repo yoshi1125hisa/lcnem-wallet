@@ -15,31 +15,41 @@
     <div class="mat-typography body-container">
       <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
       <ng-template #loaded>
-        <ng-container *ngFor="let contactId of contactIds; let i = index">
+        <ng-container *ngFor="let contactId of contactIds;">
           <mat-card>
             <mat-toolbar>
-              <span>{{contacts[contactId].name}}</span>
-              <span class="fill-remaining-space"></span>
-              <span>
-                <button mat-icon-button color="accent" (click)="editContact(contactId)">
-                  <mat-icon>edit</mat-icon>
-                </button>
-              </span>
               <span>
                 <button mat-icon-button color="warn" (click)="deleteContact(contactId)">
                   <mat-icon>close</mat-icon>
                 </button>
               </span>
+              <span>{{contacts[contactId].name}}</span>
+              <span>
+                <button mat-icon-button color="accent" (click)="updateContact(contactId)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </span>
+              <span class="fill-remaining-space"></span>
+              <span>
+                <button mat-icon-button color="accent" (click)="createContactElement(contactId)">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </span>
             </mat-toolbar>
             <mat-card-content>
-              <mat-list>
+              <mat-list *ngIf="contacts[contactId].nem.length">
                 <h3 mat-subheader>nem</h3>
-                <mat-list-item *ngFor="let n of contacts[contactId].nem">
+                <mat-list-item *ngFor="let n of contacts[contactId].nem; let i = index">
                   <span>{{n}}</span>
                   <span class="fill-remaining-space"></span>
                   <span>
                     <button mat-icon-button color="accent" (click)="sendNem(n)">
                       <mat-icon>send</mat-icon>
+                    </button>
+                  </span>
+                  <span>
+                    <button mat-icon-button color="warn" (click)="deleteContactElement('nem', contactId, i)">
+                      <mat-icon>close</mat-icon>
                     </button>
                   </span>
                 </mat-list-item>

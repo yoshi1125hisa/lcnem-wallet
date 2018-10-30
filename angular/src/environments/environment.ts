@@ -12,5 +12,9 @@ export const environment = {
     projectId: 'lcnem-wallet',
     storageBucket: 'lcnem-wallet.appspot.com',
     messagingSenderId: '522057576747'
+  },
+  stripe: {
+    pk: "pk_test_sVIc8W1jrazk2t1LxqAdnls3",
+    test: true
   }
 };

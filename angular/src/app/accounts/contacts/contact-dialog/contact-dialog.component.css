@@ -1,0 +1,10 @@
+mat-radio-group {
+  margin: 1em 0;
+}
+mat-radio-group span:first-child {
+  margin-right: 1em;
+  color: gray;
+}
+mat-radio-button {
+  margin-right: 1em;
+}
