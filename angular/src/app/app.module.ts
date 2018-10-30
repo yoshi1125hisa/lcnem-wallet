@@ -60,6 +60,7 @@ import { TransactionComponent } from './home/history/transaction/transaction.com
 import { HistoryComponent } from './home/history/history.component';
 import { CreateDialogComponent } from './accounts/wallets/create-dialog/create-dialog.component';
 import { WalletsComponent } from './accounts/wallets/wallets.component';
+import { ContactDialogComponent } from './accounts/contacts/contact-dialog/contact-dialog.component';
 
 @NgModule({
   declarations: [
@@ -84,7 +85,8 @@ import { WalletsComponent } from './accounts/wallets/wallets.component';
     PrivacyPolicyComponent,
     WalletsComponent,
     PlanComponent,
-    CreateDialogComponent
+    CreateDialogComponent,
+    ContactDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -125,7 +127,8 @@ import { WalletsComponent } from './accounts/wallets/wallets.component';
     ConfirmDialogComponent,
     PromptDialogComponent,
     TransferDialogComponent,
-    CreateDialogComponent
+    CreateDialogComponent,
+    ContactDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

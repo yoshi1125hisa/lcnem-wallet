@@ -1,16 +1,13 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatListOption } from '@angular/material';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   Address,
-  PublicAccount,
   PlainMessage,
   EncryptedMessage,
   Message,
   TransferTransaction,
   Asset,
-  AssetId,
-  AssetDefinition,
   TimeWindow,
   AssetTransferable,
   XEM,
@@ -33,6 +30,8 @@ import { BalanceService } from '../../../app/services/balance.service';
 import { nodes } from '../../../models/nodes';
 import { back } from '../../../models/back';
 import { UserService } from '../../services/user.service';
+import { ContactsService } from '../../services/contacts.service';
+import { NemAddress } from '../../../models/nem-address';
 
 @Component({
   selector: 'app-transfer',
@@ -52,12 +51,11 @@ export class TransferComponent implements OnInit {
     encrypt: false,
     transferAssets: [{}] as {
       index?: number,
-      name?: string,
       amount?: number
     }[]
   };
 
-  public autoCompletes: string[] = [];
+  public suggests: string[] = [];
 
   public navigatorShare = (navigator as any).share;
 
@@ -68,7 +66,8 @@ export class TransferComponent implements OnInit {
     private auth: AngularFireAuth,
     private user: UserService,
     private wallet: WalletsService,
-    private balance: BalanceService
+    private balance: BalanceService,
+    private contact: ContactsService
   ) {
   }
 
@@ -82,7 +81,7 @@ export class TransferComponent implements OnInit {
   public async refresh() {
     this.loading = true;
 
-    await this.balance.readAssets();
+    await Promise.all([this.balance.readAssets(), this.contact.readContacts()]);
 
     this.address = new Address(this.wallet.wallets![this.wallet.currentWallet!].nem);
     this.assets = this.balance.assets!;
@@ -91,12 +90,12 @@ export class TransferComponent implements OnInit {
     let invoice = this.route.snapshot.queryParamMap.get('invoice') || "";
     let invoiceData = Invoice.parse(decodeURI(invoice));
 
-    if(invoiceData) {
+    if (invoiceData) {
       this.forms.recipient = invoiceData.data.addr;
       this.forms.message = invoiceData.data.msg;
 
-      if(invoiceData.data.assets) {
-        for(let asset of invoiceData.data.assets) {
+      if (invoiceData.data.assets) {
+        for (let asset of invoiceData.data.assets) {
           this.setAsset(asset.id, asset.amount);
         }
       }
@@ -109,50 +108,39 @@ export class TransferComponent implements OnInit {
     back(() => this.router.navigate([""]));
   }
 
+  public async onRecipientChange() {
+    NemAddress.format({input: this.forms.recipient});
+    this.suggests = await NemAddress.suggest(this.forms.recipient, this.contact);
+  }
+
   public async setAsset(id: string, amountAbsolute: number) {
     let asset = this.assetIds.find(a => a == id);
-    if(!asset || !this.assetIsNotReady(id)) {
+    if (!asset || !this.assetIsNotReady(id)) {
       return
     }
     let index = this.forms.transferAssets.length - 1;
-    this.forms.transferAssets[index].index = index;
+    this.forms.transferAssets[index].index = this.assetIds.findIndex(a => a == id);
     this.forms.transferAssets[index].amount = amountAbsolute / Math.pow(10, (await this.balance.readDefinition(id)).properties.divisibility);
-    this.addAsset(index);
-  }
-
-  public addAsset(index: number) {
-    this.forms.transferAssets[index].name = this.assetIds![this.forms.transferAssets[index].index!];
-
-    if (index != this.forms.transferAssets.length - 1) {
-      return;
-    }
-    this.forms.transferAssets.push({});
-  }
-
-  public deleteAsset(index: number) {
-    this.forms.transferAssets.splice(index, 1);
   }
 
   public assetIsNotReady(id: string) {
-    return this.forms.transferAssets.findIndex(a => a.name == id) == -1;
+    for (let asset of this.forms.transferAssets) {
+      if (!asset.index) {
+        continue;
+      }
+      if (this.assetIds[asset.index!] == id) {
+        return false;
+      }
+    }
+    return true;
   }
 
-  public async onRecipientChange() {
-    if(this.forms.recipient.replace(/-/g, "").trim().toUpperCase().match(/^N[A-Z2-7]{39}$/)) {
-      this.forms.recipient = this.forms.recipient.replace(/-/g, "");
-    }
+  public spliceAsset(index: number) {
+    this.forms.transferAssets.splice(index, 1);
+  }
 
-    this.autoCompletes = [];
-
-    let namespaceHttp = new NamespaceHttp(nodes);
-
-    try {
-      let result = await namespaceHttp.getNamespace(this.forms.recipient).toPromise();
-      let resolved = result.owner.plain();
-      this.autoCompletes.push(resolved);
-    } catch {
-
-    }
+  public pushAsset() {
+    this.forms.transferAssets.push({});
   }
 
   public async share() {
@@ -160,7 +148,8 @@ export class TransferComponent implements OnInit {
     invoice.data.addr = this.forms.recipient;
     invoice.data.msg = this.forms.message;
     invoice.data.assets = (await this.getTransferMosaics()).assets.map(asset => {
-      return { id: asset.assetId.toString(), amount: asset.absoluteQuantity() }}
+      return { id: asset.assetId.toString(), amount: asset.absoluteQuantity() }
+    }
     );
 
     (navigator as any).share({
@@ -174,19 +163,20 @@ export class TransferComponent implements OnInit {
 
     let transferAssets: AssetTransferable[] = [];
 
-    let filtered = this.forms.transferAssets.filter(asset => asset.name);
-    for(let asset of filtered){
-      if (asset.name == "nem:xem") {
+    for (let asset of this.forms.transferAssets) {
+      let assetId = this.assetIds[asset.index!];
+      if (assetId == "nem:xem") {
         transferAssets.push(new XEM(asset.amount!));
+        continue;
       }
-      let definition = await this.balance.readDefinition(asset.name!);
+      let definition = await this.balance.readDefinition(assetId);
 
       let absolute = asset.amount! * Math.pow(10, definition.properties.divisibility);
-      
-      if(definition.levy) {
-        if(definition.levy.type == AssetLevyType.Absolute) {
+
+      if (definition.levy) {
+        if (definition.levy.type == AssetLevyType.Absolute) {
           levy.push(new Asset(definition.levy.assetId, definition.levy.fee));
-        } else if(definition.levy.type == AssetLevyType.Percentil) {
+        } else if (definition.levy.type == AssetLevyType.Percentil) {
           levy.push(new Asset(definition.levy.assetId, definition.levy.fee * absolute / 10000));
         }
       }
@@ -202,7 +192,7 @@ export class TransferComponent implements OnInit {
 
   public async transfer() {
     let wallet = this.wallet.wallets![this.wallet.currentWallet!].wallet;
-    if(!wallet) {
+    if (!wallet) {
       this.dialog.open(AlertDialogComponent, {
         data: {
           title: this.translation.error[this.lang],

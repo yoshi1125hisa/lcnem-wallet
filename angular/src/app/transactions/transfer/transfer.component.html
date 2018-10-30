@@ -19,11 +19,11 @@
           <mat-card>
             <mat-form-field fxFill>
               <input matInput placeholder="{{translation.recipient[lang]}}" [(ngModel)]="forms.recipient" name="recipient"
-                [matAutocomplete]="auto" (change)="onRecipientChange()" required minlength="40" pattern="N[A-Z2-7]{39}">
+                [matAutocomplete]="nemSuggest" (change)="onRecipientChange()" required pattern="N[A-Z2-7]{39}">
               <mat-error>{{translation.addressRequired[lang]}}</mat-error>
             </mat-form-field>
-            <mat-autocomplete #auto="matAutocomplete">
-              <mat-option *ngFor="let autoComplete of autoCompletes" [value]="autoComplete">{{autoComplete}}</mat-option>
+            <mat-autocomplete #nemSuggest="matAutocomplete">
+              <mat-option *ngFor="let suggest of suggests" [value]="suggest">{{suggest}}</mat-option>
             </mat-autocomplete>
           </mat-card>
           <br />
@@ -40,22 +40,25 @@
             <br />
             <div *ngFor="let asset of forms.transferAssets; let i = index; let l = last" fxLayout="row">
               <mat-form-field fxFlex="50">
-                <mat-select color="accent" placeholder="{{translation.assetName[lang]}}" [(ngModel)]="asset.index"
-                  name="asset{{i}}-name" required="{{!l || forms.transferAssets.length == 1}}" (selectionChange)="addAsset(i)">
-                  <ng-container *ngFor="let a of assetIds; let j = index">
-                    <mat-option *ngIf="assetIsNotReady(a) || j == asset.index" [value]="j">{{a}}</mat-option>
+                <mat-select color="accent" placeholder="{{translation.assetName[lang]}}" [(ngModel)]="asset.index" name="asset{{i}}-name"
+                  required>
+                  <ng-container *ngFor="let assetId of assetIds; let j = index">
+                    <mat-option *ngIf="assetIsNotReady(assetId)" [value]="j">{{assetId}}</mat-option>
                   </ng-container>
                 </mat-select>
               </mat-form-field>
-              <ng-container *ngIf="!l">
+              <div fxFlex="50" fxLayout="row">
                 <mat-form-field class="fill-remaining-space">
                   <input matInput color="accent" placeholder="{{translation.amount[lang]}}" [(ngModel)]="asset.amount"
-                    name="asset{{i}}-amount" required minlength="1" pattern="\d+(\.\d+)?" />
+                    name="asset{{i}}-amount" required pattern="\d+(\.\d+)?" />
                 </mat-form-field>
-                <button mat-icon-button color="warn" type="button" (click)="deleteAsset(i)">
+                <button mat-icon-button color="warn" type="button" (click)="spliceAsset(i)" *ngIf="!l">
                   <mat-icon>clear</mat-icon>
                 </button>
-              </ng-container>
+                <button mat-icon-button color="accent" type="button" (click)="pushAsset()" *ngIf="l">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
             </div>
           </mat-card>
           <br />

@@ -9,6 +9,7 @@ import { BalanceService } from '../../services/balance.service';
   styleUrls: ['./assets-list.component.css']
 })
 export class AssetsListComponent implements OnInit {
+  @Input() public title?: string;
   @Input() public assets?: Asset[];
   
   public _assets = new Array<{

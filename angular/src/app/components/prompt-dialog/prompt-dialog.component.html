@@ -2,7 +2,7 @@
   <h2 mat-dialog-title>{{data.title}}</h2>
   <mat-dialog-content>
     <mat-form-field fxFill>
-      <input matInput #input [(ngModel)]="model" name="input" required [maxlength]="data.input.maxlength" [minlength]="data.input.minlength"
+      <input matInput [(ngModel)]="model" name="input" required [maxlength]="data.input.maxlength" [minlength]="data.input.minlength"
         [pattern]="data.input.pattern" [placeholder]="data.input.placeholder" />
     </mat-form-field>
   </mat-dialog-content>

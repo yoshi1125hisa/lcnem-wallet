@@ -1,0 +1,24 @@
+<form #form="ngForm">
+  <mat-form-field>
+    <input matInput [(ngModel)]="contact.name" name="name" placeholder="{{translation.name[lang]}}" required />
+  </mat-form-field>
+  <mat-dialog-content>
+    <div *ngFor="let n of contact.nem; let i = index; let l = last" fxLayout="row">
+      <mat-form-field class="fill-remaining-space">
+        <input matInput [(ngModel)]="contact.nem[i]" name="nem" placeholder="nem{{i + 1}}" (change)="onNemChange(i)"
+          required="{{contact.nem.length > 1}}" pattern="N[A-Z2-7]{39}">
+      </mat-form-field>
+      <button mat-icon-button color="warn" (click)="spliceNem(i)" *ngIf="!l">
+        <mat-icon>close</mat-icon>
+      </button>
+      <button mat-icon-button color="accent" (click)="pushNem()" *ngIf="l">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <span class="fill-remaining-space"></span>
+    <button mat-raised-button mat-dialog-close color="warn">Cancel</button>
+    <button mat-raised-button [mat-dialog-close]="contact" color="accent" [disabled]="form.invalid">OK</button>
+  </mat-dialog-actions>
+</form>

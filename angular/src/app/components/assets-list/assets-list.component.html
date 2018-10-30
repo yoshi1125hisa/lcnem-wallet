@@ -1,4 +1,5 @@
 <mat-list>
+  <h3 mat-subheader *ngIf="title">{{title}}</h3>
   <mat-divider></mat-divider>
   <ng-container *ngFor="let asset of _assets">
     <mat-list-item>
