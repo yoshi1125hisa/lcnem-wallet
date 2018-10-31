@@ -72,7 +72,7 @@ export class ContactsComponent implements OnInit {
     }
 
     id ? await this.contact.updateContact(id, { name: result }) : await this.contact.createContact({ name: result, nem: []});
-    this.contactIds = Object.keys(this.contact.contacts!);
+    await this.refresh(true);
   }
 
   public async deleteContact(id: string) {
@@ -87,7 +87,7 @@ export class ContactsComponent implements OnInit {
     }
 
     await this.contact.deleteContact(id);
-    this.contactIds = Object.keys(this.contact.contacts!);
+    await this.refresh(true);
   }
 
   public async createContactElement(id: string) {
