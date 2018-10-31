@@ -52,10 +52,10 @@ export class ContactDialogComponent implements OnInit {
     addAddress: {
       en: "Add an address",
       ja: "アドレスを追加"
-    },
+    } as any,
     address: {
       en: "Address",
       ja: "アドレス"
-    }
+    } as any
   }
 }

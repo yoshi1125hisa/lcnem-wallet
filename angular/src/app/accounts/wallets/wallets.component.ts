@@ -11,7 +11,7 @@ import { ConfirmDialogComponent } from '../../../app/components/confirm-dialog/c
 import { WalletsService } from '../../../app/services/wallets.service';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { Plan } from '../../../../../firebase/functions/src/models/plan';
-import { lang } from '../../../models/lang';
+import { lang, setLang } from '../../../models/lang';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -22,6 +22,7 @@ import { UserService } from '../../services/user.service';
 export class WalletsComponent implements OnInit {
   public loading = true;
   get lang() { return lang; }
+  set lang(value) { setLang(value); }
   public wallets!: {
     [id: string]: Wallet
   };

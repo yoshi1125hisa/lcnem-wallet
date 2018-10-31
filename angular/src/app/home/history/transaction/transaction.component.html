@@ -1,9 +1,6 @@
-<mat-spinner *ngIf="loading; else loaded"></mat-spinner>
-<ng-template #loaded>
-  <pre><code>{{message}}</code></pre>
-  <app-assets-list [title]="translation.assets[lang]" [assets]="assets"></app-assets-list>
-  <mat-dialog-actions>
-    <span class="fill-remaining-space"></span>
-    <button mat-raised-button mat-dialog-close color="accent">OK</button>
-  </mat-dialog-actions>
-</ng-template>
+<pre><code>{{message}}</code></pre>
+<app-assets-list [title]="translation.assets[lang]" [assets]="assets"></app-assets-list>
+<mat-dialog-actions>
+  <span class="fill-remaining-space"></span>
+  <button mat-raised-button mat-dialog-close color="accent">OK</button>
+</mat-dialog-actions>
