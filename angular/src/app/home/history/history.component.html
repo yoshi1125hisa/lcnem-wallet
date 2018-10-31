@@ -1,4 +1,8 @@
-<mat-paginator [pageSizeOptions]="[10, 20]" (page)="onPageChanged($event)"></mat-paginator>
+<mat-paginator [pageSizeOptions]="[10, 20]" (page)="onPageChanged($event)">
+  <button mat-icon-button color="accent" (click)="refresh(true)">
+    <mat-icon>refresh</mat-icon>
+  </button>
+</mat-paginator>
 <mat-spinner *ngIf="loading"></mat-spinner>
 <div class="table-container">
   <table mat-table [dataSource]="dataSource" [hidden]="loading">

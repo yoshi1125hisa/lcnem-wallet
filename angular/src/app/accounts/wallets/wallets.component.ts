@@ -155,7 +155,6 @@ export class WalletsComponent implements OnInit {
     }
 
     await this.wallet.deleteWallet(id);
-
     await this.refresh();
   }
 

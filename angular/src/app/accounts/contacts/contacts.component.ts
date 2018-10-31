@@ -72,7 +72,7 @@ export class ContactsComponent implements OnInit {
     }
 
     id ? await this.contact.updateContact(id, { name: result }) : await this.contact.createContact({ name: result, nem: []});
-    await this.refresh(true);
+    await this.refresh();
   }
 
   public async deleteContact(id: string) {
@@ -87,7 +87,7 @@ export class ContactsComponent implements OnInit {
     }
 
     await this.contact.deleteContact(id);
-    await this.refresh(true);
+    await this.refresh();
   }
 
   public async createContactElement(id: string) {
@@ -107,6 +107,16 @@ export class ContactsComponent implements OnInit {
   }
 
   public async deleteContactElement(type: string, id: string, index: number) {
+    let result = await this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: this.translation.confirm[this.lang]
+      }
+    }).afterClosed().toPromise();
+
+    if(!result) {
+      return;
+    }
+
     if(type == "nem") {
       this.contact.contacts![id].nem.splice(index, 1);
     }
