@@ -301,8 +301,8 @@ export class TransferComponent implements OnInit {
       ja: "秘密鍵のインポートが必要です。"
     } as any,
     addressRequired: {
-      en: "An address is required. You can also enter any NEM namespace.",
-      ja: "アドレスを入力してください。NEMネームスペースを入力することもできます。"
+      en: "An address is required. You can also enter any NEM namespace or contact.",
+      ja: "アドレスを入力してください。NEMネームスペース、コンタクトを入力することもできます。"
     } as any,
     namespace: {
       en: "NEM namespace",

@@ -27,7 +27,6 @@ export class HistoryComponent implements OnInit {
   public displayedColumns = ["confirmed", "type", "from", "to", "date", "action"];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-
   public transactions?: Transaction[];
 
   constructor(
@@ -105,7 +104,9 @@ export class HistoryComponent implements OnInit {
   }
 
   public async openSnackBar(type: string) {
-    if (type == "unconfirmed") {
+    if(type == "confirmed") {
+      this.snackBar.open(this.translation.confirmedSnackBar[this.lang], undefined, { duration: 3000 });
+    } else if (type == "unconfirmed") {
       this.snackBar.open(this.translation.unconfirmedSnackBar[this.lang], undefined, { duration: 3000 });
     }
   }
@@ -118,6 +119,10 @@ export class HistoryComponent implements OnInit {
     noTransaction: {
       en: "There is no transaction.",
       ja: "取引はありません。"
+    } as any,
+    confirmedSnackBar: {
+      en: "This transaction has been confirmed.",
+      ja: "この取引はブロックチェーンに承認されています。"
     } as any,
     unconfirmedSnackBar: {
       en: "This transaction is not confirmed yet.",

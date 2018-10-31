@@ -51,13 +51,15 @@ export class HomeComponent implements OnInit {
 
     await this.balance.readAssets(force);
 
-    this.photoUrl = this.auth.auth.currentUser!.photoURL!;
-    this.assets = this.balance.assets!;
-
-    let invoice = new Invoice();
-    invoice.data.addr = this.wallet.wallets![this.wallet.currentWallet!].nem;
-    this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
-    this.address = invoice.data.addr;
+    if(!this.address) {
+      this.address = this.wallet.wallets![this.wallet.currentWallet!].nem;
+      this.photoUrl = this.auth.auth.currentUser!.photoURL!;
+      this.assets = this.balance.assets!;
+  
+      let invoice = new Invoice();
+      invoice.data.addr = this.address;
+      this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
+    }
 
     this.loading = false;
   }
