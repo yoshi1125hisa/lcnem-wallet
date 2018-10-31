@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { TransferTransaction, Asset, AssetTransferable } from 'nem-library';
-import { GlobalDataService } from '../../../services/global-data.service';
+import { TransferTransaction, Asset, AssetTransferable, XEM } from 'nem-library';
+import { lang } from '../../../../models/lang';
 
 @Component({
   selector: 'app-transfer-dialog',
@@ -9,13 +9,14 @@ import { GlobalDataService } from '../../../services/global-data.service';
   styleUrls: ['./transfer-dialog.component.css']
 })
 export class TransferDialogComponent {
+  get lang() { return lang; }
   public transaction: TransferTransaction;
   public assets: Asset[];
+  public fee: Asset[];
   public levy: Asset[];
   public Math = Math;
 
   constructor(
-    public global: GlobalDataService,
     @Inject(MAT_DIALOG_DATA) public data: {
       transaction: TransferTransaction
       message: string,
@@ -24,6 +25,7 @@ export class TransferDialogComponent {
   ) {
     this.transaction = data.transaction as TransferTransaction;
     this.assets = this.transaction.mosaics();
+    this.fee = [new XEM(this.transaction.fee / 1000000)];
     this.levy = data.levy;
   }
 

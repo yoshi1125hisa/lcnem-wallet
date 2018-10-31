@@ -2,10 +2,10 @@
   <mat-sidenav></mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar class="mat-elevation-z4 top-toolbar">
-      <button mat-icon-button (click)="global.back()">
+      <button mat-icon-button (click)="back()">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <span>{{translation.plan[global.lang]}}</span>
+      <span>{{translation.plan[lang]}}</span>
       <span class="fill-remaining-space"></span>
     </mat-toolbar>
     <div class="mat-typography body-container">
@@ -13,11 +13,11 @@
       <ng-template #loaded>
         <div fxLayout="row wrap">
           <div class="plan" fxFlex="50" *ngFor="let plan of translation.plans">
-            <h3>{{plan.name[global.lang]}}</h3>
+            <h3>{{plan.name[lang]}}</h3>
             <mat-card>
-              <p class="price">{{plan.price[global.lang]}}</p>
+              <p class="price">{{plan.price[lang]}}</p>
               <ul>
-                <li *ngFor="let function of plan.functions">{{function[global.lang]}}</li>
+                <li *ngFor="let function of plan.functions">{{function[lang]}}</li>
               </ul>
             </mat-card>
           </div>

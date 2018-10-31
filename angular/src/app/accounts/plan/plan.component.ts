@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { GlobalDataService } from '../../services/global-data.service';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { lang } from '../../../models/lang';
+import { back } from '../../../models/back';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-plan',
@@ -10,29 +12,29 @@ import { AngularFireAuth } from '@angular/fire/auth';
 })
 export class PlanComponent implements OnInit {
   public loading = true;
+  get lang() { return lang; }
 
   constructor(
-    public global: GlobalDataService,
     private router: Router,
-    private auth: AngularFireAuth
+    private user: UserService
   ) { }
 
   ngOnInit() {
-    this.auth.authState.subscribe(async (user) => {
-      if (user == null) {
-        this.router.navigate(["accounts", "login"]);
-        return;
-      }
+    this.user.checkLogin().then(async () => {
       await this.refresh();
     });
   }
   
-  async refresh() {
+  public async refresh() {
     this.loading = true;
 
-    await this.global.refresh();
+    
 
     this.loading = false;
+  }
+
+  public back() {
+    back(() => this.router.navigate([""]));
   }
 
   public translation = {

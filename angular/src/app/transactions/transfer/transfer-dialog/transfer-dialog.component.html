@@ -1,33 +1,22 @@
-<h2 mat-dialog-title>{{translation.confirmation[global.lang]}}</h2>
+<h2 mat-dialog-title>{{translation.confirmation[lang]}}</h2>
 <mat-dialog-content>
-  <app-assets-list [title]="translation.amount[global.lang]" [assets]="assets"></app-assets-list>
-  <mat-list>
-    <h3 mat-subheader>{{translation.fee[global.lang]}}</h3>
+  <app-assets-list [title]="translation.amount[lang]" [assets]="assets"></app-assets-list>
+  <app-assets-list [title]="translation.fee[lang]" [assets]="fee"></app-assets-list>
+  <mat-list *ngIf="data.message">
+    <h3 mat-subheader>{{translation.message[lang]}}</h3>
     <mat-divider></mat-divider>
-    <mat-list-item matTooltip="nem:xem">
-      <img mat-list-icon src="assets/data/nem/xem.svg" />
-      <span mat-line>nem:xem</span>
-      <small mat-line></small>
+    <mat-list-item>
+      <span>{{translation.encryption[lang]}} </span>
       <span class="fill-remaining-space"></span>
-      <span class="right">{{Math.floor(transaction.fee) / 1000000}}<br />XEM</span>
+      <span class="right">
+        <mat-icon *ngIf="transaction.message.isEncrypted()">check</mat-icon>
+        <mat-icon *ngIf="transaction.message.isPlain()">close</mat-icon>
+      </span>
     </mat-list-item>
     <mat-divider></mat-divider>
-    <ng-container *ngIf="data.message">
-      <h3 mat-subheader>{{translation.message[global.lang]}}</h3>
-      <mat-divider></mat-divider>
-      <mat-list-item>
-        <span>{{translation.encryption[global.lang]}} </span>
-        <span class="fill-remaining-space"></span>
-        <span class="right">
-          <mat-icon *ngIf="transaction.message.isEncrypted()">check</mat-icon>
-          <mat-icon *ngIf="transaction.message.isPlain()">close</mat-icon>
-        </span>
-      </mat-list-item>
-      <mat-divider></mat-divider>
-      <p class="message">{{data.message}}</p>
-    </ng-container>
+    <p class="message">{{data.message}}</p>
   </mat-list>
-  <app-assets-list [title]="translation.levy[global.lang]" [assets]="levy" *ngIf="levy && levy.length"></app-assets-list>
+  <app-assets-list [title]="translation.levy[lang]" [assets]="levy" *ngIf="levy && levy.length"></app-assets-list>
 </mat-dialog-content>
 <mat-dialog-actions>
   <span class="fill-remaining-space"></span>

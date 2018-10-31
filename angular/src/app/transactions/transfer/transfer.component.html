@@ -2,11 +2,11 @@
   <mat-sidenav></mat-sidenav>
   <mat-sidenav-content>
     <mat-toolbar class="mat-elevation-z4 top-toolbar">
-      <button mat-icon-button (click)="global.back()">
+      <button mat-icon-button (click)="back()">
         <mat-icon>arrow_back</mat-icon>
       </button>
 
-      <span>{{translation.transfer[global.lang]}}</span>
+      <span>{{translation.transfer[lang]}}</span>
       <span class="fill-remaining-space"></span>
       <button mat-icon-button routerLink="/transactions/scan">
         <mat-icon>center_focus_strong</mat-icon>
@@ -18,20 +18,20 @@
         <form #form="ngForm" (ngSubmit)="transfer()">
           <mat-card>
             <mat-form-field fxFill>
-              <input matInput placeholder="{{translation.recipient[global.lang]}}" [(ngModel)]="forms.recipient" name="recipient"
-                [matAutocomplete]="auto" (change)="onRecipientChange()" required minlength="40" pattern="N[A-Z2-7]{39}">
-              <mat-error>{{translation.addressRequired[global.lang]}}</mat-error>
+              <input matInput placeholder="{{translation.recipient[lang]}}" [(ngModel)]="forms.recipient" name="recipient"
+                [matAutocomplete]="nemSuggest" (change)="onRecipientChange()" required pattern="N[A-Z2-7]{39}">
+              <mat-error>{{translation.addressRequired[lang]}}</mat-error>
             </mat-form-field>
-            <mat-autocomplete #auto="matAutocomplete">
-              <mat-option *ngFor="let autoComplete of autoCompletes" [value]="autoComplete">{{autoComplete}}</mat-option>
+            <mat-autocomplete #nemSuggest="matAutocomplete">
+              <mat-option *ngFor="let suggest of suggests" [value]="suggest">{{suggest}}</mat-option>
             </mat-autocomplete>
           </mat-card>
           <br />
           <mat-card>
             <mat-form-field fxFill>
-              <input matInput placeholder="{{translation.message[global.lang]}}" [(ngModel)]="forms.message" name="message"
+              <input matInput placeholder="{{translation.message[lang]}}" [(ngModel)]="forms.message" name="message"
                 [required]="forms.encrypt">
-              <mat-slide-toggle fxFill matSuffix [(ngModel)]="forms.encrypt" name="encrypt">{{translation.encryption[global.lang]}}</mat-slide-toggle>
+              <mat-slide-toggle fxFill matSuffix [(ngModel)]="forms.encrypt" name="encrypt">{{translation.encryption[lang]}}</mat-slide-toggle>
             </mat-form-field>
           </mat-card>
           <br />
@@ -40,29 +40,32 @@
             <br />
             <div *ngFor="let asset of forms.transferAssets; let i = index; let l = last" fxLayout="row">
               <mat-form-field fxFlex="50">
-                <mat-select color="accent" placeholder="{{translation.assetName[global.lang]}}" [(ngModel)]="asset.index"
-                  name="asset{{i}}-name" required="{{!l || forms.transferAssets.length == 1}}" (selectionChange)="addAsset(i)">
-                  <ng-container *ngFor="let a of global.account.currentWallet!.assets; let j = index">
-                    <mat-option *ngIf="assetIsNotReady(a.name) || j == asset.index" [value]="j">{{a.name}}</mat-option>
+                <mat-select color="accent" placeholder="{{translation.assetName[lang]}}" [(ngModel)]="asset.index" name="asset{{i}}-name"
+                  required>
+                  <ng-container *ngFor="let assetId of assetIds; let j = index">
+                    <mat-option *ngIf="assetIsNotReady(assetId) || asset.index == j" [value]="j">{{assetId}}</mat-option>
                   </ng-container>
                 </mat-select>
               </mat-form-field>
-              <ng-container *ngIf="!l">
+              <div fxFlex="50" fxLayout="row">
                 <mat-form-field class="fill-remaining-space">
-                  <input matInput color="accent" placeholder="{{translation.amount[global.lang]}}" [(ngModel)]="asset.amount"
-                    name="asset{{i}}-amount" required minlength="1" pattern="\d+(\.\d+)?" />
+                  <input matInput color="accent" placeholder="{{translation.amount[lang]}}" [(ngModel)]="asset.amount"
+                    name="asset{{i}}-amount" required pattern="\d+(\.\d+)?" />
                 </mat-form-field>
-                <button mat-icon-button color="warn" type="button" (click)="deleteAsset(i)">
+                <button mat-icon-button color="warn" type="button" (click)="spliceAsset(i)" *ngIf="!l">
                   <mat-icon>clear</mat-icon>
                 </button>
-              </ng-container>
+                <button mat-icon-button color="accent" type="button" (click)="pushAsset()" *ngIf="l">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
             </div>
           </mat-card>
           <br />
           <div fxLayout="row">
             <span class="fill-remaining-space"></span>
-            <button mat-raised-button type="button" [disabled]="form.invalid" (click)="share()" *ngIf="navigatorShare">{{translation.share[global.lang]}}</button>
-            <button mat-raised-button color="accent" [disabled]="form.invalid">{{translation.transfer[global.lang]}}</button>
+            <button mat-raised-button type="button" [disabled]="form.invalid" (click)="share()" *ngIf="navigatorShare">{{translation.share[lang]}}</button>
+            <button mat-raised-button color="accent" [disabled]="form.invalid">{{translation.transfer[lang]}}</button>
           </div>
         </form>
       </ng-template>

@@ -32,6 +32,7 @@ export const _withdraw = functions.https.onRequest((req, res) => {
       }
     );
   } catch (e) {
+    console.error(e);
     res.status(400).send(e.message);
   }
 })

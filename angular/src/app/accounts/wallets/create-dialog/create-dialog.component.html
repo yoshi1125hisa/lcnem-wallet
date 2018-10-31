@@ -1,26 +1,29 @@
 <form #form="ngForm">
-  <h2 mat-dialog-title>{{translation.create[global.lang]}}</h2>
+  <h2 mat-dialog-title>{{translation.create[lang]}}</h2>
   <mat-dialog-content>
     <mat-form-field fxFill>
-      <input matInput placeholder="{{translation.name[global.lang]}}" [(ngModel)]="forms.name" name="namey" required />
+      <input matInput placeholder="{{translation.name[lang]}}" [(ngModel)]="forms.name" name="namey" required />
     </mat-form-field>
-    <p>{{translation.localOrCloud[global.lang]}}</p>
+    <br />
     <mat-radio-group [(ngModel)]="forms.local" name="local" required>
-      <mat-radio-button matTooltip="{{translation.cloudDescription[global.lang]}}" [value]="0">{{translation.cloud[global.lang]}}</mat-radio-button>
-      <mat-radio-button matTooltip="{{translation.localDescription[global.lang]}}" [value]="1">{{translation.local[global.lang]}}</mat-radio-button>
+      <span>{{translation.localOrCloud[lang]}}</span>
+      <mat-radio-button matTooltip="{{translation.cloudDescription[lang]}}" [value]="0">{{translation.cloud[lang]}}</mat-radio-button>
+      <mat-radio-button matTooltip="{{translation.localDescription[lang]}}" [value]="1">{{translation.local[lang]}}</mat-radio-button>
     </mat-radio-group>
-    <p>{{translation.privateKey[global.lang]}}</p>
+    <br />
     <mat-radio-group [(ngModel)]="forms.import" name="import" required>
-      <mat-radio-button [value]="0">{{translation.generate[global.lang]}}</mat-radio-button>
-      <mat-radio-button [value]="1">{{translation.import[global.lang]}}</mat-radio-button>
+      <span>{{translation.privateKey[lang]}}</span>
+      <mat-radio-button [value]="0">{{translation.generate[lang]}}</mat-radio-button>
+      <mat-radio-button [value]="1">{{translation.import[lang]}}</mat-radio-button>
     </mat-radio-group>
+    <br />
     <mat-form-field fxFill>
-      <input matInput placeholder="{{translation.privateKey[global.lang]}}" [(ngModel)]="forms.privateKey" name="privateKey"
+      <input matInput placeholder="{{translation.privateKey[lang]}}" [(ngModel)]="forms.privateKey" name="privateKey"
         required="{{forms.import}}" disabled="{{!forms.import}}" pattern="[0-9a-f]{64}" />
     </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions>
-    <span class="fill-remaining-space"></span>
+    
     <button mat-raised-button [mat-dialog-close]="forms" color="accent" [disabled]="form.invalid">OK</button>
   </mat-dialog-actions>
 </form>

@@ -31,7 +31,9 @@ import {
   MatProgressBarModule,
   MatRadioModule,
   MatSnackBarModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatTableModule,
+  MatPaginatorModule
 } from '@angular/material';
 
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
@@ -41,8 +43,6 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './accounts/login/login.component';
-import { HistoryComponent } from './transactions/history/history.component';
-import { TransactionComponent } from './transactions/history/transaction/transaction.component';
 import { ScanComponent } from './transactions/scan/scan.component';
 import { TransferComponent } from './transactions/transfer/transfer.component';
 import { PageNotFoundComponent } from './error/page-not-found/page-not-found.component';
@@ -58,8 +58,11 @@ import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.
 import { TransferDialogComponent } from './transactions/transfer/transfer-dialog/transfer-dialog.component';
 import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.component';
 import { PlanComponent } from './accounts/plan/plan.component';
-import { WalletsComponent } from './accounts/wallets/wallets.component';
+import { TransactionComponent } from './home/history/transaction/transaction.component';
+import { HistoryComponent } from './home/history/history.component';
 import { CreateDialogComponent } from './accounts/wallets/create-dialog/create-dialog.component';
+import { WalletsComponent } from './accounts/wallets/wallets.component';
+import { ContactDialogComponent } from './accounts/contacts/contact-dialog/contact-dialog.component';
 
 @NgModule({
   declarations: [
@@ -84,7 +87,8 @@ import { CreateDialogComponent } from './accounts/wallets/create-dialog/create-d
     PrivacyPolicyComponent,
     WalletsComponent,
     PlanComponent,
-    CreateDialogComponent
+    CreateDialogComponent,
+    ContactDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -117,7 +121,9 @@ import { CreateDialogComponent } from './accounts/wallets/create-dialog/create-d
     MatMenuModule,
     MatRadioModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatTableModule,
+    MatPaginatorModule
   ],
   entryComponents: [
     LoadingDialogComponent,
@@ -125,7 +131,9 @@ import { CreateDialogComponent } from './accounts/wallets/create-dialog/create-d
     ConfirmDialogComponent,
     PromptDialogComponent,
     TransferDialogComponent,
-    CreateDialogComponent
+    CreateDialogComponent,
+    ContactDialogComponent,
+    TransactionComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

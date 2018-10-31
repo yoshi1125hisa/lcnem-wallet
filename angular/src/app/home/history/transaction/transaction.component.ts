@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 
 import {
   Address,
@@ -10,20 +10,23 @@ import {
   Asset,
   XEM,
   AssetId,
-  Password
+  Password,
+  SimpleWallet,
+  AccountHttp
 } from 'nem-library';
-import { GlobalDataService } from '../../../services/global-data.service';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { lang } from '../../../../models/lang';
+import { WalletsService } from '../../../services/wallets.service';
+import { nodes } from '../../../../models/nodes';
+import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'app-transaction',
   templateUrl: './transaction.component.html',
   styleUrls: ['./transaction.component.css']
 })
-export class TransactionComponent implements OnInit {
-  @Input() public transaction?: Transaction;
-
-  public loading = true;
+export class TransactionComponent {
+  get lang() { return lang; }
 
   public address?: string;
   public assets?: Asset[];
@@ -33,26 +36,31 @@ export class TransactionComponent implements OnInit {
   public received = true;
 
   constructor(
-    public global: GlobalDataService,
-    private auth: AngularFireAuth
-  ) { }
-
-  ngOnInit() {
-    if (!this.transaction) {
+    private auth: AngularFireAuth,
+    private wallet: WalletsService,
+    @Inject(MAT_DIALOG_DATA) data: {
+      transaction: Transaction
+    }
+  ) {
+    if (!data.transaction) {
       return;
     }
-    if (this.transaction.type == TransactionTypes.TRANSFER) {
-      this.set(this.transaction as TransferTransaction);
-    } else if (this.transaction.type == TransactionTypes.MULTISIG) {
-      let mt = this.transaction as MultisigTransaction;
+    if (data.transaction.type == TransactionTypes.TRANSFER) {
+      this.refresh(data.transaction as TransferTransaction);
+    } else if (data.transaction.type == TransactionTypes.MULTISIG) {
+      let mt = data.transaction as MultisigTransaction;
       if (mt.otherTransaction.type == TransactionTypes.TRANSFER) {
-        this.set(mt.otherTransaction as TransferTransaction);
+        this.refresh(mt.otherTransaction as TransferTransaction);
       }
     }
   }
 
-  public async set(transferTransaction: TransferTransaction) {
-    if (this.global.account.currentWallet!.address.plain() == transferTransaction.recipient.plain()) {
+  public async refresh(transferTransaction: TransferTransaction) {
+    let address = new Address(this.wallet.wallets![this.wallet.currentWallet!].nem);
+    let wallet = this.wallet.wallets![this.wallet.currentWallet!].wallet;
+    let accountHttp = new AccountHttp(nodes);
+
+    if (address.plain() == transferTransaction.recipient.plain()) {
       this.address = transferTransaction.signer!.address.pretty();
     } else {
       this.address = transferTransaction.recipient.pretty();
@@ -61,15 +69,15 @@ export class TransactionComponent implements OnInit {
 
     let message: string;
     if (transferTransaction.message.isEncrypted()) {
-      if (this.global.account.currentWallet!.wallet) {
+      if (!wallet) {
         message = "";
       } else {
         let password = new Password(this.auth.auth.currentUser!.uid);
-        let account = this.global.account.currentWallet!.wallet!.open(password);
+        let account = SimpleWallet.readFromWLT(wallet).open(password);
         if (this.received) {
           message = account!.decryptMessage(transferTransaction.message, transferTransaction.signer!).payload;
         } else {
-          let recipient = await this.global.accountHttp.getFromAddress(transferTransaction.recipient).toPromise();
+          let recipient = await accountHttp.getFromAddress(transferTransaction.recipient).toPromise();
           message = account!.decryptMessage(transferTransaction.message, recipient.publicAccount!).payload;
         }
       }
@@ -87,8 +95,6 @@ export class TransactionComponent implements OnInit {
 
     this.date = transferTransaction.timeWindow.timeStamp.toLocalDate();
     this.time = transferTransaction.timeWindow.timeStamp.toLocalTime();
-
-    this.loading = false;
   }
 
   public translation = {

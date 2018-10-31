@@ -1,5 +1,5 @@
-import { Component, Inject, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatInput } from '@angular/material';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'app-prompt-dialog',
@@ -8,9 +8,6 @@ import { MAT_DIALOG_DATA, MatInput } from '@angular/material';
 })
 export class PromptDialogComponent {
   public model: any;
-
-  @ViewChild('input')
-  public input?: MatInput;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: {

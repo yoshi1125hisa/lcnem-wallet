@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Asset, AssetDefinition } from 'nem-library';
-import { GlobalDataService } from '../../services/global-data.service';
 import { assetAdditionalDefinitions, AssetAdditionalDefinition } from '../../../models/asset-additional-definition';
+import { BalanceService } from '../../services/balance.service';
 
 @Component({
   selector: 'app-assets-list',
@@ -9,6 +9,7 @@ import { assetAdditionalDefinitions, AssetAdditionalDefinition } from '../../../
   styleUrls: ['./assets-list.component.css']
 })
 export class AssetsListComponent implements OnInit {
+  @Input() public title?: string;
   @Input() public assets?: Asset[];
   
   public _assets = new Array<{
@@ -19,30 +20,32 @@ export class AssetsListComponent implements OnInit {
     unit?: string
   }>();
 
-  constructor(public global: GlobalDataService) { }
+  constructor(
+    private balance: BalanceService
+  ) { }
 
   ngOnInit() {
-    this.initialize();
+    this.refresh();
   }
 
-  public async initialize() {
+  public async refresh() {
     if (!this.assets) {
       return;
     }
-    for(let asset of this.assets) {
-      let name = asset.assetId.namespaceId + ":" + asset.assetId.name;
-      let definitions = this.global.account.currentWallet!.assets!.filter(a => a.name == name).map(a => a.definition);
-      if (!definitions.length) {
-        definitions = [await this.global.assetHttp.getAssetDefinition(asset.assetId).toPromise()];
-      }
-      let definition = definitions[0];
 
-      let additionalDefinition = assetAdditionalDefinitions.find(a => a.name == name);
+    await Promise.all(this.assets.map(asset => this.balance.readDefinition(asset.assetId.namespaceId + ":" + asset.assetId.name)));
+    
+    for(let asset of this.assets) {
+      let id = asset.assetId.namespaceId + ":" + asset.assetId.name;
+
+      let definition = await this.balance.readDefinition(id);
+
+      let additionalDefinition = assetAdditionalDefinitions.find(a => a.name == id);
 
       this._assets!.push({
-        name: name,
+        name: id,
         amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
-        imageUrl: AssetAdditionalDefinition.getImageUrl(name),
+        imageUrl: AssetAdditionalDefinition.getImageUrl(id),
         issuer: additionalDefinition && additionalDefinition.issuer,
         unit: additionalDefinition && additionalDefinition.unit
       });
