@@ -1,14 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatTableDataSource, MatPaginator, PageEvent } from '@angular/material';
 import { Contact } from '../../../../../firebase/functions/src/models/contact';
 import { ContactsService } from '../../services/contacts.service';
 import { back } from '../../../models/back';
 import { lang } from '../../../models/lang';
 import { UserService } from '../../services/user.service';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
-import { ContactDialogComponent } from './contact-dialog/contact-dialog.component';
-import { Invoice } from '../../../models/invoice';
 import { PromptDialogComponent } from '../../components/prompt-dialog/prompt-dialog.component';
 
 @Component({
@@ -19,10 +17,13 @@ import { PromptDialogComponent } from '../../components/prompt-dialog/prompt-dia
 export class ContactsComponent implements OnInit {
   public loading = true;
   get lang() { return lang; }
-  public contacts!: {
-    [id: string]: Contact
-  };
-  public contactIds: string[] = [];
+
+  public dataSource = new MatTableDataSource<{
+    id: string,
+    contact: Contact
+  }>();
+  public displayedColumns = ["confirmed", "type", "from", "to", "date", "action"];
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private router: Router,
@@ -41,8 +42,24 @@ export class ContactsComponent implements OnInit {
     this.loading = true;
     await this.contact.readContacts(force);
 
-    this.contacts = this.contact.contacts!;
-    this.contactIds = Object.keys(this.contact.contacts!);
+    this.dataSource.data = [];
+    for(let id in this.contact.contacts!) {
+      this.dataSource.data.push({
+        id: id,
+        contact: this.contact.contacts![id]
+      })
+    }
+    this.dataSource.data = this.dataSource.data;
+
+    this.dataSource.paginator = this.paginator;
+    this.paginator.length = this.dataSource!.data.length;
+    this.paginator.pageSize = 10;
+
+    this.onPageChanged({
+      length: this.paginator.length,
+      pageIndex: this.paginator.pageIndex,
+      pageSize: this.paginator.pageSize
+    });
 
     this.loading = false;
   }
@@ -51,17 +68,22 @@ export class ContactsComponent implements OnInit {
     back(() => this.router.navigate([""]));
   }
 
+  public async onPageChanged(pageEvent: PageEvent) {
+    this.loading = true;
+    this.loading = false;
+  }
+
   public async createContact() {
     await this.updateContact();
   }
 
   public async updateContact(id?: string) {
-    let result = await this.dialog.open(PromptDialogComponent, {
+    let result: Contact = await this.dialog.open(PromptDialogComponent, {
       data: {
         title: this.translation.createContact[this.lang],
         input: {
           placeholder: this.translation.name[this.lang],
-          pattern: "\\S+",
+          pattern: "^(!?\\s*)$",
           value: id ? this.contact.contacts![id].name : ""
         }
       }
@@ -71,7 +93,7 @@ export class ContactsComponent implements OnInit {
       return;
     }
 
-    id ? await this.contact.updateContact(id, { name: result }) : await this.contact.createContact({ name: result, nem: []});
+    id ? await this.contact.updateContact(id, result) : await this.contact.createContact(result);
     await this.refresh();
   }
 
@@ -88,53 +110,6 @@ export class ContactsComponent implements OnInit {
 
     await this.contact.deleteContact(id);
     await this.refresh();
-  }
-
-  public async createContactElement(id: string) {
-    let result: {
-      type: string,
-      value: string
-    } = await this.dialog.open(ContactDialogComponent).afterClosed().toPromise();
-
-    if(!result) {
-      return;
-    }
-
-    if(result.type == "nem") {
-      this.contact.contacts![id].nem.push(result.value);
-    }
-    await this.contact.updateContact(id, this.contact.contacts![id])
-  }
-
-  public async deleteContactElement(type: string, id: string, index: number) {
-    let result = await this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: this.translation.confirm[this.lang]
-      }
-    }).afterClosed().toPromise();
-
-    if(!result) {
-      return;
-    }
-
-    if(type == "nem") {
-      this.contact.contacts![id].nem.splice(index, 1);
-    }
-    await this.contact.updateContact(id, this.contact.contacts![id])
-  }
-
-  public sendNem(nem: string) {
-    let invoice = new Invoice();
-    invoice.data.addr = nem;
-
-    this.router.navigate(
-      ["transactions", "transfer"],
-      {
-        queryParams: {
-          invoice: encodeURI(invoice.stringify())
-        }
-      }
-    );
   }
 
   public translation = {

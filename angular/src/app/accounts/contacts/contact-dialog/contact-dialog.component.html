@@ -1,22 +1,10 @@
-<form #form="ngForm">
-  <h2 mat-dialog-title>{{translation.addAddress[lang]}}</h2>
-  <mat-dialog-content>
-    <mat-radio-group [(ngModel)]="ret.type" name="type" required>
-      <span>{{translation.type[lang]}}</span>
-      <mat-radio-button [value]="'nem'">nem</mat-radio-button>
-    </mat-radio-group>
-    <br />
-    <mat-form-field fxFill>
-      <input matInput [(ngModel)]="ret.value" name="{{ret.type}}" placeholder="{{translation.address[lang]}}"
-        [matAutocomplete]="nemSuggest" (change)="onChange()" required pattern="">
-    </mat-form-field>
-    <mat-autocomplete #nemSuggest="matAutocomplete">
-      <mat-option *ngFor="let suggest of suggests" [value]="suggest">{{suggest}}</mat-option>
-    </mat-autocomplete>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <span class="fill-remaining-space"></span>
-    <button mat-raised-button mat-dialog-close color="warn">Cancel</button>
-    <button mat-raised-button [mat-dialog-close]="ret" color="accent" [disabled]="form.invalid">OK</button>
-  </mat-dialog-actions>
-</form>
+<h2 mat-dialog-title>{{contact.name}}</h2>
+<mat-dialog-content>
+  <div class="table-container">
+
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="fill-remaining-space"></span>
+  <button mat-raised-button mat-dialog-close color="accent">OK</button>
+</mat-dialog-actions>

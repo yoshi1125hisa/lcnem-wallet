@@ -28,12 +28,25 @@ export class ContactsService {
   }
 
   public async readContacts(force?: boolean) {
+    if(this.contacts && !force) {
+      return;
+    }
     let uid = this.auth.auth.currentUser!.uid;
     let contacts = await this.firestore.collection("users").doc(uid).collection("contacts").get().toPromise();
 
     this.contacts = {};
     for(let doc of contacts.docs) {
       this.contacts[doc.id] = doc.data() as Contact;
+
+      //nem: string[]からnem: { name: string, address: string}[]への互換性
+      if(this.contacts[doc.id].nem.length && !this.contacts[doc.id].nem[0].address) {
+        this.contacts[doc.id].nem = this.contacts[doc.id].nem.map(n => {
+          return {
+            name: "",
+            address: n as any as string
+          };
+        });
+      }
     }
   }
 
