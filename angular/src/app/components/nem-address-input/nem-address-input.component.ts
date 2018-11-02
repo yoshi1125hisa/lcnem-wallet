@@ -17,7 +17,8 @@ import { nodes } from '../../../models/nodes';
   ],
 })
 export class NemAddressInputComponent implements ControlValueAccessor {
-  @Input() placeholder!: string;
+  @Input() placeholder?: string;
+  @Input() required?: boolean;
 
   public suggests: {
     name: string,
@@ -29,6 +30,19 @@ export class NemAddressInputComponent implements ControlValueAccessor {
   ) { }
 
   public async onChange() {
+    this.suggests = [];
+
+    const sleep = () => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => resolve(), 1000);
+      })
+    };
+    await sleep();
+
+    if(this.suggests.length) {
+      return;
+    }
+
     if(this.value.replace(/-/g, "").trim().toUpperCase().match(/^N[A-Z2-7]{39}$/)) {
       this.suggests.push({
         name: "",
@@ -53,7 +67,7 @@ export class NemAddressInputComponent implements ControlValueAccessor {
         }
         for(let nem of this.contact.contacts![id].nem) {
           this.suggests.push({
-            name: this.contact.contacts![id].name + nem.name ? " " + nem.name : "",
+            name: this.contact.contacts![id].name + " " + nem.name,
             address: nem.address
           });
         }

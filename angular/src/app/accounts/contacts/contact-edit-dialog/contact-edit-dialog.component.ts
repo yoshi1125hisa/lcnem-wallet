@@ -17,7 +17,17 @@ export class ContactEditDialogComponent implements OnInit {
       contact: Contact
     }
   ) {
-    this.contact = data.contact;
+    this.contact = Object.assign({}, data.contact);
+    if(!data.contact.nem || !data.contact.nem.length) {
+      this.contact.nem = [{} as any];
+    } else {
+      this.contact.nem = data.contact.nem.concat();
+    }
+    if(!data.contact.tags || !data.contact.tags.length) {
+      this.contact.tags = [{} as any];
+    } else {
+      this.contact.tags = data.contact.tags.concat();
+    }
   }
 
   ngOnInit() {

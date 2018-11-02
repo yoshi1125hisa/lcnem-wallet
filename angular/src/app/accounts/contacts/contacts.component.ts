@@ -8,6 +8,9 @@ import { lang } from '../../../models/lang';
 import { UserService } from '../../services/user.service';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { PromptDialogComponent } from '../../components/prompt-dialog/prompt-dialog.component';
+import { SelectionModel } from '@angular/cdk/collections';
+import { ContactDialogComponent } from './contact-dialog/contact-dialog.component';
+import { ContactEditDialogComponent } from './contact-edit-dialog/contact-edit-dialog.component';
 
 @Component({
   selector: 'app-contacts',
@@ -22,8 +25,13 @@ export class ContactsComponent implements OnInit {
     id: string,
     contact: Contact
   }>();
-  public displayedColumns = ["confirmed", "type", "from", "to", "date", "action"];
+  public displayedColumns = ["select", "name", "tags"];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  public selection = new SelectionModel<{
+    id: string,
+    contact: Contact
+  }>(true, []);
 
   constructor(
     private router: Router,
@@ -73,19 +81,18 @@ export class ContactsComponent implements OnInit {
     this.loading = false;
   }
 
-  public async createContact() {
-    await this.updateContact();
+  public async showContact(id: string) {
+    await this.dialog.open(ContactDialogComponent, {
+      data: {
+        contact: this.contact.contacts![id]
+      }
+    }).afterClosed().toPromise();
   }
 
-  public async updateContact(id?: string) {
-    let result: Contact = await this.dialog.open(PromptDialogComponent, {
+  public async createContact() {
+    let result: Contact = await this.dialog.open(ContactEditDialogComponent, {
       data: {
-        title: this.translation.createContact[this.lang],
-        input: {
-          placeholder: this.translation.name[this.lang],
-          pattern: "^(!?\\s*)$",
-          value: id ? this.contact.contacts![id].name : ""
-        }
+        contact: {}
       }
     }).afterClosed().toPromise();
 
@@ -93,11 +100,11 @@ export class ContactsComponent implements OnInit {
       return;
     }
 
-    id ? await this.contact.updateContact(id, result) : await this.contact.createContact(result);
+    await this.contact.createContact(result);
     await this.refresh();
   }
 
-  public async deleteContact(id: string) {
+  public async deleteContact() {
     let result = await this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: this.translation.confirm[this.lang]
@@ -108,8 +115,22 @@ export class ContactsComponent implements OnInit {
       return;
     }
 
-    await this.contact.deleteContact(id);
+    await Promise.all(this.selection.selected.map(selected => {
+      this.contact.deleteContact(selected.id)
+    }));
     await this.refresh();
+  }
+
+  public isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  public masterToggle() {
+    this.isAllSelected() ?
+        this.selection.clear() :
+        this.dataSource.data.forEach(row => this.selection.select(row));
   }
 
   public translation = {

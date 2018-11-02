@@ -1,10 +1,25 @@
-<h2 mat-dialog-title>{{contact.name}}</h2>
+<div fxLayout="row">
+  <h2 mat-dialog-title>{{_contact.name}}</h2>
+  <span class="fill-remaining-space"></span>
+  <button mat-icon-button color="accent" (click)="updateContact(_contact)">
+    <mat-icon>edit</mat-icon>
+  </button>
+</div>
 <mat-dialog-content>
-  <div class="table-container">
-
-  </div>
+  <mat-list>
+    <h3 mat-subheader>nem</h3>
+    <mat-divider></mat-divider>
+    <ng-container *ngFor="let nem of _contact.nem; let i = index">
+      <mat-list-item>
+        <div fxFlex="50">{{nem.name}}</div>
+        <div fxFlex="50" class="address">{{nem.address}}</div>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+    </ng-container>
+  </mat-list>
+  <p *ngIf="_contact.memo">{{_contact.memo}}</p>
 </mat-dialog-content>
 <mat-dialog-actions>
   <span class="fill-remaining-space"></span>
-  <button mat-raised-button mat-dialog-close color="accent">OK</button>
+  <button mat-button mat-dialog-close color="accent">OK</button>
 </mat-dialog-actions>

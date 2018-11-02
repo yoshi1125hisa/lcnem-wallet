@@ -56,6 +56,9 @@ mat-spinner {
   overflow: auto;
   white-space: nowrap;
 }
+.table-container table {
+  width: 100%;
+}
 .table-container th, td {
   padding: 0 0.5em !important;
 }

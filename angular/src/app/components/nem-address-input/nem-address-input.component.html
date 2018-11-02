@@ -1,6 +1,6 @@
 <mat-form-field fxFill>
   <input matInput [(ngModel)]="value" placeholder="{{placeholder}}"
-    [matAutocomplete]="nemSuggest" (change)="onChange()" pattern="N[2-7A-Z]{39}">
+    [matAutocomplete]="nemSuggest" (keyup)="onChange()" [required]="required" [pattern]="required ? 'N[2-7A-Z]{39}' : ''">
 </mat-form-field>
 <mat-autocomplete #nemSuggest="matAutocomplete">
   <mat-option *ngFor="let suggest of suggests" [value]="suggest.address">

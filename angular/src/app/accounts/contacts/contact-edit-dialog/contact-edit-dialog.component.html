@@ -2,7 +2,7 @@
   <h2 mat-dialog-title>{{translation.editContact[lang]}}</h2>
   <mat-dialog-content>
     <mat-form-field fxFill>
-      <input matInput [(ngModel)]="contact.name" name="name" placeholder="{{translation.name[lang]}}" />
+      <input matInput [(ngModel)]="contact.name" name="name" placeholder="{{translation.name[lang]}}" required pattern="\S+" />
     </mat-form-field>
     <mat-list>
       <h3 mat-subheader>nem</h3>
@@ -13,10 +13,10 @@
             <input matInput [(ngModel)]="nem.name" name="nem{{i}}-name" placeholder="{{translation.name[lang]}}" />
           </mat-form-field>
           <app-nem-address-input class="fill-remaining-space"  [(ngModel)]="nem.address" name="nem{{i}}-address" placeholder="{{translation.address[lang]}}" required></app-nem-address-input>
-          <button mat-raised-button color="warn" (click)="spliceNem(i, true)">
+          <button mat-icon-button color="warn" (click)="spliceNem(i, true)">
             <mat-icon>close</mat-icon>
           </button>
-          <button mat-raised-button color="accent" (click)="spliceNem(i)">
+          <button mat-icon-button color="accent" (click)="spliceNem(i)">
             <mat-icon>add</mat-icon>
           </button>
         </mat-list-item>
@@ -29,7 +29,7 @@
   </mat-dialog-content>
   <mat-dialog-actions>
     <span class="fill-remaining-space"></span>
-    <button mat-raised-button mat-dialog-close color="warn">Cancel</button>
-    <button mat-raised-button [mat-dialog-close]="contact" color="accent" [disabled]="form.invalid">OK</button>
+    <button mat-button mat-dialog-close color="warn">Cancel</button>
+    <button mat-button [mat-dialog-close]="contact" color="accent" [disabled]="form.invalid">OK</button>
   </mat-dialog-actions>
 </form>

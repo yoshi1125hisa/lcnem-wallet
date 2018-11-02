@@ -1,12 +1,7 @@
-mat-card {
-  padding: 0;
-  border-radius: 12px;
-}
-mat-card-content {
-  padding: 24px;
-  padding-top: 0;
-}
-
 .empty {
   text-align: center;
+}
+
+mat-card mat-toolbar {
+  background: white;
 }

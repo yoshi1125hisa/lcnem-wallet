@@ -17,14 +17,8 @@
       <ng-template #loaded>
         <form #form="ngForm" (ngSubmit)="transfer()">
           <mat-card>
-            <mat-form-field fxFill>
-              <input matInput placeholder="{{translation.recipient[lang]}}" [(ngModel)]="forms.recipient" name="recipient"
-                [matAutocomplete]="nemSuggest" (change)="onRecipientChange()" required pattern="N[A-Z2-7]{39}">
-              <mat-error>{{translation.addressRequired[lang]}}</mat-error>
-            </mat-form-field>
-            <mat-autocomplete #nemSuggest="matAutocomplete">
-              <mat-option *ngFor="let suggest of suggests" [value]="suggest">{{suggest}}</mat-option>
-            </mat-autocomplete>
+            <app-nem-address-input fxFill [(ngModel)]="forms.recipient" name="recipient" placeholder="{{translation.recipient[lang]}}"
+              required></app-nem-address-input>
           </mat-card>
           <br />
           <mat-card>

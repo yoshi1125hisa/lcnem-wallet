@@ -31,7 +31,6 @@ import { nodes } from '../../../models/nodes';
 import { back } from '../../../models/back';
 import { UserService } from '../../services/user.service';
 import { ContactsService } from '../../services/contacts.service';
-import { NemAddress } from '../../../models/nem-address';
 
 @Component({
   selector: 'app-transfer',
@@ -106,10 +105,6 @@ export class TransferComponent implements OnInit {
 
   public back() {
     back(() => this.router.navigate([""]));
-  }
-
-  public async onRecipientChange() {
-    this.suggests = await NemAddress.suggest(this.forms.recipient, this.contact);
   }
 
   public async setAsset(id: string, amountAbsolute: number) {
