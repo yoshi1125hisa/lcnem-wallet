@@ -7,7 +7,6 @@ import { back } from '../../../models/back';
 import { lang } from '../../../models/lang';
 import { UserService } from '../../services/user.service';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
-import { PromptDialogComponent } from '../../components/prompt-dialog/prompt-dialog.component';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ContactDialogComponent } from './contact-dialog/contact-dialog.component';
 import { ContactEditDialogComponent } from './contact-edit-dialog/contact-edit-dialog.component';
@@ -25,7 +24,7 @@ export class ContactsComponent implements OnInit {
     id: string,
     contact: Contact
   }>();
-  public displayedColumns = ["select", "name", "tags"];
+  public displayedColumns = ["select", "name", "tags", "action"];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   public selection = new SelectionModel<{
@@ -51,7 +50,7 @@ export class ContactsComponent implements OnInit {
     await this.contact.readContacts(force);
 
     this.dataSource.data = [];
-    for(let id in this.contact.contacts!) {
+    for (let id in this.contact.contacts!) {
       this.dataSource.data.push({
         id: id,
         contact: this.contact.contacts![id]
@@ -84,7 +83,7 @@ export class ContactsComponent implements OnInit {
   public async showContact(id: string) {
     await this.dialog.open(ContactDialogComponent, {
       data: {
-        contact: this.contact.contacts![id]
+        id: id
       }
     }).afterClosed().toPromise();
   }
@@ -96,7 +95,7 @@ export class ContactsComponent implements OnInit {
       }
     }).afterClosed().toPromise();
 
-    if(!result) {
+    if (!result) {
       return;
     }
 
@@ -111,13 +110,14 @@ export class ContactsComponent implements OnInit {
       }
     }).afterClosed().toPromise();
 
-    if(!result) {
+    if (!result) {
       return;
     }
 
     await Promise.all(this.selection.selected.map(selected => {
       this.contact.deleteContact(selected.id)
     }));
+    this.selection.clear();
     await this.refresh();
   }
 
@@ -129,8 +129,8 @@ export class ContactsComponent implements OnInit {
 
   public masterToggle() {
     this.isAllSelected() ?
-        this.selection.clear() :
-        this.dataSource.data.forEach(row => this.selection.select(row));
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
   }
 
   public translation = {

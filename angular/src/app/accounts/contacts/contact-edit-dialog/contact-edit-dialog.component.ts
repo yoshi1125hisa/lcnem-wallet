@@ -17,25 +17,17 @@ export class ContactEditDialogComponent implements OnInit {
       contact: Contact
     }
   ) {
-    this.contact = Object.assign({}, data.contact);
-    if(!data.contact.nem || !data.contact.nem.length) {
-      this.contact.nem = [{} as any];
-    } else {
-      this.contact.nem = data.contact.nem.concat();
-    }
-    if(!data.contact.tags || !data.contact.tags.length) {
-      this.contact.tags = [{} as any];
-    } else {
-      this.contact.tags = data.contact.tags.concat();
+    this.contact = JSON.parse(JSON.stringify(data.contact));
+    if(!this.contact.nem) {
+      this.contact.nem = [];
     }
   }
 
   ngOnInit() {
   }
 
-  public spliceNem(index: number, del?: boolean) {
-    del ? this.contact.nem.splice(index, 1) : this.contact.nem.splice(index, 0, {} as any);
-  }
+  public pushNem = () => this.contact.nem.push({} as any);
+  public removeNem = (index: number) => this.contact.nem.splice(index, 1);
 
   public translation = {
     editContact: {

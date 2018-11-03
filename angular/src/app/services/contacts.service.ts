@@ -39,7 +39,7 @@ export class ContactsService {
       this.contacts[doc.id] = doc.data() as Contact;
 
       //nem: string[]からnem: { name: string, address: string}[]への互換性
-      if(this.contacts[doc.id].nem.length && !this.contacts[doc.id].nem[0].address) {
+      if(this.contacts[doc.id].nem && this.contacts[doc.id].nem.length && typeof this.contacts[doc.id].nem[0] == "string") {
         this.contacts[doc.id].nem = this.contacts[doc.id].nem.map(n => {
           return {
             name: "",
@@ -73,7 +73,6 @@ export class ContactsService {
     let uid = this.auth.auth.currentUser!.uid;
 
     await this.firestore.collection("users").doc(uid).collection("contacts").doc(id).delete();
-
     delete this.contacts[id];
   }
 }

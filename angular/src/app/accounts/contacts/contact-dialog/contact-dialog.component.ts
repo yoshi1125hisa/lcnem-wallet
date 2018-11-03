@@ -15,23 +15,25 @@ import { ContactEditDialogComponent } from '../contact-edit-dialog/contact-edit-
 export class ContactDialogComponent {
   get lang() { return lang; }
 
+  public id: string;
   public _contact: Contact;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) data: {
-      contact: Contact
+      id: string
     },
     private router: Router,
     private dialog: MatDialog,
     private contact: ContactsService
   ) {
-    this._contact = data.contact;
+    this.id = data.id;
+    this._contact = this.contact.contacts![data.id];
   }
 
-  public async updateContact(contact: Contact) {
+  public async updateContact() {
     let result: Contact = await this.dialog.open(ContactEditDialogComponent, {
       data: {
-        contact: contact
+        contact: this._contact
       }
     }).afterClosed().toPromise();
 
@@ -39,7 +41,7 @@ export class ContactDialogComponent {
       return;
     }
 
-    await this.contact.createContact(result);
+    await this.contact.updateContact(this.id, result);
   }
   
   public sendNem(nem: string) {

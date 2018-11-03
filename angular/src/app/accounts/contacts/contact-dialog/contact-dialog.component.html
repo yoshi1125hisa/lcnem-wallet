@@ -1,12 +1,12 @@
 <div fxLayout="row">
   <h2 mat-dialog-title>{{_contact.name}}</h2>
   <span class="fill-remaining-space"></span>
-  <button mat-icon-button color="accent" (click)="updateContact(_contact)">
+  <button mat-icon-button color="accent" (click)="updateContact()">
     <mat-icon>edit</mat-icon>
   </button>
 </div>
 <mat-dialog-content>
-  <mat-list>
+  <mat-list *ngIf="_contact.nem && _contact.nem.length">
     <h3 mat-subheader>nem</h3>
     <mat-divider></mat-divider>
     <ng-container *ngFor="let nem of _contact.nem; let i = index">

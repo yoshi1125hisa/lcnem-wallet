@@ -43,13 +43,19 @@
             </ng-container>
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef>{{translation.name[lang]}}</th>
-              <td mat-cell *matCellDef="let element">
-                <a (click)="showContact(element.id)">{{element.contact.name}}</a>
-              </td>
+              <td mat-cell *matCellDef="let element">{{element.contact.name}}</td>
             </ng-container>
             <ng-container matColumnDef="tags">
               <th mat-header-cell *matHeaderCellDef></th>
               <td mat-cell *matCellDef="let element">
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="action" stickyEnd>
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-icon-button color="accent" (click)="showContact(element.id)">
+                  <mat-icon>launch</mat-icon>
+                </button>
               </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
