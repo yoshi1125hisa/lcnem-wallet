@@ -48,7 +48,6 @@
         <a mat-list-item href="https://lcnem.cc" target="_blank">
           <img mat-list-icon src="assets/images/lcnem.svg" />
           LCNEM
-          <mat-icon class="open-in-new">open_in_new</mat-icon>
         </a>
       </mat-nav-list>
     </div>
@@ -82,7 +81,7 @@
       <br />
       <h3>{{translation.yourAddress[lang]}}</h3>
       <mat-card>
-        <p style="text-align: center;">{{address}}
+        <p class="address">{{address}}
           <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyMessage(address)">
             <mat-icon>input</mat-icon>
           </button>

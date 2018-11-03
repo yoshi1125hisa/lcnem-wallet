@@ -1,4 +1,9 @@
 export interface Contact {
   name: string;
-  nem: string[];
+  nem: {
+    name: string,
+    address: string
+  }[];
+  memo: string;
+  tags: string[]
 }

@@ -1,35 +1,30 @@
-<div fxLayout="row">
+<mat-toolbar>
   <span class="fill-remaining-space"></span>
+  <mat-paginator [pageSizeOptions]="[10, 20]" (page)="onPageChanged($event)"></mat-paginator>
   <button mat-icon-button color="accent" (click)="refresh(true)">
     <mat-icon>refresh</mat-icon>
   </button>
-</div>
-<mat-paginator [pageSizeOptions]="[10, 20]" (page)="onPageChanged($event)"></mat-paginator>
+</mat-toolbar>
 <mat-spinner *ngIf="loading"></mat-spinner>
-<div class="table-container">
-  <table mat-table [dataSource]="dataSource" [hidden]="loading">
+<div class="table-container" [hidden]="loading">
+  <table mat-table [dataSource]="dataSource">
     <ng-container matColumnDef="confirmed">
       <th mat-header-cell *matHeaderCellDef>{{translation.confirmed[lang]}}</th>
       <td mat-cell *matCellDef="let element">
-        <button mat-icon-button color="accent" (click)="openSnackBar('confirmed')" *ngIf="element.confirmed">
-          <mat-icon>done</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="openSnackBar('unconfirmed')" *ngIf="!element.confirmed">
-          <mat-icon>report_problem</mat-icon>
-        </button>
+        <mat-icon color="accent" (mouseover)="openSnackBar('confirmed')" *ngIf="element.confirmed">done</mat-icon>
+        <mat-icon color="warn" (mouseover)="openSnackBar('unconfirmed')" *ngIf="!element.confirmed">report_problem</mat-icon>
       </td>
     </ng-container>
     <ng-container matColumnDef="type">
       <th mat-header-cell *matHeaderCellDef>{{translation.type[lang]}}</th>
-      <td mat-cell *matCellDef="let element">{{element.type}}</td>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon color="primary" (mouseover)="openSnackBar(element.icon)">{{element.icon}}</mat-icon>
+        <mat-icon color="accent" (mouseover)="openSnackBar('multisig')" *ngIf="element.multisig">people</mat-icon>
+      </td>
     </ng-container>
-    <ng-container matColumnDef="from">
-      <th mat-header-cell *matHeaderCellDef>{{translation.from[lang]}}</th>
-      <td mat-cell *matCellDef="let element">{{element.from}}</td>
-    </ng-container>
-    <ng-container matColumnDef="to">
-      <th mat-header-cell *matHeaderCellDef>{{translation.to[lang]}}</th>
-      <td mat-cell *matCellDef="let element">{{element.to}}</td>
+    <ng-container matColumnDef="address">
+      <th mat-header-cell *matHeaderCellDef>{{translation.address[lang]}}</th>
+      <td mat-cell *matCellDef="let element">{{element.address}}</td>
     </ng-container>
     <ng-container matColumnDef="date">
       <th mat-header-cell *matHeaderCellDef>{{translation.date[lang]}}</th>
@@ -46,5 +41,5 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+  <p *ngIf="!dataSource || !dataSource.data.length" class="empty">{{translation.noTransaction[lang]}}</p>
 </div>
-<p *ngIf="!dataSource || !dataSource.data.length" class="empty">{{translation.noTransaction[lang]}}</p>

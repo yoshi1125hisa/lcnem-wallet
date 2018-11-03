@@ -86,8 +86,7 @@ export class WalletsComponent implements OnInit {
     };
 
     await this.wallet.createWallet(firestoreObject);
-
-    await this.refresh(true);
+    await this.refresh();
   }
 
   public async enterWallet(id: string) {

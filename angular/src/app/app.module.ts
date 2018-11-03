@@ -63,6 +63,8 @@ import { HistoryComponent } from './home/history/history.component';
 import { CreateDialogComponent } from './accounts/wallets/create-dialog/create-dialog.component';
 import { WalletsComponent } from './accounts/wallets/wallets.component';
 import { ContactDialogComponent } from './accounts/contacts/contact-dialog/contact-dialog.component';
+import { ContactEditDialogComponent } from './accounts/contacts/contact-edit-dialog/contact-edit-dialog.component';
+import { NemAddressInputComponent } from './components/nem-address-input/nem-address-input.component';
 
 @NgModule({
   declarations: [
@@ -88,7 +90,9 @@ import { ContactDialogComponent } from './accounts/contacts/contact-dialog/conta
     WalletsComponent,
     PlanComponent,
     CreateDialogComponent,
-    ContactDialogComponent
+    ContactDialogComponent,
+    ContactEditDialogComponent,
+    NemAddressInputComponent
   ],
   imports: [
     BrowserModule,
@@ -133,6 +137,7 @@ import { ContactDialogComponent } from './accounts/contacts/contact-dialog/conta
     TransferDialogComponent,
     CreateDialogComponent,
     ContactDialogComponent,
+    ContactEditDialogComponent,
     TransactionComponent
   ],
   providers: [],

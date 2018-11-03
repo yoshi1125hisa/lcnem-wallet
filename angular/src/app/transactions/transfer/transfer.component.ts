@@ -31,7 +31,6 @@ import { nodes } from '../../../models/nodes';
 import { back } from '../../../models/back';
 import { UserService } from '../../services/user.service';
 import { ContactsService } from '../../services/contacts.service';
-import { NemAddress } from '../../../models/nem-address';
 
 @Component({
   selector: 'app-transfer',
@@ -108,10 +107,6 @@ export class TransferComponent implements OnInit {
     back(() => this.router.navigate([""]));
   }
 
-  public async onRecipientChange() {
-    this.suggests = await NemAddress.suggest(this.forms.recipient, this.contact);
-  }
-
   public async setAsset(id: string, amountAbsolute: number) {
     let asset = this.assetIds.find(a => a == id);
     if (!asset || !this.assetIsNotReady(id)) {
@@ -134,12 +129,13 @@ export class TransferComponent implements OnInit {
     return true;
   }
 
-  public spliceAsset(index: number) {
+  public pushAsset = () => this.forms.transferAssets.push({});
+  public removeAsset = (index: number) => {
+    if(this.forms.transferAssets.length == 1) {
+      this.forms.transferAssets[0] = {};
+      return;
+    }
     this.forms.transferAssets.splice(index, 1);
-  }
-
-  public pushAsset() {
-    this.forms.transferAssets.push({});
   }
 
   public async share() {
@@ -301,8 +297,8 @@ export class TransferComponent implements OnInit {
       ja: "秘密鍵のインポートが必要です。"
     } as any,
     addressRequired: {
-      en: "An address is required. You can also enter any NEM namespace or contact.",
-      ja: "アドレスを入力してください。NEMネームスペース、コンタクトを入力することもできます。"
+      en: "Correct address is required.",
+      ja: "アドレスを正しく入力してください。"
     } as any,
     namespace: {
       en: "NEM namespace",
@@ -315,6 +311,10 @@ export class TransferComponent implements OnInit {
     encryption: {
       en: "Encryption",
       ja: "暗号化"
+    } as any,
+    assets: {
+      en: "Assets for transfer",
+      ja: "送信するアセット"
     } as any,
     assetName: {
       en: "Asset name",
