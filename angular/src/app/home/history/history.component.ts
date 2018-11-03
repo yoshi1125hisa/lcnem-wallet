@@ -4,7 +4,6 @@ import { lang } from '../../../models/lang';
 import { HistoryService } from '../../services/history.service';
 import { MatTableDataSource, MatPaginator, PageEvent, MatSnackBar, MatDialog } from '@angular/material';
 import { TransactionComponent } from './transaction/transaction.component';
-import { WalletsService } from '../../services/wallets.service';
 
 @Component({
   selector: 'app-history',
@@ -17,14 +16,14 @@ export class HistoryComponent implements OnInit {
 
   public dataSource = new MatTableDataSource<{
     confirmed: boolean,
-    type: string,
-    from: string,
-    to: string,
+    icon: string,
+    multisig?: boolean,
+    address: string,
     date: string,
     action: boolean,
     transaction: Transaction
   }>();
-  public displayedColumns = ["confirmed", "type", "from", "to", "date", "action"];
+  public displayedColumns = ["confirmed", "type", "address", "date", "action"];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   public transactions?: Transaction[];
@@ -45,9 +44,8 @@ export class HistoryComponent implements OnInit {
     this.dataSource.data = this.history.transactions!.map(transaction => {
       return {
         confirmed: transaction.isConfirmed(),
-        type: "",
-        from: transaction.signer && transaction.signer.address.plain() || "",
-        to: "",
+        icon: "",
+        address: "",
         date: `${transaction.timeWindow.timeStamp.toLocalDate()} ${transaction.timeWindow.timeStamp.toLocalTime()}`,
         action: false,
         transaction: transaction
@@ -71,24 +69,31 @@ export class HistoryComponent implements OnInit {
     let dataSourceRange = this.dataSource.data.slice(pageEvent.pageIndex * pageEvent.pageSize, Math.min((pageEvent.pageIndex + 1) * pageEvent.pageSize, pageEvent.length));
 
     for (let data of dataSourceRange) {
-      if(data.transaction.type == TransactionTypes.TRANSFER) {
-        data.to = (data.transaction as TransferTransaction).recipient.plain();
-        data.type = this.translation.transactionTypes.transfer[this.lang];
-        data.action = true
-      } else if(data.transaction.type == TransactionTypes.MULTISIG) {
+      const setDataFromTransferTransaction = (transaction: TransferTransaction) => {
+        data.address = transaction.recipient.plain();
+        if(data.address == this.history.address.plain()) {
+          data.icon = "call_received"
+          data.address = transaction.signer && transaction.signer.address.plain() || "";
+        } else {
+          data.icon = "call_made"
+        }
+        data.action = true;
+      }
+
+      if (data.transaction.type == TransactionTypes.TRANSFER) {
+        setDataFromTransferTransaction(data.transaction as TransferTransaction);
+      } else if (data.transaction.type == TransactionTypes.MULTISIG) {
         const multisigTransaction = data.transaction as MultisigTransaction;
         const otherTransaction = multisigTransaction.otherTransaction;
-        data.from = otherTransaction.signer && otherTransaction.signer.address.plain() || "";
+        data.multisig = true;
 
-        if(otherTransaction.type == TransactionTypes.TRANSFER) {
-          data.to = (otherTransaction as TransferTransaction).recipient.plain();
-          data.type = this.translation.transactionTypes.multisig[this.lang];
-          data.action = true
+        if (otherTransaction.type == TransactionTypes.TRANSFER) {
+          setDataFromTransferTransaction(otherTransaction as TransferTransaction);
         } else {
-          data.type = this.translation.transactionTypes.othersMultisig[this.lang];
+          data.icon = "business";
         }
       } else {
-        data.type = this.translation.transactionTypes.others[this.lang];
+        data.icon = "business";
       }
     }
 
@@ -104,11 +109,7 @@ export class HistoryComponent implements OnInit {
   }
 
   public async openSnackBar(type: string) {
-    if(type == "confirmed") {
-      this.snackBar.open(this.translation.confirmedSnackBar[this.lang], undefined, { duration: 3000 });
-    } else if (type == "unconfirmed") {
-      this.snackBar.open(this.translation.unconfirmedSnackBar[this.lang], undefined, { duration: 3000 });
-    }
+    this.snackBar.open(this.translation.snackBar[type][this.lang], undefined, { duration: 3000 });
   }
 
   public translation = {
@@ -120,32 +121,32 @@ export class HistoryComponent implements OnInit {
       en: "There is no transaction.",
       ja: "取引はありません。"
     } as any,
-    confirmedSnackBar: {
-      en: "This transaction has been confirmed.",
-      ja: "この取引はブロックチェーンに承認されています。"
-    } as any,
-    unconfirmedSnackBar: {
-      en: "This transaction is not confirmed yet.",
-      ja: "この取引はまだブロックチェーンに承認されていません。"
-    } as any,
-    transactionTypes: {
-      transfer: {
-        en: "Asset transfer",
-        ja: "アセット送信"
+    snackBar: {
+      confirmed: {
+        en: "This transaction has been confirmed.",
+        ja: "この取引はブロックチェーンに承認されています。"
       } as any,
-      others: {
-        en: "Others",
-        ja: "その他"
+      unconfirmed: {
+        en: "This transaction is not confirmed yet.",
+        ja: "この取引はまだブロックチェーンに承認されていません。"
+      } as any,
+      call_made: {
+        en: "The type of this transaction is \"Asset transfer.\"",
+        ja: "アセット送信トランザクションです。"
+      } as any,
+      call_received: {
+        en: "The type of this transaction is \"Asset receiving.\"",
+        ja: "アセット受信トランザクションです。"
+      } as any,
+      business: {
+        en: "The type of this transaction is \"Others.\"",
+        ja: "その他のトランザクションです。"
       } as any,
       multisig: {
-        en: "Asset transer(Multisig)",
-        ja: "アセット送信(マルチシグ)"
-      } as any,
-      othersMultisig: {
-        en: "Others(Multisig)",
-        ja: "その他(マルチシグ)"
+        en: "The type of this transaction is \"Multisig.\"",
+        ja: "マルチシグトランザクションです。"
       } as any
-    },
+    } as any,
     confirmed: {
       en: "Confirmation",
       ja: "承認"
@@ -154,13 +155,9 @@ export class HistoryComponent implements OnInit {
       en: "Type",
       ja: "種類"
     } as any,
-    from: {
-      en: "From",
-      ja: "送信者"
-    } as any,
-    to: {
-      en: "To",
-      ja: "受信者"
+    address: {
+      en: "Address",
+      ja: "アドレス"
     } as any,
     date: {
       en: "Date",

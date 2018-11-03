@@ -17,14 +17,8 @@
       <ng-template #loaded>
         <form #form="ngForm" (ngSubmit)="transfer()">
           <mat-card>
-            <mat-form-field fxFill>
-              <input matInput placeholder="{{translation.recipient[lang]}}" [(ngModel)]="forms.recipient" name="recipient"
-                [matAutocomplete]="nemSuggest" (change)="onRecipientChange()" required pattern="N[A-Z2-7]{39}">
-              <mat-error>{{translation.addressRequired[lang]}}</mat-error>
-            </mat-form-field>
-            <mat-autocomplete #nemSuggest="matAutocomplete">
-              <mat-option *ngFor="let suggest of suggests" [value]="suggest">{{suggest}}</mat-option>
-            </mat-autocomplete>
+            <app-nem-address-input fxFill [(ngModel)]="forms.recipient" name="recipient" placeholder="{{translation.recipient[lang]}}"
+              required></app-nem-address-input>
           </mat-card>
           <br />
           <mat-card>
@@ -36,30 +30,35 @@
           </mat-card>
           <br />
           <mat-card>
-            <app-assets-list [assets]="assets"></app-assets-list>
-            <br />
-            <div *ngFor="let asset of forms.transferAssets; let i = index; let l = last" fxLayout="row">
-              <mat-form-field fxFlex="50">
-                <mat-select color="accent" placeholder="{{translation.assetName[lang]}}" [(ngModel)]="asset.index" name="asset{{i}}-name"
-                  required>
-                  <ng-container *ngFor="let assetId of assetIds; let j = index">
-                    <mat-option *ngIf="assetIsNotReady(assetId) || asset.index == j" [value]="j">{{assetId}}</mat-option>
-                  </ng-container>
-                </mat-select>
-              </mat-form-field>
-              <div fxFlex="50" fxLayout="row">
-                <mat-form-field class="fill-remaining-space">
-                  <input matInput color="accent" placeholder="{{translation.amount[lang]}}" [(ngModel)]="asset.amount"
-                    name="asset{{i}}-amount" required pattern="\d+(\.\d+)?" />
-                </mat-form-field>
-                <button mat-icon-button color="warn" type="button" (click)="spliceAsset(i)" *ngIf="!l">
-                  <mat-icon>clear</mat-icon>
-                </button>
-                <button mat-icon-button color="accent" type="button" (click)="pushAsset()" *ngIf="l">
+            <mat-list>
+              <div fxLayout="row">
+                <h3 mat-subheader>{{translation.assets[lang]}}</h3>
+                <span class="fill-remaining-space"></span>
+                <button mat-icon-button color="accent" type="button" (click)="pushAsset()">
                   <mat-icon>add</mat-icon>
                 </button>
               </div>
-            </div>
+              <ng-container *ngFor="let asset of forms.transferAssets; let i = index">
+                <mat-list-item>
+                  <mat-form-field class="fill-remaining-space">
+                    <mat-select color="accent" placeholder="{{translation.assetName[lang]}}" [(ngModel)]="asset.index"
+                      name="asset{{i}}-name" required>
+                      <ng-container *ngFor="let assetId of assetIds; let j = index">
+                        <mat-option *ngIf="assetIsNotReady(assetId) || asset.index == j" [value]="j">{{assetId}}</mat-option>
+                      </ng-container>
+                    </mat-select>
+                  </mat-form-field>
+                  <mat-form-field class="fill-remaining-space">
+                    <input matInput color="accent" placeholder="{{translation.amount[lang]}}" [(ngModel)]="asset.amount"
+                      name="asset{{i}}-amount" required pattern="\d+(\.\d+)?" />
+                  </mat-form-field>
+                  <button mat-icon-button color="warn" type="button" (click)="removeAsset(i, true)">
+                    <mat-icon>clear</mat-icon>
+                  </button>
+                </mat-list-item>
+              </ng-container>
+            </mat-list>
+            <app-assets-list [title]="translation.balance[lang]" [assets]="assets"></app-assets-list>
           </mat-card>
           <br />
           <div fxLayout="row">

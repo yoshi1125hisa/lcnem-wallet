@@ -7,6 +7,7 @@ import { WalletsService } from './wallets.service';
   providedIn: 'root'
 })
 export class HistoryService {
+  public address!: Address;
   public transactions?: Transaction[];
 
   constructor(
@@ -22,10 +23,10 @@ export class HistoryService {
     }
 
     let accountHttp = new AccountHttp(nodes);
-    let address = new Address(this.wallet.wallets![this.wallet.currentWallet!].nem);
+    this.address = new Address(this.wallet.wallets![this.wallet.currentWallet!].nem);
 
-    let unconfirmedTransactions = await accountHttp.unconfirmedTransactions(address).toPromise();
-    let allTransactions = await accountHttp.allTransactions(address, { pageSize: 25 }).toPromise();
+    let unconfirmedTransactions = await accountHttp.unconfirmedTransactions(this.address).toPromise();
+    let allTransactions = await accountHttp.allTransactions(this.address, { pageSize: 25 }).toPromise();
     
     this.transactions = unconfirmedTransactions.concat(allTransactions);
   }

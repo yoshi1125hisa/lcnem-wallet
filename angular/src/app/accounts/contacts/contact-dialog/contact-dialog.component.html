@@ -1,22 +1,25 @@
-<form #form="ngForm">
-  <h2 mat-dialog-title>{{translation.addAddress[lang]}}</h2>
-  <mat-dialog-content>
-    <mat-radio-group [(ngModel)]="ret.type" name="type" required>
-      <span>{{translation.type[lang]}}</span>
-      <mat-radio-button [value]="'nem'">nem</mat-radio-button>
-    </mat-radio-group>
-    <br />
-    <mat-form-field fxFill>
-      <input matInput [(ngModel)]="ret.value" name="{{ret.type}}" placeholder="{{translation.address[lang]}}"
-        [matAutocomplete]="nemSuggest" (change)="onChange()" required pattern="">
-    </mat-form-field>
-    <mat-autocomplete #nemSuggest="matAutocomplete">
-      <mat-option *ngFor="let suggest of suggests" [value]="suggest">{{suggest}}</mat-option>
-    </mat-autocomplete>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <span class="fill-remaining-space"></span>
-    <button mat-raised-button mat-dialog-close color="warn">Cancel</button>
-    <button mat-raised-button [mat-dialog-close]="ret" color="accent" [disabled]="form.invalid">OK</button>
-  </mat-dialog-actions>
-</form>
+<div fxLayout="row">
+  <h2 mat-dialog-title>{{_contact.name}}</h2>
+  <span class="fill-remaining-space"></span>
+  <button mat-icon-button color="accent" (click)="updateContact()">
+    <mat-icon>edit</mat-icon>
+  </button>
+</div>
+<mat-dialog-content>
+  <mat-list *ngIf="_contact.nem && _contact.nem.length">
+    <h3 mat-subheader>nem</h3>
+    <mat-divider></mat-divider>
+    <ng-container *ngFor="let nem of _contact.nem; let i = index">
+      <mat-list-item>
+        <div fxFlex="50">{{nem.name}}</div>
+        <div fxFlex="50" class="address">{{nem.address}}</div>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+    </ng-container>
+  </mat-list>
+  <p *ngIf="_contact.memo">{{_contact.memo}}</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <span class="fill-remaining-space"></span>
+  <button mat-button mat-dialog-close color="accent">OK</button>
+</mat-dialog-actions>
