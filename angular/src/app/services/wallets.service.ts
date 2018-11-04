@@ -136,7 +136,8 @@ export class WalletsService {
 
     if(this.wallets[id]) {
       delete this.wallets[id];
-    } else if(this.localWallets[id]) {
+    }
+    if(this.localWallets[id]) {
       delete this.localWallets[id];
     }
   }
