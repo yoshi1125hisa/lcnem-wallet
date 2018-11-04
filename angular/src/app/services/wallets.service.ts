@@ -134,8 +134,12 @@ export class WalletsService {
 
     await this.firestore.collection("users").doc(uid).collection("wallets").doc(id).delete();
 
-    delete this.wallets[id];
-    delete this.localWallets[id];
+    if(this.wallets[id]) {
+      delete this.wallets[id];
+    }
+    if(this.localWallets[id]) {
+      delete this.localWallets[id];
+    }
   }
 
   public importPrivateKey(id: string, privateKey: string) {
