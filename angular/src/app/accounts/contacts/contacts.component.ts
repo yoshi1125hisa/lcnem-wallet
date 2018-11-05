@@ -113,9 +113,9 @@ export class ContactsComponent implements OnInit {
     if (!result) {
       return;
     }
-
-    await Promise.all(this.selection.selected.map(selected => {
-      this.contact.deleteContact(selected.id)
+    
+    await Promise.all(this.selection.selected.map(async selected => {
+      await this.contact.deleteContact(selected.id);
     }));
     this.selection.clear();
     await this.refresh();
