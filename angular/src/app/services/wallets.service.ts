@@ -134,10 +134,10 @@ export class WalletsService {
 
     await this.firestore.collection("users").doc(uid).collection("wallets").doc(id).delete();
 
-    if(this.wallets[id]) {
+    if(this.wallets && this.wallets[id]) {
       delete this.wallets[id];
     }
-    if(this.localWallets[id]) {
+    if(this.localWallets && this.localWallets[id]) {
       delete this.localWallets[id];
     }
   }
