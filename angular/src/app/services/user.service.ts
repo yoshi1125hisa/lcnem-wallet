@@ -4,7 +4,7 @@ import { WalletsService } from './wallets.service';
 import { BalanceService } from './balance.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 
-import * as firebase from 'firebase';
+import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { User } from '../../../../firebase/functions/src/models/user';
@@ -23,7 +23,7 @@ export class UserService {
     private balance: BalanceService
   ) { }
 
-  public async initialize() {
+  public initialize() {
     this.wallet.initialize();
     this.balance.initialize();
   }
@@ -39,20 +39,20 @@ export class UserService {
         name: this.auth.auth.currentUser!.displayName
       } as User);
     }
-    this.router.navigate([""]);
+    await this.router.navigate([""]);
   }
 
   public async logout() {
     await this.auth.auth.signOut();
     this.initialize();
 
-    this.router.navigate(["accounts", "login"]);
+    await this.router.navigate(["accounts", "login"]);
   }
 
   public async checkLogin() {
     let user = await this.auth.authState.pipe(first()).toPromise();
     if (user == null) {
-      this.router.navigate(["accounts", "login"]);
+      await this.router.navigate(["accounts", "login"]);
     }
   }
 }
