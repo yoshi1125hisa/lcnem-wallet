@@ -276,7 +276,7 @@ export class TransferComponent implements OnInit {
     await this.dialog.open(AlertDialogComponent, {
       data: {
         title: this.translation.completed[this.lang],
-        content: ""
+        content: this.translation.completedBody[this.lang]
       }
     }).afterClosed().toPromise();
 
