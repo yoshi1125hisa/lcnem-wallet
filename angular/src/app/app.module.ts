@@ -65,6 +65,7 @@ import { WalletsComponent } from './accounts/wallets/wallets.component';
 import { ContactDialogComponent } from './accounts/contacts/contact-dialog/contact-dialog.component';
 import { ContactEditDialogComponent } from './accounts/contacts/contact-edit-dialog/contact-edit-dialog.component';
 import { NemAddressInputComponent } from './components/nem-address-input/nem-address-input.component';
+import { MultisigComponent } from './home/multisig/multisig.component';
 
 @NgModule({
   declarations: [
@@ -92,7 +93,8 @@ import { NemAddressInputComponent } from './components/nem-address-input/nem-add
     CreateDialogComponent,
     ContactDialogComponent,
     ContactEditDialogComponent,
-    NemAddressInputComponent
+    NemAddressInputComponent,
+    MultisigComponent
   ],
   imports: [
     BrowserModule,

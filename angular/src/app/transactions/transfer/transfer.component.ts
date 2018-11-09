@@ -342,7 +342,11 @@ export class TransferComponent implements OnInit {
     } as any,
     completed: {
       en: "Completed",
-      ja: "完了"
+      ja: "送信しました"
+    } as any,
+    completedBody: {
+      en: "Please confirm later that the transaction be confirmed.",
+      ja: "ブロックチェーンに正しく送信されましたが、正しく承認を受ける必要もあります。後ほど、承認されたことを確認してください。"
     } as any,
     noPublicKey: {
       en: "Failed to get the recipient public key for encryption.",
