@@ -1,0 +1,13 @@
+<mat-toolbar>
+  <span class="fill-remaining-space"></span>
+  <button mat-icon-button color="accent" (click)="refresh(true)">
+    <mat-icon>refresh</mat-icon>
+  </button>
+</mat-toolbar>
+<mat-spinner *ngIf="loading"></mat-spinner>
+<mat-nav-list [hidden]="loading">
+  <mat-list-item *ngFor="let address of addresses" (click)="onClick(address)">
+    <span>{{address}}</span>
+  </mat-list-item>
+  <p class="empty">{{translation.empty[lang]}}</p>
+</mat-nav-list>

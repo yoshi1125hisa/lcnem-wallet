@@ -128,6 +128,10 @@ export class HomeComponent implements OnInit {
     contacts: {
       en: "Contact list",
       ja: "コンタクトリスト"
+    } as any,
+    cosignatoryOf: {
+      en: "Multisig addresses you can cosign",
+      ja: "連署名できるマルチシグアドレス"
     } as any
   };
 }
