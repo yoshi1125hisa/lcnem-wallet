@@ -92,7 +92,7 @@
       <ng-container *ngIf="address">
         <h3>{{translation.cosignatoryOf[lang]}}</h3>
         <mat-card>
-          <app-multisig></app-multisig>
+          <app-multisig [refresh]="refresh"></app-multisig>
         </mat-card>
       </ng-container>
       <br />

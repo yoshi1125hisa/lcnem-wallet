@@ -8,11 +8,17 @@ import { map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class MultisigService {
-  public addresses!: Address[];
+  public addresses?: Address[];
 
   constructor(
     private wallet: WalletsService
-  ) { }
+  ) {
+    wallet.multisig = this;
+  }
+
+  public initialize() {
+    this.addresses = undefined;
+  }
 
   public async readMultisigAccounts(force?: boolean) {
     if(this.addresses && !force) {

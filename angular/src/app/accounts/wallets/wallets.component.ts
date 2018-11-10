@@ -13,7 +13,7 @@ import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { Plan } from '../../../../../firebase/functions/src/models/plan';
 import { lang, setLang } from '../../../models/lang';
 import { UserService } from '../../services/user.service';
-import { LoadingDialogComponent } from 'src/app/components/loading-dialog/loading-dialog.component';
+import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 
 @Component({
   selector: 'app-wallets',
@@ -53,6 +53,7 @@ export class WalletsComponent implements OnInit {
     await this.wallet.readWallets(force);
     this.wallets = this.wallet.wallets!;
     this.walletIds = Object.keys(this.wallet.wallets!);
+    this.walletIds = this.walletIds.filter(id => id != "multisig");
     this.clouds = 0;
     for(let id of this.walletIds) {
       if(!this.wallets[id].local) {

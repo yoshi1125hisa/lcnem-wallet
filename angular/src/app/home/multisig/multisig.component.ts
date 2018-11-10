@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { MultisigService } from '../../services/multisig.service';
-import { Address } from 'nem-library';
 import { lang } from '../../../models/lang';
+import { WalletsService } from '../../services/wallets.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-multisig',
@@ -14,9 +15,15 @@ export class MultisigComponent implements OnInit {
 
   get lang() { return lang; }
 
+  @Input("refresh") refreshHome!: (force?: boolean) => void;
+
   constructor(
-    private multisig: MultisigService
-  ) { }
+    private multisig: MultisigService,
+    private wallet: WalletsService,
+    private router: Router
+  ) {
+    
+  }
 
   ngOnInit() {
     this.refresh();
@@ -25,13 +32,21 @@ export class MultisigComponent implements OnInit {
   public async refresh(force?: boolean) {
     this.loading = true;
     await this.multisig.readMultisigAccounts(force);
-    this.addresses = this.multisig.addresses.map(a => a.plain());
+    this.addresses = this.multisig.addresses!.map(a => a.plain());
 
     this.loading = false;
   }
 
   public async onClick(address: string) {
-    let a = new Address(address);
+    this.wallet.wallets!["multisig"] = {
+      name: "",
+      local: true,
+      nem: address,
+      wallet: undefined
+    }
+
+    this.wallet.updateCurrentWallet("multisig");
+    await this.refreshHome(true);
   }
 
   public translation = {

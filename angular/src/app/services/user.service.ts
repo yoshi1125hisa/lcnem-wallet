@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { WalletsService } from './wallets.service';
 import { BalanceService } from './balance.service';
+import { HistoryService } from './history.service';
+import { MultisigService } from './multisig.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 
 import * as firebase from 'firebase/app';
@@ -9,6 +11,7 @@ import 'firebase/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { User } from '../../../../firebase/functions/src/models/user';
 import { first } from 'rxjs/operators';
+import { ContactsService } from './contacts.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,12 +23,18 @@ export class UserService {
     private auth: AngularFireAuth,
     private firestore: AngularFirestore,
     private wallet: WalletsService,
-    private balance: BalanceService
+    private balance: BalanceService,
+    private contact: ContactsService,
+    private history: HistoryService,
+    private multisig: MultisigService
   ) { }
 
   public initialize() {
     this.wallet.initialize();
     this.balance.initialize();
+    this.contact.initialize();
+    this.history.initialize();
+    this.multisig.initialize();
   }
 
   public async login() {
