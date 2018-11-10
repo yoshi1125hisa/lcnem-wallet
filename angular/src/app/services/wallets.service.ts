@@ -105,10 +105,6 @@ export class WalletsService {
     }
     this.readLocalWallet();
 
-    if (!this.localWallets) {
-      throw new Error()
-    }
-
     for (let id in this.localWallets) {
       if (this.wallets[id]) {
         this.wallets[id].wallet = this.localWallets[id];
@@ -173,7 +169,7 @@ export class WalletsService {
     try {
       this.localWallets = JSON.parse(localStorage.getItem("wallets")!);
     } catch {
-      this.localWallets = {};
+      throw new Error()
     }
   }
 
