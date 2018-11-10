@@ -13,6 +13,7 @@ import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { Plan } from '../../../../../firebase/functions/src/models/plan';
 import { lang, setLang } from '../../../models/lang';
 import { UserService } from '../../services/user.service';
+import { LoadingDialogComponent } from 'src/app/components/loading-dialog/loading-dialog.component';
 
 @Component({
   selector: 'app-wallets',
@@ -68,6 +69,8 @@ export class WalletsComponent implements OnInit {
     if (!result) {
       return;
     }
+    let dialogRef = this.dialog.open(LoadingDialogComponent, { disableClose: true });
+
     let uid = this.auth.auth.currentUser!.uid;
 
     let wallet: SimpleWallet;
@@ -86,6 +89,7 @@ export class WalletsComponent implements OnInit {
     };
 
     await this.wallet.createWallet(firestoreObject);
+    dialogRef.close();
     await this.refresh();
   }
 
@@ -153,7 +157,10 @@ export class WalletsComponent implements OnInit {
       return;
     }
 
+    let dialogRef = this.dialog.open(LoadingDialogComponent, { disableClose: true });
+
     await this.wallet.deleteWallet(id);
+    dialogRef.close();
     await this.refresh();
   }
 

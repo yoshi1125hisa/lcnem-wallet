@@ -172,7 +172,7 @@ export class WalletsService {
   }
 
   public updateCurrentWallet(id: string) {
-    if(!this.wallets || !this.wallets[id].wallet) {
+    if(!this.wallets || !this.wallets[id]) {
       return;
     }
     this.currentWallet = id;
