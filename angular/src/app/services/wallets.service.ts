@@ -105,6 +105,9 @@ export class WalletsService {
     }
     this.readLocalWallet();
 
+    if (!this.localWallets) {
+      return;
+    }
     for (let id in this.localWallets) {
       if (this.wallets[id]) {
         this.wallets[id].wallet = this.localWallets[id];
