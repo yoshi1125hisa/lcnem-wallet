@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Contact } from '../../../../firebase/functions/src/models/contact';
+import { WalletsService } from './wallets.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +14,15 @@ export class ContactsService {
 
   constructor(
     private auth: AngularFireAuth,
-    private firestore: AngularFirestore
-  ) { }
+    private firestore: AngularFirestore,
+    private wallet: WalletsService
+  ) {
+    wallet.contact = this;
+  }
+
+  public initialize() {
+    this.contacts = undefined;
+  }
 
   public async createContact(contact: Contact) {
     if(!this.contacts) {

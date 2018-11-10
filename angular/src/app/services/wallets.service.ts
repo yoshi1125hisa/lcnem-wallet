@@ -6,6 +6,10 @@ import { User } from '../../../../firebase/functions/src/models/user';
 import { Wallet } from '../../../../firebase/functions/src/models/wallet';
 import { Plan } from '../../../../firebase/functions/src/models/plan';
 import { Router } from '@angular/router';
+import { BalanceService } from './balance.service';
+import { HistoryService } from './history.service';
+import { MultisigService } from './multisig.service';
+import { ContactsService } from './contacts.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +24,11 @@ export class WalletsService {
   } = {};
 
   public currentWallet?: string;
+
+  public balance!: BalanceService;
+  public contact!: ContactsService;
+  public history!: HistoryService;
+  public multisig!: MultisigService;
 
   constructor(
     private router: Router,
@@ -37,16 +46,16 @@ export class WalletsService {
 
   public async checkWallets() {
     await this.readWallets();
-    if(!this.currentWallet) {
+    if (!this.currentWallet) {
       this.router.navigate(["accounts", "wallets"]);
     }
   }
 
   public async createWallet(wallet: Wallet) {
-    if(!this.wallets) {
+    if (!this.wallets) {
       return;
     }
-    
+
     let wltFile = wallet.wallet;
     if (wallet.local) {
       delete wallet.wallet;
@@ -56,21 +65,21 @@ export class WalletsService {
     let newWallet = await this.firestore.collection("users").doc(uid).collection("wallets").add(wallet);
     this.wallets[newWallet.id] = wallet;
 
-    if(wallet.local) {
+    if (wallet.local) {
       this.createLocalWallet(newWallet.id, wltFile!);
     }
-    
+
     return newWallet.id;
   }
 
   public async readWallets(force?: boolean) {
-    if(this.wallets && !force) {
+    if (this.wallets && !force) {
       return;
     }
     let uid = this.auth.auth.currentUser!.uid;
     let wallets = await this.firestore.collection("users").doc(uid).collection("wallets").get().toPromise();
 
-    if(wallets.empty) {
+    if (wallets.empty) {
       //互換性
       let user = await this.firestore.collection("users").doc(uid).get().toPromise();
       let userData = user.data() as any;
@@ -91,18 +100,13 @@ export class WalletsService {
       }
     }
     this.wallets = {};
-    for(let doc of wallets.docs) {
+    for (let doc of wallets.docs) {
       this.wallets[doc.id] = doc.data() as Wallet;
     }
+    this.readLocalWallet();
 
-    try {
-      this.localWallets = JSON.parse(localStorage.getItem("wallets")!);
-    } catch {
-      this.localWallets = {};
-    }
-
-    for(let id in this.localWallets) {
-      if(this.wallets[id]) {
+    for (let id in this.localWallets) {
+      if (this.wallets[id]) {
         this.wallets[id].wallet = this.localWallets[id];
       }
     }
@@ -111,7 +115,7 @@ export class WalletsService {
   }
 
   public async updateWallet(id: string, data: any) {
-    if(!this.wallets) {
+    if (!this.wallets) {
       return;
     }
 
@@ -121,25 +125,23 @@ export class WalletsService {
       { merge: true }
     );
 
-    for(let key in data) {
+    for (let key in data) {
       (this.wallets[id] as any)[key] = data[key];
     }
   }
 
   public async deleteWallet(id: string) {
-    if(!this.wallets) {
+    if (!this.wallets) {
       return;
     }
     let uid = this.auth.auth.currentUser!.uid;
 
     await this.firestore.collection("users").doc(uid).collection("wallets").doc(id).delete();
 
-    if(this.wallets[id]) {
+    if (this.wallets && this.wallets[id]) {
       delete this.wallets[id];
     }
-    if(this.localWallets[id]) {
-      delete this.localWallets[id];
-    }
+    this.deleteLocalWallet(id);
   }
 
   public importPrivateKey(id: string, privateKey: string) {
@@ -149,7 +151,7 @@ export class WalletsService {
   }
 
   public backupPrivateKey(id: string) {
-    if(!this.wallets || !this.wallets[id].wallet) {
+    if (!this.wallets || !this.wallets[id].wallet) {
       return "";
     }
     let wallet = SimpleWallet.readFromWLT(this.wallets[id].wallet!);
@@ -163,12 +165,34 @@ export class WalletsService {
     localStorage.setItem("wallets", JSON.stringify(this.localWallets));
   }
 
+  public readLocalWallet() {
+    try {
+      this.localWallets = JSON.parse(localStorage.getItem("wallets")!);
+    } catch {
+      this.localWallets = {};
+    }
+  }
+
+  public deleteLocalWallet(id: string) {
+    if (this.localWallets && this.localWallets[id]) {
+      delete this.localWallets[id];
+      localStorage.setItem("wallets", JSON.stringify(this.localWallets));
+    }
+  }
+
   public updateCurrentWallet(id: string) {
-    if(!this.wallets || !this.wallets[id].wallet) {
+    if (!this.wallets || !this.wallets[id]) {
       return;
     }
     this.currentWallet = id;
-    localStorage.setItem("currentWallet", id);
+    if (id != "multisig") {
+      localStorage.setItem("currentWallet", id);
+    }
+
+    this.balance.initialize();
+    this.contact.initialize();
+    this.history.initialize();
+    this.multisig.initialize();
   }
 
   public deleteCurrentWallet() {

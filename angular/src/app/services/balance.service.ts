@@ -14,7 +14,9 @@ export class BalanceService {
 
   constructor(
     private wallet: WalletsService
-  ) { }
+  ) {
+    wallet.balance = this;
+  }
 
   public initialize() {
     this.assets = undefined;

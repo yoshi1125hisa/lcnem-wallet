@@ -4,6 +4,7 @@ import { lang } from '../../../models/lang';
 import { HistoryService } from '../../services/history.service';
 import { MatTableDataSource, MatPaginator, PageEvent, MatSnackBar, MatDialog } from '@angular/material';
 import { TransactionComponent } from './transaction/transaction.component';
+import { WalletsService } from '../../services/wallets.service';
 
 @Component({
   selector: 'app-history',
@@ -31,6 +32,7 @@ export class HistoryComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
+    private wallet: WalletsService,
     private history: HistoryService
   ) { }
 
@@ -71,7 +73,7 @@ export class HistoryComponent implements OnInit {
     for (let data of dataSourceRange) {
       const setDataFromTransferTransaction = (transaction: TransferTransaction) => {
         data.address = transaction.recipient.plain();
-        if(data.address == this.history.address.plain()) {
+        if(data.address == this.wallet.wallets![this.wallet.currentWallet!].nem) {
           data.icon = "call_received"
           data.address = transaction.signer && transaction.signer.address.plain() || "";
         } else {

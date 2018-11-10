@@ -33,7 +33,9 @@ export class HomeComponent implements OnInit {
     private user: UserService,
     private wallet: WalletsService,
     private balance: BalanceService
-  ) { }
+  ) {
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+  }
 
   ngOnInit() {
     this.user.checkLogin().then(async () => {
@@ -46,20 +48,18 @@ export class HomeComponent implements OnInit {
     await this.user.logout();
   }
 
-  public async refresh(force?: boolean) {
+  public refresh = async (force?: boolean) => {
     this.loading = true;
 
     await this.balance.readAssets(force);
 
-    if(!this.address) {
-      this.address = this.wallet.wallets![this.wallet.currentWallet!].nem;
-      this.photoUrl = this.auth.auth.currentUser!.photoURL!;
-      this.assets = this.balance.assets!;
-  
-      let invoice = new Invoice();
-      invoice.data.addr = this.address;
-      this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
-    }
+    this.address = this.wallet.wallets![this.wallet.currentWallet!].nem;
+    this.photoUrl = this.auth.auth.currentUser!.photoURL!;
+    this.assets = this.balance.assets!;
+
+    let invoice = new Invoice();
+    invoice.data.addr = this.address;
+    this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
 
     this.loading = false;
   }
@@ -128,6 +128,10 @@ export class HomeComponent implements OnInit {
     contacts: {
       en: "Contact list",
       ja: "コンタクトリスト"
+    } as any,
+    cosignatoryOf: {
+      en: "Multisig addresses you can cosign",
+      ja: "連署名できるマルチシグアドレス"
     } as any
   };
 }

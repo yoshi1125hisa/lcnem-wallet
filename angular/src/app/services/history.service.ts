@@ -7,12 +7,17 @@ import { WalletsService } from './wallets.service';
   providedIn: 'root'
 })
 export class HistoryService {
-  public address!: Address;
   public transactions?: Transaction[];
 
   constructor(
     private wallet: WalletsService
-  ) { }
+  ) {
+    wallet.history = this;
+  }
+
+  public initialize() {
+    this.transactions = undefined;
+  }
 
   public async readTransactions(force?: boolean) {
     if(this.transactions && !force) {
@@ -23,10 +28,10 @@ export class HistoryService {
     }
 
     let accountHttp = new AccountHttp(nodes);
-    this.address = new Address(this.wallet.wallets![this.wallet.currentWallet!].nem);
+    let address = new Address(this.wallet.wallets![this.wallet.currentWallet!].nem);
 
-    let unconfirmedTransactions = await accountHttp.unconfirmedTransactions(this.address).toPromise();
-    let allTransactions = await accountHttp.allTransactions(this.address, { pageSize: 25 }).toPromise();
+    let unconfirmedTransactions = await accountHttp.unconfirmedTransactions(address).toPromise();
+    let allTransactions = await accountHttp.allTransactions(address, { pageSize: 25 }).toPromise();
     
     this.transactions = unconfirmedTransactions.concat(allTransactions);
   }

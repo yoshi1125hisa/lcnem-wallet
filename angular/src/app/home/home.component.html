@@ -90,6 +90,13 @@
       </mat-card>
       <br />
       <ng-container *ngIf="address">
+        <h3>{{translation.cosignatoryOf[lang]}}</h3>
+        <mat-card>
+          <app-multisig [refresh]="refresh"></app-multisig>
+        </mat-card>
+      </ng-container>
+      <br />
+      <ng-container *ngIf="address">
         <h3>{{translation.history[lang]}}</h3>
         <mat-card>
           <app-history></app-history>
