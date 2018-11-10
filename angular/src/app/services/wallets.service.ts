@@ -94,12 +94,7 @@ export class WalletsService {
     for(let doc of wallets.docs) {
       this.wallets[doc.id] = doc.data() as Wallet;
     }
-
-    try {
-      this.localWallets = JSON.parse(localStorage.getItem("wallets")!);
-    } catch {
-      this.localWallets = {};
-    }
+    this.readLocalWallet();
 
     for(let id in this.localWallets) {
       if(this.wallets[id]) {
@@ -137,9 +132,7 @@ export class WalletsService {
     if(this.wallets && this.wallets[id]) {
       delete this.wallets[id];
     }
-    if(this.localWallets && this.localWallets[id]) {
-      delete this.localWallets[id];
-    }
+    this.deleteLocalWallet(id);
   }
 
   public importPrivateKey(id: string, privateKey: string) {
@@ -161,6 +154,21 @@ export class WalletsService {
   public createLocalWallet(id: string, wallet: string) {
     this.localWallets[id] = wallet;
     localStorage.setItem("wallets", JSON.stringify(this.localWallets));
+  }
+
+  public readLocalWallet() {
+    try {
+      this.localWallets = JSON.parse(localStorage.getItem("wallets")!);
+    } catch {
+      this.localWallets = {};
+    }
+  }
+
+  public deleteLocalWallet(id: string) {
+    if(this.localWallets && this.localWallets[id]) {
+      delete this.localWallets[id];
+      localStorage.setItem("wallets", JSON.stringify(this.localWallets));
+    }
   }
 
   public updateCurrentWallet(id: string) {
