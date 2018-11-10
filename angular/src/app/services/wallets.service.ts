@@ -167,39 +167,41 @@ export class WalletsService {
 
   public readLocalWallet() {
     try {
+      if (!this.localWallets) {
+        throw
+      }
       this.localWallets = JSON.parse(localStorage.getItem("wallets")!);
     } catch {
-      if (!this.localWallets) {
-        throw new Error()
-      }
-      this.localWallets = {};
+      this.localWallets = {}
     }
+    this.localWallets = {};
   }
+}
 
   public deleteLocalWallet(id: string) {
-    if (this.localWallets && this.localWallets[id]) {
-      delete this.localWallets[id];
-      localStorage.setItem("wallets", JSON.stringify(this.localWallets));
-    }
+  if (this.localWallets && this.localWallets[id]) {
+    delete this.localWallets[id];
+    localStorage.setItem("wallets", JSON.stringify(this.localWallets));
   }
+}
 
   public updateCurrentWallet(id: string) {
-    if (!this.wallets || !this.wallets[id]) {
-      return;
-    }
-    this.currentWallet = id;
-    if (id != "multisig") {
-      localStorage.setItem("currentWallet", id);
-    }
-
-    this.balance.initialize();
-    this.contact.initialize();
-    this.history.initialize();
-    this.multisig.initialize();
+  if (!this.wallets || !this.wallets[id]) {
+    return;
   }
+  this.currentWallet = id;
+  if (id != "multisig") {
+    localStorage.setItem("currentWallet", id);
+  }
+
+  this.balance.initialize();
+  this.contact.initialize();
+  this.history.initialize();
+  this.multisig.initialize();
+}
 
   public deleteCurrentWallet() {
-    this.currentWallet = undefined;
-    localStorage.setItem("currentWallet", "");
-  }
+  this.currentWallet = undefined;
+  localStorage.setItem("currentWallet", "");
+}
 }
