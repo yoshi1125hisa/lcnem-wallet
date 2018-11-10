@@ -174,7 +174,6 @@ export class WalletsService {
     } catch {
       this.localWallets = {}
     }
-    this.localWallets = {};
   }
 
   public deleteLocalWallet(id: string) {
