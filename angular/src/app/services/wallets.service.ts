@@ -169,7 +169,10 @@ export class WalletsService {
     try {
       this.localWallets = JSON.parse(localStorage.getItem("wallets")!);
     } catch {
-      throw new Error()
+      if (!this.localWallets) {
+        throw new Error()
+      }
+      this.localWallets = {};
     }
   }
 
