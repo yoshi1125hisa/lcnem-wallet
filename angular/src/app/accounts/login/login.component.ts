@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { back } from '../../../models/back';
-import { lang, setLang } from '../../../models/lang';
+import { back } from '../../models/back';
+import { lang, setLang } from '../../models/lang';
 import { UserService } from '../../services/user.service';
 
 @Component({

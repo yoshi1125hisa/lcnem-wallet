@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Address, Transaction, AccountHttp } from 'nem-library';
 import { WalletsService } from './wallets.service';
-import { nodes } from '../../models/nodes';
+import { nodes } from '../models/nodes';
 import { map } from 'rxjs/operators';
 
 @Injectable({

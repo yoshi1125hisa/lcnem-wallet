@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Asset, AssetDefinition, AccountHttp, AssetHttp, PublicAccount, XEM, AssetId, Address } from 'nem-library';
-import { nodes } from '../../models/nodes';
+import { nodes } from '../models/nodes';
 import { WalletsService } from './wallets.service';
 
 @Injectable({

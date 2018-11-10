@@ -11,7 +11,7 @@ import { ConfirmDialogComponent } from '../../../app/components/confirm-dialog/c
 import { WalletsService } from '../../../app/services/wallets.service';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { Plan } from '../../../../../firebase/functions/src/models/plan';
-import { lang, setLang } from '../../../models/lang';
+import { lang, setLang } from '../../models/lang';
 import { UserService } from '../../services/user.service';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 

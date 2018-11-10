@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Invoice } from '../../models/invoice';
+import { Invoice } from '../models/invoice';
 import { MatDialog } from '@angular/material';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
-import { Share } from '../../models/share';
-import { lang, setLang } from '../../models/lang';
+import { Share } from '../models/share';
+import { lang, setLang } from '../models/lang';
 import { WalletsService } from '../services/wallets.service';
 import { BalanceService } from '../services/balance.service';
 import { UserService } from '../services/user.service';

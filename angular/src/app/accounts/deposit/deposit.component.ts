@@ -7,9 +7,9 @@ import { HttpClient } from '@angular/common/http';
 
 import { AngularFireAuth } from '@angular/fire/auth';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
-import { lang } from '../../../models/lang';
+import { lang } from '../../models/lang';
 import { WalletsService } from '../../services/wallets.service';
-import { back } from '../../../models/back';
+import { back } from '../../models/back';
 import { UserService } from '../../services/user.service';
 
 @Component({

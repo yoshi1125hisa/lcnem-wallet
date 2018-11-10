@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Asset, AssetDefinition } from 'nem-library';
-import { assetAdditionalDefinitions, AssetAdditionalDefinition } from '../../../models/asset-additional-definition';
+import { assetAdditionalDefinitions, AssetAdditionalDefinition } from '../../models/asset-additional-definition';
 import { BalanceService } from '../../services/balance.service';
 
 @Component({

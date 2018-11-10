@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { lang } from '../../../../models/lang';
+import { lang } from '../../../models/lang';
 import { Contact } from '../../../../../../firebase/functions/src/models/contact';
 import { MAT_DIALOG_DATA } from '@angular/material';
 

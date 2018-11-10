@@ -2,8 +2,8 @@ import { Component, Input, forwardRef, OnInit } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, NG_VALIDATORS, Validator, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ContactsService } from '../../services/contacts.service';
 import { NamespaceHttp, AccountHttp, Address } from 'nem-library';
-import { nodes } from '../../../models/nodes';
-import { lang } from '../../../models/lang';
+import { nodes } from '../../models/nodes';
+import { lang } from '../../models/lang';
 
 
 @Component({

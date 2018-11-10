@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { lang } from '../../../models/lang';
-import { back } from '../../../models/back';
+import { lang } from '../../models/lang';
+import { back } from '../../models/back';
 import { Router } from '@angular/router';
 
 @Component({

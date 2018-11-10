@@ -2,12 +2,12 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
-import { Invoice } from '../../../models/invoice';
+import { Invoice } from '../../models/invoice';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { lang } from '../../../models/lang';
-import { back } from '../../../models/back';
+import { lang } from '../../models/lang';
+import { back } from '../../models/back';
 import { UserService } from '../../services/user.service';
 
 @Component({
