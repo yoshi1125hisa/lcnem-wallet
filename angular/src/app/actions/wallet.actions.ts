@@ -1,11 +1,26 @@
 import { Action } from '@ngrx/store';
 
 export enum WalletActionTypes {
-  LoadWallets = '[Wallet] Load Wallets'
+  CreateWallet = '[Wallet] Create Wallet',
+  ReadWallets = '[Wallet] Read Wallets',
+  UpdateWallet = '[Wallet] Update Wallet',
+  DeleteWallet = '[Wallet] Delete Wallet'
 }
 
-export class LoadWallets implements Action {
-  readonly type = WalletActionTypes.LoadWallets;
+export class CreateWallet implements Action {
+  readonly type = WalletActionTypes.CreateWallet;
 }
 
-export type WalletActions = LoadWallets;
+export class ReadWallets implements Action {
+  readonly type = WalletActionTypes.ReadWallets;
+}
+
+export class UpdateWallets implements Action {
+  readonly type = WalletActionTypes.UpdateWallet;
+}
+
+export class DeleteWallets implements Action {
+  readonly type = WalletActionTypes.DeleteWallet;
+}
+
+export type WalletActions = CreateWallet | ReadWallets | UpdateWallets | DeleteWallets;

@@ -1,11 +1,11 @@
 import { Action } from '@ngrx/store';
 
 export enum MultisigActionTypes {
-  LoadMultisigs = '[Multisig] Load Multisigs'
+  ReadMultisigs = '[Multisig] Read Multisigs'
 }
 
-export class LoadMultisigs implements Action {
-  readonly type = MultisigActionTypes.LoadMultisigs;
+export class ReadMultisigs implements Action {
+  readonly type = MultisigActionTypes.ReadMultisigs;
 }
 
-export type MultisigActions = LoadMultisigs;
+export type MultisigActions = ReadMultisigs;

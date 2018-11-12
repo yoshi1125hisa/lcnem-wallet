@@ -1,11 +1,11 @@
 import { Action } from '@ngrx/store';
 
 export enum HistoryActionTypes {
-  LoadHistorys = '[History] Load Historys'
+  ReadHistorys = '[History] Read Historys'
 }
 
-export class LoadHistorys implements Action {
-  readonly type = HistoryActionTypes.LoadHistorys;
+export class ReadHistorys implements Action {
+  readonly type = HistoryActionTypes.ReadHistorys;
 }
 
-export type HistoryActions = LoadHistorys;
+export type HistoryActions = ReadHistorys;

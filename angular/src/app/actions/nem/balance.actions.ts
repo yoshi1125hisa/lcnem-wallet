@@ -1,11 +1,11 @@
 import { Action } from '@ngrx/store';
 
 export enum BalanceActionTypes {
-  LoadBalances = '[Balance] Load Balances'
+  ReadBalances = '[Balance] Read Balances'
 }
 
-export class LoadBalances implements Action {
-  readonly type = BalanceActionTypes.LoadBalances;
+export class ReadBalances implements Action {
+  readonly type = BalanceActionTypes.ReadBalances;
 }
 
-export type BalanceActions = LoadBalances;
+export type BalanceActions = ReadBalances;
