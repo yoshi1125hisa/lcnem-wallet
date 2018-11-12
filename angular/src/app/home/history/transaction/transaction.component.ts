@@ -15,9 +15,9 @@ import {
   AccountHttp
 } from 'nem-library';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { lang } from '../../../../models/lang';
+import { lang } from '../../../models/lang';
 import { WalletsService } from '../../../services/wallets.service';
-import { nodes } from '../../../../models/nodes';
+import { nodes } from '../../../models/nodes';
 import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({

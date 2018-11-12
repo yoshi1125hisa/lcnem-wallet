@@ -1,9 +1,9 @@
 import { Component, Inject } from '@angular/core';
-import { lang } from '../../../../models/lang'
+import { lang } from '../../../models/lang'
 import { ContactsService } from '../../../services/contacts.service';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { Contact } from '../../../../../../firebase/functions/src/models/contact';
-import { Invoice } from '../../../../models/invoice';
+import { Invoice } from '../../../models/invoice';
 import { Router } from '@angular/router';
 import { ContactEditDialogComponent } from '../contact-edit-dialog/contact-edit-dialog.component';
 

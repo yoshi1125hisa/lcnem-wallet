@@ -168,6 +168,9 @@ export class WalletsService {
   public readLocalWallet() {
     try {
       this.localWallets = JSON.parse(localStorage.getItem("wallets")!);
+      if (!this.localWallets) {
+        throw Error();
+      }
     } catch {
       this.localWallets = {};
     }

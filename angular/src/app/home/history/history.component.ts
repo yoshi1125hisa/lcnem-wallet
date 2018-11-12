@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Transaction, TransactionTypes, MultisigTransaction, TransferTransaction } from 'nem-library';
-import { lang } from '../../../models/lang';
+import { lang } from '../../models/lang';
 import { HistoryService } from '../../services/history.service';
 import { MatTableDataSource, MatPaginator, PageEvent, MatSnackBar, MatDialog } from '@angular/material';
 import { TransactionComponent } from './transaction/transaction.component';

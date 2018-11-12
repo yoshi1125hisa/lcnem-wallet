@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { MultisigService } from '../../services/multisig.service';
-import { lang } from '../../../models/lang';
+import { lang } from '../../models/lang';
 import { WalletsService } from '../../services/wallets.service';
 import { Router } from '@angular/router';
 

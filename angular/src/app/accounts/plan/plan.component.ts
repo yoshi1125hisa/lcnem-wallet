@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { lang } from '../../../models/lang';
-import { back } from '../../../models/back';
+import { lang } from '../../models/lang';
+import { back } from '../../models/back';
 import { UserService } from '../../services/user.service';
 
 @Component({

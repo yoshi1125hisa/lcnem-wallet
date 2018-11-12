@@ -7,9 +7,9 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
-import { lang } from '../../../models/lang';
+import { lang } from '../../models/lang';
 import { WalletsService } from '../../../app/services/wallets.service';
-import { back } from '../../../models/back';
+import { back } from '../../models/back';
 import { UserService } from '../../services/user.service';
 
 @Component({

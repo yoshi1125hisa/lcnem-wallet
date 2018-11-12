@@ -25,7 +25,7 @@
             ],
             "styles": [
               "src/styles.css",
-              "src/theme/nem-theme.scss"
+              "src/nem-theme.scss"
             ],
             "scripts": []
           },
@@ -77,7 +77,7 @@
             "scripts": [],
             "styles": [
               "src/styles.css",
-              "src/theme/nem-theme.scss"
+              "src/nem-theme.scss"
             ],
             "assets": [
               "src/favicon.png",
@@ -128,5 +128,8 @@
       }
     }
   },
-  "defaultProject": "lcnem-wallet"
+  "defaultProject": "lcnem-wallet",
+  "cli": {
+    "defaultCollection": "@ngrx/schematics"
+  }
 }

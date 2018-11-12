@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { lang } from '../../../../models/lang';
+import { lang } from '../../../models/lang';
 
 @Component({
   selector: 'app-create-dialog',

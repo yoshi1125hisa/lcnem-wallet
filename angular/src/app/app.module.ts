@@ -66,6 +66,9 @@ import { ContactDialogComponent } from './accounts/contacts/contact-dialog/conta
 import { ContactEditDialogComponent } from './accounts/contacts/contact-edit-dialog/contact-edit-dialog.component';
 import { NemAddressInputComponent } from './components/nem-address-input/nem-address-input.component';
 import { MultisigComponent } from './home/multisig/multisig.component';
+import { StoreModule } from '@ngrx/store';
+import { reducers, metaReducers } from './reducers';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 @NgModule({
   declarations: [
@@ -129,7 +132,9 @@ import { MultisigComponent } from './home/multisig/multisig.component';
     MatSnackBarModule,
     MatTooltipModule,
     MatTableModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    StoreModule.forRoot(reducers, { metaReducers }),
+    !environment.production ? StoreDevtoolsModule.instrument() : []
   ],
   entryComponents: [
     LoadingDialogComponent,
