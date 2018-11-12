@@ -67,7 +67,7 @@ import { ContactEditDialogComponent } from './accounts/contacts/contact-edit-dia
 import { NemAddressInputComponent } from './components/nem-address-input/nem-address-input.component';
 import { MultisigComponent } from './home/multisig/multisig.component';
 import { StoreModule } from '@ngrx/store';
-import { reducers, metaReducers } from './reducers';
+import { reducers, metaReducers } from './store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 @NgModule({
