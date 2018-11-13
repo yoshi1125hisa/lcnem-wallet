@@ -25,7 +25,7 @@ export class ContactsService {
   }
 
   public async createContact(contact: Contact) {
-    if(!this.contacts) {
+    if (!this.contacts) {
       return;
     }
     let uid = this.auth.auth.currentUser!.uid;
@@ -36,18 +36,18 @@ export class ContactsService {
   }
 
   public async readContacts(force?: boolean) {
-    if(this.contacts && !force) {
+    if (this.contacts && !force) {
       return;
     }
     let uid = this.auth.auth.currentUser!.uid;
     let contacts = await this.firestore.collection("users").doc(uid).collection("contacts").get().toPromise();
 
     this.contacts = {};
-    for(let doc of contacts.docs) {
+    for (let doc of contacts.docs) {
       this.contacts[doc.id] = doc.data() as Contact;
 
       //nem: string[]からnem: { name: string, address: string}[]への互換性
-      if(this.contacts[doc.id].nem && this.contacts[doc.id].nem.length && typeof this.contacts[doc.id].nem[0] == "string") {
+      if (this.contacts[doc.id].nem && this.contacts[doc.id].nem.length && typeof this.contacts[doc.id].nem[0] == "string") {
         this.contacts[doc.id].nem = this.contacts[doc.id].nem.map(n => {
           return {
             name: "",
@@ -59,7 +59,7 @@ export class ContactsService {
   }
 
   public async updateContact(id: string, data: any) {
-    if(!this.contacts) {
+    if (!this.contacts) {
       return;
     }
 
@@ -69,13 +69,13 @@ export class ContactsService {
       { merge: true }
     );
 
-    for(let key in data) {
+    for (let key in data) {
       (this.contacts[id] as any)[key] = data[key];
     }
   }
 
   public async deleteContact(id: string) {
-    if(!this.contacts) {
+    if (!this.contacts) {
       return;
     }
     let uid = this.auth.auth.currentUser!.uid;
