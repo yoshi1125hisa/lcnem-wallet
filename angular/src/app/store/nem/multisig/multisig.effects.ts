@@ -4,15 +4,21 @@ import { mergeMap, map, catchError } from 'rxjs/operators';
 import { AccountHttp } from 'nem-library';
 import { nodes } from '../../../../app/models/nodes';
 import { of } from 'rxjs';
+import {
+  MultisigActionTypes,
+  LoadMultisigsSuccess,
+  LoadMultisigs,
+  LoadMultisigsFailed
+} from './multisig.actions';
 
 
 @Injectable()
 export class MultisigEffects {
 
-  constructor(private actions$: Actions) {}
+  constructor(private actions$: Actions) { }
 
   @Effect() loadMultisig$ = this.actions$.pipe(
-    ofType('LOAD_MULTISIG'),
+    ofType<LoadMultisigs>(MultisigActionTypes.LoadMultisigs),
     mergeMap(
       action => (new AccountHttp(nodes)).getFromAddress(action.payload.address).pipe(
         map(
@@ -20,8 +26,8 @@ export class MultisigEffects {
             cosignatoryOf => cosignatoryOf.publicAccount!.address
           )
         ),
-        map(data => ({ type: 'LOAD_MULTISIG_SUCCESS', payload: data })),
-        catchError(() => of({ type: 'LOAD_BALANCES_FAILED' }))
+        map(data => (new LoadMultisigsSuccess())),
+        catchError(() => of(new LoadMultisigsFailed()))
       )
     )
   );
