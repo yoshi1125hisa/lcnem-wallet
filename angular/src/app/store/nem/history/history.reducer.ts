@@ -6,7 +6,9 @@ export interface State extends EntityState<History> {
   // additional entities state properties
 }
 
-export const adapter: EntityAdapter<History> = createEntityAdapter<History>();
+export const adapter: EntityAdapter<History> = createEntityAdapter<History>({
+  selectId: entity => entity.id
+});
 
 export const initialState: State = adapter.getInitialState({
   // additional entity state properties

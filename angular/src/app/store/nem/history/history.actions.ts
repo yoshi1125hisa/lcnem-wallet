@@ -1,7 +1,6 @@
 import { Action } from '@ngrx/store';
 import { Update } from '@ngrx/entity';
 import { History } from './history.model';
-import { Address } from 'nem-library';
 
 export enum HistoryActionTypes {
   LoadHistorys = '[History] Load Historys',

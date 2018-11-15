@@ -6,7 +6,9 @@ export interface State extends EntityState<Wallet> {
   // additional entities state properties
 }
 
-export const adapter: EntityAdapter<Wallet> = createEntityAdapter<Wallet>();
+export const adapter: EntityAdapter<Wallet> = createEntityAdapter<Wallet>({
+  selectId: entity => entity.id
+});
 
 export const initialState: State = adapter.getInitialState({
   // additional entity state properties
