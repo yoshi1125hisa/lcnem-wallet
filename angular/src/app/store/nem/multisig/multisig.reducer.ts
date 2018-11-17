@@ -6,7 +6,9 @@ export interface State extends EntityState<Multisig> {
   loading: boolean
 }
 
-export const adapter: EntityAdapter<Multisig> = createEntityAdapter<Multisig>();
+export const adapter: EntityAdapter<Multisig> = createEntityAdapter<Multisig>({
+  selectId: entity => entity.id
+});
 
 export const initialState: State = adapter.getInitialState({
   loading: false
