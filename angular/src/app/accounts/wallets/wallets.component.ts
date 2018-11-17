@@ -16,6 +16,7 @@ import { UserService } from '../../services/user.service';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
+import { State } from '../../store/index'
 
 @Component({
   selector: 'app-wallets',
@@ -37,7 +38,7 @@ export class WalletsComponent implements OnInit {
   public clouds = 0;
 
   constructor(
-    private store: Store<WalletReducer.State>,
+    private store: Store<State>,
     private router: Router,
     private auth: AngularFireAuth,
     private dialog: MatDialog,
@@ -45,6 +46,7 @@ export class WalletsComponent implements OnInit {
     private user: UserService,
     private wallet: WalletsService
   ) {
+    this.loading$ = store.select(state => state.wallet.loading);
   }
 
   ngOnInit() {
