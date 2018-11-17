@@ -1,5 +1,4 @@
 import { Action } from '@ngrx/store';
-import { Update } from '@ngrx/entity';
 import { Contact } from './contact.model';
 
 export enum ContactActionTypes {
@@ -9,30 +8,28 @@ export enum ContactActionTypes {
   AddContact = '[Contact] Add Contact',
   AddContactSuccess = '[Contact] Add Contact Success',
   AddContactFailed = '[Contact] Add Contact Failed',
-  UpsertContact = '[Contact] Upsert Contact',
-  AddContacts = '[Contact] Add Contacts',
-  UpsertContacts = '[Contact] Upsert Contacts',
   UpdateContact = '[Contact] Update Contact',
   UpdateContactSuccess = '[Contact] Update Contact Success',
   UpdateContactFailed = '[Contact] Update Contact Failed',
-  UpdateContacts = '[Contact] Update Contacts',
-  DeleteContact = '[Contact] Delete Contact',
-  DeleteContactSuccess = '[Contact] Delete Contact Success',
-  DeleteContactFailed = '[Contact] Delete Contact Failed',
-  DeleteContacts = '[Contact] Delete Contacts',
-  ClearContacts = '[Contact] Clear Contacts',
+  DeleteContacts = '[Contact] Delete Contact',
+  DeleteContactsSuccess = '[Contact] Delete Contact Success',
+  DeleteContactsFailed = '[Contact] Delete Contact Failed',
 }
 
 
 export class LoadContacts implements Action {
   readonly type = ContactActionTypes.LoadContacts;
 
-  constructor(public payload?: { contacts: Contact[] }) { }
+  constructor(public payload?: {
+    contacts: Contact[]
+  }) { }
 }
 
 export class LoadContactsSuccess implements Action {
   readonly type = ContactActionTypes.LoadContactsSuccess;
-  constructor() { }
+  constructor(public payload?: {
+    //あと回し
+  }) { }
 }
 
 export class LoadContactsFailed implements Action {
@@ -43,13 +40,19 @@ export class LoadContactsFailed implements Action {
 export class AddContact implements Action {
   readonly type = ContactActionTypes.AddContact;
 
-  constructor(public payload: { contact: Contact }) { }
+  constructor(public payload: {
+    id: string;
+    contact: Contact
+  }) { }
 }
 
 export class AddContactSuccess implements Action {
   readonly type = ContactActionTypes.AddContactSuccess;
 
-  constructor() { }
+  constructor(public payload: {
+    id: string;
+    changes: Contact;
+  }) { }
 }
 
 export class AddContactFailed implements Action {
@@ -58,30 +61,12 @@ export class AddContactFailed implements Action {
   constructor() { }
 }
 
-export class UpsertContact implements Action {
-  readonly type = ContactActionTypes.UpsertContact;
-
-  constructor(public payload: { contact: Contact }) { }
-}
-
-export class AddContacts implements Action {
-  readonly type = ContactActionTypes.AddContacts;
-
-  constructor(public payload: { contacts: Contact[] }) { }
-}
-
-export class UpsertContacts implements Action {
-  readonly type = ContactActionTypes.UpsertContacts;
-
-  constructor(public payload: { contacts: Contact[] }) { }
-}
-
 export class UpdateContact implements Action {
   readonly type = ContactActionTypes.UpdateContact;
 
   constructor(public payload: {
     id: string,
-    data: Contact
+    changes: Contact
   }) { }
 }
 
@@ -97,48 +82,32 @@ export class UpdateContactFailed implements Action {
   constructor() { }
 }
 
-export class UpdateContacts implements Action {
-  readonly type = ContactActionTypes.UpdateContacts;
-
-  constructor(public payload: { contacts: Update<Contact>[] }) { }
-}
-
-export class DeleteContact implements Action {
-  readonly type = ContactActionTypes.DeleteContact;
+export class DeleteContacts implements Action {
+  readonly type = ContactActionTypes.DeleteContacts;
 
   constructor(public payload: { id: string }) { }
 }
 
-export class DeleteContactSuccess implements Action {
-  readonly type = ContactActionTypes.DeleteContactSuccess;
+export class DeleteContactsSuccess implements Action {
+  readonly type = ContactActionTypes.DeleteContactsSuccess;
 
   constructor() { }
 }
 
-export class DeleteContactFailed implements Action {
-  readonly type = ContactActionTypes.DeleteContactFailed;
+export class DeleteContactsFailed implements Action {
+  readonly type = ContactActionTypes.DeleteContactsFailed;
 
   constructor() { }
-}
-
-export class DeleteContacts implements Action {
-  readonly type = ContactActionTypes.DeleteContacts;
-
-  constructor(public payload: { ids: string[] }) { }
-}
-
-export class ClearContacts implements Action {
-  readonly type = ContactActionTypes.ClearContacts;
 }
 
 export type ContactActions =
   LoadContacts
+  | LoadContactsSuccess
   | AddContact
-  | UpsertContact
-  | AddContacts
-  | UpsertContacts
+  | AddContactSuccess
+  | AddContactFailed
   | UpdateContact
-  | UpdateContacts
-  | DeleteContact
   | DeleteContacts
-  | ClearContacts;
+  | DeleteContactsSuccess
+  | DeleteContactsFailed
+

@@ -27,40 +27,26 @@ export function reducer(
       return adapter.addContact(action.payload.contact, state);
     }
 
-    case ContactActionTypes.UpsertContact: {
-      return adapter.upsertOne(action.payload.contact, state);
-    }
-
-    case ContactActionTypes.AddContacts: {
-      return adapter.addMany(action.payload.contacts, state);
-    }
-
-    case ContactActionTypes.UpsertContacts: {
-      return adapter.upsertMany(action.payload.contacts, state);
+    case ContactActionTypes.AddContactSuccess: {
+      let entities = { ...state.entities };
+      entities[action.payload.id] = action.payload.contact;
+      return {
+        ids: (state.ids as string[]).concat([action.payload.id]),
+        entities: entities
+      };
     }
 
     case ContactActionTypes.UpdateContact: {
-      return adapter.updateOne(action.payload.contact, state);
-    }
-
-    case ContactActionTypes.UpdateContacts: {
-      return adapter.updateMany(action.payload.contacts, state);
-    }
-
-    case ContactActionTypes.DeleteContact: {
-      return adapter.removeOne(action.payload.id, state);
+      return adapter.updateOne(action.payload, state);
     }
 
     case ContactActionTypes.DeleteContacts: {
       return adapter.removeMany(action.payload.ids, state);
     }
 
-    case ContactActionTypes.LoadContacts: {
-      return adapter.addAll(action.payload.contacts, state);
-    }
-
-    case ContactActionTypes.ClearContacts: {
-      return adapter.removeAll(state);
+    case ContactActionTypes.LoadContactsSuccess: {
+      //後回し
+      return adapter.addAll(action.payload, state);
     }
 
     default: {

@@ -6,7 +6,9 @@ export interface State extends EntityState<Balance> {
   // additional entities state properties
 }
 
-export const adapter: EntityAdapter<Balance> = createEntityAdapter<Balance>();
+export const adapter: EntityAdapter<Balance> = createEntityAdapter<Balance>({
+  selectId: entity => entity.id
+});
 
 export const initialState: State = adapter.getInitialState({
   // additional entity state properties

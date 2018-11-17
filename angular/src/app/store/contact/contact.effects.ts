@@ -10,16 +10,15 @@ import {
   AddContactFailed,
   AddContactSuccess,
   LoadContactsFailed,
-  DeleteContactFailed,
   UpdateContactSuccess,
   UpdateContactFailed,
-  DeleteContact,
   LoadContacts,
   UpdateContact,
   LoadContactsSuccess,
-  DeleteContactSuccess
+  DeleteContacts,
+  DeleteContactsFailed,
+  DeleteContactsSuccess
 } from './contact.actions';
-import { Update } from '@ngrx/entity';
 
 
 @Injectable()
@@ -36,7 +35,7 @@ export class ContactEffects {
     ofType<AddContact>(ContactActionTypes.AddContact),
     mergeMap(
       action => from(this.firestore.collection("users").doc(this.auth.auth.currentUser!.uid).collection("contacts").add(action.payload)).pipe(
-        map(data => new AddContactSuccess()),
+        map(data => new AddContactSuccess({ id: data.id, contact: action.payload.contact })),
         catchError(() => of(new AddContactFailed()))
       )
     )
@@ -63,11 +62,11 @@ export class ContactEffects {
   );
 
   @Effect() deleteContact$ = this.actions$.pipe(
-    ofType<DeleteContact>(ContactActionTypes.DeleteContact),
+    ofType<DeleteContacts>(ContactActionTypes.DeleteContacts),
     mergeMap(
       action => from(this.firestore.collection("users").doc(this.auth.auth.currentUser!.uid).collection("contacts").doc(action.payload.id).delete()).pipe(
-        map(data => (new DeleteContactSuccess())),
-        catchError(() => of(new DeleteContactFailed()))
+        map(data => (new DeleteContactsSuccess())),
+        catchError(() => of(new DeleteContactsFailed()))
       )
     )
   );
