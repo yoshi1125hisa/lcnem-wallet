@@ -26,7 +26,7 @@ export class HistoryEffects {
             accountHttp.allTransactions(action.payload.address)
           ).pipe(
             map(data => data[0].concat(data[1])),
-            map(data => (new LoadHistorysSuccess())),
+            map(data => new LoadHistorysSuccess({ transactions: data })),
             catchError(() => of(new LoadHistorysFailed()))
           )
         )

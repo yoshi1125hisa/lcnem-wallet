@@ -18,7 +18,13 @@ export function reducer(
 ): State {
   switch (action.type) {
     case ContactActionTypes.AddContact: {
-      return state
+      return adapter.addContact(action.payload.contact, state);
+    }
+    case ContactActionTypes.AddContactSuccess: {
+      return adapter.addContact(action.payload.contact, state);
+    }
+    case ContactActionTypes.AddContactFailed: {
+      return adapter.addContact(action.payload.contact, state);
     }
 
     case ContactActionTypes.AddContactSuccess: {
@@ -26,7 +32,8 @@ export function reducer(
       entities[action.payload.id] = action.payload.contact;
       return {
         ids: (state.ids as string[]).concat([action.payload.id]),
-        entities: entities
+        entities: entities,
+        loading: state.loading
       };
     }
 
