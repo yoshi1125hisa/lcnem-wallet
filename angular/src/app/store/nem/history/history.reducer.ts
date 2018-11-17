@@ -3,13 +3,13 @@ import { History } from './history.model';
 import { HistoryActions, HistoryActionTypes } from './history.actions';
 
 export interface State extends EntityState<History> {
-  // additional entities state properties
+  loading: boolean
 }
 
 export const adapter: EntityAdapter<History> = createEntityAdapter<History>();
 
 export const initialState: State = adapter.getInitialState({
-  // additional entity state properties
+  loading: false
 });
 
 export function reducer(

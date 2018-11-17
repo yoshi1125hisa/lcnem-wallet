@@ -3,13 +3,13 @@ import { Contact } from './contact.model';
 import { ContactActions, ContactActionTypes } from './contact.actions';
 
 export interface State extends EntityState<Contact> {
-  // additional entities state properties
+  loading: boolean
 }
 
 export const adapter: EntityAdapter<Contact> = createEntityAdapter<Contact>();
 
 export const initialState: State = adapter.getInitialState({
-  // additional entity state properties
+  loading: false
 });
 
 export function reducer(

@@ -3,13 +3,13 @@ import { Multisig } from './multisig.model';
 import { MultisigActions, MultisigActionTypes } from './multisig.actions';
 
 export interface State extends EntityState<Multisig> {
-  // additional entities state properties
+  loading: boolean
 }
 
 export const adapter: EntityAdapter<Multisig> = createEntityAdapter<Multisig>();
 
 export const initialState: State = adapter.getInitialState({
-  // additional entity state properties
+  loading: false
 });
 
 export function reducer(

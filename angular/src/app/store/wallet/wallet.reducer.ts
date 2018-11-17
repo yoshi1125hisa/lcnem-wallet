@@ -3,13 +3,13 @@ import { Wallet } from './wallet.model';
 import { WalletActions, WalletActionTypes } from './wallet.actions';
 
 export interface State extends EntityState<Wallet> {
-  // additional entities state properties
+  loading: boolean
 }
 
 export const adapter: EntityAdapter<Wallet> = createEntityAdapter<Wallet>();
 
 export const initialState: State = adapter.getInitialState({
-  // additional entity state properties
+  loading: false
 });
 
 export function reducer(

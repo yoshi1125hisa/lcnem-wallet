@@ -3,13 +3,13 @@ import { Balance } from './balance.model';
 import { BalanceActions, BalanceActionTypes } from './balance.actions';
 
 export interface State extends EntityState<Balance> {
-  // additional entities state properties
+  loading: boolean
 }
 
 export const adapter: EntityAdapter<Balance> = createEntityAdapter<Balance>();
 
 export const initialState: State = adapter.getInitialState({
-  // additional entity state properties
+  loading: false
 });
 
 export function reducer(
