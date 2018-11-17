@@ -3,7 +3,7 @@ import { Contact } from './contact.model';
 import { ContactActions, ContactActionTypes } from './contact.actions';
 
 export interface State extends EntityState<Contact> {
-  // additional entities state properties
+  // additional entity state properties
 }
 
 export const adapter: EntityAdapter<Contact> = createEntityAdapter<Contact>();
@@ -18,7 +18,13 @@ export function reducer(
 ): State {
   switch (action.type) {
     case ContactActionTypes.AddContact: {
-      return adapter.addOne(action.payload.contact, state);
+      return adapter.addContact(action.payload.contact, state);
+    }
+    case ContactActionTypes.AddContactSuccess: {
+      return adapter.addContact(action.payload.contact, state);
+    }
+    case ContactActionTypes.AddContactFailed: {
+      return adapter.addContact(action.payload.contact, state);
     }
 
     case ContactActionTypes.UpsertContact: {
