@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { mergeMap, catchError, map } from 'rxjs/operators';
 import { from, of } from 'rxjs';
 import {
   AddWallet,
   WalletActionTypes,
-  LoadWalletsFailed
-  , LoadWalletsSuccess,
+  LoadWalletsFailed,
+  LoadWalletsSuccess,
   UpdateWalletFailed,
   UpdateWalletSuccess,
   UpdateWallet,
@@ -19,6 +18,8 @@ import {
   AddWalletFailed,
   AddWalletSuccess
 } from './wallet.actions';
+import { Dictionary } from '@ngrx/entity';
+import { Wallet } from './wallet.model';
 
 
 @Injectable()
@@ -26,27 +27,43 @@ export class WalletEffects {
 
   constructor(
     private actions$: Actions,
-    private auth: AngularFireAuth,
     private firestore: AngularFirestore
   ) {
   }
 
-  @Effect() addWallet$ = this.actions$.pipe(
-    ofType<AddWallet>(WalletActionTypes.AddWallet),
+  @Effect() loadWallets$ = this.actions$.pipe(
+    ofType<LoadWallets>(WalletActionTypes.LoadWallets),
     mergeMap(action =>
-      from(this.firestore.collection("users").doc(this.auth.auth.currentUser!.uid).collection("wallets").add(action.payload)).pipe(
-        map(data => new AddWalletSuccess()),
-        catchError(() => of(new AddWalletFailed()))
+      this.firestore.collection("users").doc(action.payload.userId).collection("wallets").get().pipe(
+        map(
+          data => {
+            const wallets: Dictionary<Wallet> = {};
+            for (let doc of data.docs) {
+              wallets[doc.id] = doc.data() as Wallet;
+            }
+            return wallets;
+          }
+        ),
+        map(data => new LoadWalletsSuccess({ wallets: data })),
+        catchError(e => of(new LoadWalletsFailed(e)))
       )
     )
   );
 
-  @Effect() loadWallets$ = this.actions$.pipe(
-    ofType<LoadWallets>(WalletActionTypes.LoadWallets),
+  @Effect() addWallet$ = this.actions$.pipe(
+    ofType<AddWallet>(WalletActionTypes.AddWallet),
     mergeMap(action =>
-      from(this.firestore.collection("users").doc(this.auth.auth.currentUser!.uid).collection("wallets").add(action.payload)).pipe(
-        map(data => new LoadWalletsSuccess()),
-        catchError(() => of(new LoadWalletsFailed()))
+      from(
+        this.firestore.collection("users").doc(action.payload.userId).collection("wallets").add(action.payload.wallet)
+      ).pipe(
+        map(
+          data => new AddWalletSuccess(
+            {
+              id: data.id,
+              wallet: action.payload.wallet
+            }
+          )),
+        catchError(e => of(new AddWalletFailed(e)))
       )
     )
   );
@@ -54,9 +71,16 @@ export class WalletEffects {
   @Effect() updateWallet$ = this.actions$.pipe(
     ofType<UpdateWallet>(WalletActionTypes.UpdateWallet),
     mergeMap(action =>
-      from(this.firestore.collection("users").doc(this.auth.auth.currentUser!.uid).collection("wallets").add(action.payload)).pipe(
-        map(data => new UpdateWalletSuccess()),
-        catchError(() => of(new UpdateWalletFailed()))
+      from(
+        this.firestore.collection("users").doc(action.payload.userId).collection("wallets").doc(action.payload.id).set(action.payload.wallet)
+      ).pipe(
+        map(data => new UpdateWalletSuccess(
+          {
+            id: action.payload.id,
+            wallet: action.payload.wallet
+          }
+        )),
+        catchError(e => of(new UpdateWalletFailed(e)))
       )
     )
   );
@@ -64,9 +88,11 @@ export class WalletEffects {
   @Effect() deleteWallet$ = this.actions$.pipe(
     ofType<DeleteWallet>(WalletActionTypes.DeleteWallet),
     mergeMap(action =>
-      from(this.firestore.collection("users").doc(this.auth.auth.currentUser!.uid).collection("wallets").add(action.payload)).pipe(
-        map(data => new DeleteWalletSuccess()),
-        catchError(() => of(new DeleteWalletFailed()))
+      from(
+        this.firestore.collection("users").doc(action.payload.userId).collection("wallets").doc(action.payload.id).delete()
+      ).pipe(
+        map(data => new DeleteWalletSuccess({ id: action.payload.id })),
+        catchError(e => of(new DeleteWalletFailed(e)))
       )
     )
   );

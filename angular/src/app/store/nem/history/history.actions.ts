@@ -1,5 +1,4 @@
 import { Action } from '@ngrx/store';
-import { Update } from '@ngrx/entity';
 import { Address, Transaction } from 'nem-library';
 
 export enum HistoryActionTypes {
@@ -11,23 +10,31 @@ export enum HistoryActionTypes {
 export class LoadHistorys implements Action {
   readonly type = HistoryActionTypes.LoadHistorys;
 
-  constructor(public payload: {
-    address: Address;
-  }) { }
+  constructor(
+    public payload: {
+      address: Address;
+    }
+  ) { }
 }
 
 export class LoadHistorysSuccess implements Action {
   readonly type = HistoryActionTypes.LoadHistorysSuccess;
 
-  constructor(public payload: {
-    transactions: Transaction[];
-  }) { }
+  constructor(
+    public payload: {
+      transactions: Transaction[];
+    }
+  ) { }
 }
 
 export class LoadHistorysFailed implements Action {
   readonly type = HistoryActionTypes.LoadHistorysFailed;
 
-  constructor() { }
+  constructor(
+    public payload: {
+      error: Error;
+    }
+  ) { }
 }
 
 export type HistoryActions =

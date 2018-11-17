@@ -3,7 +3,8 @@ import { Contact } from './contact.model';
 import { ContactActions, ContactActionTypes } from './contact.actions';
 
 export interface State extends EntityState<Contact> {
-  loading: boolean
+  loading: boolean;
+  error?: Error;
 }
 
 export const adapter: EntityAdapter<Contact> = createEntityAdapter<Contact>();
@@ -17,37 +18,93 @@ export function reducer(
   action: ContactActions
 ): State {
   switch (action.type) {
-    case ContactActionTypes.AddContact: {
-      return adapter.addContact(action.payload.contact, state);
-    }
-    case ContactActionTypes.AddContactSuccess: {
-      return adapter.addContact(action.payload.contact, state);
-    }
-    case ContactActionTypes.AddContactFailed: {
-      return adapter.addContact(action.payload.contact, state);
-    }
-
-    case ContactActionTypes.AddContactSuccess: {
-      let entities = { ...state.entities };
-      entities[action.payload.id] = action.payload.contact;
+    case ContactActionTypes.LoadContacts: {
       return {
-        ids: (state.ids as string[]).concat([action.payload.id]),
-        entities: entities,
-        loading: state.loading
-      };
-    }
-
-    case ContactActionTypes.UpdateContact: {
-      return adapter.updateOne(action.payload, state);
-    }
-
-    case ContactActionTypes.DeleteContacts: {
-      return adapter.removeMany(action.payload.ids, state);
+        ...state,
+        loading: true
+      }
     }
 
     case ContactActionTypes.LoadContactsSuccess: {
-      //後回し
-      return adapter.addAll(action.payload, state);
+      return {
+        ...state,
+        loading: false
+      }
+    }
+
+    case ContactActionTypes.LoadContactsFailed: {
+      return {
+        ...state,
+        loading: false
+      }
+    }
+
+    case ContactActionTypes.AddContact: {
+      return {
+        ...state,
+        loading: true
+      }
+    }
+
+    case ContactActionTypes.AddContactSuccess: {
+      const entities = { ...state.entities };
+      entities[action.payload.id] = action.payload.contact;
+      return {
+        ...state,
+        ids: (state.ids as string[]).concat([action.payload.id]),
+        entities: entities
+      };
+    }
+
+    case ContactActionTypes.AddContactFailed: {
+      return {
+        ...state,
+        loading: false
+      }
+    }
+
+    case ContactActionTypes.UpdateContact: {
+      return {
+        ...state,
+        loading: true
+      }
+    }
+
+    case ContactActionTypes.UpdateContactSuccess: {
+      return {
+        ...adapter.updateOne({ id: action.payload.id, changes: action.payload.contact }, state),
+        loading: false
+      }
+    }
+
+    case ContactActionTypes.UpdateContactFailed: {
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.error
+      }
+    }
+
+    case ContactActionTypes.DeleteContacts: {
+      return {
+        ...state,
+        loading: true
+      }
+    }
+
+    case ContactActionTypes.DeleteContactsSuccess: {
+      return {
+        ...adapter.removeMany(action.payload.ids, state),
+        loading: false,
+      }
+    }
+
+    case ContactActionTypes.DeleteContactsFailed: {
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.error
+      }
     }
 
     default: {

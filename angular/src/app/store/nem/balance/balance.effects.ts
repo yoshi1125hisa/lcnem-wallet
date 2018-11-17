@@ -21,8 +21,8 @@ export class BalanceEffects {
     ofType<LoadBalances>(BalanceActionTypes.LoadBalances),
     mergeMap(
       action => (new AccountHttp(nodes)).getAssetsOwnedByAddress(action.payload.address).pipe(
-        map(data => new LoadBalancesSuccess()),
-        catchError(() => of(new LoadBalancesFailed()))
+        map(data => new LoadBalancesSuccess({ assets: data })),
+        catchError(e => of(new LoadBalancesFailed(e)))
       )
     )
   );

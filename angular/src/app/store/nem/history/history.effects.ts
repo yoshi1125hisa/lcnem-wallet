@@ -27,7 +27,7 @@ export class HistoryEffects {
           ).pipe(
             map(data => data[0].concat(data[1])),
             map(data => new LoadHistorysSuccess({ transactions: data })),
-            catchError(() => of(new LoadHistorysFailed()))
+            catchError(e => of(new LoadHistorysFailed(e)))
           )
         )
       )

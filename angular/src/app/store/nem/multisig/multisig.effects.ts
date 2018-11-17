@@ -26,8 +26,8 @@ export class MultisigEffects {
             cosignatoryOf => cosignatoryOf.publicAccount!.address
           )
         ),
-        map(data => (new LoadMultisigsSuccess())),
-        catchError(() => of(new LoadMultisigsFailed()))
+        map(data => new LoadMultisigsSuccess({ multisigs: data })),
+        catchError(e => of(new LoadMultisigsFailed(e)))
       )
     )
   );

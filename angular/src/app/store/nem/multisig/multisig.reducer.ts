@@ -1,62 +1,43 @@
-import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-import { Multisig } from './multisig.model';
 import { MultisigActions, MultisigActionTypes } from './multisig.actions';
+import { Address } from 'nem-library';
 
-export interface State extends EntityState<Multisig> {
-  loading: boolean
+export interface State {
+  multisigs: Address[]
+  loading: boolean;
+  error?: Error
 }
 
-export const adapter: EntityAdapter<Multisig> = createEntityAdapter<Multisig>({
-  selectId: entity => entity.id
-});
-
-export const initialState: State = adapter.getInitialState({
+export const initialState: State = {
+  multisigs: [],
   loading: false
-});
+};
 
 export function reducer(
   state = initialState,
   action: MultisigActions
 ): State {
   switch (action.type) {
-    case MultisigActionTypes.AddMultisig: {
-      return adapter.addOne(action.payload.multisig, state);
-    }
-
-    case MultisigActionTypes.UpsertMultisig: {
-      return adapter.upsertOne(action.payload.multisig, state);
-    }
-
-    case MultisigActionTypes.AddMultisigs: {
-      return adapter.addMany(action.payload.multisigs, state);
-    }
-
-    case MultisigActionTypes.UpsertMultisigs: {
-      return adapter.upsertMany(action.payload.multisigs, state);
-    }
-
-    case MultisigActionTypes.UpdateMultisig: {
-      return adapter.updateOne(action.payload.multisig, state);
-    }
-
-    case MultisigActionTypes.UpdateMultisigs: {
-      return adapter.updateMany(action.payload.multisigs, state);
-    }
-
-    case MultisigActionTypes.DeleteMultisig: {
-      return adapter.removeOne(action.payload.id, state);
-    }
-
-    case MultisigActionTypes.DeleteMultisigs: {
-      return adapter.removeMany(action.payload.ids, state);
-    }
 
     case MultisigActionTypes.LoadMultisigs: {
-      return adapter.addAll(action.payload.multisigs, state);
+      return {
+        ...state,
+        loading: true
+      }
     }
 
-    case MultisigActionTypes.ClearMultisigs: {
-      return adapter.removeAll(state);
+    case MultisigActionTypes.LoadMultisigsSuccess: {
+      return {
+        multisigs: action.payload.multisigs,
+        loading: false
+      }
+    }
+
+    case MultisigActionTypes.LoadMultisigsFailed: {
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.error
+      }
     }
 
     default: {
@@ -64,10 +45,3 @@ export function reducer(
     }
   }
 }
-
-export const {
-  selectIds,
-  selectEntities,
-  selectAll,
-  selectTotal,
-} = adapter.getSelectors();

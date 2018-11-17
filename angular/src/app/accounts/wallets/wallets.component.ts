@@ -14,6 +14,8 @@ import { Plan } from '../../../../../firebase/functions/src/models/plan';
 import { lang, setLang } from '../../models/lang';
 import { UserService } from '../../services/user.service';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-wallets',
@@ -21,6 +23,9 @@ import { LoadingDialogComponent } from '../../components/loading-dialog/loading-
   styleUrls: ['./wallets.component.css']
 })
 export class WalletsComponent implements OnInit {
+  public loading$: Observable<boolean>;
+
+  //以下レガシー
   public loading = true;
   get lang() { return lang; }
   set lang(value) { setLang(value); }
@@ -32,6 +37,7 @@ export class WalletsComponent implements OnInit {
   public clouds = 0;
 
   constructor(
+    private store: Store<WalletReducer.State>,
     private router: Router,
     private auth: AngularFireAuth,
     private dialog: MatDialog,

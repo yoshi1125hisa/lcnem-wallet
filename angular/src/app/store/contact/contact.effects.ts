@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { map, mergeMap, catchError } from 'rxjs/operators';
-import { of, from } from 'rxjs';
+import { of, from, forkJoin } from 'rxjs';
 import {
   ContactActionTypes,
   AddContact,
@@ -19,6 +18,8 @@ import {
   DeleteContactsFailed,
   DeleteContactsSuccess
 } from './contact.actions';
+import { Dictionary } from '@ngrx/entity';
+import { Contact } from './contact.model';
 
 
 @Injectable()
@@ -26,27 +27,44 @@ export class ContactEffects {
 
   constructor(
     private actions$: Actions,
-    private auth: AngularFireAuth,
     private firestore: AngularFirestore
   ) {
   }
 
-  @Effect() addContact$ = this.actions$.pipe(
-    ofType<AddContact>(ContactActionTypes.AddContact),
+  @Effect() loadContacts$ = this.actions$.pipe(
+    ofType<LoadContacts>(ContactActionTypes.LoadContacts),
     mergeMap(
-      action => from(this.firestore.collection("users").doc(this.auth.auth.currentUser!.uid).collection("contacts").add(action.payload)).pipe(
-        map(data => new AddContactSuccess({ id: data.id, contact: action.payload.contact })),
-        catchError(() => of(new AddContactFailed()))
+      action => this.firestore.collection("users").doc(action.payload.userId).collection("contacts").get().pipe(
+        map(
+          data => {
+            const contacts: Dictionary<Contact> = {};
+            for (let doc of data.docs) {
+              contacts[doc.id] = doc.data() as Contact;
+            }
+            return contacts;
+          }
+        ),
+        map(data => new LoadContactsSuccess({ contacts: data })),
+        catchError(e => of(new LoadContactsFailed(e)))
       )
     )
   );
 
-  @Effect() loadContacts$ = this.actions$.pipe(
-    ofType<LoadContacts>(ContactActionTypes.LoadContacts),
+  @Effect() addContact$ = this.actions$.pipe(
+    ofType<AddContact>(ContactActionTypes.AddContact),
     mergeMap(
-      action => this.firestore.collection("users").doc(this.auth.auth.currentUser!.uid).collection("contacts").get().pipe(
-        map(data => new LoadContactsSuccess()),
-        catchError(() => of(new LoadContactsFailed()))
+      action => from(
+        this.firestore.collection("users").doc(action.payload.userId).collection("contacts").add(action.payload.contact)
+      ).pipe(
+        map(
+          data => new AddContactSuccess(
+            {
+              id: data.id,
+              contact: action.payload.contact
+            }
+          )
+        ),
+        catchError(e => of(new AddContactFailed(e)))
       )
     )
   );
@@ -54,19 +72,32 @@ export class ContactEffects {
   @Effect() updateContact$ = this.actions$.pipe(
     ofType<UpdateContact>(ContactActionTypes.UpdateContact),
     mergeMap(
-      action => from(this.firestore.collection("users").doc(this.auth.auth.currentUser!.uid).collection("contacts").doc(action.payload.id).set(action.payload)).pipe(
-        map(data => (new UpdateContactSuccess())),
-        catchError(() => of(new UpdateContactFailed()))
+      action => from(
+        this.firestore.collection("users").doc(action.payload.userId).collection("contacts").doc(action.payload.id).set(action.payload.contact)
+      ).pipe(
+        map(
+          data => new UpdateContactSuccess(
+            {
+              id: action.payload.id,
+              contact: action.payload.contact
+            }
+          )
+        ),
+        catchError(e => of(new UpdateContactFailed(e)))
       )
     )
   );
 
-  @Effect() deleteContact$ = this.actions$.pipe(
+  @Effect() deleteContacts$ = this.actions$.pipe(
     ofType<DeleteContacts>(ContactActionTypes.DeleteContacts),
     mergeMap(
-      action => from(this.firestore.collection("users").doc(this.auth.auth.currentUser!.uid).collection("contacts").doc(action.payload.id).delete()).pipe(
-        map(data => (new DeleteContactsSuccess())),
-        catchError(() => of(new DeleteContactsFailed()))
+      action => forkJoin(
+        action.payload.ids.map(
+          id => this.firestore.collection("users").doc(action.payload.userId).collection("contacts").doc(id).delete()
+        )
+      ).pipe(
+        map(() => new DeleteContactsSuccess({ ids: action.payload.ids })),
+        catchError(e => of(new DeleteContactsFailed(e)))
       )
     )
   );
