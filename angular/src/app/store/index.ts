@@ -3,7 +3,8 @@ import {
   ActionReducerMap,
   createFeatureSelector,
   createSelector,
-  MetaReducer
+  MetaReducer,
+  Action
 } from '@ngrx/store';
 import { environment } from '../../environments/environment';
 
@@ -15,7 +16,7 @@ export interface State {
   wallet: WalletReducer.State
 }
 
-export const reducers: ActionReducerMap<State> = {
+export const reducers: ActionReducerMap<State, any> = {
   contact: ContactReducer.reducer,
   wallet: WalletReducer.reducer
 };
