@@ -1,8 +1,10 @@
 import { Action } from '@ngrx/store';
-import { Update } from '@ngrx/entity';
+import { SignedTransaction, NemAnnounceResult } from 'nem-library';
 
 export enum TransactionActionTypes {
-  SendTransferTransaction = '[Transaction] Send Transfer Transaction'
+  SendTransferTransaction = '[Transaction] Send Transfer Transaction',
+  SendTransferTransactionSuccess = '[Transaction] Send Transfer Transaction Success',
+  SendTransferTransactionFailed = '[Transaction] Send Transfer Transaction Failed'
 }
 
 export class LoadTransactions implements Action {
@@ -10,10 +12,30 @@ export class LoadTransactions implements Action {
 
   constructor(
     public payload: {
-
+      signedTransaction: SignedTransaction
     }
   ) { }
 }
 
+export class LoadTransactionsSuccess implements Action {
+  readonly type = TransactionActionTypes.SendTransferTransactionSuccess;
+
+  constructor(
+    public payload: {
+      transaction: NemAnnounceResult
+    }
+  ) { }
+}
+
+export class LoadTransactionsFailed implements Action {
+  readonly type = TransactionActionTypes.SendTransferTransactionFailed;
+
+  constructor(
+    error: Error
+  ) { }
+}
+
 export type TransactionActions =
-  LoadTransactions;
+  LoadTransactions
+  | LoadTransactionsSuccess
+  | LoadTransactionsFailed

@@ -1,11 +1,14 @@
 import { TransactionActions, TransactionActionTypes } from './transaction.actions';
+import { NemAnnounceResult } from 'nem-library';
 
 export interface State {
-  // additional entities state properties
+  transaction?: NemAnnounceResult
+  error?: Error;
+  loading: boolean;
 }
 
 export const initialState: State = {
-  // additional entity state properties
+  loading: false
 };
 
 export function reducer(
@@ -15,7 +18,21 @@ export function reducer(
   switch (action.type) {
     case TransactionActionTypes.SendTransferTransaction: {
       return {
-        ...state
+        ...state,
+        loading: true
+      }
+    }
+    case TransactionActionTypes.SendTransferTransactionSuccess: {
+      return {
+        ...state,
+        transaction: action.payload.transaction,
+        loading: false
+      }
+    }
+    case TransactionActionTypes.SendTransferTransactionFailed: {
+      return {
+        ...state,
+        loading: false
       }
     }
 
