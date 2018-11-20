@@ -21,7 +21,7 @@ export class LoadWallets implements Action {
   readonly type = WalletActionTypes.LoadWallets;
 
   constructor(
-    public payload: { 
+    public payload: {
       userId: string;
     }
   ) { }
@@ -41,9 +41,7 @@ export class LoadWalletsFailed implements Action {
   readonly type = WalletActionTypes.LoadWalletsFailed;
 
   constructor(
-    public payload: {
-      error: Error;
-    }
+    error: Error
   ) { }
 }
 
@@ -74,9 +72,7 @@ export class AddWalletFailed implements Action {
   readonly type = WalletActionTypes.AddWalletFailed;
 
   constructor(
-    public payload: {
-      error: Error;
-    }
+    error: Error
   ) { }
 }
 
@@ -107,9 +103,7 @@ export class UpdateWalletFailed implements Action {
   readonly type = WalletActionTypes.UpdateWalletFailed;
 
   constructor(
-    public payload: {
-      error: Error;
-    }
+    error: Error
   ) { }
 }
 
@@ -138,9 +132,7 @@ export class DeleteWalletFailed implements Action {
   readonly type = WalletActionTypes.DeleteWalletFailed;
 
   constructor(
-    public payload: {
-      error: Error;
-    }
+    error: Error
   ) { }
 }
 

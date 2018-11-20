@@ -34,11 +34,10 @@ export function reducer(
     case HistoryActionTypes.LoadHistorysFailed: {
       return {
         ...state,
-        loading: false,
-        error: action.payload.error
+        loading: false
       }
     }
-    
+
     default: {
       return state;
     }

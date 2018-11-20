@@ -34,8 +34,7 @@ export function reducer(
     case BalanceActionTypes.LoadBalancesFailed: {
       return {
         ...state,
-        loading: false,
-        error: action.payload.error
+        loading: false
       }
     }
 

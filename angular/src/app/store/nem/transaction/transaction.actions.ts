@@ -12,8 +12,8 @@ export class LoadTransactions implements Action {
     public payload: {
 
     }
-  ) {}
+  ) { }
 }
 
 export type TransactionActions =
- LoadTransactions;
+  LoadTransactions;

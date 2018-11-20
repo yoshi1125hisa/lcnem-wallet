@@ -63,8 +63,8 @@ export class WalletsComponent implements OnInit {
     this.walletIds = Object.keys(this.wallet.wallets!);
     this.walletIds = this.walletIds.filter(id => id != "multisig");
     this.clouds = 0;
-    for(let id of this.walletIds) {
-      if(!this.wallets[id].local) {
+    for (let id of this.walletIds) {
+      if (!this.wallets[id].local) {
         this.clouds++;
       }
     }
@@ -92,7 +92,7 @@ export class WalletsComponent implements OnInit {
 
     let firestoreObject: Wallet = {
       name: result.name,
-      local: result.local == 1 ? true: false,
+      local: result.local == 1 ? true : false,
       nem: wallet.address.plain(),
       wallet: wallet.writeWLTFile()
     };
@@ -118,7 +118,7 @@ export class WalletsComponent implements OnInit {
       }
     }).afterClosed().toPromise();
 
-    if(!pk) {
+    if (!pk) {
       return;
     }
 
@@ -136,7 +136,7 @@ export class WalletsComponent implements OnInit {
       }
     }).afterClosed().toPromise();
 
-    if(!name) {
+    if (!name) {
       return;
     }
 
@@ -174,7 +174,7 @@ export class WalletsComponent implements OnInit {
   }
 
   public async openSnackBar(type: string) {
-    if(type == "import") {
+    if (type == "import") {
       this.snackBar.open(this.translation.localNotFound[this.lang], undefined, { duration: 3000 });
     } else if (type == "plan") {
       this.snackBar.open(this.translation.unavailablePlan[this.lang], undefined, { duration: 3000 });

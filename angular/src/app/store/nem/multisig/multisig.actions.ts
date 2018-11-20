@@ -31,9 +31,7 @@ export class LoadMultisigsFailed implements Action {
   readonly type = MultisigActionTypes.LoadMultisigsFailed;
 
   constructor(
-    public payload: {
-      error: Error;
-    }
+    error: Error
   ) { }
 }
 

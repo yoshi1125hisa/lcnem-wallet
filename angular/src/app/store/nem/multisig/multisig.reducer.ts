@@ -35,8 +35,7 @@ export function reducer(
     case MultisigActionTypes.LoadMultisigsFailed: {
       return {
         ...state,
-        loading: false,
-        error: action.payload.error
+        loading: false
       }
     }
 
