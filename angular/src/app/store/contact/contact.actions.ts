@@ -39,9 +39,7 @@ export class LoadContactsSuccess implements Action {
 export class LoadContactsFailed implements Action {
   readonly type = ContactActionTypes.LoadContactsFailed;
   constructor(
-    payload: {
-      error: Error;
-    }
+    public error: Error
   ) { }
 }
 
@@ -71,9 +69,7 @@ export class AddContactFailed implements Action {
   readonly type = ContactActionTypes.AddContactFailed;
 
   constructor(
-    public payload: {
-      error: Error;
-    }
+    error: Error
   ) { }
 }
 
@@ -104,9 +100,7 @@ export class UpdateContactFailed implements Action {
   readonly type = ContactActionTypes.UpdateContactFailed;
 
   constructor(
-    public payload: {
-      error: Error;
-    }
+    error: Error
   ) { }
 }
 
@@ -135,9 +129,7 @@ export class DeleteContactsFailed implements Action {
   readonly type = ContactActionTypes.DeleteContactsFailed;
 
   constructor(
-    public payload: {
-      error: Error;
-    }
+    error: Error
   ) { }
 }
 

@@ -80,8 +80,7 @@ export function reducer(
     case ContactActionTypes.UpdateContactFailed: {
       return {
         ...state,
-        loading: false,
-        error: action.payload.error
+        loading: false
       }
     }
 
@@ -102,8 +101,7 @@ export function reducer(
     case ContactActionTypes.DeleteContactsFailed: {
       return {
         ...state,
-        loading: false,
-        error: action.payload.error
+        loading: false
       }
     }
 

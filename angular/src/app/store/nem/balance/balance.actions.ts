@@ -31,9 +31,7 @@ export class LoadBalancesFailed implements Action {
   readonly type = BalanceActionTypes.LoadBalancesFailed;
 
   constructor(
-    public payload: {
-      error: Error;
-    }
+    error: Error
   ) { }
 }
 

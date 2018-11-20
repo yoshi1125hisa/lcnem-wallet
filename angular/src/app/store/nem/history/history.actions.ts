@@ -31,9 +31,7 @@ export class LoadHistorysFailed implements Action {
   readonly type = HistoryActionTypes.LoadHistorysFailed;
 
   constructor(
-    public payload: {
-      error: Error;
-    }
+    error: Error
   ) { }
 }
 
