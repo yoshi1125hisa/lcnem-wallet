@@ -17,7 +17,7 @@ export class TransactionEffects {
     ofType<LoadTransactions>(TransactionActionTypes.SendTransferTransaction),
     mergeMap(
       action => (new TransactionHttp(nodes)).announceTransaction(action.payload.signedTransaction).pipe(
-        map(data => new LoadTransactionsSuccess({ transaction: data })),
+        map(data => new LoadTransactionsSuccess({ result: data })),
         catchError(e => of(new LoadBalancesFailed(e)))
       )
     )

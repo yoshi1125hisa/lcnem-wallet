@@ -22,7 +22,7 @@ export class LoadTransactionsSuccess implements Action {
 
   constructor(
     public payload: {
-      transaction: NemAnnounceResult
+      result: NemAnnounceResult
     }
   ) { }
 }
