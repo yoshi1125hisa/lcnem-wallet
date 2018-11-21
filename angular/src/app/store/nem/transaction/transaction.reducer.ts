@@ -25,7 +25,7 @@ export function reducer(
     case TransactionActionTypes.SendTransferTransactionSuccess: {
       return {
         ...state,
-        transaction: action.payload.transaction,
+        transaction: action.payload.result,
         loading: false
       }
     }
