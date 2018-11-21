@@ -1,7 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { UserActionTypes, LoginGoogle, LoginGoogleFailed, LoginGoogleSuccess, LoadUser, LoadUserFailed, LoadUserSuccess } from './user.actions';
+import {
+  UserActionTypes,
+  LoginGoogle,
+  LoginGoogleFailed,
+  LoginGoogleSuccess,
+  LoadUser,
+  LoadUserFailed,
+  LoadUserSuccess
+} from './user.actions';
 import { mergeMap, map, catchError, first } from 'rxjs/operators';
 import { from, of } from 'rxjs';
 

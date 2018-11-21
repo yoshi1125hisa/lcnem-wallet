@@ -1,5 +1,4 @@
 import { Action } from '@ngrx/store';
-import { User } from '../../../../../firebase/functions/src/models/user';
 
 export enum UserActionTypes {
   LoginGoogle = '[User] Login Google',
