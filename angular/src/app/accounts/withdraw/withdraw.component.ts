@@ -11,6 +11,9 @@ import { lang } from '../../models/lang';
 import { WalletsService } from '../../../app/services/wallets.service';
 import { back } from '../../models/back';
 import { UserService } from '../../services/user.service';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { State } from '../../store/index'
 
 @Component({
   selector: 'app-withdraw',
@@ -18,6 +21,7 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./withdraw.component.css']
 })
 export class WithdrawComponent implements OnInit {
+  public loading$: Observable<boolean>;
   get lang() { return lang; }
   public supportedCurrencies = ["JPY"];
   public selectedCurrency = "JPY";
@@ -28,6 +32,7 @@ export class WithdrawComponent implements OnInit {
   public safeSite: SafeResourceUrl;
 
   constructor(
+    private store: Store<State>,
     private router: Router,
     private dialog: MatDialog,
     private http: HttpClient,
@@ -36,6 +41,7 @@ export class WithdrawComponent implements OnInit {
     private wallet: WalletsService,
     sanitizer: DomSanitizer
   ) {
+    this.loading$ = store.select(state => state.wallet.loading)
     this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${this.lang}.txt`);
   }
 
@@ -78,7 +84,7 @@ export class WithdrawComponent implements OnInit {
         content: this.translation.following[this.lang]
       }
     }).afterClosed().toPromise();
-    
+
     this.router.navigate([""]);
   }
 

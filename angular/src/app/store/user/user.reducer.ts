@@ -1,11 +1,11 @@
 import { UserActions, UserActionTypes } from './user.actions';
 
 export interface State {
-  // additional entities state properties
+  loading: boolean
 }
 
 export const initialState: State = {
-  // additional entity state properties
+  loading: false
 };
 
 export function reducer(
@@ -15,19 +15,43 @@ export function reducer(
   switch (action.type) {
     case UserActionTypes.LoginGoogle: {
       return {
-        ...state
+        ...state,
+        loading: true
       }
     }
 
     case UserActionTypes.LoginGoogleSuccess: {
       return {
-        ...state
+        ...state,
+        loading: false
       }
     }
 
     case UserActionTypes.LoginGoogleFailed: {
       return {
-        ...state
+        ...state,
+        loading: false
+      }
+    }
+
+    case UserActionTypes.LoadUser: {
+      return {
+        ...state,
+        loading: true
+      }
+    }
+
+    case UserActionTypes.LoadUserSuccess: {
+      return {
+        ...state,
+        loading: false
+      }
+    }
+
+    case UserActionTypes.LoadUserFailed: {
+      return {
+        ...state,
+        loading: false
       }
     }
 

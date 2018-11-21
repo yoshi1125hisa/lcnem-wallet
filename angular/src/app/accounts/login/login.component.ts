@@ -5,6 +5,9 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { back } from '../../models/back';
 import { lang, setLang } from '../../models/lang';
 import { UserService } from '../../services/user.service';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { State } from '../../store/index'
 
 @Component({
   selector: 'app-login',
@@ -12,16 +15,19 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  public loading$: Observable<boolean>;
   get lang() { return lang; }
   set lang(value: string) { setLang(value); }
   public agree = false;
   public safeSite: SafeResourceUrl;
 
   constructor(
+    public store: Store<State>,
     public router: Router,
     private user: UserService,
     sanitizer: DomSanitizer
   ) {
+    this.loading$ = store.select(state => state.user.loading)
     this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/terms/${this.lang}.txt`);
   }
 
