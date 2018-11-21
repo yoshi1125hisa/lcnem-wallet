@@ -7,7 +7,7 @@ export enum TransactionActionTypes {
   SendTransferTransactionFailed = '[Transaction] Send Transfer Transaction Failed'
 }
 
-export class LoadTransactions implements Action {
+export class SendTransferTransaction implements Action {
   readonly type = TransactionActionTypes.SendTransferTransaction;
 
   constructor(
@@ -17,7 +17,7 @@ export class LoadTransactions implements Action {
   ) { }
 }
 
-export class LoadTransactionsSuccess implements Action {
+export class SendTransferTransactionsSuccess implements Action {
   readonly type = TransactionActionTypes.SendTransferTransactionSuccess;
 
   constructor(
@@ -27,7 +27,7 @@ export class LoadTransactionsSuccess implements Action {
   ) { }
 }
 
-export class LoadTransactionsFailed implements Action {
+export class SendTransferTransactionsFailed implements Action {
   readonly type = TransactionActionTypes.SendTransferTransactionFailed;
 
   constructor(
@@ -36,6 +36,6 @@ export class LoadTransactionsFailed implements Action {
 }
 
 export type TransactionActions =
-  LoadTransactions
-  | LoadTransactionsSuccess
-  | LoadTransactionsFailed
+  SendTransferTransaction
+  | SendTransferTransactionsSuccess
+  | SendTransferTransactionsFailed
