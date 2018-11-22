@@ -1,11 +1,13 @@
 import { UserActions, UserActionTypes } from './user.actions';
+import { User } from '../../../../../firebase/functions/src/models/user';
 
 export interface State {
-  // additional entities state properties
+  user?: User
+  loading: boolean
 }
 
 export const initialState: State = {
-  // additional entity state properties
+  loading: false
 };
 
 export function reducer(
@@ -15,19 +17,44 @@ export function reducer(
   switch (action.type) {
     case UserActionTypes.LoginGoogle: {
       return {
-        ...state
+        ...state,
+        loading: true
       }
     }
 
     case UserActionTypes.LoginGoogleSuccess: {
       return {
-        ...state
+        ...state,
+        loading: false
       }
     }
 
     case UserActionTypes.LoginGoogleFailed: {
       return {
-        ...state
+        ...state,
+        loading: false
+      }
+    }
+
+    case UserActionTypes.LoadUser: {
+      return {
+        ...state,
+        loading: true
+      }
+    }
+
+    case UserActionTypes.LoadUserSuccess: {
+      return {
+        ...state,
+        user: action.payload.user,
+        loading: false
+      }
+    }
+
+    case UserActionTypes.LoadUserFailed: {
+      return {
+        ...state,
+        loading: false
       }
     }
 

@@ -10,6 +10,9 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
 import { SelectionModel } from '@angular/cdk/collections';
 import { ContactDialogComponent } from './contact-dialog/contact-dialog.component';
 import { ContactEditDialogComponent } from './contact-edit-dialog/contact-edit-dialog.component';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { State } from '../../store/index'
 
 @Component({
   selector: 'app-contacts',
@@ -17,6 +20,7 @@ import { ContactEditDialogComponent } from './contact-edit-dialog/contact-edit-d
   styleUrls: ['./contacts.component.css']
 })
 export class ContactsComponent implements OnInit {
+  public loading$: Observable<boolean>;
   public loading = true;
   get lang() { return lang; }
 
@@ -33,11 +37,14 @@ export class ContactsComponent implements OnInit {
   }>(true, []);
 
   constructor(
+    private store: Store<State>,
     private router: Router,
     private user: UserService,
     private contact: ContactsService,
     private dialog: MatDialog
-  ) { }
+  ) {
+    this.loading$ = store.select(state => state.contact.loading)
+  }
 
   ngOnInit() {
     this.user.checkLogin().then(async () => {
@@ -113,7 +120,7 @@ export class ContactsComponent implements OnInit {
     if (!result) {
       return;
     }
-    
+
     await Promise.all(this.selection.selected.map(async selected => {
       await this.contact.deleteContact(selected.id);
     }));
