@@ -1,6 +1,8 @@
 import { UserActions, UserActionTypes } from './user.actions';
+import { User } from '../../../../../firebase/functions/src/models/user';
 
 export interface State {
+  user?: User
   loading: boolean
 }
 
@@ -44,6 +46,7 @@ export function reducer(
     case UserActionTypes.LoadUserSuccess: {
       return {
         ...state,
+        user: action.payload.user,
         loading: false
       }
     }

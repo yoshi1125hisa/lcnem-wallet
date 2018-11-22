@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { AngularFireAuth } from '@angular/fire/auth';
 import {
   UserActionTypes,
   LoginGoogle,
@@ -15,13 +14,16 @@ import { from, of } from 'rxjs';
 
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireAuth } from '@angular/fire/auth';
 
 @Injectable()
 export class UserEffects {
 
   constructor(
-    private actions$: Actions,
-    private auth: AngularFireAuth
+    private auth: AngularFireAuth,
+    private firestore: AngularFirestore,
+    private actions$: Actions
   ) { }
 
   @Effect() loginGoogle$ = this.actions$.pipe(
@@ -37,8 +39,8 @@ export class UserEffects {
   @Effect() loadUser$ = this.actions$.pipe(
     ofType<LoadUser>(UserActionTypes.LoadUser),
     mergeMap(
-      action => from(this.auth.authState.pipe(first())).pipe(
-        map(credential => new LoadUserSuccess({ credential: credential })),
+      action => from(this.firestore.collection("users").doc(action.payload.userId).ref.get()).pipe(
+        map(data => new LoadUserSuccess({ user: data.ref.get })),
         catchError(e => of(new LoadUserFailed(e)))
       )
     )

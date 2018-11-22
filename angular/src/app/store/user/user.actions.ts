@@ -1,4 +1,5 @@
 import { Action } from '@ngrx/store';
+import { User } from '../../../../../firebase/functions/src/models/user';
 
 export enum UserActionTypes {
   LoginGoogle = '[User] Login Google',
@@ -39,7 +40,9 @@ export class LoadUser implements Action {
   readonly type = UserActionTypes.LoadUser;
 
   constructor(
-    public payload: {}
+    public payload: {
+      userId: string;
+    }
   ) { }
 }
 
@@ -47,7 +50,9 @@ export class LoadUserSuccess implements Action {
   readonly type = UserActionTypes.LoadUserSuccess;
 
   constructor(
-    public payload: {}
+    public payload: {
+      user: User;
+    }
   ) { }
 }
 
