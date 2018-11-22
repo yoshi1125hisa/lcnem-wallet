@@ -12,15 +12,19 @@ export class LoadLocalWallet implements Action {
 
 export class LoadLocalWalletSuccess implements Action {
   readonly type = LocalWalletActionTypes.LoadLocalWalletSuccess;
+
+  constructor(
+    public payload: {
+      localWallets: JSON;
+    }
+  ) { }
 }
 
 export class LoadLocalWalletFailed implements Action {
   readonly type = LocalWalletActionTypes.LoadLocalWalletFailed;
 
   constructor(
-    public payload: {
-      error: Error;
-    }
+    error: Error
   ) { }
 }
 
