@@ -8,7 +8,7 @@ import {
 } from './transaction.actions';
 import { mergeMap, catchError, map } from 'rxjs/operators';
 import { TransactionHttp } from 'nem-library';
-import { nodes } from 'src/app/models/nodes';
+import { nodes } from '../../../models/nodes';
 import { of } from 'rxjs';
 
 
