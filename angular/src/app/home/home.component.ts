@@ -5,6 +5,7 @@ import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { Store } from '@ngrx/store';
 import { State } from '../store/index'
 import { Invoice } from '../models/invoice';
+import { CheckLogin } from '../store/user/user.actions';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
@@ -28,6 +29,10 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
+    if(!this.auth.auth.currentUser) {
+      return;
+    }
+    this.store.dispatch(new CheckLogin());
     this.user.checkLogin().then(async () => {
       await this.wallet.checkWallets();
       await this.refresh();

@@ -18,9 +18,6 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { Store } from '@ngrx/store';
-import { State } from '..';
-import { Navigate } from '../router/router.actions';
 
 @Injectable()
 export class UserEffects {
@@ -28,27 +25,8 @@ export class UserEffects {
   constructor(
     private auth: AngularFireAuth,
     private firestore: AngularFirestore,
-    private store: Store<State>,
     private actions$: Actions
   ) { }
-
-  @Effect() checkLogin$ = this.actions$.pipe(
-    ofType<CheckLogin>(UserActionTypes.CheckLogin),
-    mergeMap(
-      action => this.auth.authState.pipe(
-        map(authState => authState ? null : new Navigate({ commands: ["accounts", "login"] }))
-      )
-    )
-  );
-
-  @Effect() checkWallets$ = this.actions$.pipe(
-    ofType<CheckWallets>(UserActionTypes.CheckWallets),
-    mergeMap(
-      action => this.store.select(state => state.user.currentWallet).pipe(
-        map(currentWallet => currentWallet ? null : new Navigate({ commands: ["accounts", "wallets"] }))
-      )
-    )
-  );
 
   @Effect() loginGoogle$ = this.actions$.pipe(
     ofType<LoginGoogle>(UserActionTypes.LoginGoogle),
