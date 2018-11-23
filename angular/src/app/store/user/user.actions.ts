@@ -2,12 +2,22 @@ import { Action } from '@ngrx/store';
 import { User } from '../../../../../firebase/functions/src/models/user';
 
 export enum UserActionTypes {
+  CheckLogin = '[User] Check Login',
+  CheckWallets = '[User] Check Wallets',
   LoginGoogle = '[User] Login Google',
   LoginGoogleSuccess = '[User] Login Google Success',
   LoginGoogleFailed = '[User] Login Google Failed',
   LoadUser = '[User] Load',
   LoadUserSuccess = '[User] Load Success',
   LoadUserFailed = '[User] Load Failed'
+}
+
+export class CheckLogin implements Action {
+  readonly type = UserActionTypes.CheckLogin;
+}
+
+export class CheckWallets implements Action {
+  readonly type = UserActionTypes.CheckWallets;
 }
 
 export class LoginGoogle implements Action {

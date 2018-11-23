@@ -1,14 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Invoice } from '../models/invoice';
 import { MatDialog } from '@angular/material';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
-import { Share } from '../models/share';
-import { lang, setLang } from '../models/lang';
-import { WalletsService } from '../services/wallets.service';
-import { BalanceService } from '../services/balance.service';
-import { UserService } from '../services/user.service';
+import { Store } from '@ngrx/store';
+import { State } from '../store/index'
+import { Invoice } from '../models/invoice';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
@@ -18,23 +14,17 @@ NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  public loading = true;
-  get lang() { return lang; }
-  set lang(value: string) { setLang(value); }
   public address = "";
   public qrUrl = "";
   public assets: Asset[] = [];
   public photoUrl = "";
 
   constructor(
-    private router: Router,
+    private store: Store<State>,
     private dialog: MatDialog,
-    private auth: AngularFireAuth,
-    private user: UserService,
-    private wallet: WalletsService,
-    private balance: BalanceService
+    private auth: AngularFireAuth
   ) {
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    
   }
 
   ngOnInit() {
