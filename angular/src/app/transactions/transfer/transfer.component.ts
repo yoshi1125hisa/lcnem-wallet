@@ -24,11 +24,9 @@ import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog
 import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.component';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Invoice } from '../../models/invoice';
-import { lang } from '../../models/lang';
 import { WalletsService } from '../../../app/services/wallets.service';
 import { BalanceService } from '../../../app/services/balance.service';
 import { nodes } from '../../models/nodes';
-import { back } from '../../models/back';
 import { UserService } from '../../services/user.service';
 import { ContactsService } from '../../services/contacts.service';
 
@@ -53,10 +51,6 @@ export class TransferComponent implements OnInit {
       amount?: number
     }[]
   };
-
-  public suggests: string[] = [];
-
-  public navigatorShare = (navigator as any).share;
 
   constructor(
     public dialog: MatDialog,
