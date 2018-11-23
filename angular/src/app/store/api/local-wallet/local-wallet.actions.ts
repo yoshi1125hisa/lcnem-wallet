@@ -21,7 +21,7 @@ export class LoadLocalWalletsSuccess implements Action {
 
   constructor(
     public payload: {
-      localWallets: JSON;
+      localWallets: {}
     }
   ) { }
 }
