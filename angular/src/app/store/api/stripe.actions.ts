@@ -32,7 +32,7 @@ export class StripeChargeFailed implements Action {
   readonly type = StripeActionTypes.StripeChargeFailed;
 
   constructor(
-    error: Error;
+    error: Error
   ) { }
 }
 
