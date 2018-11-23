@@ -8,8 +8,7 @@ import {
   LoadUser,
   LoadUserFailed,
   LoadUserSuccess,
-  CheckWallets,
-  CheckLogin
+  Logout
 } from './user.actions';
 import { mergeMap, map, catchError, first } from 'rxjs/operators';
 import { from, of } from 'rxjs';
@@ -34,6 +33,15 @@ export class UserEffects {
       action => from(this.auth.auth.signInWithPopup(new firebase.auth!.GoogleAuthProvider)).pipe(
         map(credential => new LoginGoogleSuccess({ credential: credential })),
         catchError(e => of(new LoginGoogleFailed(e)))
+      )
+    )
+  );
+
+  @Effect({ dispatch: false }) logout$ = this.actions$.pipe(
+    ofType<Logout>(UserActionTypes.Logout),
+    map(
+      action => from(this.auth.auth.signOut()).pipe(
+        map(() => location.reload())
       )
     )
   );

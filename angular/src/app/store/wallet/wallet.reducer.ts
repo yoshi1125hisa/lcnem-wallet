@@ -5,6 +5,7 @@ import { WalletActions, WalletActionTypes } from './wallet.actions';
 export interface State extends EntityState<Wallet> {
   loading: boolean;
   error?: Error;
+  currentWallet?: string;
 }
 
 export const adapter: EntityAdapter<Wallet> = createEntityAdapter<Wallet>();

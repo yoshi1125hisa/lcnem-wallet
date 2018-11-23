@@ -4,10 +4,6 @@ import { User } from '../../../../../firebase/functions/src/models/user';
 export interface State {
   user?: User;
   loading: boolean;
-  currentWallet?: {
-    nem: string;
-    wallet?: string;
-  }
 }
 
 export const initialState: State = {

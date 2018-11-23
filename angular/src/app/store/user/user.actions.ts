@@ -5,6 +5,7 @@ export enum UserActionTypes {
   LoginGoogle = '[User] Login Google',
   LoginGoogleSuccess = '[User] Login Google Success',
   LoginGoogleFailed = '[User] Login Google Failed',
+  Logout = '[User] Logout',
   LoadUser = '[User] Load',
   LoadUserSuccess = '[User] Load Success',
   LoadUserFailed = '[User] Load Failed'
@@ -34,6 +35,10 @@ export class LoginGoogleFailed implements Action {
       error: Error;
     }
   ) { }
+}
+
+export class Logout implements Action {
+  readonly type = UserActionTypes.Logout;
 }
 
 export class LoadUser implements Action {

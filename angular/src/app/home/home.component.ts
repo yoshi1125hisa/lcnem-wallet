@@ -5,7 +5,12 @@ import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { Store } from '@ngrx/store';
 import { State } from '../store/index'
 import { Invoice } from '../models/invoice';
-import { CheckLogin } from '../store/user/user.actions';
+import { Logout } from '../store/user/user.actions';
+import { LoadBalances } from '../store/nem/balance/balance.actions';
+import { LoadWallets } from '../store/wallet/wallet.actions';
+import { Observable, of } from 'rxjs';
+import { map, mergeMap, first } from 'rxjs/operators';
+import { Wallet } from '../store/wallet/wallet.model';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
@@ -15,48 +20,54 @@ NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  public address = "";
-  public qrUrl = "";
-  public assets: Asset[] = [];
-  public photoUrl = "";
+  public language = "";
+  public photoUrl$: Observable<string>;
+  public currentWallet$: Observable<Wallet>;
+  public qrUrl$: Observable<string>;
+  public assets$: Observable<Asset[]>;
 
   constructor(
     private store: Store<State>,
     private dialog: MatDialog,
     private auth: AngularFireAuth
   ) {
-    
+    this.store.select(state => state.language).subscribe(
+      language => {
+        this.language = language.twoLetter;
+      }
+    )
+
+    this.photoUrl$ = this.auth.authState.pipe(
+      first(),
+      map(authState => authState && authState.photoURL ? authState.photoURL : "")
+    )
+
+    this.currentWallet$ = this.store.select(state => state.wallet.currentWallet).pipe(
+      mergeMap(id => id ? this.store.select(state => state.wallet.entities[id]) : of())
+    );
+
+    this.qrUrl$ = this.currentWallet$.pipe(
+      map(currentWallet => {
+        let invoice = new Invoice();
+        invoice.data.addr = currentWallet.nem;
+        return "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
+      })
+    )
+
+    this.assets$ = this.store.select(state => state.nem.balance.assets);
   }
 
   ngOnInit() {
-    if(!this.auth.auth.currentUser) {
-      return;
-    }
-    this.store.dispatch(new CheckLogin());
-    this.user.checkLogin().then(async () => {
-      await this.wallet.checkWallets();
-      await this.refresh();
-    });
+    this.load();
   }
 
   public async logout() {
-    await this.user.logout();
+    this.store.dispatch(new Logout());
   }
 
-  public refresh = async (force?: boolean) => {
-    this.loading = true;
-
-    await this.balance.readAssets(force);
-
-    this.address = this.wallet.wallets![this.wallet.currentWallet!].nem;
-    this.photoUrl = this.auth.auth.currentUser!.photoURL!;
-    this.assets = this.balance.assets!;
-
-    let invoice = new Invoice();
-    invoice.data.addr = this.address;
-    this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
-
-    this.loading = false;
+  public load(refresh?: boolean) {
+    this.store.dispatch(new LoadWallets());
+    this.store.dispatch(new LoadBalances());
   }
 
   copyMessage(val: string) {
