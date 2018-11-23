@@ -1,0 +1,8 @@
+<mat-toolbar>
+  <span class="fill-remaining-space"></span>
+  <button mat-icon-button color="accent" (click)="refresh(true)">
+    <mat-icon>refresh</mat-icon>
+  </button>
+</mat-toolbar>
+<mat-spinner *ngIf="loading"></mat-spinner>
+<app-assets-list [assets]="assets" *ngIf="!loading"></app-assets-list>
