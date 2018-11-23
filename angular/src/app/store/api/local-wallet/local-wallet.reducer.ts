@@ -63,26 +63,6 @@ export function reducer(
         loading: false
       }
     }
-    case LocalWalletActionTypes.UpdateLocalWallet: {
-      return {
-        ...state,
-        loading: true
-      }
-    }
-
-    case LocalWalletActionTypes.UpdateLocalWalletSuccess: {
-      return {
-        ...state,
-        loading: false
-      }
-    }
-
-    case LocalWalletActionTypes.UpdateLocalWalletFailed: {
-      return {
-        ...state,
-        loading: false
-      }
-    }
 
     case LocalWalletActionTypes.DeleteLocalWallet: {
       return {

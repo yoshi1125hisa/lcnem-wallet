@@ -7,9 +7,6 @@ export enum LocalWalletActionTypes {
   AddLcalWallet = '[LocalWallet] Add LocalWallet',
   AddLocalWalletSuccess = '[LocalWallet] Add LocalWallet Success',
   AddLocalWalletFailed = '[LocalWallet] Add LocalWallet Failed',
-  UpdateLocalWallet = '[LocalWallet] Update LocalWallet',
-  UpdateLocalWalletSuccess = '[LocalWallet] Update LocalWallet Success',
-  UpdateLocalWalletFailed = '[LocalWallet] Update LocalWallet Failed',
   DeleteLocalWallet = '[LocalWallet] Delete LocalWallet',
   DeleteLocalWalletSuccess = '[LocalWallet] Delete LocalWallet Success',
   DeleteLocalWalletFailed = '[LocalWallet] Delete LocalWallet Failed',
@@ -45,7 +42,11 @@ export class AddLocalWallet implements Action {
   readonly type = LocalWalletActionTypes.AddLcalWallet;
 
   constructor(
-    public payload: {}
+    public payload: {
+      localWallets: {
+        [id: string]: string
+      }
+    }
   ) { }
 }
 
@@ -65,35 +66,15 @@ export class AddLocalWalletFailed implements Action {
   ) { }
 }
 
-export class UpdateLocalWallet implements Action {
-  readonly type = LocalWalletActionTypes.UpdateLocalWallet;
-
-  constructor(
-    public payload: {}
-  ) { }
-}
-
-export class UpdateLocalWalletSuccess implements Action {
-  readonly type = LocalWalletActionTypes.UpdateLocalWalletSuccess;
-
-  constructor(
-    public payload: {}
-  ) { }
-}
-
-export class UpdateLocalWalletFailed implements Action {
-  readonly type = LocalWalletActionTypes.UpdateLocalWalletFailed;
-
-  constructor(
-    error: Error
-  ) { }
-}
-
 export class DeleteLocalWallet implements Action {
   readonly type = LocalWalletActionTypes.DeleteLocalWallet;
 
   constructor(
-    public payload: {}
+    public payload: {
+      localWallets: {
+        [id: string]: string
+      }
+    }
   ) { }
 }
 
@@ -120,9 +101,6 @@ export type LocalWalletActions =
   | AddLocalWallet
   | AddLocalWalletSuccess
   | AddLocalWalletFailed
-  | UpdateLocalWallet
-  | UpdateLocalWalletSuccess
-  | UpdateLocalWalletFailed
   | DeleteLocalWallet
   | DeleteLocalWalletSuccess
   | DeleteLocalWalletFailed

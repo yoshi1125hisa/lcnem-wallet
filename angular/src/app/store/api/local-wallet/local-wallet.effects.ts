@@ -3,11 +3,17 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import {
   LoadLocalWallets,
   LocalWalletActionTypes,
-  LoadLocalWalletsSuccess
+  LoadLocalWalletsSuccess,
+  AddLocalWallet,
+  AddLocalWalletSuccess,
+  DeleteLocalWallet,
+  DeleteLocalWalletSuccess,
+  DeleteLocalWalletFailed
 } from './local-wallet.actions';
-import { mergeMap, catchError, map } from 'rxjs/operators';
+import { mergeMap, catchError, map, merge } from 'rxjs/operators';
 import { LoadBalancesFailed } from '../../nem/balance/balance.actions';
-import { of } from 'rxjs';
+import { of, from } from 'rxjs';
+import { AddContactFailed } from '../../contact/contact.actions';
 
 
 @Injectable()
@@ -23,6 +29,26 @@ export class LocalWalletEffects {
       action => (JSON.parse(action.payload.localStorage.getItem("wallets")!)).pipe(
         map(data => new LoadLocalWalletsSuccess({})),
         catchError(e => of(new LoadBalancesFailed(e)))
+      )
+    )
+  )
+
+  @Effect() addLocalWallet$ = this.actions$.pipe(
+    ofType<AddLocalWallet>(LocalWalletActionTypes.AddLcalWallet),
+    mergeMap(
+      action => of(localStorage.setItem("wallets", JSON.stringify(action.payload.localWallets))).pipe(
+        map(data => new AddLocalWalletSuccess({})),
+        catchError(e => of(new AddContactFailed(e)))
+      )
+    )
+  )
+
+  @Effect() deleteLocalWallet$ = this.actions$.pipe(
+    ofType<DeleteLocalWallet>(LocalWalletActionTypes.DeleteLocalWallet),
+    mergeMap(
+      action => of(localStorage.setItem("wallets", JSON.stringify(action.payload.localWallets))).pipe(
+        map(data => new DeleteLocalWalletSuccess({})),
+        catchError(e => of(new DeleteLocalWalletFailed(e)))
       )
     )
   )
