@@ -20,9 +20,7 @@ export class LoadLocalWalletsSuccess implements Action {
   readonly type = LocalWalletActionTypes.LoadLocalWalletsSuccess;
 
   constructor(
-    public payload: {
-      localWallets: {}
-    }
+    public payload: {}
   ) { }
 }
 
