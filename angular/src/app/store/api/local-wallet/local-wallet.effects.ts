@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { LoadLocalWallets, LocalWalletActionTypes, LoadLocalWalletsSuccess } from './local-wallet.actions';
+import {
+  LoadLocalWallets,
+  LocalWalletActionTypes,
+  LoadLocalWalletsSuccess
+} from './local-wallet.actions';
 import { mergeMap, catchError, map } from 'rxjs/operators';
 import { LoadBalancesFailed } from '../../nem/balance/balance.actions';
 import { of } from 'rxjs';
@@ -17,9 +21,8 @@ export class LocalWalletEffects {
     ofType<LoadLocalWallets>(LocalWalletActionTypes.LoadLocalWallets),
     mergeMap(
       action => (JSON.parse(action.payload.localStorage.getItem("walltes")!)).pipe(
-        map(data => new LoadLocalWalletsSuccess({ localWallets: data }),
-          catchError(e => of(new LoadBalancesFailed(e)))
-        )
+        map(data => new LoadLocalWalletsSuccess({ localWallets: data })),
+        catchError(e => of(new LoadBalancesFailed(e)))
       )
     )
   )
