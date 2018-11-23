@@ -4,7 +4,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import {
   Address,
   PlainMessage,
-  EncryptedMessage,
   Message,
   TransferTransaction,
   Asset,
@@ -15,20 +14,23 @@ import {
   Password,
   AssetLevyType,
   SimpleWallet,
-  NamespaceHttp,
   AccountHttp,
   TransactionHttp
 } from 'nem-library';
+import { Observable, of } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { State } from '../../store/index'
+import { LanguageService } from '../../services/language.service';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.component';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { Wallet } from '../../store/wallet/wallet.model';
+import { LoadWallets } from '../../store/wallet/wallet.actions';
+import { Back } from '../../store/router/router.actions';
+import { LoadBalances } from '../../store/nem/balance/balance.actions';
 import { Invoice } from '../../models/invoice';
-import { WalletsService } from '../../../app/services/wallets.service';
-import { BalanceService } from '../../../app/services/balance.service';
 import { nodes } from '../../models/nodes';
-import { UserService } from '../../services/user.service';
-import { ContactsService } from '../../services/contacts.service';
 
 @Component({
   selector: 'app-transfer',
@@ -36,49 +38,42 @@ import { ContactsService } from '../../services/contacts.service';
   styleUrls: ['./transfer.component.css']
 })
 export class TransferComponent implements OnInit {
-  public loading = true;
-  get lang() { return lang; }
-  public address!: Address;
-  public assets: Asset[] = [];
-  public assetIds: string[] = [];
+  public get lang() { return this.language.twoLetter; }
+
+  public currentWallet$: Observable<Wallet>;
+  public assets$: Observable<Asset[]>;
 
   public forms = {
     recipient: "",
     message: "",
     encrypt: false,
     transferAssets: [{}] as {
-      index?: number,
+      id?: string,
       amount?: number
     }[]
   };
 
   constructor(
-    public dialog: MatDialog,
+    private store: Store<State>,
+    private language: LanguageService,
+    private dialog: MatDialog,
     private router: Router,
-    private route: ActivatedRoute,
-    private auth: AngularFireAuth,
-    private user: UserService,
-    private wallet: WalletsService,
-    private balance: BalanceService,
-    private contact: ContactsService
+    private route: ActivatedRoute
   ) {
+    this.currentWallet$ = this.store.select(state => state.wallet.currentWallet).pipe(
+      mergeMap(id => id ? this.store.select(state => state.wallet.entities[id]) : of())
+    );
+
+    this.assets$ = this.store.select(state => state.nem.balance.assets);
   }
 
   ngOnInit() {
-    this.user.checkLogin().then(async () => {
-      await this.wallet.checkWallets();
-      await this.refresh();
-    });
+    this.load();
   }
 
-  public async refresh() {
-    this.loading = true;
-
-    await Promise.all([this.balance.readAssets(), this.contact.readContacts()]);
-
-    this.address = new Address(this.wallet.wallets![this.wallet.currentWallet!].nem);
-    this.assets = this.balance.assets!;
-    this.assetIds = this.balance.assets!.map(a => a.assetId.namespaceId + ":" + a.assetId.name);
+  public load() {
+    this.store.dispatch(new LoadWallets())
+    this.store.dispatch(new LoadBalances());
 
     let invoice = this.route.snapshot.queryParamMap.get('invoice') || "";
     let invoiceData = Invoice.parse(decodeURI(invoice));
@@ -89,43 +84,27 @@ export class TransferComponent implements OnInit {
 
       if (invoiceData.data.assets) {
         for (let asset of invoiceData.data.assets) {
-          this.setAsset(asset.id, asset.amount);
+          this.addTransferAsset(asset.id, asset.amount);
         }
       }
     }
-
-    this.loading = false;
   }
 
   public back() {
-    back(() => this.router.navigate([""]));
+    this.store.dispatch(new Back({ commands: [""] }));
   }
 
-  public async setAsset(id: string, amountAbsolute: number) {
-    let asset = this.assetIds.find(a => a == id);
-    if (!asset || !this.assetIsNotReady(id)) {
-      return
-    }
-    let index = this.forms.transferAssets.length - 1;
-    this.forms.transferAssets[index].index = this.assetIds.findIndex(a => a == id);
-    this.forms.transferAssets[index].amount = amountAbsolute / Math.pow(10, (await this.balance.readDefinition(id)).properties.divisibility);
-  }
-
-  public assetIsNotReady(id: string) {
-    for (let asset of this.forms.transferAssets) {
-      if (!asset.index) {
-        continue;
+  public addTransferAsset(id?: string, amount?: number) {
+    this.forms.transferAssets.push(
+      {
+        id: id,
+        amount: amount
       }
-      if (this.assetIds[asset.index!] == id) {
-        return false;
-      }
-    }
-    return true;
+    );
   }
 
-  public pushAsset = () => this.forms.transferAssets.push({});
-  public removeAsset = (index: number) => {
-    if(this.forms.transferAssets.length == 1) {
+  public deleteTransferAsset(index: number) {
+    if (this.forms.transferAssets.length == 1) {
       this.forms.transferAssets[0] = {};
       return;
     }

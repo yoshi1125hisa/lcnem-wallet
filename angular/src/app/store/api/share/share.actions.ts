@@ -1,11 +1,32 @@
 import { Action } from '@ngrx/store';
 
 export enum ShareActionTypes {
-  LoadShares = '[Share] Load Shares'
+  WebShareApi = '[Share] Web Share Api',
+  CopyToClipboard = '[Share] Copy to Clipboard'
 }
 
-export class LoadShares implements Action {
-  readonly type = ShareActionTypes.LoadShares;
+export class WebShareApi implements Action {
+  readonly type = ShareActionTypes.WebShareApi;
+
+  constructor(
+    public payload: {
+      title?: string;
+      text?: string;
+      url: string;
+    }
+  ) {}
 }
 
-export type ShareActions = LoadShares;
+export class CopyToClipboard implements Action {
+  readonly type = ShareActionTypes.CopyToClipboard;
+
+  constructor(
+    public payload: {
+      text: string;
+    }
+  ) {}
+}
+
+export type ShareActions =
+  WebShareApi
+  | CopyToClipboard;
