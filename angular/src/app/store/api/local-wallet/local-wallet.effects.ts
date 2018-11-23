@@ -21,7 +21,7 @@ export class LocalWalletEffects {
     ofType<LoadLocalWallets>(LocalWalletActionTypes.LoadLocalWallets),
     mergeMap(
       action => (JSON.parse(action.payload.localStorage.getItem("wallets")!)).pipe(
-        map(data => new LoadLocalWalletsSuccess({ localWallets: data })),
+        map(data => new LoadLocalWalletsSuccess({})),
         catchError(e => of(new LoadBalancesFailed(e)))
       )
     )
