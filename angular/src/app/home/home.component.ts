@@ -7,12 +7,11 @@ import { Store } from '@ngrx/store';
 
 import { State } from '../store/index'
 import { Logout } from '../store/user/user.actions';
-import { LoadBalances } from '../store/nem/balance/balance.actions';
 import { LoadWallets } from '../store/wallet/wallet.actions';
 import { Wallet } from '../store/wallet/wallet.model';
 import { LanguageService } from '../services/language.service';
-import { SetLanguage } from '../store/language/language.actions';
 import { Invoice } from '../models/invoice';
+import { SetLanguage } from '../store/language/language.actions';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
@@ -23,7 +22,6 @@ NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 })
 export class HomeComponent implements OnInit {
   public get lang() { return this.language.twoLetter; }
-  public set lang(value) { this.store.dispatch(new SetLanguage({ twoLetter: value })) }
 
   public photoUrl$: Observable<string>;
   public currentWallet$: Observable<Wallet>;
@@ -61,15 +59,17 @@ export class HomeComponent implements OnInit {
 
   public load(refresh?: boolean) {
     this.store.dispatch(new LoadWallets());
-    this.store.dispatch(new LoadBalances());
+  }
+
+  public setLanguage(twoLetter: string) {
+    this.store.dispatch(new SetLanguage({ twoLetter: twoLetter })) 
   }
 
   public logout() {
     this.store.dispatch(new Logout());
   }
 
-  copyMessage(val: string) {
-    Share.copyMessage(val);
+  public copyAddress() {
   }
 
   public translation = {

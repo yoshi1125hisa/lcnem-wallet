@@ -58,10 +58,10 @@
       <span>LCNEM Wallet</span>
       <span class="fill-remaining-space"></span>
       <mat-menu #langMenu="matMenu" [overlapTrigger]="false">
-        <button mat-menu-item (click)="lang = 'en'">
+        <button mat-menu-item (click)="setLanguage('en')">
           English
         </button>
-        <button mat-menu-item (click)="lang = 'ja'">
+        <button mat-menu-item (click)="setLanguage('ja')">
           日本語
         </button>
       </mat-menu>
@@ -78,7 +78,7 @@
       <h3>{{translation.yourAddress[lang]}}</h3>
       <mat-card>
         <p class="address">{{(currentWallet$ | async).nem}}
-          <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyMessage(address)">
+          <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyAddress()">
             <mat-icon>input</mat-icon>
           </button>
         </p>
