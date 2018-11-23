@@ -1,14 +1,21 @@
 import { Action } from '@ngrx/store';
-import { LocalWalletActionTypes, LocalWalletActions } from './local-wallet.actions';
+import {
+  LocalWalletActionTypes,
+  LocalWalletActions
+} from './local-wallet.actions';
 
 
 export interface State {
   loading: boolean;
+  localWallets: {
+    [id: string]: string
+  }
   error?: Error;
 }
 
 export const initialState: State = {
-  loading: false
+  loading: false,
+  localWallets: {}
 };
 
 export function reducer(
