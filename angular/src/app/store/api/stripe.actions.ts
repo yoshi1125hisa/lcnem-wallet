@@ -11,7 +11,11 @@ export class StripeCharge implements Action {
 
   constructor(
     public payload: {
-
+      result: PaymentResponse;
+      callback: (
+        status: any,
+        response: any
+      ) => any
     }
   ) { }
 }
@@ -28,7 +32,7 @@ export class StripeChargeFailed implements Action {
   readonly type = StripeActionTypes.StripeChargeFailed;
 
   constructor(
-    public payload: {}
+    error: Error;
   ) { }
 }
 
