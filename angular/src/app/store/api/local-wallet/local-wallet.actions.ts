@@ -1,17 +1,23 @@
 import { Action } from '@ngrx/store';
 
 export enum LocalWalletActionTypes {
-  LoadLocalWallet = '[LocalWallet] Load LocalWallet',
-  LoadLocalWalletSuccess = '[LocalWallet] Load LocalWallet Success',
-  LoadLocalWalletFailed = '[LocalWallet] Load LocalWallet Failed'
+  LoadLocalWallets = '[LocalWallet] Load LocalWallet',
+  LoadLocalWalletsSuccess = '[LocalWallet] Load LocalWallet Success',
+  LoadLocalWalletsFailed = '[LocalWallet] Load LocalWallet Failed'
 }
 
-export class LoadLocalWallet implements Action {
-  readonly type = LocalWalletActionTypes.LoadLocalWallet;
+export class LoadLocalWallets implements Action {
+  readonly type = LocalWalletActionTypes.LoadLocalWallets;
+
+  constructor(
+    public payload: {
+      localStorage: Storage;
+    }
+  ) { }
 }
 
-export class LoadLocalWalletSuccess implements Action {
-  readonly type = LocalWalletActionTypes.LoadLocalWalletSuccess;
+export class LoadLocalWalletsSuccess implements Action {
+  readonly type = LocalWalletActionTypes.LoadLocalWalletsSuccess;
 
   constructor(
     public payload: {
@@ -20,8 +26,8 @@ export class LoadLocalWalletSuccess implements Action {
   ) { }
 }
 
-export class LoadLocalWalletFailed implements Action {
-  readonly type = LocalWalletActionTypes.LoadLocalWalletFailed;
+export class LoadLocalWalletsFailed implements Action {
+  readonly type = LocalWalletActionTypes.LoadLocalWalletsFailed;
 
   constructor(
     error: Error
@@ -29,6 +35,6 @@ export class LoadLocalWalletFailed implements Action {
 }
 
 export type LocalWalletActions =
-  LoadLocalWallet
-  | LoadLocalWalletSuccess
-  | LoadLocalWalletFailed
+  LoadLocalWallets
+  | LoadLocalWalletsSuccess
+  | LoadLocalWalletsFailed
