@@ -61,7 +61,7 @@ export class AddLocalWalletFailed implements Action {
   readonly type = LocalWalletActionTypes.AddLocalWalletFailed;
 
   constructor(
-    error: Error;
+    error: Error
   ) { }
 }
 
@@ -85,7 +85,7 @@ export class UpdateLocalWalletFailed implements Action {
   readonly type = LocalWalletActionTypes.UpdateLocalWalletFailed;
 
   constructor(
-    error: Error;
+    error: Error
   ) { }
 }
 
@@ -97,7 +97,7 @@ export class DeleteLocalWallet implements Action {
   ) { }
 }
 
-export class DeleteLocalWalleteSuccess implements Action {
+export class DeleteLocalWalletSuccess implements Action {
   readonly type = LocalWalletActionTypes.DeleteLocalWalletSuccess;
 
   constructor(
@@ -109,12 +109,9 @@ export class DeleteLocalWalletFailed implements Action {
   readonly type = LocalWalletActionTypes.DeleteLocalWalletFailed;
 
   constructor(
-    error: Error;
+    error: Error
   ) { }
 }
-
-
-export class AddLocalWallets
 
 export type LocalWalletActions =
   LoadLocalWallets
@@ -127,5 +124,5 @@ export type LocalWalletActions =
   | UpdateLocalWalletSuccess
   | UpdateLocalWalletFailed
   | DeleteLocalWallet
-  | DeleteLocalWalleteSuccess
-  | DeleteLocalWalleteFaild
+  | DeleteLocalWalletSuccess
+  | DeleteLocalWalletFailed
