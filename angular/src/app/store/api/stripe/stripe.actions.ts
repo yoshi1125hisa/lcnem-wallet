@@ -1,11 +1,31 @@
 import { Action } from '@ngrx/store';
 
 export enum StripeActionTypes {
-  LoadStripes = '[Stripe] Load Stripes'
+  StripeCharge = '[Stripe] Charge',
+  StripeChargeComplete = '[Stripe] Charge Complete'
 }
 
-export class LoadStripes implements Action {
-  readonly type = StripeActionTypes.LoadStripes;
+export class StripeCharge implements Action {
+  readonly type = StripeActionTypes.StripeCharge;
+
+  constructor(
+    public payload: {
+      paymentResponse: PaymentResponse;
+    }
+  ) { }
 }
 
-export type StripeActions = LoadStripes;
+export class StripeChargeComplete implements Action {
+  readonly type = StripeActionTypes.StripeChargeComplete;
+
+  constructor(
+    public payload: {
+      status: any;
+      response: any;
+    }
+  ) { }
+}
+
+export type StripeActions =
+  StripeCharge
+  | StripeChargeComplete;
