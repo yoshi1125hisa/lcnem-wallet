@@ -7,7 +7,8 @@ import {
   LoginGoogleSuccess,
   LoadUser,
   LoadUserFailed,
-  LoadUserSuccess
+  LoadUserSuccess,
+  Logout
 } from './user.actions';
 import { mergeMap, map, catchError, first } from 'rxjs/operators';
 import { from, of } from 'rxjs';
@@ -34,7 +35,16 @@ export class UserEffects {
         catchError(e => of(new LoginGoogleFailed(e)))
       )
     )
-  )
+  );
+
+  @Effect({ dispatch: false }) logout$ = this.actions$.pipe(
+    ofType<Logout>(UserActionTypes.Logout),
+    map(
+      action => from(this.auth.auth.signOut()).pipe(
+        map(() => location.reload())
+      )
+    )
+  );
 
   @Effect() loadUser$ = this.actions$.pipe(
     ofType<LoadUser>(UserActionTypes.LoadUser),

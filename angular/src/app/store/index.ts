@@ -8,23 +8,32 @@ import {
 } from '@ngrx/store';
 import { environment } from '../../environments/environment';
 
-import * as ContactReducer from './contact/contact.reducer';
-import * as WalletReducer from './wallet/wallet.reducer';
 import * as UserReducer from './user/user.reducer';
 import * as LocalWalletReducer from './api/local-wallet/local-wallet.reducer';
+import * as WalletReducer from './wallet/wallet.reducer';
+import * as ContactReducer from './contact/contact.reducer';
+import * as NemBalanceReducer from './nem/balance/balance.reducer';
+import * as LanguageReducer from './language/language.reducer';
 
 export interface State {
-  contact: ContactReducer.State,
-  wallet: WalletReducer.State,
   user: UserReducer.State,
-  localWallet: LocalWalletReducer.State
+  wallet: WalletReducer.State,
+  localWallet: LocalWalletReducer.State,
+  contact: ContactReducer.State,
+  nem: {
+    balance: NemBalanceReducer.State
+  },
+  language: LanguageReducer.State
 }
 
 export const reducers: ActionReducerMap<State, any> = {
-  contact: ContactReducer.reducer,
+  user: UserReducer.reducer,
   wallet: WalletReducer.reducer,
   user: UserReducer.reducer,
-  localWallet: LocalWalletReducer.reducer
+  localWallet: LocalWalletReducer.reducer,
+  contact: ContactReducer.reducer,
+  nemBalance: NemBalanceReducer.reducer,
+  language: LanguageReducer.reducer
 };
 
 

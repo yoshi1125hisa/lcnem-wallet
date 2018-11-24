@@ -2,8 +2,8 @@ import { UserActions, UserActionTypes } from './user.actions';
 import { User } from '../../../../../firebase/functions/src/models/user';
 
 export interface State {
-  user?: User
-  loading: boolean
+  user?: User;
+  loading: boolean;
 }
 
 export const initialState: State = {

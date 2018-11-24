@@ -69,6 +69,7 @@ import { MultisigComponent } from './home/multisig/multisig.component';
 import { StoreModule } from '@ngrx/store';
 import { reducers, metaReducers } from './store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { BalanceComponent } from './home/balance/balance.component';
 
 @NgModule({
   declarations: [
@@ -97,7 +98,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     ContactDialogComponent,
     ContactEditDialogComponent,
     NemAddressInputComponent,
-    MultisigComponent
+    MultisigComponent,
+    BalanceComponent
   ],
   imports: [
     BrowserModule,

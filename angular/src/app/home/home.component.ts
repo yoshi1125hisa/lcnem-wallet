@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Invoice } from '../models/invoice';
-import { MatDialog } from '@angular/material';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
-import { Share } from '../models/share';
-import { lang, setLang } from '../models/lang';
-import { WalletsService } from '../services/wallets.service';
-import { BalanceService } from '../services/balance.service';
-import { UserService } from '../services/user.service';
+import { Observable, of } from 'rxjs';
+import { map, mergeMap, first } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+
+import { State } from '../store/index'
+import { Logout } from '../store/user/user.actions';
+import { LoadWallets } from '../store/wallet/wallet.actions';
+import { Wallet } from '../store/wallet/wallet.model';
+import { LanguageService } from '../services/language.service';
+import { Invoice } from '../models/invoice';
+import { SetLanguage } from '../store/language/language.actions';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
@@ -18,54 +21,55 @@ NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  public loading = true;
-  get lang() { return lang; }
-  set lang(value: string) { setLang(value); }
-  public address = "";
-  public qrUrl = "";
-  public assets: Asset[] = [];
-  public photoUrl = "";
+  public get lang() { return this.language.twoLetter; }
+
+  public photoUrl$: Observable<string>;
+  public currentWallet$: Observable<Wallet>;
+  public qrUrl$: Observable<string>;
+  public assets$: Observable<Asset[]>;
 
   constructor(
-    private router: Router,
-    private dialog: MatDialog,
-    private auth: AngularFireAuth,
-    private user: UserService,
-    private wallet: WalletsService,
-    private balance: BalanceService
+    private store: Store<State>,
+    private language: LanguageService,
+    private auth: AngularFireAuth
   ) {
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.photoUrl$ = this.auth.authState.pipe(
+      first(),
+      map(authState => authState && authState.photoURL ? authState.photoURL : "")
+    )
+
+    this.currentWallet$ = this.store.select(state => state.wallet.currentWallet).pipe(
+      mergeMap(id => id ? this.store.select(state => state.wallet.entities[id]) : of())
+    );
+
+    this.qrUrl$ = this.currentWallet$.pipe(
+      map(currentWallet => {
+        let invoice = new Invoice();
+        invoice.data.addr = currentWallet.nem;
+        return "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
+      })
+    )
+
+    this.assets$ = this.store.select(state => state.nem.balance.assets);
   }
 
   ngOnInit() {
-    this.user.checkLogin().then(async () => {
-      await this.wallet.checkWallets();
-      await this.refresh();
-    });
+    this.load();
   }
 
-  public async logout() {
-    await this.user.logout();
+  public load(refresh?: boolean) {
+    this.store.dispatch(new LoadWallets());
   }
 
-  public refresh = async (force?: boolean) => {
-    this.loading = true;
-
-    await this.balance.readAssets(force);
-
-    this.address = this.wallet.wallets![this.wallet.currentWallet!].nem;
-    this.photoUrl = this.auth.auth.currentUser!.photoURL!;
-    this.assets = this.balance.assets!;
-
-    let invoice = new Invoice();
-    invoice.data.addr = this.address;
-    this.qrUrl = "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
-
-    this.loading = false;
+  public setLanguage(twoLetter: string) {
+    this.store.dispatch(new SetLanguage({ twoLetter: twoLetter })) 
   }
 
-  copyMessage(val: string) {
-    Share.copyMessage(val);
+  public logout() {
+    this.store.dispatch(new Logout());
+  }
+
+  public copyAddress() {
   }
 
   public translation = {
