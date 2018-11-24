@@ -15,11 +15,7 @@ export enum LocalWalletActionTypes {
 export class LoadLocalWallets implements Action {
   readonly type = LocalWalletActionTypes.LoadLocalWallets;
 
-  constructor(
-    public payload: {
-      localStorage: Storage;
-    }
-  ) { }
+  constructor() { }
 }
 
 export class LoadLocalWalletsSuccess implements Action {
