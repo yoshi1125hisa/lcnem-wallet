@@ -1,60 +1,41 @@
-import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-import { Balance } from './balance.model';
 import { BalanceActions, BalanceActionTypes } from './balance.actions';
+import { Asset } from 'nem-library';
 
-export interface State extends EntityState<Balance> {
-  // additional entities state properties
+export interface State {
+  assets: Asset[];
+  loading: boolean;
+  error?: Error
 }
 
-export const adapter: EntityAdapter<Balance> = createEntityAdapter<Balance>();
-
-export const initialState: State = adapter.getInitialState({
-  // additional entity state properties
-});
+export const initialState: State = {
+  assets: [],
+  loading: false
+};
 
 export function reducer(
   state = initialState,
   action: BalanceActions
 ): State {
   switch (action.type) {
-    case BalanceActionTypes.AddBalance: {
-      return adapter.addOne(action.payload.balance, state);
-    }
-
-    case BalanceActionTypes.UpsertBalance: {
-      return adapter.upsertOne(action.payload.balance, state);
-    }
-
-    case BalanceActionTypes.AddBalances: {
-      return adapter.addMany(action.payload.balances, state);
-    }
-
-    case BalanceActionTypes.UpsertBalances: {
-      return adapter.upsertMany(action.payload.balances, state);
-    }
-
-    case BalanceActionTypes.UpdateBalance: {
-      return adapter.updateOne(action.payload.balance, state);
-    }
-
-    case BalanceActionTypes.UpdateBalances: {
-      return adapter.updateMany(action.payload.balances, state);
-    }
-
-    case BalanceActionTypes.DeleteBalance: {
-      return adapter.removeOne(action.payload.id, state);
-    }
-
-    case BalanceActionTypes.DeleteBalances: {
-      return adapter.removeMany(action.payload.ids, state);
-    }
-
     case BalanceActionTypes.LoadBalances: {
-      return adapter.addAll(action.payload.balances, state);
+      return {
+        ...state,
+        loading: true
+      }
     }
 
-    case BalanceActionTypes.ClearBalances: {
-      return adapter.removeAll(state);
+    case BalanceActionTypes.LoadBalancesSuccess: {
+      return {
+        ...state,
+        loading: false
+      }
+    }
+
+    case BalanceActionTypes.LoadBalancesFailed: {
+      return {
+        ...state,
+        loading: false
+      }
     }
 
     default: {
@@ -62,10 +43,3 @@ export function reducer(
     }
   }
 }
-
-export const {
-  selectIds,
-  selectEntities,
-  selectAll,
-  selectTotal,
-} = adapter.getSelectors();

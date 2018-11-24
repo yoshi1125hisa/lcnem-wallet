@@ -1,7 +1,7 @@
 <mat-sidenav-container>
   <mat-sidenav #sidenav class="mat-elevation-z16" [fixedInViewport]="true">
     <mat-toolbar class="mat-elevation-z4 top-toolbar">
-      <img class="icon" src="{{photoUrl}}" *ngIf="photoUrl" />
+      <img class="icon" src="{{photoUrl$ | async}}" />
       <span class="fill-remaining-space"></span>
     </mat-toolbar>
     <div fxLayout="column">
@@ -57,14 +57,11 @@
       <img class="icon" src="assets/images/lcnem.svg" />
       <span>LCNEM Wallet</span>
       <span class="fill-remaining-space"></span>
-      <button mat-icon-button (click)="refresh(true)" [disabled]="loading">
-        <mat-icon>refresh</mat-icon>
-      </button>
       <mat-menu #langMenu="matMenu" [overlapTrigger]="false">
-        <button mat-menu-item (click)="lang = 'en'">
+        <button mat-menu-item (click)="setLanguage('en')">
           English
         </button>
-        <button mat-menu-item (click)="lang = 'ja'">
+        <button mat-menu-item (click)="setLanguage('ja')">
           日本語
         </button>
       </mat-menu>
@@ -75,33 +72,28 @@
     <div class="mat-typography body-container">
       <h3>{{translation.balance[lang]}}</h3>
       <mat-card>
-        <mat-spinner *ngIf="loading"></mat-spinner>
-        <app-assets-list [assets]="assets" *ngIf="!loading"></app-assets-list>
+        <app-balance></app-balance>
       </mat-card>
       <br />
       <h3>{{translation.yourAddress[lang]}}</h3>
       <mat-card>
-        <p class="address">{{address}}
-          <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyMessage(address)">
+        <p class="address">{{(currentWallet$ | async).nem}}
+          <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyAddress()">
             <mat-icon>input</mat-icon>
           </button>
         </p>
-        <img class="qr" [src]="qrUrl" />
+        <img class="qr" [src]="qrUrl$ | async" />
       </mat-card>
       <br />
-      <ng-container *ngIf="address">
-        <h3>{{translation.cosignatoryOf[lang]}}</h3>
-        <mat-card>
-          <app-multisig [refresh]="refresh"></app-multisig>
-        </mat-card>
-      </ng-container>
+      <h3>{{translation.cosignatoryOf[lang]}}</h3>
+      <mat-card>
+        <app-multisig></app-multisig>
+      </mat-card>
       <br />
-      <ng-container *ngIf="address">
-        <h3>{{translation.history[lang]}}</h3>
-        <mat-card>
-          <app-history></app-history>
-        </mat-card>
-      </ng-container>
+      <h3>{{translation.history[lang]}}</h3>
+      <mat-card>
+        <app-history></app-history>
+      </mat-card>
     </div>
     <button mat-fab color="accent" class="floating-action-button" (click)="sidenav.toggle()">
       <mat-icon>menu</mat-icon>

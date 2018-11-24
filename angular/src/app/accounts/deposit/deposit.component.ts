@@ -11,6 +11,9 @@ import { lang } from '../../models/lang';
 import { WalletsService } from '../../services/wallets.service';
 import { back } from '../../models/back';
 import { UserService } from '../../services/user.service';
+import { Store } from '@ngrx/store';
+import { State } from '../../store/index'
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-deposit',
@@ -18,6 +21,7 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./deposit.component.css']
 })
 export class DepositComponent implements OnInit {
+  public loading$: Observable<boolean>;
   public loading = true;
   get lang() { return lang; }
   public supportedCurrencies = ["JPY"];
@@ -33,6 +37,7 @@ export class DepositComponent implements OnInit {
   public safeSite: SafeResourceUrl;
 
   constructor(
+    private store: Store<State>,
     private router: Router,
     private dialog: MatDialog,
     private http: HttpClient,
@@ -41,6 +46,7 @@ export class DepositComponent implements OnInit {
     private wallet: WalletsService,
     sanitizer: DomSanitizer
   ) {
+    this.loading$ = store.select(state => state.wallet.loading)
     this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${this.lang}.txt`);
   }
 
@@ -83,7 +89,7 @@ export class DepositComponent implements OnInit {
         content: this.translation.following[this.lang]
       }
     }).afterClosed().toPromise();
-    
+
     this.router.navigate([""]);
   }
 

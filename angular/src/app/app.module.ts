@@ -69,8 +69,7 @@ import { MultisigComponent } from './home/multisig/multisig.component';
 import { StoreModule } from '@ngrx/store';
 import { reducers, metaReducers } from './store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { reducers, metaReducers } from './reducers';
-import { WithdrawModule } from './withdraw/withdraw.module';
+import { BalanceComponent } from './home/balance/balance.component';
 
 @NgModule({
   declarations: [
@@ -99,7 +98,8 @@ import { WithdrawModule } from './withdraw/withdraw.module';
     ContactDialogComponent,
     ContactEditDialogComponent,
     NemAddressInputComponent,
-    MultisigComponent
+    MultisigComponent,
+    BalanceComponent
   ],
   imports: [
     BrowserModule,
@@ -137,7 +137,6 @@ import { WithdrawModule } from './withdraw/withdraw.module';
     MatPaginatorModule,
     StoreModule.forRoot(reducers, { metaReducers }),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
-    WithdrawModule
   ],
   entryComponents: [
     LoadingDialogComponent,

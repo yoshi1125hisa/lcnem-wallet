@@ -1,60 +1,41 @@
-import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
-import { History } from './history.model';
 import { HistoryActions, HistoryActionTypes } from './history.actions';
+import { Transaction } from 'nem-library';
 
-export interface State extends EntityState<History> {
-  // additional entities state properties
+export interface State {
+  transactions: Transaction[];
+  loading: boolean;
+  error?: Error;
 }
 
-export const adapter: EntityAdapter<History> = createEntityAdapter<History>();
-
-export const initialState: State = adapter.getInitialState({
-  // additional entity state properties
-});
+export const initialState: State = {
+  transactions: [],
+  loading: false
+};
 
 export function reducer(
   state = initialState,
   action: HistoryActions
 ): State {
   switch (action.type) {
-    case HistoryActionTypes.AddHistory: {
-      return adapter.addOne(action.payload.history, state);
-    }
-
-    case HistoryActionTypes.UpsertHistory: {
-      return adapter.upsertOne(action.payload.history, state);
-    }
-
-    case HistoryActionTypes.AddHistorys: {
-      return adapter.addMany(action.payload.historys, state);
-    }
-
-    case HistoryActionTypes.UpsertHistorys: {
-      return adapter.upsertMany(action.payload.historys, state);
-    }
-
-    case HistoryActionTypes.UpdateHistory: {
-      return adapter.updateOne(action.payload.history, state);
-    }
-
-    case HistoryActionTypes.UpdateHistorys: {
-      return adapter.updateMany(action.payload.historys, state);
-    }
-
-    case HistoryActionTypes.DeleteHistory: {
-      return adapter.removeOne(action.payload.id, state);
-    }
-
-    case HistoryActionTypes.DeleteHistorys: {
-      return adapter.removeMany(action.payload.ids, state);
-    }
-
     case HistoryActionTypes.LoadHistorys: {
-      return adapter.addAll(action.payload.historys, state);
+      return {
+        ...state,
+        loading: true
+      };
     }
 
-    case HistoryActionTypes.ClearHistorys: {
-      return adapter.removeAll(state);
+    case HistoryActionTypes.LoadHistorysSuccess: {
+      return {
+        transactions: action.payload.transactions,
+        loading: false
+      };
+    }
+
+    case HistoryActionTypes.LoadHistorysFailed: {
+      return {
+        ...state,
+        loading: false
+      }
     }
 
     default: {
@@ -62,10 +43,3 @@ export function reducer(
     }
   }
 }
-
-export const {
-  selectIds,
-  selectEntities,
-  selectAll,
-  selectTotal,
-} = adapter.getSelectors();
