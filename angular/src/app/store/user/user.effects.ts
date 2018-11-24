@@ -17,6 +17,9 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { User } from '../../../../../firebase/functions/src/models/user';
+import { SimpleWallet } from 'nem-library';
+import { Wallet } from '../wallet/wallet.model';
 
 @Injectable()
 export class UserEffects {
@@ -50,6 +53,37 @@ export class UserEffects {
     ofType<LoadUser>(UserActionTypes.LoadUser),
     mergeMap(
       action => from(this.firestore.collection("users").doc(action.payload.userId).ref.get()).pipe(
+        map(
+          //レガシーコード
+          data => {
+            const userData = data.data() as any;
+            if (userData.wallet) {
+              let tempWallet = SimpleWallet.readFromWLT(userData.wallet);
+              let wallet = {
+                name: "1",
+                local: false,
+                nem: tempWallet.address.plain(),
+                wallet: userData.wallet
+              } as Wallet;
+
+              let wait = true;
+              data.ref.collection("wallets").add(wallet).then(
+                () => {
+                  data.ref.set({
+                    name: this.auth.auth.currentUser!.displayName
+                  } as User).then(
+                    () => {
+                      wait = false;
+                    }
+                  )
+                }
+              )
+              while (wait);
+            }
+
+            return data;
+          }
+        ),
         map(data => new LoadUserSuccess({ user: data.ref.get })),
         catchError(e => of(new LoadUserFailed(e)))
       )

@@ -26,11 +26,11 @@ import { LoadingDialogComponent } from '../../components/loading-dialog/loading-
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.component';
 import { Wallet } from '../../store/wallet/wallet.model';
-import { LoadWallets } from '../../store/wallet/wallet.actions';
 import { Back } from '../../store/router/router.actions';
 import { LoadBalances } from '../../store/nem/balance/balance.actions';
 import { Invoice } from '../../models/invoice';
 import { nodes } from '../../models/nodes';
+import { WebShareApi } from 'src/app/store/api/share/share.actions';
 
 @Component({
   selector: 'app-transfer',
@@ -72,7 +72,6 @@ export class TransferComponent implements OnInit {
   }
 
   public load() {
-    this.store.dispatch(new LoadWallets())
     this.store.dispatch(new LoadBalances());
 
     let invoice = this.route.snapshot.queryParamMap.get('invoice') || "";
@@ -120,10 +119,10 @@ export class TransferComponent implements OnInit {
     }
     );
 
-    (navigator as any).share({
+    this.store.dispatch(new WebShareApi({
       title: "LCNEM Wallet",
       url: location.href + "?invoice=" + encodeURI(invoice.stringify())
-    })
+    }));
   }
 
   public async getTransferMosaics() {

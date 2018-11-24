@@ -1,8 +1,10 @@
 import { Action } from '@ngrx/store';
-import { AssetId } from 'nem-library';
+import { AssetId, AssetDefinition } from 'nem-library';
 
 export enum AssetDefinitionActionTypes {
-  LoadAssetDefinitions = '[AssetDefinition] Load AssetDefinitions'
+  LoadAssetDefinitions = '[AssetDefinition] Load AssetDefinitions',
+  LoadAssetDefinitionsSuccess = '[AssetDefinition] Load AssetDefinitions Success',
+  LoadAssetDefinitionsFailed = '[AssetDefinition] Load AssetDefinitions Failed'
 }
 
 export class LoadAssetDefinitions implements Action {
@@ -11,6 +13,26 @@ export class LoadAssetDefinitions implements Action {
   constructor(
     public payload: {
       assetIds: AssetId[]
+    }
+  ) {}
+}
+
+export class LoadAssetDefinitionsSuccess implements Action {
+  readonly type = AssetDefinitionActionTypes.LoadAssetDefinitionsSuccess;
+
+  constructor(
+    public payload: {
+      definitions: AssetDefinition[]
+    }
+  ) {}
+}
+
+export class LoadAssetDefinitionsFailed implements Action {
+  readonly type = AssetDefinitionActionTypes.LoadAssetDefinitionsFailed;
+
+  constructor(
+    public payload: {
+      error: Error
     }
   ) {}
 }

@@ -53,11 +53,6 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.load();
-  }
-
-  public load(refresh?: boolean) {
-    this.store.dispatch(new LoadWallets());
   }
 
   public setLanguage(twoLetter: string) {
