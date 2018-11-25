@@ -7,13 +7,12 @@ import { HttpClient } from '@angular/common/http';
 
 import { AngularFireAuth } from '@angular/fire/auth';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
-import { lang } from '../../models/lang';
-import { WalletsService } from '../../services/wallets.service';
-import { back } from '../../models/back';
-import { UserService } from '../../services/user.service';
 import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
 import { Observable } from 'rxjs';
+import { LanguageService } from '../../services/language.service';
+import { Back, Navigate } from '../../store/router/router.actions';
+import { SendDepositRequest } from 'src/app/store/api/deposit/deposit.actions';
 
 @Component({
   selector: 'app-deposit',
@@ -21,29 +20,32 @@ import { Observable } from 'rxjs';
   styleUrls: ['./deposit.component.css']
 })
 export class DepositComponent implements OnInit {
+  public get lang() { return this.language.twoLetter; }
+
   public loading$: Observable<boolean>;
-  public loading = true;
-  get lang() { return lang; }
-  public supportedCurrencies = ["JPY"];
+
+  public readonly supportedCurrencies = [
+    {
+      name: "JPY",
+      minimum: 1000
+    }
+  ];
   public selectedCurrency = "JPY";
 
-  public minimum = {
-    JPY: 1000
-  } as { [key: string]: number };
-
-  public amount?: number;
-  public method?: string;
+  public forms: {
+    address?: string;
+    amount?: number;
+    method?: string; 
+  } = {};
 
   public safeSite: SafeResourceUrl;
 
   constructor(
     private store: Store<State>,
-    private router: Router,
+    private language: LanguageService,
     private dialog: MatDialog,
     private http: HttpClient,
     private auth: AngularFireAuth,
-    private user: UserService,
-    private wallet: WalletsService,
     sanitizer: DomSanitizer
   ) {
     this.loading$ = store.select(state => state.wallet.loading)
@@ -51,26 +53,24 @@ export class DepositComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.user.checkLogin().then(async () => {
-      await this.wallet.checkWallets();
-    });
   }
 
   public async deposit() {
     let dialogRef = this.dialog.open(LoadingDialogComponent, { disableClose: true });
 
+    this.store.dispatch(new SendDepositRequest(
+      {
+        email: this.auth.auth.currentUser!.email!,
+        nem: this.forms.address!,
+        currency: this.selectedCurrency,
+        amount: this.forms.amount!,
+        method: this.forms.method!,
+        lang: this.lang
+      }
+    ));
+
     try {
-      await this.http.post(
-        "/api/deposit",
-        {
-          email: this.auth.auth.currentUser!.email,
-          nem: this.wallet.wallets![this.wallet.currentWallet!].nem,
-          currency: this.selectedCurrency,
-          amount: this.amount,
-          method: this.method,
-          lang: this.lang
-        }
-      ).toPromise();
+      
     } catch {
       this.dialog.open(AlertDialogComponent, {
         data: {
@@ -90,11 +90,11 @@ export class DepositComponent implements OnInit {
       }
     }).afterClosed().toPromise();
 
-    this.router.navigate([""]);
+    this.store.dispatch(new Navigate({ commands: [""] }))
   }
 
   public back() {
-    back(() => this.router.navigate([""]));
+    this.store.dispatch(new Back({ commands: [""] }));
   }
 
   public translation = {

@@ -14,7 +14,7 @@ export class LoadAssetDefinitions implements Action {
     public payload: {
       assetIds: AssetId[]
     }
-  ) {}
+  ) { }
 }
 
 export class LoadAssetDefinitionsSuccess implements Action {
@@ -24,18 +24,18 @@ export class LoadAssetDefinitionsSuccess implements Action {
     public payload: {
       definitions: AssetDefinition[]
     }
-  ) {}
+  ) { }
 }
 
 export class LoadAssetDefinitionsFailed implements Action {
   readonly type = AssetDefinitionActionTypes.LoadAssetDefinitionsFailed;
 
   constructor(
-    public payload: {
-      error: Error
-    }
-  ) {}
+    public error: Error
+  ) { }
 }
 
 export type AssetDefinitionActions =
- LoadAssetDefinitions;
+  LoadAssetDefinitions
+  | LoadAssetDefinitionsSuccess
+  | LoadAssetDefinitionsFailed;

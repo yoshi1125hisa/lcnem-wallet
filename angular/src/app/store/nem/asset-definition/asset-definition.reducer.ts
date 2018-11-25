@@ -3,10 +3,13 @@ import { AssetDefinitionActions, AssetDefinitionActionTypes } from './asset-defi
 import { AssetDefinition, PublicAccount, XEM } from 'nem-library';
 
 export interface State {
-  definitions: AssetDefinition[]
+  loading: boolean;
+  definitions: AssetDefinition[];
+  error?: Error;
 }
 
 export const initialState: State = {
+  loading: false,
   definitions: [
     {
       creator: new PublicAccount(),
@@ -29,7 +32,24 @@ export function reducer(
   switch (action.type) {
     case AssetDefinitionActionTypes.LoadAssetDefinitions: {
       return {
-        ...state
+        ...state,
+        loading: true
+      }
+    }
+
+    case AssetDefinitionActionTypes.LoadAssetDefinitionsSuccess: {
+      return {
+        ...state,
+        loading: false,
+        definitions: action.payload.definitions
+      }
+    }
+
+    case AssetDefinitionActionTypes.LoadAssetDefinitionsFailed: {
+      return {
+        ...state,
+        loading: false,
+        error: action.error
       }
     }
 
