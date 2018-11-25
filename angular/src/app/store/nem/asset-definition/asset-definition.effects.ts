@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { LoadAssetDefinitions, AssetDefinitionActionTypes, LoadAssetDefinitionsFailed, LoadAssetDefinitionsSuccess } from './asset-definition.actions';
-import { mergeMap, map, catchError, toArray } from 'rxjs/operators';
-import { of, from, forkJoin } from 'rxjs';
+import { mergeMap, map, catchError, toArray, merge } from 'rxjs/operators';
+import { of, from, forkJoin, concat } from 'rxjs';
 import { AssetHttp } from 'nem-library';
 import { nodes } from '../../../models/nodes';
 
@@ -19,7 +19,9 @@ export class AssetDefinitionEffects {
         return of(new AssetHttp(nodes)).pipe(
           mergeMap(
             (assetHttp) => {
-              return action.payload.assetIds.map(assetId => assetHttp.getAssetDefinition(assetId))
+              return from(action.payload.assetIds).pipe(
+                mergeMap(assetId => assetHttp.getAssetDefinition(assetId))
+              )
             }
           ),
           toArray(),
@@ -36,5 +38,5 @@ export class AssetDefinitionEffects {
         )
       }
     )
-  )
+  );
 }
