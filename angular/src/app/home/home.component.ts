@@ -4,7 +4,7 @@ import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, first } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import { State } from '../store/index'
+import { State } from '../store/index';
 import { Logout } from '../store/user/user.actions';
 import { LoadWallets } from '../store/wallet/wallet.actions';
 import { Wallet } from '../store/wallet/wallet.model';
