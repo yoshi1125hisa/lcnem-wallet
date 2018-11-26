@@ -1,25 +1,25 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ZXingScannerComponent } from '@zxing/ngx-scanner';
-import { MatDialog } from '@angular/material';
-import { Router } from '@angular/router';
-import { Invoice } from '../../models/invoice';
-import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
-import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { lang } from '../../models/lang';
-import { back } from '../../models/back';
-import { UserService } from '../../services/user.service';
+import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
+import { ZXingScannerComponent } from "@zxing/ngx-scanner";
+import { MatDialog } from "@angular/material";
+import { Router } from "@angular/router";
+import { Invoice } from "../../models/invoice";
+import { AlertDialogComponent } from "../../components/alert-dialog/alert-dialog.component";
+import { LoadingDialogComponent } from "../../components/loading-dialog/loading-dialog.component";
+import { lang } from "../../models/lang";
+import { back } from "../../models/back";
 
 @Component({
-  selector: 'app-scan',
-  templateUrl: './scan.component.html',
-  styleUrls: ['./scan.component.css']
+  selector: "app-scan",
+  templateUrl: "./scan.component.html",
+  styleUrls: ["./scan.component.css"]
 })
-export class ScanComponent implements OnInit {
+export class ScanComponent implements OnInit, OnDestroy {
   public scanning = false;
-  get lang() { return lang; }
+  get lang() {
+    return lang;
+  }
 
-  @ViewChild('scanner')
+  @ViewChild("scanner")
   scanner?: ZXingScannerComponent;
 
   noCamera = false;
@@ -28,10 +28,7 @@ export class ScanComponent implements OnInit {
   availableDevices?: MediaDeviceInfo[];
   selected?: number;
 
-  constructor(
-    private router: Router,
-    private dialog: MatDialog
-  ) { }
+  constructor(private router: Router, private dialog: MatDialog) {}
 
   ngOnInit() {
     if (!this.scanner) {
@@ -56,12 +53,18 @@ export class ScanComponent implements OnInit {
         return;
       }
       this.scanning = true;
-      let dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
+      let dialog = this.dialog.open(LoadingDialogComponent, {
+        disableClose: true
+      });
 
       let decoded = decodeURI(result);
       try {
         let invoice = Invoice.parse(decoded);
-        if (!invoice && decoded[0] == "N" && decoded.replace(/-/g, "").trim().length == 40) {
+        if (
+          !invoice &&
+          decoded[0] == "N" &&
+          decoded.replace(/-/g, "").trim().length == 40
+        ) {
           let invoiceData = new Invoice();
           invoiceData.data.addr = decoded;
           result = encodeURI(invoiceData.stringify());
@@ -75,18 +78,32 @@ export class ScanComponent implements OnInit {
           });
         }
       } catch {
-        this.dialog.open(AlertDialogComponent, {
-          data: {
-            title: this.translation.unexpected[this.lang],
-            content: decoded
-          }
-        }).afterClosed().subscribe(() => {
-          this.scanning = false;
-        });
+        this.dialog
+          .open(AlertDialogComponent, {
+            data: {
+              title: this.translation.unexpected[this.lang],
+              content: decoded
+            }
+          })
+          .afterClosed()
+          .subscribe(() => {
+            this.scanning = false;
+          });
       } finally {
         dialog.close();
       }
     });
+  }
+
+  ngOnDestroy() {
+    if (!this.scanner) {
+      return;
+    }
+
+    this.scanner.camerasFound.unsubscribe();
+    this.scanner.camerasNotFound.unsubscribe();
+    this.scanner.permissionResponse.unsubscribe();
+    this.scanner.scanSuccess.unsubscribe();
   }
 
   public back() {
