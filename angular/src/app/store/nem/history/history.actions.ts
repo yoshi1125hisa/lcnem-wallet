@@ -1,86 +1,41 @@
 import { Action } from '@ngrx/store';
-import { Update } from '@ngrx/entity';
-import { History } from './history.model';
+import { Address, Transaction } from 'nem-library';
 
 export enum HistoryActionTypes {
   LoadHistorys = '[History] Load Historys',
-  AddHistory = '[History] Add History',
-  UpsertHistory = '[History] Upsert History',
-  AddHistorys = '[History] Add Historys',
-  UpsertHistorys = '[History] Upsert Historys',
-  UpdateHistory = '[History] Update History',
-  UpdateHistorys = '[History] Update Historys',
-  DeleteHistory = '[History] Delete History',
-  DeleteHistorys = '[History] Delete Historys',
-  ClearHistorys = '[History] Clear Historys'
+  LoadHistorysSuccess = '[History] Load Historys Success',
+  LoadHistorysFailed = '[History] Load Historys Failed'
 }
 
 export class LoadHistorys implements Action {
   readonly type = HistoryActionTypes.LoadHistorys;
 
-  constructor(public payload: { historys: History[] }) {}
+  constructor(
+    public payload: {
+      address: Address;
+    }
+  ) { }
 }
 
-export class AddHistory implements Action {
-  readonly type = HistoryActionTypes.AddHistory;
+export class LoadHistorysSuccess implements Action {
+  readonly type = HistoryActionTypes.LoadHistorysSuccess;
 
-  constructor(public payload: { history: History }) {}
+  constructor(
+    public payload: {
+      transactions: Transaction[];
+    }
+  ) { }
 }
 
-export class UpsertHistory implements Action {
-  readonly type = HistoryActionTypes.UpsertHistory;
+export class LoadHistorysFailed implements Action {
+  readonly type = HistoryActionTypes.LoadHistorysFailed;
 
-  constructor(public payload: { history: History }) {}
-}
-
-export class AddHistorys implements Action {
-  readonly type = HistoryActionTypes.AddHistorys;
-
-  constructor(public payload: { historys: History[] }) {}
-}
-
-export class UpsertHistorys implements Action {
-  readonly type = HistoryActionTypes.UpsertHistorys;
-
-  constructor(public payload: { historys: History[] }) {}
-}
-
-export class UpdateHistory implements Action {
-  readonly type = HistoryActionTypes.UpdateHistory;
-
-  constructor(public payload: { history: Update<History> }) {}
-}
-
-export class UpdateHistorys implements Action {
-  readonly type = HistoryActionTypes.UpdateHistorys;
-
-  constructor(public payload: { historys: Update<History>[] }) {}
-}
-
-export class DeleteHistory implements Action {
-  readonly type = HistoryActionTypes.DeleteHistory;
-
-  constructor(public payload: { id: string }) {}
-}
-
-export class DeleteHistorys implements Action {
-  readonly type = HistoryActionTypes.DeleteHistorys;
-
-  constructor(public payload: { ids: string[] }) {}
-}
-
-export class ClearHistorys implements Action {
-  readonly type = HistoryActionTypes.ClearHistorys;
+  constructor(
+    error: Error
+  ) { }
 }
 
 export type HistoryActions =
- LoadHistorys
- | AddHistory
- | UpsertHistory
- | AddHistorys
- | UpsertHistorys
- | UpdateHistory
- | UpdateHistorys
- | DeleteHistory
- | DeleteHistorys
- | ClearHistorys;
+  LoadHistorys
+  | LoadHistorysSuccess
+  | LoadHistorysFailed;

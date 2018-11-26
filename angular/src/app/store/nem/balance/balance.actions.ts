@@ -1,86 +1,41 @@
 import { Action } from '@ngrx/store';
-import { Update } from '@ngrx/entity';
-import { Balance } from './balance.model';
+import { Address, Asset } from 'nem-library';
 
 export enum BalanceActionTypes {
   LoadBalances = '[Balance] Load Balances',
-  AddBalance = '[Balance] Add Balance',
-  UpsertBalance = '[Balance] Upsert Balance',
-  AddBalances = '[Balance] Add Balances',
-  UpsertBalances = '[Balance] Upsert Balances',
-  UpdateBalance = '[Balance] Update Balance',
-  UpdateBalances = '[Balance] Update Balances',
-  DeleteBalance = '[Balance] Delete Balance',
-  DeleteBalances = '[Balance] Delete Balances',
-  ClearBalances = '[Balance] Clear Balances'
+  LoadBalancesSuccess = '[Balance] Load Balances Success',
+  LoadBalancesFailed = '[Balance] Load Balances Failed',
 }
 
 export class LoadBalances implements Action {
   readonly type = BalanceActionTypes.LoadBalances;
 
-  constructor(public payload: { balances: Balance[] }) {}
+  constructor(
+    public payload: {
+      address: Address;
+    }
+  ) { }
 }
 
-export class AddBalance implements Action {
-  readonly type = BalanceActionTypes.AddBalance;
+export class LoadBalancesSuccess implements Action {
+  readonly type = BalanceActionTypes.LoadBalancesSuccess;
 
-  constructor(public payload: { balance: Balance }) {}
+  constructor(
+    public payload: {
+      assets: Asset[];
+    }
+  ) { }
 }
 
-export class UpsertBalance implements Action {
-  readonly type = BalanceActionTypes.UpsertBalance;
+export class LoadBalancesFailed implements Action {
+  readonly type = BalanceActionTypes.LoadBalancesFailed;
 
-  constructor(public payload: { balance: Balance }) {}
-}
-
-export class AddBalances implements Action {
-  readonly type = BalanceActionTypes.AddBalances;
-
-  constructor(public payload: { balances: Balance[] }) {}
-}
-
-export class UpsertBalances implements Action {
-  readonly type = BalanceActionTypes.UpsertBalances;
-
-  constructor(public payload: { balances: Balance[] }) {}
-}
-
-export class UpdateBalance implements Action {
-  readonly type = BalanceActionTypes.UpdateBalance;
-
-  constructor(public payload: { balance: Update<Balance> }) {}
-}
-
-export class UpdateBalances implements Action {
-  readonly type = BalanceActionTypes.UpdateBalances;
-
-  constructor(public payload: { balances: Update<Balance>[] }) {}
-}
-
-export class DeleteBalance implements Action {
-  readonly type = BalanceActionTypes.DeleteBalance;
-
-  constructor(public payload: { id: string }) {}
-}
-
-export class DeleteBalances implements Action {
-  readonly type = BalanceActionTypes.DeleteBalances;
-
-  constructor(public payload: { ids: string[] }) {}
-}
-
-export class ClearBalances implements Action {
-  readonly type = BalanceActionTypes.ClearBalances;
+  constructor(
+    error: Error
+  ) { }
 }
 
 export type BalanceActions =
- LoadBalances
- | AddBalance
- | UpsertBalance
- | AddBalances
- | UpsertBalances
- | UpdateBalance
- | UpdateBalances
- | DeleteBalance
- | DeleteBalances
- | ClearBalances;
+  LoadBalances
+  | LoadBalancesSuccess
+  | LoadBalancesFailed

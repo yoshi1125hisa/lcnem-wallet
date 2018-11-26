@@ -4,6 +4,9 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { lang } from '../../models/lang';
 import { back } from '../../models/back';
 import { UserService } from '../../services/user.service';
+import { State } from '../../store/index'
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-plan',
@@ -11,24 +14,28 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./plan.component.css']
 })
 export class PlanComponent implements OnInit {
+  public loading$: Observable<boolean>;
   public loading = true;
   get lang() { return lang; }
 
   constructor(
+    private store: Store<State>,
     private router: Router,
     private user: UserService
-  ) { }
+  ) {
+    this.loading$ = store.select(state => state.user.loading)
+  }
 
   ngOnInit() {
     this.user.checkLogin().then(async () => {
       await this.refresh();
     });
   }
-  
+
   public async refresh() {
     this.loading = true;
 
-    
+
 
     this.loading = false;
   }

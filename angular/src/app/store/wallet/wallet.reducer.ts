@@ -3,13 +3,14 @@ import { Wallet } from './wallet.model';
 import { WalletActions, WalletActionTypes } from './wallet.actions';
 
 export interface State extends EntityState<Wallet> {
-  // additional entities state properties
+  loading: boolean;
+  error?: Error;
 }
 
 export const adapter: EntityAdapter<Wallet> = createEntityAdapter<Wallet>();
 
 export const initialState: State = adapter.getInitialState({
-  // additional entity state properties
+  loading: false
 });
 
 export function reducer(
@@ -17,44 +18,91 @@ export function reducer(
   action: WalletActions
 ): State {
   switch (action.type) {
+    case WalletActionTypes.LoadWallets: {
+      return {
+        ...state,
+        loading: true
+      }
+    }
+
+    case WalletActionTypes.LoadWalletsSuccess: {
+      return {
+        ...state,
+        loading: false
+      }
+    }
+
+    case WalletActionTypes.LoadWalletsFailed: {
+      return {
+        ...state,
+        loading: false
+      }
+    }
+
     case WalletActionTypes.AddWallet: {
-      return adapter.addOne(action.payload.wallet, state);
+      return {
+        ...state,
+        loading: true
+      }
     }
 
-    case WalletActionTypes.UpsertWallet: {
-      return adapter.upsertOne(action.payload.wallet, state);
+    case WalletActionTypes.AddWalletSuccess: {
+      const entities = { ...state.entities };
+      entities[action.payload.id] = action.payload.wallet;
+      return {
+        ...state,
+        ids: (state.ids as string[]).concat([action.payload.id]),
+        entities: entities
+      };
     }
 
-    case WalletActionTypes.AddWallets: {
-      return adapter.addMany(action.payload.wallets, state);
-    }
-
-    case WalletActionTypes.UpsertWallets: {
-      return adapter.upsertMany(action.payload.wallets, state);
+    case WalletActionTypes.AddWalletFailed: {
+      return {
+        ...state,
+        loading: false
+      }
     }
 
     case WalletActionTypes.UpdateWallet: {
-      return adapter.updateOne(action.payload.wallet, state);
+      return {
+        ...state,
+        loading: true
+      }
     }
 
-    case WalletActionTypes.UpdateWallets: {
-      return adapter.updateMany(action.payload.wallets, state);
+    case WalletActionTypes.UpdateWalletSuccess: {
+      return {
+        ...adapter.updateOne({ id: action.payload.id, changes: action.payload.wallet }, state),
+        loading: false
+      }
+    }
+
+    case WalletActionTypes.UpdateWalletFailed: {
+      return {
+        ...state,
+        loading: false
+      }
     }
 
     case WalletActionTypes.DeleteWallet: {
-      return adapter.removeOne(action.payload.id, state);
+      return {
+        ...state,
+        loading: true
+      }
     }
 
-    case WalletActionTypes.DeleteWallets: {
-      return adapter.removeMany(action.payload.ids, state);
+    case WalletActionTypes.DeleteWalletSuccess: {
+      return {
+        ...adapter.removeOne(action.payload.id, state),
+        loading: false,
+      }
     }
 
-    case WalletActionTypes.LoadWallets: {
-      return adapter.addAll(action.payload.wallets, state);
-    }
-
-    case WalletActionTypes.ClearWallets: {
-      return adapter.removeAll(state);
+    case WalletActionTypes.DeleteWalletFailed: {
+      return {
+        ...state,
+        loading: false
+      }
     }
 
     default: {
