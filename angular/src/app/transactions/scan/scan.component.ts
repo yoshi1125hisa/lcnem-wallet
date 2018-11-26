@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
 import { ZXingScannerComponent } from "@zxing/ngx-scanner";
 import { MatDialog } from "@angular/material";
 import { Router } from "@angular/router";
@@ -13,7 +13,7 @@ import { back } from "../../models/back";
   templateUrl: "./scan.component.html",
   styleUrls: ["./scan.component.css"]
 })
-export class ScanComponent implements OnInit {
+export class ScanComponent implements OnInit, OnDestroy {
   public scanning = false;
   get lang() {
     return lang;
@@ -93,6 +93,17 @@ export class ScanComponent implements OnInit {
         dialog.close();
       }
     });
+  }
+
+  ngOnDestroy() {
+    if (!this.scanner) {
+      return;
+    }
+
+    this.scanner.camerasFound.unsubscribe();
+    this.scanner.camerasNotFound.unsubscribe();
+    this.scanner.permissionResponse.unsubscribe();
+    this.scanner.scanSuccess.unsubscribe();
   }
 
   public back() {
