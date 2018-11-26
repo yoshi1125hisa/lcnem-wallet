@@ -112,6 +112,8 @@ export function reducer(
   }
 }
 
+// TODO: setCurrentWalletを作る
+
 export const {
   selectIds,
   selectEntities,

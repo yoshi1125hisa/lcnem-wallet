@@ -3,10 +3,14 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { SimpleWallet, Password } from 'nem-library';
 import { MatDialog, MatSnackBar } from '@angular/material';
+import { Store } from '@ngrx/store';
+import { Dictionary } from '@ngrx/entity';
+import { from } from 'rxjs';
+import { map, mergeMap, toArray } from 'rxjs/operators';
+
 import { CreateDialogComponent } from './create-dialog/create-dialog.component';
 import { AlertDialogComponent } from '../../../app/components/alert-dialog/alert-dialog.component';
 import { PromptDialogComponent } from '../../../app/components/prompt-dialog/prompt-dialog.component';
-
 import { ConfirmDialogComponent } from '../../../app/components/confirm-dialog/confirm-dialog.component';
 import { WalletsService } from '../../../app/services/wallets.service';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
@@ -15,7 +19,6 @@ import { UserService } from '../../services/user.service';
 import { LanguageService } from '../../services/language.service';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { Observable } from 'rxjs';
-import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
 
 @Component({
@@ -25,6 +28,9 @@ import { State } from '../../store/index'
 })
 export class WalletsComponent implements OnInit {
   public loading$: Observable<boolean>;
+  public wallets$: Observable<Dictionary<Wallet>>;
+  public walletIds$: Observable<(string | number)[]>;
+  public clouds$: Observable<number>;
 
   //以下レガシー
   public loading = true;
@@ -47,6 +53,26 @@ export class WalletsComponent implements OnInit {
     private language: LanguageService
   ) {
     this.loading$ = store.select(state => state.wallet.loading);
+    this.wallets$ = store.select(state => state.wallet.entities);
+
+    this.walletIds$ = store.select(state => state.wallet.ids).pipe(
+      map((ids: (string | number)[]) => ids.filter(id => id != "multisig"))
+    )
+    this.clouds$ = this.walletIds$.pipe(
+      mergeMap(
+        ids => from(ids)
+      ),
+      mergeMap(
+        id =>
+        this.wallets$.pipe(
+          map(
+            wallets => wallets[id]
+          )
+        )
+      ),
+      toArray(),
+      map(wallets => wallets.filter(wallet => !wallet.local).length)
+    )
   }
 
   ngOnInit() {
@@ -58,7 +84,7 @@ export class WalletsComponent implements OnInit {
   async refresh(force?: boolean) {
     this.loading = true;
 
-    await this.wallet.readWallets(force);
+    await this.wallet.readWallets(force); // ここ以外はsubscribeされる
     this.wallets = this.wallet.wallets!;
     this.walletIds = Object.keys(this.wallet.wallets!);
     this.walletIds = this.walletIds.filter(id => id != "multisig");
