@@ -55,10 +55,6 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
   }
 
-  public setLanguage(twoLetter: string) {
-    this.store.dispatch(new SetLanguage({ twoLetter: twoLetter })) 
-  }
-
   public logout() {
     this.store.dispatch(new Logout());
   }

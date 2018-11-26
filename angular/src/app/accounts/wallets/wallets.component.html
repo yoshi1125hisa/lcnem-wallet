@@ -7,17 +7,7 @@
       </button>
       <span>{{translation.wallets[lang]}}</span>
       <span class="fill-remaining-space"></span>
-      <mat-menu #langMenu="matMenu" [overlapTrigger]="false">
-        <button mat-menu-item (click)="lang = 'en'">
-          English
-        </button>
-        <button mat-menu-item (click)="lang = 'ja'">
-          日本語
-        </button>
-      </mat-menu>
-      <button mat-icon-button [matMenuTriggerFor]="langMenu" yPosition="below">
-        {{lang}}
-      </button>
+      <app-language-menu></app-language-menu>
     </mat-toolbar>
     <div class="mat-typography body-container">
       <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
