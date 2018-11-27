@@ -1,11 +1,21 @@
-import { LocalWalletActions, LocalWalletActionTypes } from './local-wallet.actions';
+import { Action } from '@ngrx/store';
+import {
+  LocalWalletActionTypes,
+  LocalWalletActions
+} from './local-wallet.actions';
+
 
 export interface State {
-  // additional entities state properties
+  loading: boolean;
+  localWallets: {
+    [id: string]: string
+  }
+  error?: Error;
 }
 
 export const initialState: State = {
-  // additional entity state properties
+  loading: false,
+  localWallets: {}
 };
 
 export function reducer(
@@ -13,10 +23,66 @@ export function reducer(
   action: LocalWalletActions
 ): State {
   switch (action.type) {
-    
-
-    default: {
-      return state;
+    case LocalWalletActionTypes.LoadLocalWallets: {
+      return {
+        ...state,
+        loading: true
+      };
     }
+
+    case LocalWalletActionTypes.LoadLocalWalletsComplete: {
+      return {
+        ...state,
+        loading: false,
+        localWallets: action.payload.localWallets
+      };
+    }
+
+    case LocalWalletActionTypes.AddLocalWallet: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+
+    case LocalWalletActionTypes.AddLocalWalletSuccess: {
+      return {
+        ...state,
+        loading: false,
+        localWallets: action.payload.localWallets
+      };
+    }
+
+    case LocalWalletActionTypes.AddLocalWalletFailed: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
+
+    case LocalWalletActionTypes.DeleteLocalWallet: {
+      return {
+        ...state,
+        loading: true
+      };
+    }
+
+    case LocalWalletActionTypes.DeleteLocalWalletSuccess: {
+      return {
+        ...state,
+        loading: false,
+        localWallets: action.payload.localWallets
+      };
+    }
+
+    case LocalWalletActionTypes.DeleteLocalWalletFailed: {
+      return {
+        ...state,
+        loading: false
+      };
+    }
+
+    default:
+      return state;
   }
 }
