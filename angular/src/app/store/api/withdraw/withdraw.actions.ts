@@ -22,15 +22,13 @@ export class SendWithdrawRequest implements Action {
 }
 
  export class SendWithdrawRequestSuccess implements Action {
-  readonly type = WithdrawRequestActionTypes.SendWithdrawRequest;
+  readonly type = WithdrawRequestActionTypes.SendWithdrawRequestSuccess;
 }
 
  export class SendWithdrawRequestFailed implements Action {
-  readonly type = WithdrawRequestActionTypes.SendWithdrawRequest;
+  readonly type = WithdrawRequestActionTypes.SendWithdrawRequestFailed;
   constructor(
-    public payload: {
-      error: Error;
-    }
+    public error: Error
   ) { }
 }
 

@@ -5,11 +5,12 @@ import {
 } from './withdraw.actions';
 
 export interface State {
-  send: boolean
+  loading: boolean;
+  error?: Error;
 }
 
 export const initialState: State = {
-  send: false
+  loading: false
 };
 
 export function reducer(
@@ -19,15 +20,16 @@ export function reducer(
   switch (action.type) {
     case WithdrawRequestActionTypes.SendWithdrawRequest:
       return {
-        send: true
+        loading: true
       }
     case WithdrawRequestActionTypes.SendWithdrawRequestSuccess:
       return {
-        send: false
+        loading: false
       }
     case WithdrawRequestActionTypes.SendWithdrawRequestFailed:
       return {
-        send: false
+        loading: false,
+        error: action.error
       }
 
     default:

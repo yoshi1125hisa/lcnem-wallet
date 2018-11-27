@@ -21,11 +21,20 @@ export class WithdrawEffects {
    @Effect() loadTransaction$ = this.actions$.pipe(
     ofType<SendWithdrawRequest>(WithdrawRequestActionTypes.SendWithdrawRequest),
     mergeMap(
-      action => (this.http.post("/api/Withdraw", action.payload).pipe(
-        map(() => new SendWithdrawRequestSuccess({ })),
-        catchError(e => of(new SendWithdrawRequestFailed(e)))
+      (action) => {
+        return this.http.post("/api/withdraw", action.payload).pipe(
+          map(
+            () => {
+              return new SendWithdrawRequestSuccess()
+            }
+          ),
+          catchError(
+            (e) => {
+              return of(new SendWithdrawRequestFailed(e))
+            }
+          )
         )
-      )
+      }
     )
   )
 }
