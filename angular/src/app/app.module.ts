@@ -138,7 +138,7 @@ import { LanguageMenuComponent } from './components/language-menu/language-menu.
     MatTableModule,
     MatPaginatorModule,
     StoreModule.forRoot(reducers, { metaReducers }),
-    !environment.production ? StoreDevtoolsModule.instrument() : []
+    !environment.production ? StoreDevtoolsModule.instrument() : [],
   ],
   entryComponents: [
     LoadingDialogComponent,
