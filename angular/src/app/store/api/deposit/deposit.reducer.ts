@@ -1,29 +1,36 @@
 import { Action } from '@ngrx/store';
-import { DepositActionTypes } from './deposit.actions';
+import { DepositActionTypes, DepositActions } from './deposit.actions';
 
 export interface State {
   loading: boolean;
+  error?: Error;
 }
 
 export const initialState: State = {
   loading: false
 };
 
-export function reducer(state = initialState, action: Action): State {
+export function reducer(
+  state = initialState,
+  action: DepositActions
+): State {
   switch (action.type) {
-
-    case DepositActionTypes.SendDepositRequest:
+    case DepositActionTypes.SendDepositRequest: {
       return {
         loading: true
       }
-    case DepositActionTypes.SendDepositRequestSuccess:
+    }
+    case DepositActionTypes.SendDepositRequestSuccess: {
       return {
         loading: false
       }
-    case DepositActionTypes.SendDepositRequestFailed:
+    }
+    case DepositActionTypes.SendDepositRequestFailed: {
       return {
-        loading: false
+        loading: false,
+        error: action.error
       }
+    }
 
     default:
       return state;

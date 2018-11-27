@@ -26,22 +26,34 @@ export class LocalWalletEffects {
   @Effect() loadLocalWallets$ = this.actions$.pipe(
     ofType<LoadLocalWallets>(LocalWalletActionTypes.LoadLocalWallets),
     mergeMap(
-      action => (JSON.parse(localStorage.getItem("wallets")!)).pipe(
-        map(data => new LoadLocalWalletsSuccess({})),
-        catchError(e => of(new LoadBalancesFailed(e)))
-      )
+      (action) => {
+        return of(localStorage.getItem("wallets") || "").pipe(
+          map(
+            (data) => {
+              return new LoadLocalWalletsSuccess({});
+            }
+          ),
+          catchError(
+            (e) => {
+              return of(new LoadLocalWalletsSuccess({}));
+            }
+          )
+        )
+      }
     )
-  )
+  );
 
   @Effect() addLocalWallet$ = this.actions$.pipe(
     ofType<AddLocalWallet>(LocalWalletActionTypes.AddLcalWallet),
     mergeMap(
-      action => of(localStorage.setItem("wallets", JSON.stringify(action.payload.localWallets))).pipe(
-        map(data => new AddLocalWalletSuccess({})),
-        catchError(e => of(new AddContactFailed(e)))
-      )
+      (action) => {
+        return of(localStorage.setItem("wallets", JSON.stringify(action.payload.localWallets))).pipe(
+          map(data => new AddLocalWalletSuccess({})),
+          catchError(e => of(new AddContactFailed(e)))
+        )
+      }
     )
-  )
+  );
 
   @Effect() deleteLocalWallet$ = this.actions$.pipe(
     ofType<DeleteLocalWallet>(LocalWalletActionTypes.DeleteLocalWallet),
@@ -51,6 +63,5 @@ export class LocalWalletEffects {
         catchError(e => of(new DeleteLocalWalletFailed(e)))
       )
     )
-  )
-
+  );
 }

@@ -11,13 +11,17 @@ export class ShareEffects {
 
   @Effect({ dispatch: false }) webShareApi$ = this.actions$.pipe(
     ofType<WebShareApi>(ShareActionTypes.WebShareApi),
-    map(action => (navigator as any).share(action.payload))
+    map(
+      (action) => {
+        (navigator as any).share(action.payload)
+      }
+    )
   );
 
   @Effect({dispatch: false}) CopyToClipboard$ = this.actions$.pipe(
     ofType<CopyToClipboard>(ShareActionTypes.CopyToClipboard),
     map(
-      action => {
+      (action) => {
         let selBox = document.createElement('textarea');
         selBox.style.position = 'fixed';
         selBox.style.left = '0';

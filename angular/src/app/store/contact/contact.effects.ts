@@ -34,38 +34,56 @@ export class ContactEffects {
   @Effect() loadContacts$ = this.actions$.pipe(
     ofType<LoadContacts>(ContactActionTypes.LoadContacts),
     mergeMap(
-      action => this.firestore.collection("users").doc(action.payload.userId).collection("contacts").get().pipe(
-        map(
-          data => {
-            const contacts: Dictionary<Contact> = {};
-            for (let doc of data.docs) {
-              contacts[doc.id] = doc.data() as Contact;
+      (action) => {
+        return this.firestore.collection("users").doc(action.payload.userId).collection("contacts").get().pipe(
+          map(
+            (data) => {
+              const contacts: Dictionary<Contact> = {};
+              for (let doc of data.docs) {
+                contacts[doc.id] = doc.data() as Contact;
+              }
+              return contacts;
             }
-            return contacts;
-          }
-        ),
-        map(data => new LoadContactsSuccess({ contacts: data })),
-        catchError(e => of(new LoadContactsFailed(e)))
-      )
+          ),
+          map(
+            (data) => {
+              return new LoadContactsSuccess({ contacts: data });
+            }
+          ),
+          catchError(
+            (e) => {
+              return of(new LoadContactsFailed(e));
+            }
+          )
+        );
+      }
     )
   );
 
   @Effect() addContact$ = this.actions$.pipe(
     ofType<AddContact>(ContactActionTypes.AddContact),
     mergeMap(
-      action => from(
-        this.firestore.collection("users").doc(action.payload.userId).collection("contacts").add(action.payload.contact)
-      ).pipe(
-        map(
-          data => new AddContactSuccess(
-            {
-              id: data.id,
-              contact: action.payload.contact
+      (action) => {
+        return from(
+          this.firestore.collection("users").doc(action.payload.userId).collection("contacts").add(action.payload.contact)
+        ).pipe(
+          map(
+            (data) => {
+              return new AddContactSuccess(
+                {
+                  id: data.id,
+                  contact: action.payload.contact
+                }
+              );
+            }
+          ),
+          catchError(
+            (e) => {
+              return of(new AddContactFailed(e));
             }
           )
-        ),
-        catchError(e => of(new AddContactFailed(e)))
-      )
+        )
+      }
     )
   );
 

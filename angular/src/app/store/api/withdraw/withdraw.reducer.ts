@@ -18,21 +18,25 @@ export function reducer(
   action: WithdrawRequestActions
 ): State {
   switch (action.type) {
-    case WithdrawRequestActionTypes.SendWithdrawRequest:
+    case WithdrawRequestActionTypes.SendWithdrawRequest: {
       return {
         loading: true
-      }
-    case WithdrawRequestActionTypes.SendWithdrawRequestSuccess:
+      };
+    }
+    case WithdrawRequestActionTypes.SendWithdrawRequestSuccess: {
       return {
         loading: false
-      }
-    case WithdrawRequestActionTypes.SendWithdrawRequestFailed:
+      };
+    }
+    case WithdrawRequestActionTypes.SendWithdrawRequestFailed: {
       return {
         loading: false,
         error: action.error
-      }
+      };
+    }
 
-    default:
-    return state;
+    default: {
+      return state;
+    }
   }
 }
