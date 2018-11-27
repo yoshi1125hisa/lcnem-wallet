@@ -12,7 +12,7 @@ import { State } from '../../store/index'
 import { Observable } from 'rxjs';
 import { LanguageService } from '../../services/language.service';
 import { Back, Navigate } from '../../store/router/router.actions';
-import { SendDepositRequest } from 'src/app/store/api/deposit/deposit.actions';
+import { SendDepositRequest } from '../../store/api/deposit/deposit.actions';
 
 @Component({
   selector: 'app-deposit',

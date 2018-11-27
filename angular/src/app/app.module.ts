@@ -70,6 +70,7 @@ import { StoreModule } from '@ngrx/store';
 import { reducers, metaReducers } from './store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { BalanceComponent } from './home/balance/balance.component';
+import { LanguageMenuComponent } from './components/language-menu/language-menu.component';
 
 @NgModule({
   declarations: [
@@ -99,7 +100,8 @@ import { BalanceComponent } from './home/balance/balance.component';
     ContactEditDialogComponent,
     NemAddressInputComponent,
     MultisigComponent,
-    BalanceComponent
+    BalanceComponent,
+    LanguageMenuComponent
   ],
   imports: [
     BrowserModule,

@@ -12,6 +12,7 @@ import { WalletsService } from '../../../app/services/wallets.service';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { Plan } from '../../../../../firebase/functions/src/models/plan';
 import { UserService } from '../../services/user.service';
+import { LanguageService } from '../../services/language.service';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
@@ -27,8 +28,7 @@ export class WalletsComponent implements OnInit {
 
   //以下レガシー
   public loading = true;
-  get lang() { return lang; }
-  set lang(value) { setLang(value); }
+  public get lang() { return this.language.twoLetter; }
   public wallets!: {
     [id: string]: Wallet
   };
@@ -43,7 +43,8 @@ export class WalletsComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private user: UserService,
-    private wallet: WalletsService
+    private wallet: WalletsService,
+    private language: LanguageService
   ) {
     this.loading$ = store.select(state => state.wallet.loading);
   }

@@ -30,7 +30,7 @@ import { Back } from '../../store/router/router.actions';
 import { LoadBalances } from '../../store/nem/balance/balance.actions';
 import { Invoice } from '../../models/invoice';
 import { nodes } from '../../models/nodes';
-import { WebShareApi } from 'src/app/store/api/share/share.actions';
+import { WebShareApi } from '../../store/api/share/share.actions';
 
 @Component({
   selector: 'app-transfer',
