@@ -9,7 +9,7 @@ import {
 import { environment } from '../../environments/environment';
 
 import * as UserReducer from './user/user.reducer';
-import * as LocalWalletReducer from './api/local-wallet/local-wallet.reducer';
+import * as LocalWalletReducer from './local-wallet/local-wallet.reducer';
 import * as WalletReducer from './wallet/wallet.reducer';
 import * as ContactReducer from './contact/contact.reducer';
 import * as NemBalanceReducer from './nem/balance/balance.reducer';
@@ -20,16 +20,13 @@ export interface State {
   wallet: WalletReducer.State,
   localWallet: LocalWalletReducer.State,
   contact: ContactReducer.State,
-  nem: {
-    balance: NemBalanceReducer.State
-  },
+  nemBalance: NemBalanceReducer.State,
   language: LanguageReducer.State
 }
 
 export const reducers: ActionReducerMap<State, any> = {
   user: UserReducer.reducer,
   wallet: WalletReducer.reducer,
-  user: UserReducer.reducer,
   localWallet: LocalWalletReducer.reducer,
   contact: ContactReducer.reducer,
   nemBalance: NemBalanceReducer.reducer,

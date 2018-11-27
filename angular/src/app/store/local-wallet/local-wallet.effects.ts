@@ -12,9 +12,9 @@ import {
   AddLocalWalletFailed
 } from './local-wallet.actions';
 import { mergeMap, catchError, map, merge } from 'rxjs/operators';
-import { LoadBalancesFailed } from '../../nem/balance/balance.actions';
+import { LoadBalancesFailed } from '../nem/balance/balance.actions';
 import { of, from } from 'rxjs';
-import { AddContactFailed } from '../../contact/contact.actions';
+import { AddContactFailed } from '../contact/contact.actions';
 import { Dictionary } from '@ngrx/entity';
 
 
