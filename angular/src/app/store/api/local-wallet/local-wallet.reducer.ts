@@ -27,62 +27,59 @@ export function reducer(
       return {
         ...state,
         loading: true
-      }
+      };
     }
 
-    case LocalWalletActionTypes.LoadLocalWalletsSuccess: {
+    case LocalWalletActionTypes.LoadLocalWalletsComplete: {
       return {
         ...state,
-        loading: false
-      }
-    }
-    case LocalWalletActionTypes.LoadLocalWalletsFailed: {
-      return {
-        ...state,
-        loading: false
-      }
+        loading: false,
+        localWallets: action.payload.localWallets
+      };
     }
 
-    case LocalWalletActionTypes.AddLcalWallet: {
+    case LocalWalletActionTypes.AddLocalWallet: {
       return {
         ...state,
         loading: true
-      }
+      };
     }
 
     case LocalWalletActionTypes.AddLocalWalletSuccess: {
       return {
         ...state,
-        loading: false
-      }
+        loading: false,
+        localWallets: action.payload.localWallets
+      };
     }
 
     case LocalWalletActionTypes.AddLocalWalletFailed: {
       return {
         ...state,
         loading: false
-      }
+      };
     }
 
     case LocalWalletActionTypes.DeleteLocalWallet: {
       return {
         ...state,
         loading: true
-      }
+      };
     }
 
     case LocalWalletActionTypes.DeleteLocalWalletSuccess: {
       return {
         ...state,
-        loading: false
-      }
+        loading: false,
+        localWallets: action.payload.localWallets
+      };
     }
 
     case LocalWalletActionTypes.DeleteLocalWalletFailed: {
       return {
         ...state,
         loading: false
-      }
+      };
     }
 
     default:

@@ -2,9 +2,8 @@ import { Action } from '@ngrx/store';
 
 export enum LocalWalletActionTypes {
   LoadLocalWallets = '[LocalWallet] Load LocalWallets',
-  LoadLocalWalletsSuccess = '[LocalWallet] Load LocalWallets Success',
-  LoadLocalWalletsFailed = '[LocalWallet] Load LocalWallets Failed',
-  AddLcalWallet = '[LocalWallet] Add LocalWallet',
+  LoadLocalWalletsComplete = '[LocalWallet] Load LocalWallets Complete',
+  AddLocalWallet = '[LocalWallet] Add LocalWallet',
   AddLocalWalletSuccess = '[LocalWallet] Add LocalWallet Success',
   AddLocalWalletFailed = '[LocalWallet] Add LocalWallet Failed',
   DeleteLocalWallet = '[LocalWallet] Delete LocalWallet',
@@ -18,30 +17,25 @@ export class LoadLocalWallets implements Action {
   constructor() { }
 }
 
-export class LoadLocalWalletsSuccess implements Action {
-  readonly type = LocalWalletActionTypes.LoadLocalWalletsSuccess;
-
-  constructor(
-    public payload: {}
-  ) { }
-}
-
-export class LoadLocalWalletsFailed implements Action {
-  readonly type = LocalWalletActionTypes.LoadLocalWalletsFailed;
-
-  constructor(
-    error: Error
-  ) { }
-}
-
-export class AddLocalWallet implements Action {
-  readonly type = LocalWalletActionTypes.AddLcalWallet;
+export class LoadLocalWalletsComplete implements Action {
+  readonly type = LocalWalletActionTypes.LoadLocalWalletsComplete;
 
   constructor(
     public payload: {
       localWallets: {
-        [id: string]: string
-      }
+        [id: string]: string;
+      };
+    }
+  ) { }
+}
+
+export class AddLocalWallet implements Action {
+  readonly type = LocalWalletActionTypes.AddLocalWallet;
+
+  constructor(
+    public payload: {
+      id: string;
+      wallet: string;
     }
   ) { }
 }
@@ -50,7 +44,11 @@ export class AddLocalWalletSuccess implements Action {
   readonly type = LocalWalletActionTypes.AddLocalWalletSuccess;
 
   constructor(
-    public payload: {}
+    public payload: {
+      localWallets: {
+        [id: string]: string;
+      };
+    }
   ) { }
 }
 
@@ -67,9 +65,7 @@ export class DeleteLocalWallet implements Action {
 
   constructor(
     public payload: {
-      localWallets: {
-        [id: string]: string
-      }
+      id: string;
     }
   ) { }
 }
@@ -78,7 +74,11 @@ export class DeleteLocalWalletSuccess implements Action {
   readonly type = LocalWalletActionTypes.DeleteLocalWalletSuccess;
 
   constructor(
-    public payload: {}
+    public payload: {
+      localWallets: {
+        [id: string]: string
+      }
+    }
   ) { }
 }
 
@@ -92,8 +92,7 @@ export class DeleteLocalWalletFailed implements Action {
 
 export type LocalWalletActions =
   LoadLocalWallets
-  | LoadLocalWalletsSuccess
-  | LoadLocalWalletsFailed
+  | LoadLocalWalletsComplete
   | AddLocalWallet
   | AddLocalWalletSuccess
   | AddLocalWalletFailed
