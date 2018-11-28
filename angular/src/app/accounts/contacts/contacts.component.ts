@@ -116,9 +116,14 @@ export class ContactsComponent implements OnInit {
       data: {
         title: this.translation.confirm[this.lang]
       }
-    }).afterClosed().subscribe(x =>
-      this.store.dispatch(new DeleteContacts({ userId: uid, ids: this.selection }))
-    )
+    }).afterClosed().subscribe(
+      result => {
+        if (!result) {
+          return;
+        }
+        this.store.dispatch(new DeleteContacts({ userId: uid, ids: this.selection }))
+      }
+    );
   }
 
   public isAllSelected() {
