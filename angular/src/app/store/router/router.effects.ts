@@ -34,7 +34,7 @@ export class RouterEffects {
 
           default: {
             let wait = true;
-            this.store.select(state => state.user.currentWallet).subscribe(currentWallet => {
+            this.store.select(state => state.wallet.currentWallet).subscribe(currentWallet => {
               if (!currentWallet) {
                 this.router.navigate(["accounts", "wallets"]);
               }
