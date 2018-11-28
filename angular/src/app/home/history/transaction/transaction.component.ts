@@ -15,10 +15,9 @@ import {
   AccountHttp
 } from 'nem-library';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { lang } from '../../../models/lang';
-import { WalletsService } from '../../../services/wallets.service';
 import { nodes } from '../../../models/nodes';
 import { MAT_DIALOG_DATA } from '@angular/material';
+import { LanguageService } from '../../../services/language.service';
 
 @Component({
   selector: 'app-transaction',
@@ -26,7 +25,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
   styleUrls: ['./transaction.component.css']
 })
 export class TransactionComponent {
-  get lang() { return lang; }
+  public get lang() { return this.language.twoLetter; }
 
   public address?: string;
   public assets?: Asset[];
@@ -37,7 +36,7 @@ export class TransactionComponent {
 
   constructor(
     private auth: AngularFireAuth,
-    private wallet: WalletsService,
+    private language: LanguageService,
     @Inject(MAT_DIALOG_DATA) data: {
       transaction: Transaction
     }

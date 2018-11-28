@@ -1,8 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { MultisigService } from '../../services/multisig.service';
-import { lang } from '../../models/lang';
-import { WalletsService } from '../../services/wallets.service';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+
+import { State } from '../../store/index'
+import { LanguageService } from '../../services/language.service';
+import { Address } from 'nem-library';
 
 @Component({
   selector: 'app-multisig',
@@ -10,43 +13,28 @@ import { Router } from '@angular/router';
   styleUrls: ['./multisig.component.css']
 })
 export class MultisigComponent implements OnInit {
-  public loading = true;
-  public addresses: string[] = [];
-
-  get lang() { return lang; }
-
-  @Input("refresh") refreshHome!: (force?: boolean) => void;
+  public get lang() { return this.language.twoLetter; }
+  
+  public loading$: Observable<boolean>;
+  public multisigs$: Observable<Address[]>;
 
   constructor(
-    private multisig: MultisigService,
-    private wallet: WalletsService,
-    private router: Router
+    private store: Store<State>,
+    private language: LanguageService
   ) {
-    
+    this.loading$ = this.store.select(state => state.NemMultisig.loading);
+    this.multisigs$ = this.store.select(state => state.NemMultisig.multisigs);
   }
 
   ngOnInit() {
-    this.refresh();
+    this.load();
   }
 
-  public async refresh(force?: boolean) {
-    this.loading = true;
-    await this.multisig.readMultisigAccounts(force);
-    this.addresses = this.multisig.addresses!.map(a => a.plain());
+  public load(refresh?: boolean) {
 
-    this.loading = false;
   }
 
   public async onClick(address: string) {
-    this.wallet.wallets!["multisig"] = {
-      name: "",
-      local: true,
-      nem: address,
-      wallet: undefined
-    }
-
-    this.wallet.updateCurrentWallet("multisig");
-    await this.refreshHome(true);
   }
 
   public translation = {

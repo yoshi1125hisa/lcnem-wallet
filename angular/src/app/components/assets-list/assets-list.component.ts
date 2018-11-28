@@ -5,6 +5,7 @@ import { State } from '../../store/index';
 import { Observable, of } from 'rxjs';
 import { LoadAssetDefinitions } from '../../store/nem/asset-definition/asset-definition.actions';
 import { map } from 'rxjs/operators';
+import { LanguageService } from '../../services/language.service';
 
 @Component({
   selector: 'app-assets-list',
@@ -12,6 +13,8 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./assets-list.component.css']
 })
 export class AssetsListComponent implements OnInit {
+  public get lang() { return this.language.twoLetter; }
+
   @Input() public title?: string;
   @Input() public assets?: Asset[];
 
@@ -25,7 +28,8 @@ export class AssetsListComponent implements OnInit {
   }>[] = [];
 
   constructor(
-    private store: Store<State>
+    private store: Store<State>,
+    private language: LanguageService
   ) {
     this.loading$ = this.store.select(state => state.nemAssetDefinition.loading);
   }

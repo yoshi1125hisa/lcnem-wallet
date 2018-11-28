@@ -19,8 +19,8 @@ export class BalanceComponent implements OnInit {
     private store: Store<State>,
     private language: LanguageService
   ) {
-    this.loading$ = this.store.select(state => state.nem.balance.loading);
-    this.assets$ = this.store.select(state => state.nem.balance.assets);
+    this.loading$ = this.store.select(state => state.nemBalance.loading);
+    this.assets$ = this.store.select(state => state.nemBalance.assets);
   }
 
   ngOnInit() {

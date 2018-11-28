@@ -1,10 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Transaction, TransactionTypes, MultisigTransaction, TransferTransaction } from 'nem-library';
-import { lang } from '../../models/lang';
-import { HistoryService } from '../../services/history.service';
 import { MatTableDataSource, MatPaginator, PageEvent, MatSnackBar, MatDialog } from '@angular/material';
 import { TransactionComponent } from './transaction/transaction.component';
-import { WalletsService } from '../../services/wallets.service';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { State } from '../../store/index';
+import { LanguageService } from '../../services/language.service';
+import { LoadHistorys } from 'src/app/store/nem/history/history.actions';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-history',
@@ -12,60 +15,59 @@ import { WalletsService } from '../../services/wallets.service';
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
-  public loading = true;
-  get lang() { return lang; }
+  public get lang() { return this.language.twoLetter; }
 
-  public dataSource = new MatTableDataSource<{
-    confirmed: boolean,
-    icon: string,
-    multisig?: boolean,
-    address: string,
-    date: string,
-    action: boolean,
-    transaction: Transaction
-  }>();
-  public displayedColumns = ["confirmed", "type", "address", "date", "action"];
+  public loading$: Observable<boolean>;
+  public transactions$: Observable<Transaction[]>;
+
+  public dataSource = this.transactions$.pipe(
+    map(
+      (transactions) => {
+        const dataSource = new MatTableDataSource(
+          transactions.map(
+            (transaction) => {
+              return {
+                confirmed: transaction.isConfirmed(),
+                icon: "",
+                address: "",
+                date: `${transaction.timeWindow.timeStamp.toLocalDate()} ${transaction.timeWindow.timeStamp.toLocalTime()}`,
+                action: false,
+                transaction: transaction
+              };
+            }
+          )
+        );
+        dataSource.paginator = this.paginator;
+        this.paginator.length = dataSource.data.length;
+        return dataSource;
+      }
+    )
+  );
+
+  public readonly displayedColumns = ["confirmed", "type", "address", "date", "action"]
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  public transactions?: Transaction[];
-
   constructor(
+    private store: Store<State>,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private wallet: WalletsService,
-    private history: HistoryService
-  ) { }
+    private language: LanguageService
+  ) {
+    this.loading$ = this.store.select(state => state.NemHistory.loading);
+    this.transactions$ = this.store.select(state => state.NemHistory.transactions);
+  }
 
   ngOnInit() {
-    this.refresh();
+    this.load();
   }
 
-  public async refresh(force?: boolean) {
-    await this.history.readTransactions(force);
-
-    this.dataSource.data = this.history.transactions!.map(transaction => {
-      return {
-        confirmed: transaction.isConfirmed(),
-        icon: "",
-        address: "",
-        date: `${transaction.timeWindow.timeStamp.toLocalDate()} ${transaction.timeWindow.timeStamp.toLocalTime()}`,
-        action: false,
-        transaction: transaction
-      }
-    });
-
-    this.dataSource.paginator = this.paginator;
-    this.paginator.length = this.dataSource!.data.length;
-    this.paginator.pageSize = 10;
-
-    this.onPageChanged({
-      length: this.paginator.length,
-      pageIndex: this.paginator.pageIndex,
-      pageSize: this.paginator.pageSize
-    });
+  public load(refresh?: boolean) {
+    this.store.dispatch(
+      new LoadHistorys()
+    );
   }
 
-  public async onPageChanged(pageEvent: PageEvent) {
+  public onPageChanged(pageEvent: PageEvent) {
     this.loading = true;
 
     let dataSourceRange = this.dataSource.data.slice(pageEvent.pageIndex * pageEvent.pageSize, Math.min((pageEvent.pageIndex + 1) * pageEvent.pageSize, pageEvent.length));
@@ -73,7 +75,7 @@ export class HistoryComponent implements OnInit {
     for (let data of dataSourceRange) {
       const setDataFromTransferTransaction = (transaction: TransferTransaction) => {
         data.address = transaction.recipient.plain();
-        if(data.address == this.wallet.wallets![this.wallet.currentWallet!].nem) {
+        if (data.address == this.wallet.wallets![this.wallet.currentWallet!].nem) {
           data.icon = "call_received"
           data.address = transaction.signer && transaction.signer.address.plain() || "";
         } else {
