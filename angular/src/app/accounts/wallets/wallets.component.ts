@@ -15,11 +15,10 @@ import { ConfirmDialogComponent } from '../../../app/components/confirm-dialog/c
 import { WalletsService } from '../../../app/services/wallets.service';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { Plan } from '../../../../../firebase/functions/src/models/plan';
-import { UserService } from '../../services/user.service';
 import { LanguageService } from '../../services/language.service';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { State } from '../../store/index'
-import { LoadWallets, UpdateWallet, DeleteWallet } from '../../store/wallet/wallet.actions';
+import { LoadWallets, UpdateWallet, DeleteWallet, AddWallet } from '../../store/wallet/wallet.actions';
 
 @Component({
   selector: 'app-wallets',
@@ -48,7 +47,6 @@ export class WalletsComponent implements OnInit {
     private auth: AngularFireAuth,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private user: UserService,
     private wallet: WalletsService,
     private language: LanguageService
   ) {
@@ -84,51 +82,31 @@ export class WalletsComponent implements OnInit {
     this.store.dispatch(new LoadWallets({userId: uid}))
   }
 
-  async refresh(force?: boolean) { // 削除予定
-    this.loading = true;
+  addWallet() {
+    const uid = this.auth.auth.currentUser!.uid;
+    let simpleWallet: SimpleWallet;
 
-    await this.wallet.readWallets(force);
-    this.wallets = this.wallet.wallets!;
-    this.walletIds = Object.keys(this.wallet.wallets!);
-    this.walletIds = this.walletIds.filter(id => id != "multisig");
-    this.clouds = 0;
-    for (let id of this.walletIds) {
-      if (!this.wallets[id].local) {
-        this.clouds++;
+    this.dialog.open(CreateDialogComponent).afterClosed().subscribe(
+      result => {
+        if (!result) {
+          return;
+        }
+        if (result.import) {
+          simpleWallet = SimpleWallet.createWithPrivateKey(uid, new Password(uid), result.privateKey);
+        } else {
+          simpleWallet = SimpleWallet.create(uid, new Password(uid));
+        }
+
+        const wallet: Wallet = {
+          name: result.name,
+          local: result.local == 1 ? true : false,
+          nem: simpleWallet.address.plain(),
+          wallet: simpleWallet.writeWLTFile()
+        };
+
+        this.store.dispatch(new AddWallet({userId: uid, wallet}))
       }
-    }
-
-    this.loading = false;
-  }
-
-  async addWallet() {
-    let result = await this.dialog.open(CreateDialogComponent).afterClosed().toPromise();
-
-    if (!result) {
-      return;
-    }
-    let dialogRef = this.dialog.open(LoadingDialogComponent, { disableClose: true });
-
-    let uid = this.auth.auth.currentUser!.uid;
-
-    let wallet: SimpleWallet;
-
-    if (result.import) {
-      wallet = SimpleWallet.createWithPrivateKey(uid, new Password(uid), result.privateKey);
-    } else {
-      wallet = SimpleWallet.create(uid, new Password(uid));
-    }
-
-    let firestoreObject: Wallet = {
-      name: result.name,
-      local: result.local == 1 ? true : false,
-      nem: wallet.address.plain(),
-      wallet: wallet.writeWLTFile()
-    };
-
-    await this.wallet.createWallet(firestoreObject);
-    dialogRef.close();
-    await this.refresh();
+    );
   }
 
   public async enterWallet(id: string) {
