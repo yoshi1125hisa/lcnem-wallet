@@ -16,7 +16,6 @@ import { WalletsService } from '../../../app/services/wallets.service';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { Plan } from '../../../../../firebase/functions/src/models/plan';
 import { LanguageService } from '../../services/language.service';
-import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { State } from '../../store/index'
 import { LoadWallets, UpdateWallet, DeleteWallet, AddWallet } from '../../store/wallet/wallet.actions';
 
@@ -176,12 +175,11 @@ export class WalletsComponent implements OnInit {
 
           const wallet = SimpleWallet.readFromWLT(targetWallet.wallet!);
           const account = wallet.open(new Password(uid));
-          const pk = this.wallet.backupPrivateKey(account.privateKey);
 
           this.dialog.open(AlertDialogComponent, {
             data: {
               title: this.translation.backup[this.lang],
-              content: pk
+              content: account.privateKey
             }
           });
         }
