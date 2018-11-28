@@ -13,6 +13,7 @@ import { ContactEditDialogComponent } from './contact-edit-dialog/contact-edit-d
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
+import { DeleteContacts } from 'src/app/store/contact/contact.actions';
 
 @Component({
   selector: 'app-contacts',
@@ -39,6 +40,7 @@ export class ContactsComponent implements OnInit {
   constructor(
     private store: Store<State>,
     private router: Router,
+    private auth: AngularFireAuth,
     private user: UserService,
     private contact: ContactsService,
     private dialog: MatDialog
@@ -111,21 +113,14 @@ export class ContactsComponent implements OnInit {
   }
 
   public async deleteContact() {
-    let result = await this.dialog.open(ConfirmDialogComponent, {
+    const uid = this.auth.auth.currentUser!.uid;
+    this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: this.translation.confirm[this.lang]
       }
-    }).afterClosed().toPromise();
-
-    if (!result) {
-      return;
-    }
-
-    await Promise.all(this.selection.selected.map(async selected => {
-      await this.contact.deleteContact(selected.id);
-    }));
-    this.selection.clear();
-    await this.refresh();
+    }).afterClosed().subscribe(x =>
+      this.store.dispatch(new DeleteContacts({ userId: uid, ids: this.selection }))
+    )
   }
 
   public isAllSelected() {
