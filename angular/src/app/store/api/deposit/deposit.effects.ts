@@ -22,11 +22,20 @@ export class DepositEffects {
   @Effect() loadTransaction$ = this.actions$.pipe(
     ofType<SendDepositRequest>(DepositActionTypes.SendDepositRequest),
     mergeMap(
-      action => (this.http.post("/api/deposit", action.payload).pipe(
-        map(() => new SendDepositRequestSuccess({ })),
-        catchError(e => of(new SendDepositRequestFailed(e)))
+      (action) => {
+        return this.http.post("/api/deposit", action.payload).pipe(
+          map(
+            () => {
+              return new SendDepositRequestSuccess();
+            }
+          ),
+          catchError(
+            (e) => {
+              return of(new SendDepositRequestFailed(e));
+            }
+          )
         )
-      )
+      }
     )
   )
 }

@@ -4,13 +4,10 @@ import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, first } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import { State } from '../store/index'
+import { State } from '../store/index';
 import { Logout } from '../store/user/user.actions';
-import { LoadWallets } from '../store/wallet/wallet.actions';
 import { Wallet } from '../store/wallet/wallet.model';
-import { LanguageService } from '../services/language.service';
 import { Invoice } from '../models/invoice';
-import { SetLanguage } from '../store/language/language.actions';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
@@ -20,8 +17,6 @@ NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  public get lang() { return this.language.twoLetter; }
-
   public photoUrl$: Observable<string>;
   public currentWallet$: Observable<Wallet>;
   public qrUrl$: Observable<string>;
@@ -29,7 +24,6 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private store: Store<State>,
-    private language: LanguageService,
     private auth: AngularFireAuth
   ) {
     this.photoUrl$ = this.auth.authState.pipe(
@@ -49,14 +43,10 @@ export class HomeComponent implements OnInit {
       })
     )
 
-    this.assets$ = this.store.select(state => state.nem.balance.assets);
+    this.assets$ = this.store.select(state => state.nemBalance.assets);
   }
 
   ngOnInit() {
-  }
-
-  public setLanguage(twoLetter: string) {
-    this.store.dispatch(new SetLanguage({ twoLetter: twoLetter })) 
   }
 
   public logout() {

@@ -1,11 +1,38 @@
 import { Action } from '@ngrx/store';
 
-export enum WithdrawActionTypes {
-  LoadWithdraws = '[Withdraw] Load Withdraws'
+export enum WithdrawRequestActionTypes {
+  SendWithdrawRequest = '[SendWithdrawRequest] Send Withdraw Request',
+  SendWithdrawRequestSuccess = '[SendWithdrawRequest] Send Withdraw Request Success',
+  SendWithdrawRequestFailed = '[SendWithdrawRequest] Send Withdraw Request Failed'
 }
 
-export class LoadWithdraws implements Action {
-  readonly type = WithdrawActionTypes.LoadWithdraws;
+export class SendWithdrawRequest implements Action {
+  readonly type = WithdrawRequestActionTypes.SendWithdrawRequest;
+
+  constructor(
+    public payload: {
+      email: string,
+      nem: string,
+      currency: string,
+      amount: number,
+      method: string,
+      lang: string
+    }
+  ) { }
 }
 
-export type WithdrawActions = LoadWithdraws;
+ export class SendWithdrawRequestSuccess implements Action {
+  readonly type = WithdrawRequestActionTypes.SendWithdrawRequestSuccess;
+}
+
+ export class SendWithdrawRequestFailed implements Action {
+  readonly type = WithdrawRequestActionTypes.SendWithdrawRequestFailed;
+  constructor(
+    public error: Error
+  ) { }
+}
+
+ export type WithdrawRequestActions =
+ SendWithdrawRequest
+  | SendWithdrawRequestSuccess
+  | SendWithdrawRequestFailed

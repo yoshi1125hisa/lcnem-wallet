@@ -20,7 +20,7 @@ export class StripeEffects {
   @Effect({ dispatch: false }) stripeCharge$ = this.actions$.pipe(
     ofType<StripeCharge>(StripeActionTypes.StripeCharge),
     map(
-      action => {
+      (action) => {
         Stripe.setPublishableKey(environment.stripe.pk);
         Stripe.card.createToken(
           {

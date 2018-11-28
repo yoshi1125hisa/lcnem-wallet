@@ -3,7 +3,7 @@ import { Action } from '@ngrx/store';
 export enum DepositActionTypes {
   SendDepositRequest = '[Deposit] Load Deposits',
   SendDepositRequestSuccess = '[Deposit] Load Deposits Success',
-  SendDepositRequestFailed = '[Deposit] Load Deposits Failed',
+  SendDepositRequestFailed = '[Deposit] Load Deposits Failed'
 }
 
 export class SendDepositRequest implements Action {
@@ -23,17 +23,13 @@ export class SendDepositRequest implements Action {
 
 export class SendDepositRequestSuccess implements Action {
   readonly type = DepositActionTypes.SendDepositRequestSuccess;
-
-  constructor(
-    public payload: { }
-  ) { }
 }
 
 export class SendDepositRequestFailed implements Action {
   readonly type = DepositActionTypes.SendDepositRequestFailed;
 
   constructor(
-    error: Error
+    public error: Error
   ) { }
 }
 
