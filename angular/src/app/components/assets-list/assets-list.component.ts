@@ -1,6 +1,10 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Asset, AssetDefinition } from 'nem-library';
-import { BalanceService } from '../../services/balance.service';
+import { Store } from '@ngrx/store';
+import { State } from '../../store/index';
+import { Observable, of } from 'rxjs';
+import { LoadAssetDefinitions } from '../../store/nem/asset-definition/asset-definition.actions';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-assets-list',
@@ -10,80 +14,104 @@ import { BalanceService } from '../../services/balance.service';
 export class AssetsListComponent implements OnInit {
   @Input() public title?: string;
   @Input() public assets?: Asset[];
-  
-  public _assets = new Array<{
+
+  public loading$: Observable<boolean>;
+  public assets$: Observable<{
     name: string,
     amount: number,
-    imageUrl: string,
+    imageURL: string,
     issuer?: string,
     unit?: string
-  }>();
+  }>[] = [];
 
   constructor(
-    private balance: BalanceService
-  ) { }
-
-  ngOnInit() {
-    this.refresh();
+    private store: Store<State>
+  ) {
+    this.loading$ = this.store.select(state => state.nemAssetDefinition.loading);
   }
 
-  public async refresh() {
+  ngOnInit() {
     if (!this.assets) {
       return;
     }
 
-    await Promise.all(this.assets.map(asset => this.balance.readDefinition(asset.assetId.namespaceId + ":" + asset.assetId.name)));
-    
-    for(let asset of this.assets) {
-      let id = asset.assetId.namespaceId + ":" + asset.assetId.name;
+    this.store.dispatch(
+      new LoadAssetDefinitions(
+        {
+          assetIds: this.assets.map(
+            (asset) => {
+              return asset.assetId;
+            }
+          )
+        }
+      )
+    );
 
-      let definition = await this.balance.readDefinition(id);
+    const definitions$ = this.store.select(state => state.nemAssetDefinition.definitions);
 
-      let additionalDefinition = assetAdditionalDefinitions.find(a => a.name == id);
+    for (const asset of this.assets) {
+      this.assets$.push(
+        definitions$.pipe(
+          map(
+            (definitions) => {
+              const name = asset.assetId.namespaceId + ":" + asset.assetId.name;
+              const definition = definitions.find(
+                (_definition) => {
+                  return _definition.id.equals(asset.assetId);
+                }
+              );
+              if (!definition) {
+                return {
+                  name: name,
+                  amount: 0,
+                  imageURL: this.getImageURL(name)
+                };
+              }
 
-      this._assets!.push({
-        name: id,
-        amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
-        imageUrl: AssetAdditionalDefinition.getImageUrl(id),
-        issuer: additionalDefinition && additionalDefinition.issuer,
-        unit: additionalDefinition && additionalDefinition.unit
-      });
+              return {
+                ...this.assetAdditionalDefinitions.find(
+                  (a) => {
+                    return a.name == name;
+                  }
+                ),
+                name: name,
+                amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
+                imageURL: this.getImageURL(name)
+              }
+            }
+          )
+        )
+      )
     }
   }
-}
 
-let assetAdditionalDefinitions: AssetAdditionalDefinition[] = [
-  {
-    name: "nem:xem",
-    issuer: "",
-    unit: "XEM"
-  },
-  {
-    name: "lc:jpy",
-    issuer: "LCNEM, Inc.",
-    unit: "JPY"
-  },
-  {
-    name: "oshibori:point2019",
-    issuer: "おしぼり.jp",
-    unit: "JPY"
-  },
-  {
-    name: "montoken:mot",
-    issuer: "かえもん",
-    unit: ""
-  }
-];
-
-class AssetAdditionalDefinition {
-  public name = "";
-  public issuer = "";
-  public unit = "";
-
-  public static getImageUrl(name: string) {
-    if (!assetAdditionalDefinitions.find(a => a.name == name)) {
+  public getImageURL(name: string) {
+    if (!this.assetAdditionalDefinitions.find(a => a.name == name)) {
       return "assets/data/mosaic.svg";
     }
     return "assets/data/" + name.replace(":", "/") + ".svg";
   }
+
+  public readonly assetAdditionalDefinitions = [
+    {
+      name: "nem:xem",
+      issuer: "",
+      unit: "XEM"
+    },
+    {
+      name: "lc:jpy",
+      issuer: "LCNEM, Inc.",
+      unit: "JPY"
+    },
+    {
+      name: "oshibori:point2019",
+      issuer: "おしぼり.jp",
+      unit: "JPY"
+    },
+    {
+      name: "montoken:mot",
+      issuer: "かえもん",
+      unit: ""
+    }
+  ];
 }

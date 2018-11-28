@@ -5,12 +5,16 @@ import { mergeMap, map, catchError, toArray, merge } from 'rxjs/operators';
 import { of, from, forkJoin, concat } from 'rxjs';
 import { AssetHttp } from 'nem-library';
 import { nodes } from '../../../models/nodes';
-
+import { Store } from '@ngrx/store';
+import { State } from '../../../store/index';
 
 @Injectable()
 export class AssetDefinitionEffects {
 
-  constructor(private actions$: Actions) { }
+  constructor(
+    private actions$: Actions,
+    private store: Store<State>
+  ) { }
 
   @Effect() loadAssetDefinitions$ = this.actions$.pipe(
     ofType<LoadAssetDefinitions>(AssetDefinitionActionTypes.LoadAssetDefinitions),
@@ -19,9 +23,38 @@ export class AssetDefinitionEffects {
         return of(new AssetHttp(nodes)).pipe(
           mergeMap(
             (assetHttp) => {
-              return from(action.payload.assetIds).pipe(
-                mergeMap(assetId => assetHttp.getAssetDefinition(assetId))
-              )
+              return of(action.payload.assetIds).pipe(
+                mergeMap(
+                  (assetIds) => {
+                    return this.store.select(state => state.nemAssetDefinition.definitions).pipe(
+                      map(
+                        (definitions) => {
+                          return assetIds.filter(
+                            (assetId) => {
+                              return !definitions.find(
+                                (definition) => {
+                                  return definition.id.equals(assetId);
+                                }
+                              )
+                            }
+                          );
+                        }
+                      )
+                    );
+                  }
+                ),
+                mergeMap(
+                  (assetId) => {
+                    return from(assetId).pipe(
+                      mergeMap(
+                        (assetId) => {
+                          return assetHttp.getAssetDefinition(assetId);
+                        }
+                      )
+                    );
+                  }
+                )
+              );
             }
           ),
           toArray(),

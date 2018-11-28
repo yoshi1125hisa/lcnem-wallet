@@ -41,7 +41,7 @@ export function reducer(
       return {
         ...state,
         loading: false,
-        definitions: action.payload.definitions
+        definitions: [...action.payload.definitions]
       }
     }
 
