@@ -5,7 +5,7 @@ import { SimpleWallet, Password } from 'nem-library';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { Store } from '@ngrx/store';
 import { Dictionary } from '@ngrx/entity';
-import { from } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { map, mergeMap, toArray } from 'rxjs/operators';
 
 import { CreateDialogComponent } from './create-dialog/create-dialog.component';
@@ -18,8 +18,8 @@ import { Plan } from '../../../../../firebase/functions/src/models/plan';
 import { UserService } from '../../services/user.service';
 import { LanguageService } from '../../services/language.service';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
-import { Observable } from 'rxjs';
 import { State } from '../../store/index'
+import { LoadWallets } from '../../store/wallet/wallet.actions';
 
 @Component({
   selector: 'app-wallets',
@@ -79,6 +79,11 @@ export class WalletsComponent implements OnInit {
     this.user.checkLogin().then(async () => {
       await this.refresh();
     });
+  }
+
+  public load(refresh?: boolean) {
+    const uid = this.auth.auth.currentUser!.uid;
+    this.store.dispatch(new LoadWallets({userId: uid}))
   }
 
   async refresh(force?: boolean) {
