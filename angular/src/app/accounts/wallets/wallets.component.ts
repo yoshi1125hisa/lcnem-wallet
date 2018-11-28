@@ -19,7 +19,7 @@ import { UserService } from '../../services/user.service';
 import { LanguageService } from '../../services/language.service';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { State } from '../../store/index'
-import { LoadWallets, UpdateWallet } from '../../store/wallet/wallet.actions';
+import { LoadWallets, UpdateWallet, DeleteWallet } from '../../store/wallet/wallet.actions';
 
 @Component({
   selector: 'app-wallets',
@@ -195,23 +195,22 @@ export class WalletsComponent implements OnInit {
     });
   }
 
-  public async deleteWallet(id: string) {
-    let result = await this.dialog.open(ConfirmDialogComponent, {
+  public deleteWallet(id: string) {
+    const uid = this.auth.auth.currentUser!.uid;
+
+    this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: this.translation.deleteConfirm[this.lang],
         content: ""
       }
-    }).afterClosed().toPromise();
-
-    if (!result) {
-      return;
-    }
-
-    let dialogRef = this.dialog.open(LoadingDialogComponent, { disableClose: true });
-
-    await this.wallet.deleteWallet(id);
-    dialogRef.close();
-    await this.refresh();
+    }).afterClosed().subscribe(
+      result => {
+        if (!result) {
+          return;
+        }
+        this.store.dispatch(new DeleteWallet({userId: uid, id: id}))
+      }
+    );
   }
 
   public async openSnackBar(type: string) {
