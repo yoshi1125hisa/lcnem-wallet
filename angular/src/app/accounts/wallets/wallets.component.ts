@@ -17,7 +17,8 @@ import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { Plan } from '../../../../../firebase/functions/src/models/plan';
 import { LanguageService } from '../../services/language.service';
 import { State } from '../../store/index'
-import { LoadWallets, UpdateWallet, DeleteWallet, AddWallet } from '../../store/wallet/wallet.actions';
+import { LoadWallets, UpdateWallet, DeleteWallet, AddWallet, SetCurrentWallet } from '../../store/wallet/wallet.actions';
+import { Navigate } from 'src/app/store/router/router.actions';
 
 @Component({
   selector: 'app-wallets',
@@ -42,7 +43,6 @@ export class WalletsComponent implements OnInit {
 
   constructor(
     private store: Store<State>,
-    private router: Router,
     private auth: AngularFireAuth,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -109,8 +109,24 @@ export class WalletsComponent implements OnInit {
   }
 
   public async enterWallet(id: string) {
-    this.wallet.updateCurrentWallet(id);
-    this.router.navigate([""]);
+    this.wallets$.pipe(
+      map(
+        wallets => wallets[id]
+      ),
+      map(
+        wallet => {
+          if (wallet) {
+            return;
+          }
+          if (id != "multisig") {
+            localStorage.setItem("currentWallet", id);
+          }
+          this.store.dispatch(new SetCurrentWallet({id}))
+          this.store.dispatch(new Navigate({ commands: [""] }))
+        }
+      )
+      // TOD: this.balance.initialize(); とかをngrxに置き換えて実装
+    )
   }
 
   public async importPrivateKey(id: string) {

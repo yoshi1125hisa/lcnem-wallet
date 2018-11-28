@@ -106,6 +106,14 @@ export function reducer(
       }
     }
 
+    case WalletActionTypes.SetCurrentWallet: {
+      return {
+        ...state,
+        currentWallet: action.payload.id,
+        loading: false
+      }
+    }
+
     default: {
       return state;
     }
