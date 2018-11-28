@@ -77,7 +77,7 @@ export class WalletsComponent implements OnInit {
     this.load();
   }
 
-  public load(refresh?: boolean) {
+  public load(refresh?: boolean) { // refreshの導入をする必要あり？
     const uid = this.auth.auth.currentUser!.uid;
     this.store.dispatch(new LoadWallets({userId: uid}))
   }
@@ -162,15 +162,31 @@ export class WalletsComponent implements OnInit {
     );
   }
 
-  public async backupWallet(id: string) {
-    let pk = this.wallet.backupPrivateKey(id);
+  public backupWallet(id: string) {
+    const uid = this.auth.auth.currentUser!.uid;
+    this.wallets$.pipe(
+      map(
+        wallets => wallets[id]
+      ),
+      map(
+        targetWallet => {
+          if (!targetWallet || !targetWallet.wallet) {
+            return
+          }
 
-    await this.dialog.open(AlertDialogComponent, {
-      data: {
-        title: this.translation.backup[this.lang],
-        content: pk
-      }
-    });
+          const wallet = SimpleWallet.readFromWLT(targetWallet.wallet!);
+          const account = wallet.open(new Password(uid));
+          const pk = this.wallet.backupPrivateKey(account.privateKey);
+
+          this.dialog.open(AlertDialogComponent, {
+            data: {
+              title: this.translation.backup[this.lang],
+              content: pk
+            }
+          });
+        }
+      )
+    )
   }
 
   public deleteWallet(id: string) {
