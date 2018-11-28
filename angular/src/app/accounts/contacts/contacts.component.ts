@@ -103,11 +103,17 @@ export class ContactsComponent implements OnInit {
       data: {
         contact: {}
       }
-    }).afterClosed().subscribe((x: Contact) =>
-      of(this.store.dispatch(new AddContact({ userId: uid, contact: x })))
-        .subscribe(x =>
-          this.refresh()
-        ))
+    }).afterClosed().subscribe(
+      (result: Contact) => {
+        if (!result) {
+          return;
+        }
+        of(this.store.dispatch(new AddContact({ userId: uid, contact: result })))
+          .subscribe(x =>
+            this.refresh()
+          )
+      }
+    );
   }
 
   public deleteContact() {
