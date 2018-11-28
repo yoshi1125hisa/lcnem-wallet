@@ -19,7 +19,7 @@ import { UserService } from '../../services/user.service';
 import { LanguageService } from '../../services/language.service';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { State } from '../../store/index'
-import { LoadWallets } from '../../store/wallet/wallet.actions';
+import { LoadWallets, UpdateWallet } from '../../store/wallet/wallet.actions';
 
 @Component({
   selector: 'app-wallets',
@@ -76,9 +76,7 @@ export class WalletsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.user.checkLogin().then(async () => {
-      await this.refresh();
-    });
+    this.load();
   }
 
   public load(refresh?: boolean) {
@@ -86,10 +84,10 @@ export class WalletsComponent implements OnInit {
     this.store.dispatch(new LoadWallets({userId: uid}))
   }
 
-  async refresh(force?: boolean) {
+  async refresh(force?: boolean) { // 削除予定
     this.loading = true;
 
-    await this.wallet.readWallets(force); // ここ以外はsubscribeされる
+    await this.wallet.readWallets(force);
     this.wallets = this.wallet.wallets!;
     this.walletIds = Object.keys(this.wallet.wallets!);
     this.walletIds = this.walletIds.filter(id => id != "multisig");
@@ -156,8 +154,8 @@ export class WalletsComponent implements OnInit {
     this.wallet.importPrivateKey(id, pk);
   }
 
-  public async renameWallet(id: string) {
-    let name = await this.dialog.open(PromptDialogComponent, {
+  public renameWallet(id: string) {
+    this.dialog.open(PromptDialogComponent, {
       data: {
         title: this.translation.rename[this.lang],
         input: {
@@ -165,13 +163,25 @@ export class WalletsComponent implements OnInit {
           value: this.wallet.wallets![id].name
         }
       }
-    }).afterClosed().toPromise();
-
-    if (!name) {
-      return;
-    }
-
-    await this.wallet.updateWallet(id, { name: name });
+    }).afterClosed().subscribe(
+      name => {
+        if (!name) {
+          return;
+        }
+        this.wallets$.pipe(
+          map(
+            wallets => wallets[id]
+          ),
+          map(
+            wallet => this.store.dispatch(new UpdateWallet({
+              userId: this.auth.auth.currentUser!.uid,
+              id: id,
+              wallet: {...wallet, name: name}
+            }))
+          )
+        )
+      }
+    );
   }
 
   public async backupWallet(id: string) {
