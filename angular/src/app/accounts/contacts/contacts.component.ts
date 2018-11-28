@@ -10,10 +10,10 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
 import { SelectionModel } from '@angular/cdk/collections';
 import { ContactDialogComponent } from './contact-dialog/contact-dialog.component';
 import { ContactEditDialogComponent } from './contact-edit-dialog/contact-edit-dialog.component';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
-import { DeleteContacts } from 'src/app/store/contact/contact.actions';
+import { DeleteContacts, AddContact } from 'src/app/store/contact/contact.actions';
 
 @Component({
   selector: 'app-contacts',
@@ -97,22 +97,21 @@ export class ContactsComponent implements OnInit {
     }).afterClosed().toPromise();
   }
 
-  public async createContact() {
-    let result: Contact = await this.dialog.open(ContactEditDialogComponent, {
+  public createContact() {
+    //Contact型にする
+    const uid = this.auth.auth.currentUser!.uid;
+    this.dialog.open(ContactEditDialogComponent, {
       data: {
         contact: {}
       }
-    }).afterClosed().toPromise();
-
-    if (!result) {
-      return;
-    }
-
-    await this.contact.createContact(result);
-    await this.refresh();
+    }).afterClosed().subscribe((x: Contact) =>
+      of(this.store.dispatch(new AddContact({ userId: uid, contact: x })))
+        .subscribe(x =>
+          this.refresh()
+        ))
   }
 
-  public async deleteContact() {
+  public deleteContact() {
     const uid = this.auth.auth.currentUser!.uid;
     this.dialog.open(ConfirmDialogComponent, {
       data: {
