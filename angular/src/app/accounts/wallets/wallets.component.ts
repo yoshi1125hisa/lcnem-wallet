@@ -108,7 +108,7 @@ export class WalletsComponent implements OnInit {
     );
   }
 
-  public async enterWallet(id: string) {
+  public enterWallet(id: string) {
     this.wallets$.pipe(
       map(
         wallets => wallets[id]
