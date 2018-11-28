@@ -98,7 +98,6 @@ export class ContactsComponent implements OnInit {
   }
 
   public createContact() {
-    //Contact型にする
     const uid = this.auth.auth.currentUser!.uid;
     this.dialog.open(ContactEditDialogComponent, {
       data: {
