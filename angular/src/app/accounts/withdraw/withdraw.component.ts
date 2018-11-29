@@ -2,18 +2,21 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { HttpClient } from '@angular/common/http';
+import { Store } from '@ngrx/store';
+import { Dictionary } from '@ngrx/entity';
+import { from, Observable } from 'rxjs';
+import { map, mergeMap, toArray } from 'rxjs/operators';
+import { Navigate } from 'src/app/store/router/router.actions';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
-import { lang } from '../../models/lang';
-import { WalletsService } from '../../../app/services/wallets.service';
-import { back } from '../../models/back';
-import { UserService } from '../../services/user.service';
-import { Observable } from 'rxjs';
-import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
+import { LanguageService } from '../../services/language.service';
+import { SendWithdrawRequest, SendWithdrawRequestSuccess, SendWithdrawRequestFailed } from '../../store/api/withdraw/withdraw.actions';
+import { dispatch } from 'rxjs/internal/observable/pairs';
+
 
 @Component({
   selector: 'app-withdraw',
@@ -22,9 +25,9 @@ import { State } from '../../store/index'
 })
 export class WithdrawComponent implements OnInit {
   public loading$: Observable<boolean>;
-  get lang() { return lang; }
   public supportedCurrencies = ["JPY"];
   public selectedCurrency = "JPY";
+  public get lang() { return this.language.twoLetter; }
 
   public amount?: number;
   public method?: string;
@@ -37,8 +40,7 @@ export class WithdrawComponent implements OnInit {
     private dialog: MatDialog,
     private http: HttpClient,
     private auth: AngularFireAuth,
-    private user: UserService,
-    private wallet: WalletsService,
+    private language: LanguageService,
     sanitizer: DomSanitizer
   ) {
     this.loading$ = store.select(state => state.wallet.loading)
@@ -46,50 +48,31 @@ export class WithdrawComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.user.checkLogin().then(async () => {
-      await this.wallet.checkWallets();
-    });
   }
 
-  public async withdraw() {
-    let dialogRef = this.dialog.open(LoadingDialogComponent, { disableClose: true });
-
-    try {
-      await this.http.post(
-        "/api/withdraw",
-        {
-          email: this.auth.auth.currentUser!.email,
-          nem: this.wallet.wallets![this.wallet.currentWallet!].nem,
-          currency: this.selectedCurrency,
-          amount: this.amount,
-          method: this.method,
-          lang: this.lang
-        }
-      ).toPromise();
-    } catch {
-      this.dialog.open(AlertDialogComponent, {
-        data: {
-          title: this.translation.error[this.lang],
-          content: ""
-        }
-      });
-      return;
-    } finally {
-      dialogRef.close();
-    }
-
-    await this.dialog.open(AlertDialogComponent, {
-      data: {
-        title: this.translation.completed[this.lang],
-        content: this.translation.following[this.lang]
+  public  withdraw() {
+    this.dialog.open(LoadingDialogComponent, { disableClose: true }).afterClosed().subscribe( x =>
+    this.store.dispatch(new SendWithdrawRequest(this.http.post(
+      "/api/withdraw",
+      {
+        email: this.auth.auth.currentUser!.email,
+        nem: this.wallet.wallets![this.wallet.currentWallet!].nem,
+        currency: this.selectedCurrency,
+        amount: this.amount,
+        method: this.method,
+        lang: this.lang
       }
-    }).afterClosed().toPromise();
-
-    this.router.navigate([""]);
+    ))));
+    this.dialog.open(AlertDialogComponent, {
+    data: {
+      title: this.translation.completed[this.lang],
+      content: this.translation.following[this.lang]
+    }
+  })
   }
 
-  public back() {
-    back(() => this.router.navigate([""]));
+  public back(){
+    this.store.dispatch(new Navigate({ commands: [""]}))
   }
 
   public translation = {
