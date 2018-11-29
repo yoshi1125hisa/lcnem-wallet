@@ -10,30 +10,30 @@
       <app-language-menu></app-language-menu>
     </mat-toolbar>
     <div class="mat-typography body-container">
-      <mat-spinner *ngIf="(loading$ | async); else loaded"></mat-spinner>
+      <mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
       <ng-template #loaded>
         <mat-card>
           <mat-list>
             <mat-divider></mat-divider>
             <ng-container *ngFor="let id of walletIds$ | async">
               <mat-list-item>
-                <mat-icon mat-list-icon *ngIf="!(wallets$[id] | async).local" color="primary">cloud_done</mat-icon>
-                <mat-icon mat-list-icon *ngIf="(wallets$[id] | async).local" color="warn">cloud_off</mat-icon>
-                <span matLine>{{(wallets$[id] | async).name}}</span>
-                <span matLine>{{(wallets$[id] | async).nem}}</span>
+                <mat-icon mat-list-icon *ngIf="!(wallets$ | async)[id].local" color="primary">cloud_done</mat-icon>
+                <mat-icon mat-list-icon *ngIf="(wallets$ | async)[id].local" color="warn">cloud_off</mat-icon>
+                <span matLine>{{(wallets$ | async)[id].name}}</span>
+                <span matLine>{{(wallets$ | async)[id].nem}}</span>
                 <span class="fill-remaining-space"></span>
                 <span>
-                  <button mat-icon-button color="warn" (click)="openSnackBar('import')" *ngIf="!(wallets$[id] | async).wallet">
+                  <button mat-icon-button color="warn" (click)="openSnackBar('import')" *ngIf="!(wallets$ | async)[id].wallet">
                     <mat-icon>warning</mat-icon>
                   </button>
                 </span>
                 <span>
-                  <button mat-icon-button color="warn" (click)="openSnackBar('plan')" *ngIf="!(wallets$[id] | async).local && clouds > 1 && !plan">
+                  <button mat-icon-button color="warn" (click)="openSnackBar('plan')" *ngIf="!(wallets$ | async)[id].local && clouds > 1 && !plan">
                     <mat-icon>warning</mat-icon>
                   </button>
                 </span>
                 <span>
-                  <button mat-icon-button color="accent" (click)="enterWallet(id)" *ngIf="(wallets$[id] | async).local || clouds == 1 || plan">
+                  <button mat-icon-button color="accent" (click)="enterWallet(id)" *ngIf="(wallets$ | async)[id].local || clouds == 1 || plan">
                     <mat-icon>launch</mat-icon>
                   </button>
                 </span>
@@ -42,10 +42,10 @@
                     <button mat-menu-item (click)="renameWallet(id)">
                       {{translation.rename[lang]}}
                     </button>
-                    <button mat-menu-item (click)="backupWallet(id)" *ngIf="(wallets$[id] | async).wallet">
+                    <button mat-menu-item (click)="backupWallet(id)" *ngIf="(wallets$ | async)[id].wallet">
                       {{translation.backup[lang]}}
                     </button>
-                    <button mat-menu-item (click)="importPrivateKey()" *ngIf="!(wallets$[id] | async).wallet">
+                    <button mat-menu-item (click)="importPrivateKey()" *ngIf="!(wallets$ | async)[id].wallet">
                       {{translation.importPrivateKey[lang]}}
                     </button>
                     <button mat-menu-item (click)="deleteWallet(id)">
