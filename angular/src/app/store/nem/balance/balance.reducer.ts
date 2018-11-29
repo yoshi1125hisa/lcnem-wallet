@@ -4,7 +4,8 @@ import { Asset } from 'nem-library';
 export interface State {
   assets: Asset[];
   loading: boolean;
-  error?: Error
+  error?: Error;
+  lastAddress?: string;
 }
 
 export const initialState: State = {

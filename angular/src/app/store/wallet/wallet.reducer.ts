@@ -6,6 +6,7 @@ export interface State extends EntityState<Wallet> {
   loading: boolean;
   error?: Error;
   currentWallet?: string;
+  lastUserId?: string;
 }
 
 export const adapter: EntityAdapter<Wallet> = createEntityAdapter<Wallet>();
