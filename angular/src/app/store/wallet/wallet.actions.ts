@@ -14,7 +14,8 @@ export enum WalletActionTypes {
   UpdateWalletFailed = '[Wallet] Update Wallet Failed',
   DeleteWallet = '[Wallet] Delete Wallet',
   DeleteWalletSuccess = '[Wallet] Delete Wallet Success',
-  DeleteWalletFailed = '[Wallet] Delete Wallet Failed'
+  DeleteWalletFailed = '[Wallet] Delete Wallet Failed',
+  SetCurrentWallet = '[Wallet] Set Current Wallet'
 }
 
 export class LoadWallets implements Action {
@@ -136,6 +137,16 @@ export class DeleteWalletFailed implements Action {
   ) { }
 }
 
+export class SetCurrentWallet implements Action {
+  readonly type = WalletActionTypes.SetCurrentWallet;
+
+  constructor(
+    public payload: {
+      id: string;
+    }
+  ) { }
+}
+
 export type WalletActions =
   LoadWallets
   | LoadWalletsSuccess
@@ -149,3 +160,4 @@ export type WalletActions =
   | DeleteWallet
   | DeleteWalletSuccess
   | DeleteWalletFailed
+  | SetCurrentWallet
