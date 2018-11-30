@@ -9,6 +9,8 @@ import { ContactEditDialogComponent } from '../contact-edit-dialog/contact-edit-
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State } from '../../../store/index'
+import { AngularFireAuth } from '@angular/fire/auth';
+import { UpdateContact } from 'src/app/store/contact/contact.actions';
 
 @Component({
   selector: 'app-contact-dialog',
@@ -26,6 +28,7 @@ export class ContactDialogComponent {
     @Inject(MAT_DIALOG_DATA) data: {
       id: string
     },
+    private auth: AngularFireAuth,
     private store: Store<State>,
     private router: Router,
     private dialog: MatDialog,
@@ -36,18 +39,18 @@ export class ContactDialogComponent {
     this._contact = this.contact.contacts![data.id];
   }
 
-  public async updateContact() {
-    let result: Contact = await this.dialog.open(ContactEditDialogComponent, {
+  public updateContact() {
+    const uid = this.auth.auth.currentUser!.uid;
+    this.dialog.open(ContactEditDialogComponent, {
       data: {
         contact: this._contact
       }
-    }).afterClosed().toPromise();
-
-    if (!result) {
-      return;
-    }
-
-    await this.contact.updateContact(this.id, result);
+    }).afterClosed().subscribe((result: Contact) => {
+      if (!result) {
+        return;
+      }
+      this.store.dispatch(new UpdateContact({ userId: uid, id: this.id, contact: this._contact }))
+    })
   }
 
   public sendNem(nem: string) {
