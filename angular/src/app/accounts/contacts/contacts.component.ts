@@ -132,8 +132,7 @@ export class ContactsComponent implements OnInit {
         if (!result) {
           return;
         }
-        this.store.dispatch(new DeleteContacts({ userId: uid, ids: pluck(this.selection.selected))
-  
+        this.store.dispatch(new DeleteContacts({ userId: uid, ids: this.selection.selected.map(obj => obj.id))
       }))
   }
     );
