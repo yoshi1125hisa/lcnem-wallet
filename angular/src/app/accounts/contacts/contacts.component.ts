@@ -13,6 +13,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { LanguageService } from '../../services/language.service';
 import { Dictionary } from '@ngrx/entity';
 import { Back } from 'src/app/store/router/router.actions';
+import { map, mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-contacts',
@@ -58,6 +59,11 @@ export class ContactsComponent implements OnInit {
     this.store.dispatch(new LoadContacts({ userId: uid }));
 
     this.dataSource.data = [];
+    this.contactIds$.pipe(
+      map(ids => 
+        for (let id in ids) { }
+        )
+    )
     this.contactIds$.forEach(id =>
       this.dataSource.data.push({
         id: id,
