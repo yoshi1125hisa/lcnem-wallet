@@ -1,9 +1,10 @@
 import { Component, Input, forwardRef, OnInit } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, NG_VALIDATORS, Validator, AbstractControl, ValidationErrors } from '@angular/forms';
-import { ContactsService } from '../../services/contacts.service';
 import { NamespaceHttp, AccountHttp, Address } from 'nem-library';
 import { nodes } from '../../models/nodes';
-import { lang } from '../../models/lang';
+import { State } from '../../store';
+import { Store } from '@ngrx/store';
+import { LanguageService } from '../../services/language.service';
 
 
 @Component({
@@ -24,7 +25,8 @@ import { lang } from '../../models/lang';
   ],
 })
 export class NemAddressInputComponent implements OnInit, ControlValueAccessor, Validator {
-  get lang() { return lang; }
+  public get lang() { return this.language.twoLetter; }
+
   @Input() placeholder?: string;
   @Input() required?: boolean;
 
@@ -37,7 +39,8 @@ export class NemAddressInputComponent implements OnInit, ControlValueAccessor, V
   }[] = [];
 
   constructor(
-    private contact: ContactsService
+    private store: Store<State>,
+    private language: LanguageService
   ) { }
 
   ngOnInit() {
