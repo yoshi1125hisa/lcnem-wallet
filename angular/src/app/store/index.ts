@@ -12,6 +12,7 @@ import * as UserReducer from './user/user.reducer';
 import * as LocalWalletReducer from './local-wallet/local-wallet.reducer';
 import * as WalletReducer from './wallet/wallet.reducer';
 import * as ContactReducer from './contact/contact.reducer';
+import * as ApiDepositReducer from './api/deposit/deposit.reducer';
 import * as NemAssetDefinitionReducer from './nem/asset-definition/asset-definition.reducer';
 import * as NemBalanceReducer from './nem/balance/balance.reducer';
 import * as NemHistoryReducer from './nem/history/history.reducer';
@@ -24,6 +25,7 @@ export interface State {
   wallet: WalletReducer.State,
   localWallet: LocalWalletReducer.State,
   contact: ContactReducer.State,
+  apiDeposit: ApiDepositReducer.State,
   nemAssetDefinition: NemAssetDefinitionReducer.State,
   nemBalance: NemBalanceReducer.State,
   NemHistory: NemHistoryReducer.State,
@@ -37,6 +39,7 @@ export const reducers: ActionReducerMap<State, any> = {
   wallet: WalletReducer.reducer,
   localWallet: LocalWalletReducer.reducer,
   contact: ContactReducer.reducer,
+  apiDeposit: ApiDepositReducer.reducer,
   nemAssetDefinition: NemAssetDefinitionReducer.reducer,
   nemBalance: NemBalanceReducer.reducer,
   NemHistory: NemHistoryReducer.reducer,

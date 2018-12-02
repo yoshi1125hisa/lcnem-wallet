@@ -4,6 +4,7 @@ import { User } from '../../../../../firebase/functions/src/models/user';
 export interface State {
   user?: User;
   loading: boolean;
+  lastUserId?: string;
 }
 
 export const initialState: State = {

@@ -4,7 +4,8 @@ import { Address } from 'nem-library';
 export interface State {
   multisigs: Address[]
   loading: boolean;
-  error?: Error
+  error?: Error;
+  lastAddress?: string;
 }
 
 export const initialState: State = {

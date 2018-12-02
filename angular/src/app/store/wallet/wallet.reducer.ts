@@ -6,6 +6,7 @@ export interface State extends EntityState<Wallet> {
   loading: boolean;
   error?: Error;
   currentWallet?: string;
+  lastUserId?: string;
 }
 
 export const adapter: EntityAdapter<Wallet> = createEntityAdapter<Wallet>();
@@ -106,11 +107,21 @@ export function reducer(
       }
     }
 
+    case WalletActionTypes.SetCurrentWallet: {
+      return {
+        ...state,
+        currentWallet: action.payload.id,
+        loading: false
+      }
+    }
+
     default: {
       return state;
     }
   }
 }
+
+// TODO: setCurrentWalletを作る
 
 export const {
   selectIds,

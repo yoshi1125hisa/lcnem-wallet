@@ -5,6 +5,7 @@ import { ContactActions, ContactActionTypes } from './contact.actions';
 export interface State extends EntityState<Contact> {
   loading: boolean;
   error?: Error;
+  lastUserId?: string;
 }
 
 export const adapter: EntityAdapter<Contact> = createEntityAdapter<Contact>();

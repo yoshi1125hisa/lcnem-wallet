@@ -12,18 +12,18 @@
     <div class="mat-typography body-container">
       <form #form="ngForm" (ngSubmit)="deposit()">
         <mat-form-field fxFill>
-          <mat-select placeholder="{{translation.currency[lang]}}" [(ngModel)]="selectedCurrency" name="selectedCurrency"
+          <mat-select placeholder="{{translation.currency[lang]}}" [(ngModel)]="forms.currency" name="currency"
             required>
             <mat-option *ngFor="let c of supportedCurrencies" [value]="c">{{c}}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field fxFill>
-          <input matInput placeholder="{{translation.amount[lang]}}" [(ngModel)]="amount" name="amount" required
-            minlength="{{minimum[selectedCurrency].toString().length}}" pattern="[1-9][0-9]*" />
-          <mat-error>min {{minimum[selectedCurrency]}}</mat-error>
+          <input matInput placeholder="{{translation.amount[lang]}}" [(ngModel)]="forms.amount" name="amount" required
+            minlength="{{minimum[forms.currency].toString().length}}" pattern="[1-9][0-9]*" />
+          <mat-error>min {{minimum[forms.currency]}}</mat-error>
         </mat-form-field>
         <mat-form-field fxFill>
-          <mat-select placeholder="{{translation.method[lang]}}" [(ngModel)]="method" name="method" required>
+          <mat-select placeholder="{{translation.method[lang]}}" [(ngModel)]="forms.method" name="method" required>
             <mat-option value="paypal">{{translation.paypal[lang]}}</mat-option>
           </mat-select>
         </mat-form-field>

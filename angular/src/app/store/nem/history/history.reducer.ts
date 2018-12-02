@@ -5,6 +5,7 @@ export interface State {
   transactions: Transaction[];
   loading: boolean;
   error?: Error;
+  lastAddress?: string;
 }
 
 export const initialState: State = {
