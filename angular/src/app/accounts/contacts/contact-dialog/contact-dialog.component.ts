@@ -1,6 +1,4 @@
 import { Component, Inject } from '@angular/core';
-import { lang } from '../../../models/lang'
-import { ContactsService } from '../../../services/contacts.service';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { Contact } from '../../../../../../firebase/functions/src/models/contact';
 import { Invoice } from '../../../models/invoice';
@@ -11,32 +9,34 @@ import { Store } from '@ngrx/store';
 import { State } from '../../../store/index'
 import { AngularFireAuth } from '@angular/fire/auth';
 import { UpdateContact } from 'src/app/store/contact/contact.actions';
+import { LanguageService } from 'src/app/services/language.service';
+import { state } from '@angular/animations';
 
 @Component({
   selector: 'app-contact-dialog',
   templateUrl: './contact-dialog.component.html',
   styleUrls: ['./contact-dialog.component.css']
 })
+
 export class ContactDialogComponent {
   public loading$: Observable<boolean>;
-  get lang() { return lang; }
+
+  get lang() { return this.language.twoLetter }
 
   public id: string;
-  public _contact: Contact;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) data: {
       id: string
     },
+    private language: LanguageService,
     private auth: AngularFireAuth,
     private store: Store<State>,
     private router: Router,
     private dialog: MatDialog,
-    private contact: ContactsService
   ) {
     this.loading$ = store.select(state => state.contact.loading)
     this.id = data.id;
-    this._contact = this.contact.contacts![data.id];
   }
 
   public updateContact() {
@@ -49,7 +49,7 @@ export class ContactDialogComponent {
       if (!result) {
         return;
       }
-      this.store.dispatch(new UpdateContact({ userId: uid, id: this.id, contact: this._contact }))
+      this.store.dispatch(new UpdateContact({ userId: uid, id: this.id, contact: result }))
     })
   }
 

@@ -1,32 +1,30 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { MatDialog, MatTableDataSource, MatPaginator, PageEvent } from '@angular/material';
 import { Contact } from '../../store/contact/contact.model';
-import { ContactsService } from '../../services/contacts.service';
-import { back } from '../../models/back';
-import { lang } from '../../models/lang';
-import { UserService } from '../../services/user.service';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ContactDialogComponent } from './contact-dialog/contact-dialog.component';
 import { ContactEditDialogComponent } from './contact-edit-dialog/contact-edit-dialog.component';
-import { Observable, of } from 'rxjs';
+import { Observable, of, from } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
 import { DeleteContacts, AddContact, LoadContacts } from 'src/app/store/contact/contact.actions';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { pluck } from 'rxjs/operators';
+import { LanguageService } from '../../services/language.service';
+import { Dictionary } from '@ngrx/entity';
+import { Back } from 'src/app/store/router/router.actions';
 
 @Component({
   selector: 'app-contacts',
   templateUrl: './contacts.component.html',
   styleUrls: ['./contacts.component.css']
 })
+
 export class ContactsComponent implements OnInit {
-  public contacts$: Observable<Contact[]>;
+  public contacts$: Observable<Dictionary<Contact>>;
+  public contactIds$: Observable<(string | number)[]>;
   public loading$: Observable<boolean>;
-  public loading = true;
-  get lang() { return lang; }
+  get lang() { return this.language.twoLetter }
 
   public dataSource = new MatTableDataSource<{
     id: string,
@@ -42,32 +40,34 @@ export class ContactsComponent implements OnInit {
 
   constructor(
     private store: Store<State>,
-    private router: Router,
     private auth: AngularFireAuth,
-    private user: UserService,
-    private contact: ContactsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private language: LanguageService
   ) {
-    this.contacts$ = store.select(state => state.contact)
+    this.contacts$ = store.select(state => state.contact.entities)
     this.loading$ = store.select(state => state.contact.loading)
+    this.contactIds$ = store.select(state => state.contact.ids)
   }
 
   ngOnInit() {
-    this.user.checkLogin().then(async () => {
-      await this.refresh();
-    });
+    this.load()
   }
 
-  public refresh(force?: boolean) {
-    this.loading = true;
+  public load() {
     const uid = this.auth.auth.currentUser!.uid;
     this.store.dispatch(new LoadContacts({ userId: uid }));
 
     this.dataSource.data = [];
-    for (let id in this.contact.contacts!) {
+    this.contactIds$.forEach(id =>
       this.dataSource.data.push({
         id: id,
-        contact: this.contact.contacts![id]
+        contact: this.contacts$
+      }))
+
+    for (let id in this.contacts$) {
+      this.dataSource.data.push({
+        id: id,
+        contact: this.contacts$
       })
     }
     this.dataSource.data = this.dataSource.data;
@@ -82,16 +82,14 @@ export class ContactsComponent implements OnInit {
       pageSize: this.paginator.pageSize
     });
 
-    this.loading = false;
   }
 
   public back() {
-    back(() => this.router.navigate([""]));
+    this.store.dispatch(new Back({ commands: [""] }));
   }
 
   public async onPageChanged(pageEvent: PageEvent) {
-    this.loading = true;
-    this.loading = false;
+    this.loading$ = this.store.select(state => state.contact.loading)
   }
 
   public async showContact(id: string) {
@@ -113,17 +111,17 @@ export class ContactsComponent implements OnInit {
         if (!result) {
           return;
         }
-        this.store.dispatch(new AddContact({ userId: uid, contact: result }))
-        .afterClosed()
-        .subscribe( 
-          this.refresh()
-        )
+        of(this.store.dispatch(new AddContact({ userId: uid, contact: result })))
+          .subscribe(() =>
+            this.load()
+          )
       }
     );
   }
 
   public deleteContact() {
     const uid = this.auth.auth.currentUser!.uid;
+    const ids = this.selection.selected.map(obj => obj.id)
     this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: this.translation.confirm[this.lang]
@@ -133,44 +131,41 @@ export class ContactsComponent implements OnInit {
         if (!result) {
           return;
         }
-        this.store.dispatch(new DeleteContacts({ userId: uid, ids: this.selection.selected.map(obj => obj.id))
-      }))
+        this.store.dispatch(new DeleteContacts({ userId: uid, ids: ids }));
+      });
   }
-    );
-}
-
   public isAllSelected() {
-  const numSelected = this.selection.selected.length;
-  const numRows = this.dataSource.data.length;
-  return numSelected === numRows;
-}
-
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
   public masterToggle() {
-  this.isAllSelected() ?
-    this.selection.clear() :
-    this.dataSource.data.forEach(row => this.selection.select(row));
-}
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
+  }
 
   public translation = {
-  contacts: {
-    en: "Contact list",
-    ja: "コンタクトリスト"
-  } as any,
-  empty: {
-    en: "There is no contacts.",
-    ja: "コンタクトはありません。"
-  } as any,
-  confirm: {
-    en: "Are you sure?",
-    ja: "削除しますか？"
-  } as any,
-  createContact: {
-    en: "Create new contact",
-    ja: "新しいコンタクトを作成"
-  } as any,
-  name: {
-    en: "Name",
-    ja: "名前"
-  } as any
-};
+    contacts: {
+      en: "Contact list",
+      ja: "コンタクトリスト"
+    } as any,
+    empty: {
+      en: "There is no contacts.",
+      ja: "コンタクトはありません。"
+    } as any,
+    confirm: {
+      en: "Are you sure?",
+      ja: "削除しますか？"
+    } as any,
+    createContact: {
+      en: "Create new contact",
+      ja: "新しいコンタクトを作成"
+    } as any,
+    name: {
+      en: "Name",
+      ja: "名前"
+    } as any
+  };
+
 }
