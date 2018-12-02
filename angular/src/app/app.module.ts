@@ -149,8 +149,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     TransferDialogComponent,
     CreateDialogComponent,
     ContactDialogComponent,
-    ContactEditDialogComponent,
-    TransactionComponent
+    ContactEditDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
