@@ -1,10 +1,10 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { lang } from '../../../models/lang';
 import { Contact } from '../../../../../../firebase/functions/src/models/contact';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State } from '../../../store/index'
+import { LanguageService } from '../../../services/language.service';
 
 @Component({
   selector: 'app-contact-edit-dialog',
@@ -13,10 +13,11 @@ import { State } from '../../../store/index'
 })
 export class ContactEditDialogComponent implements OnInit {
   public loading$: Observable<boolean>;
-  get lang() { return lang; }
+  get lang() { return this.language.twoLetter; }
   public contact: Contact;
 
   constructor(
+    private language: LanguageService,
     private store: Store<State>,
     @Inject(MAT_DIALOG_DATA) data: {
       contact: Contact

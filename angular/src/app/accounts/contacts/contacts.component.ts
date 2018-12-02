@@ -1,28 +1,31 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { MatDialog, MatTableDataSource, MatPaginator, PageEvent } from '@angular/material';
-import { Contact } from '../../../../../firebase/functions/src/models/contact';
-import { ContactsService } from '../../services/contacts.service';
-import { back } from '../../models/back';
-import { lang } from '../../models/lang';
-import { UserService } from '../../services/user.service';
+import { Contact } from '../../store/contact/contact.model';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ContactDialogComponent } from './contact-dialog/contact-dialog.component';
 import { ContactEditDialogComponent } from './contact-edit-dialog/contact-edit-dialog.component';
-import { Observable } from 'rxjs';
+import { Observable, of, from } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
+import { DeleteContacts, AddContact, LoadContacts } from 'src/app/store/contact/contact.actions';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { LanguageService } from '../../services/language.service';
+import { Dictionary } from '@ngrx/entity';
+import { Back } from 'src/app/store/router/router.actions';
+import { map, mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-contacts',
   templateUrl: './contacts.component.html',
   styleUrls: ['./contacts.component.css']
 })
+
 export class ContactsComponent implements OnInit {
+  public contacts$: Observable<Dictionary<Contact>>;
+  public contactIds$: Observable<(string | number)[]>;
   public loading$: Observable<boolean>;
-  public loading = true;
-  get lang() { return lang; }
+  get lang() { return this.language.twoLetter }
 
   public dataSource = new MatTableDataSource<{
     id: string,
@@ -38,31 +41,43 @@ export class ContactsComponent implements OnInit {
 
   constructor(
     private store: Store<State>,
-    private router: Router,
-    private user: UserService,
-    private contact: ContactsService,
-    private dialog: MatDialog
+    private auth: AngularFireAuth,
+    private dialog: MatDialog,
+    private language: LanguageService
   ) {
+    this.contacts$ = store.select(state => state.contact.entities)
     this.loading$ = store.select(state => state.contact.loading)
+    this.contactIds$ = store.select(state => state.contact.ids)
   }
 
   ngOnInit() {
-    this.user.checkLogin().then(async () => {
-      await this.refresh();
-    });
+    this.load()
   }
 
-  public async refresh(force?: boolean) {
-    this.loading = true;
-    await this.contact.readContacts(force);
+  public load() {
+    const uid = this.auth.auth.currentUser!.uid;
+    this.store.dispatch(new LoadContacts({ userId: uid }));
 
     this.dataSource.data = [];
-    for (let id in this.contact.contacts!) {
-      this.dataSource.data.push({
-        id: id,
-        contact: this.contact.contacts![id]
-      })
-    }
+
+
+    this.contactIds$.pipe(
+      mergeMap(
+        ids => from(ids)
+      ),
+      map((id, index) =>
+        this.contacts$.subscribe(
+          contacts => {
+            this.dataSource.data.push(
+              {
+                id: String(index),
+                contact: contacts[id]
+              }
+            )
+          }
+        )
+      )
+    );
     this.dataSource.data = this.dataSource.data;
 
     this.dataSource.paginator = this.paginator;
@@ -75,16 +90,14 @@ export class ContactsComponent implements OnInit {
       pageSize: this.paginator.pageSize
     });
 
-    this.loading = false;
   }
 
   public back() {
-    back(() => this.router.navigate([""]));
+    this.store.dispatch(new Back({ commands: [""] }));
   }
 
   public async onPageChanged(pageEvent: PageEvent) {
-    this.loading = true;
-    this.loading = false;
+    this.loading$ = this.store.select(state => state.contact.loading)
   }
 
   public async showContact(id: string) {
@@ -95,45 +108,49 @@ export class ContactsComponent implements OnInit {
     }).afterClosed().toPromise();
   }
 
-  public async createContact() {
-    let result: Contact = await this.dialog.open(ContactEditDialogComponent, {
-      data: {
-        contact: {}
-      }
-    }).afterClosed().toPromise();
-
-    if (!result) {
-      return;
-    }
-
-    await this.contact.createContact(result);
-    await this.refresh();
+  public createContact() {
+    const uid = this.auth.auth.currentUser!.uid;
+    this.dialog.open(ContactEditDialogComponent,
+      {
+        data: {
+          contact: {}
+        }
+      })
+      .afterClosed().subscribe(
+        (result: Contact) => {
+          if (!result) {
+            return;
+          }
+          this.store.dispatch(new AddContact({
+            userId: uid, contact: result
+          }
+          )
+          )
+        }
+      )
   }
 
-  public async deleteContact() {
-    let result = await this.dialog.open(ConfirmDialogComponent, {
+  public deleteContact() {
+    const uid = this.auth.auth.currentUser!.uid;
+    const ids = this.selection.selected.map(obj => obj.id)
+    this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: this.translation.confirm[this.lang]
       }
-    }).afterClosed().toPromise();
-
-    if (!result) {
-      return;
-    }
-
-    await Promise.all(this.selection.selected.map(async selected => {
-      await this.contact.deleteContact(selected.id);
-    }));
-    this.selection.clear();
-    await this.refresh();
+    }).afterClosed().subscribe(
+      result => {
+        if (!result) {
+          return;
+        }
+        this.store.dispatch(new DeleteContacts({ userId: uid, ids: ids }));
+      }
+    );
   }
-
   public isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
-
   public masterToggle() {
     this.isAllSelected() ?
       this.selection.clear() :
@@ -162,4 +179,5 @@ export class ContactsComponent implements OnInit {
       ja: "名前"
     } as any
   };
+
 }
