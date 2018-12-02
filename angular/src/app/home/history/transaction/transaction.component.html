@@ -1,6 +1,14 @@
-<pre><code>{{message}}</code></pre>
+<mat-card>
+  <div fxLayout="row">
+    <mat-icon color="accent" (mouseover)="openSnackBar('confirmed')" *ngIf="confirmed; else unconfirmed">done</mat-icon>
+    <ng-template #unconfirmed>
+      <mat-icon color="warn" (mouseover)="openSnackBar('unconfirmed')">report_problem</mat-icon>
+    </ng-template>
+    <mat-icon color="primary" (mouseover)="openSnackBar(icon)">{{icon}}</mat-icon>
+    <mat-icon color="accent" (mouseover)="openSnackBar('multisig')" *ngIf="multisig">people</mat-icon>
+    <span>{{address | async}}</span>
+  </div>
+</mat-card>
 <app-assets-list [title]="translation.assets[lang]" [assets]="assets"></app-assets-list>
-<mat-dialog-actions>
-  <span class="fill-remaining-space"></span>
-  <button mat-raised-button mat-dialog-close color="accent">OK</button>
-</mat-dialog-actions>
+<blockquote>{{message | async}}</blockquote>
+<p>{{date}}</p>
