@@ -10,7 +10,8 @@ import { State } from '../../../store/index'
 import { AngularFireAuth } from '@angular/fire/auth';
 import { UpdateContact } from 'src/app/store/contact/contact.actions';
 import { LanguageService } from 'src/app/services/language.service';
-import { state } from '@angular/animations';
+import { Dictionary } from '@ngrx/entity';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-contact-dialog',
@@ -20,6 +21,7 @@ import { state } from '@angular/animations';
 
 export class ContactDialogComponent {
   public loading$: Observable<boolean>;
+  public contacts$: Observable<Dictionary<Contact>>;
 
   get lang() { return this.language.twoLetter }
 
@@ -37,20 +39,27 @@ export class ContactDialogComponent {
   ) {
     this.loading$ = store.select(state => state.contact.loading)
     this.id = data.id;
+    this.contacts$ = store.select(state => state.contact.entities)
   }
 
   public updateContact() {
     const uid = this.auth.auth.currentUser!.uid;
-    this.dialog.open(ContactEditDialogComponent, {
-      data: {
-        contact: this._contact
-      }
-    }).afterClosed().subscribe((result: Contact) => {
-      if (!result) {
-        return;
-      }
-      this.store.dispatch(new UpdateContact({ userId: uid, id: this.id, contact: result }))
-    })
+    this.contacts$.pipe(
+      map(
+        contacts =>
+          this.dialog.open(ContactEditDialogComponent, {
+            data: {
+              contact: contacts[this.id]
+            }
+          }).afterClosed().subscribe((result: Contact) => {
+            if (!result) {
+              return
+            }
+            this.store.dispatch(new UpdateContact({ userId: uid, id: this.id, contact: result }))
+          }
+          )
+      )
+    )
   }
 
   public sendNem(nem: string) {
