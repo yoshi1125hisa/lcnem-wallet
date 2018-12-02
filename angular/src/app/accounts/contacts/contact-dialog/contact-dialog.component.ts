@@ -1,6 +1,4 @@
 import { Component, Inject } from '@angular/core';
-import { lang } from '../../../models/lang'
-import { ContactsService } from '../../../services/contacts.service';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { Contact } from '../../../../../../firebase/functions/src/models/contact';
 import { Invoice } from '../../../models/invoice';
@@ -9,45 +7,61 @@ import { ContactEditDialogComponent } from '../contact-edit-dialog/contact-edit-
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State } from '../../../store/index'
+import { AngularFireAuth } from '@angular/fire/auth';
+import { UpdateContact } from 'src/app/store/contact/contact.actions';
+import { LanguageService } from 'src/app/services/language.service';
+import { Dictionary } from '@ngrx/entity';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-contact-dialog',
   templateUrl: './contact-dialog.component.html',
   styleUrls: ['./contact-dialog.component.css']
 })
+
 export class ContactDialogComponent {
   public loading$: Observable<boolean>;
-  get lang() { return lang; }
+  public contacts$: Observable<Dictionary<Contact>>;
+
+  get lang() { return this.language.twoLetter }
 
   public id: string;
-  public _contact: Contact;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) data: {
       id: string
     },
+    private language: LanguageService,
+    private auth: AngularFireAuth,
     private store: Store<State>,
     private router: Router,
     private dialog: MatDialog,
-    private contact: ContactsService
   ) {
     this.loading$ = store.select(state => state.contact.loading)
     this.id = data.id;
-    this._contact = this.contact.contacts![data.id];
+    this.contacts$ = store.select(state => state.contact.entities)
   }
 
-  public async updateContact() {
-    let result: Contact = await this.dialog.open(ContactEditDialogComponent, {
-      data: {
-        contact: this._contact
-      }
-    }).afterClosed().toPromise();
-
-    if (!result) {
-      return;
-    }
-
-    await this.contact.updateContact(this.id, result);
+  public updateContact() {
+    const uid = this.auth.auth.currentUser!.uid;
+    this.contacts$.pipe(
+      map(
+        contacts =>
+          this.dialog.open(ContactEditDialogComponent, {
+            data: {
+              contact: contacts[this.id]
+            }
+          }).afterClosed()
+            .subscribe(
+              (result: Contact) => {
+                if (!result) {
+                  return
+                }
+                this.store.dispatch(new UpdateContact({ userId: uid, id: this.id, contact: result }))
+              }
+            )
+      )
+    )
   }
 
   public sendNem(nem: string) {
