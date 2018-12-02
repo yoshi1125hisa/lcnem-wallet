@@ -59,23 +59,19 @@ export class ContactsComponent implements OnInit {
     this.store.dispatch(new LoadContacts({ userId: uid }));
 
     this.dataSource.data = [];
-    this.contactIds$.pipe(
-      map(ids => 
-        for (let id in ids) { }
-        )
-    )
-    this.contactIds$.forEach(id =>
-      this.dataSource.data.push({
-        id: id,
-        contact: this.contacts$
-      }))
 
-    for (let id in this.contacts$) {
-      this.dataSource.data.push({
-        id: id,
-        contact: this.contacts$
-      })
-    }
+
+    this.contactIds$.pipe(
+      mergeMap(
+        ids => from(ids)
+      ),
+      map((id, index) =>
+        this.contacts$.subscribe(contacts =>
+          this.dataSource.data.push({
+            id: String(index),
+            contact: contacts[id]
+          })))
+    )
     this.dataSource.data = this.dataSource.data;
 
     this.dataSource.paginator = this.paginator;
