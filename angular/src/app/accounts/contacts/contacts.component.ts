@@ -66,12 +66,18 @@ export class ContactsComponent implements OnInit {
         ids => from(ids)
       ),
       map((id, index) =>
-        this.contacts$.subscribe(contacts =>
-          this.dataSource.data.push({
-            id: String(index),
-            contact: contacts[id]
-          })))
-    )
+        this.contacts$.subscribe(
+          contacts => {
+            this.dataSource.data.push(
+              {
+                id: String(index),
+                contact: contacts[id]
+              }
+            )
+          }
+        )
+      )
+    );
     this.dataSource.data = this.dataSource.data;
 
     this.dataSource.paginator = this.paginator;
@@ -104,21 +110,24 @@ export class ContactsComponent implements OnInit {
 
   public createContact() {
     const uid = this.auth.auth.currentUser!.uid;
-    this.dialog.open(ContactEditDialogComponent, {
-      data: {
-        contact: {}
-      }
-    }).afterClosed().subscribe(
-      (result: Contact) => {
-        if (!result) {
-          return;
+    this.dialog.open(ContactEditDialogComponent,
+      {
+        data: {
+          contact: {}
         }
-        of(this.store.dispatch(new AddContact({ userId: uid, contact: result })))
-          .subscribe(() =>
-            this.load()
+      })
+      .afterClosed().subscribe(
+        (result: Contact) => {
+          if (!result) {
+            return;
+          }
+          this.store.dispatch(new AddContact({
+            userId: uid, contact: result
+          }
           )
-      }
-    );
+          )
+        }
+      )
   }
 
   public deleteContact() {
@@ -134,7 +143,8 @@ export class ContactsComponent implements OnInit {
           return;
         }
         this.store.dispatch(new DeleteContacts({ userId: uid, ids: ids }));
-      });
+      }
+    );
   }
   public isAllSelected() {
     const numSelected = this.selection.selected.length;

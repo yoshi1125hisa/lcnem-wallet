@@ -51,13 +51,15 @@ export class ContactDialogComponent {
             data: {
               contact: contacts[this.id]
             }
-          }).afterClosed().subscribe((result: Contact) => {
-            if (!result) {
-              return
-            }
-            this.store.dispatch(new UpdateContact({ userId: uid, id: this.id, contact: result }))
-          }
-          )
+          }).afterClosed()
+            .subscribe(
+              (result: Contact) => {
+                if (!result) {
+                  return
+                }
+                this.store.dispatch(new UpdateContact({ userId: uid, id: this.id, contact: result }))
+              }
+            )
       )
     )
   }
