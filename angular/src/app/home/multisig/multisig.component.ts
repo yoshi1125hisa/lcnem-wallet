@@ -6,6 +6,8 @@ import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
 import { LanguageService } from '../../services/language.service';
 import { Address } from 'nem-library';
+import { first } from 'rxjs/operators';
+import { LoadMultisigs } from '../../store/nem/multisig/multisig.actions';
 
 @Component({
   selector: 'app-multisig',
@@ -31,10 +33,20 @@ export class MultisigComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-
+    this.store.select(state => state.wallet).pipe(first()).subscribe(
+      (wallet) => {
+        this.store.dispatch(
+          new LoadMultisigs(
+            {
+              address: new Address(wallet.entities[wallet.currentWallet!].nem)
+            }
+          )
+        );
+      }
+    )
   }
 
-  public async onClick(address: string) {
+  public onClick(address: string) {
   }
 
   public translation = {

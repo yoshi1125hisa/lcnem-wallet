@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Transaction, TransactionTypes, MultisigTransaction, TransferTransaction } from 'nem-library';
+import { Transaction, TransactionTypes, MultisigTransaction, TransferTransaction, Address } from 'nem-library';
 import { MatTableDataSource, MatPaginator, PageEvent, MatSnackBar, MatDialog } from '@angular/material';
 import { TransactionComponent } from './transaction/transaction.component';
 import { Observable } from 'rxjs';
@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { State } from '../../store/index';
 import { LanguageService } from '../../services/language.service';
 import { LoadHistorys } from 'src/app/store/nem/history/history.actions';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-history',
@@ -32,9 +33,17 @@ export class HistoryComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    this.store.dispatch(
-      new LoadHistorys()
-    );
+    this.store.select(state => state.wallet).pipe(first()).subscribe(
+      (wallet) => {
+        this.store.dispatch(
+          new LoadHistorys(
+            {
+              address: new Address(wallet.entities[wallet.currentWallet!].nem)
+            }
+          )
+        );
+      }
+    )
   }
 
   public translation = {
