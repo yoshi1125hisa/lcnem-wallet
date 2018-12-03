@@ -5,7 +5,7 @@ import { State } from '../../store/index';
 import { Observable, of } from 'rxjs';
 import { LoadAssetDefinitions } from '../../store/nem/asset-definition/asset-definition.actions';
 import { map } from 'rxjs/operators';
-import { LanguageService } from '../../services/language.service';
+import { LanguageService } from '../../services/language/language.service';
 
 @Component({
   selector: 'app-assets-list',

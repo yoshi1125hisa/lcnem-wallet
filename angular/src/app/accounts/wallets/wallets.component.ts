@@ -13,7 +13,7 @@ import { PromptDialogComponent } from '../../../app/components/prompt-dialog/pro
 import { ConfirmDialogComponent } from '../../../app/components/confirm-dialog/confirm-dialog.component';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { Plan } from '../../../../../firebase/functions/src/models/plan';
-import { LanguageService } from '../../services/language.service';
+import { LanguageService } from '../../services/language/language.service';
 import { State } from '../../store/index'
 import { LoadWallets, UpdateWallet, DeleteWallet, AddWallet, SetCurrentWallet } from '../../store/wallet/wallet.actions';
 import { AddLocalWallet } from '../../store/local-wallet/local-wallet.actions';

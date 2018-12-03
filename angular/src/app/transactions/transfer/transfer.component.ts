@@ -21,7 +21,7 @@ import { Observable, of, Subscription } from 'rxjs';
 import { mergeMap, first, map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
-import { LanguageService } from '../../services/language.service';
+import { LanguageService } from '../../services/language/language.service';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.component';

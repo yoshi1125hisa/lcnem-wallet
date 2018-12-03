@@ -4,7 +4,7 @@ import { NamespaceHttp, AccountHttp, Address } from 'nem-library';
 import { nodes } from '../../models/nodes';
 import { State } from '../../store';
 import { Store } from '@ngrx/store';
-import { LanguageService } from '../../services/language.service';
+import { LanguageService } from '../../services/language/language.service';
 import { Observable, of, from } from 'rxjs';
 import { debounceTime, filter, mergeMap, map, catchError, toArray } from 'rxjs/operators';
 

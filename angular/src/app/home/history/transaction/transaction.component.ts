@@ -16,7 +16,7 @@ import {
 } from 'nem-library';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { nodes } from '../../../models/nodes';
-import { LanguageService } from '../../../services/language.service';
+import { LanguageService } from '../../../services/language/language.service';
 import { Observable, of } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State } from '../../../store';

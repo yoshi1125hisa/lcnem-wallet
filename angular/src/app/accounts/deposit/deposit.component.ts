@@ -8,7 +8,7 @@ import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
 import { Observable, Subscription } from 'rxjs';
-import { LanguageService } from '../../services/language.service';
+import { LanguageService } from '../../services/language/language.service';
 import { Back, Navigate } from '../../store/router/router.actions';
 import { SendDepositRequest } from '../../store/api/deposit/deposit.actions';
 

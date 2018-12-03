@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 import { TransferTransaction, Asset, AssetTransferable, XEM } from 'nem-library';
 import { Store } from '@ngrx/store';
 import { State } from '../../../store';
-import { LanguageService } from 'src/app/services/language.service';
+import { LanguageService } from 'src/app/services/language/language.service';
 
 @Component({
   selector: 'app-transfer-dialog',

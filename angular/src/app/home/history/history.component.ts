@@ -5,7 +5,7 @@ import { TransactionComponent } from './transaction/transaction.component';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State } from '../../store/index';
-import { LanguageService } from '../../services/language.service';
+import { LanguageService } from '../../services/language/language.service';
 import { LoadHistorys } from 'src/app/store/nem/history/history.actions';
 import { first } from 'rxjs/operators';
 
