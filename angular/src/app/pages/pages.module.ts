@@ -20,10 +20,33 @@ import { BalanceComponent } from './home/nem/balance/balance.component';
 import { MultisigComponent } from './home/nem/multisig/multisig.component';
 
 @NgModule({
-  declarations: [PagesComponent, SettingsComponent, ContactsComponent, LoginComponent, TermsComponent, PrivacyPolicyComponent, QrScanComponent, TransferComponent, DepositComponent, WithdrawComponent, HomeComponent, NemComponent, HistoryComponent, TransactionComponent, BalanceComponent, MultisigComponent],
+  declarations: [
+    PagesComponent,
+    SettingsComponent,
+    ContactsComponent,
+    LoginComponent,
+    TermsComponent,
+    PrivacyPolicyComponent,
+    QrScanComponent,
+    TransferComponent,
+    DepositComponent,
+    WithdrawComponent,
+    HomeComponent,
+    NemComponent,
+    HistoryComponent,
+    TransactionComponent,
+    BalanceComponent,
+    MultisigComponent
+  ],
   imports: [
     CommonModule,
     PagesRoutingModule
+  ],
+  entryComponents: [
+    TransferDialogComponent,
+    CreateDialogComponent,
+    ContactDialogComponent,
+    ContactEditDialogComponent
   ]
 })
 export class PagesModule { }

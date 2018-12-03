@@ -10,6 +10,7 @@ import { QrScanComponent } from './nem/qr-scan/qr-scan.component';
 import { TransferComponent } from './nem/transfer/transfer.component';
 import { TermsComponent } from './terms/terms.component';
 import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.component';
+import { PageNotFoundComponent } from './error/page-not-found/page-not-found.component';
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
@@ -21,7 +22,8 @@ const routes: Routes = [
   { path: "nem/qr-scan", component: QrScanComponent },
   { path: "nem/transfer", component: TransferComponent },
   { path: "terms", component: TermsComponent },
-  { path: "terms/privacy-policy", component: PrivacyPolicyComponent }
+  { path: "terms/privacy-policy", component: PrivacyPolicyComponent },
+  { path: "**", component: PageNotFoundComponent }
 ];
 
 @NgModule({

@@ -31,78 +31,21 @@ import {
   MatProgressBarModule,
   MatRadioModule,
   MatSnackBarModule,
-  MatTooltipModule,
-  MatTableModule,
-  MatPaginatorModule
+  MatTooltipModule
 } from '@angular/material';
 
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-
-import { HomeComponent } from './pages/home/home.component';
-import { LoginComponent } from './accounts/login/login.component';
-import { ScanComponent } from './transactions/scan/scan.component';
-import { TransferComponent } from './transactions/transfer/transfer.component';
-import { PageNotFoundComponent } from './error/page-not-found/page-not-found.component';
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
-import { AssetsListComponent } from './components/assets-list/assets-list.component';
-import { DepositComponent } from './accounts/deposit/deposit.component';
-import { TermsComponent } from './terms/terms/terms.component';
-import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
-import { ContactsComponent } from './accounts/contacts/contacts.component';
 import { AlertDialogComponent } from './components/alert-dialog/alert-dialog.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
-import { TransferDialogComponent } from './transactions/transfer/transfer-dialog/transfer-dialog.component';
-import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.component';
-import { PlanComponent } from './accounts/plan/plan.component';
-import { TransactionComponent } from './home/history/transaction/transaction.component';
-import { HistoryComponent } from './pages/home/nem/history/history.component';
-import { CreateDialogComponent } from './accounts/wallets/create-dialog/create-dialog.component';
-import { WalletsComponent } from './accounts/wallets/wallets.component';
-import { ContactDialogComponent } from './accounts/contacts/contact-dialog/contact-dialog.component';
-import { ContactEditDialogComponent } from './accounts/contacts/contact-edit-dialog/contact-edit-dialog.component';
-import { NemAddressInputComponent } from './components/nem-address-input/nem-address-input.component';
-import { MultisigComponent } from './home/multisig/multisig.component';
-import { BalanceComponent } from './pages/home/nem/balance/balance.component';
-import { LanguageMenuComponent } from './components/language-menu/language-menu.component';
-
-import { StoreModule } from '@ngrx/store';
-import { reducers, metaReducers } from './store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    HomeComponent,
-    LoginComponent,
-    HistoryComponent,
-    TransactionComponent,
-    ScanComponent,
-    TransferComponent,
-    PageNotFoundComponent,
-    LoadingDialogComponent,
-    AssetsListComponent,
-    DepositComponent,
-    TermsComponent,
-    WithdrawComponent,
-    ContactsComponent,
-    AlertDialogComponent,
-    ConfirmDialogComponent,
-    PromptDialogComponent,
-    TransferDialogComponent,
-    PrivacyPolicyComponent,
-    WalletsComponent,
-    PlanComponent,
-    CreateDialogComponent,
-    ContactDialogComponent,
-    ContactEditDialogComponent,
-    NemAddressInputComponent,
-    MultisigComponent,
-    BalanceComponent,
-    LanguageMenuComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -135,21 +78,13 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     MatMenuModule,
     MatRadioModule,
     MatSnackBarModule,
-    MatTooltipModule,
-    MatTableModule,
-    MatPaginatorModule,
-    StoreModule.forRoot(reducers, { metaReducers }),
-    !environment.production ? StoreDevtoolsModule.instrument() : [],
+    MatTooltipModule
   ],
   entryComponents: [
     LoadingDialogComponent,
     AlertDialogComponent,
     ConfirmDialogComponent,
-    PromptDialogComponent,
-    TransferDialogComponent,
-    CreateDialogComponent,
-    ContactDialogComponent,
-    ContactEditDialogComponent
+    PromptDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
