@@ -13,10 +13,14 @@ import { TransferComponent } from './nem/transfer/transfer.component';
 import { DepositComponent } from './digital-legal-currency/deposit/deposit.component';
 import { WithdrawComponent } from './digital-legal-currency/withdraw/withdraw.component';
 import { HomeComponent } from './home/home.component';
-import { NemComponent } from './nem/nem.component';
+import { NemComponent } from './home/nem/nem.component';
+import { HistoryComponent } from './home/nem/history/history.component';
+import { TransactionComponent } from './home/nem/history/transaction/transaction.component';
+import { BalanceComponent } from './home/nem/balance/balance.component';
+import { MultisigComponent } from './home/nem/multisig/multisig.component';
 
 @NgModule({
-  declarations: [PagesComponent, SettingsComponent, ContactsComponent, LoginComponent, TermsComponent, PrivacyPolicyComponent, QrScanComponent, TransferComponent, DepositComponent, WithdrawComponent, HomeComponent, NemComponent],
+  declarations: [PagesComponent, SettingsComponent, ContactsComponent, LoginComponent, TermsComponent, PrivacyPolicyComponent, QrScanComponent, TransferComponent, DepositComponent, WithdrawComponent, HomeComponent, NemComponent, HistoryComponent, TransactionComponent, BalanceComponent, MultisigComponent],
   imports: [
     CommonModule,
     PagesRoutingModule
