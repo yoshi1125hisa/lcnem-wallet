@@ -18,6 +18,7 @@ import { SendWithdrawRequest } from '../../store/api/withdraw/withdraw.actions';
   styleUrls: ['./wothdraw.component.css']
 })
 export class WithdrawComponent implements OnInit, OnDestroy {
+  public loading$: Observable<boolean>;
   public get lang() { return this.language.twoLetter; }
 
   public readonly supportedCurrencies = [
@@ -45,6 +46,7 @@ export class WithdrawComponent implements OnInit, OnDestroy {
     private auth: AngularFireAuth,
     sanitizer: DomSanitizer
   ) {
+    this.loading$ = store.select(state => state.apiWithdraw.loading)
     this.subscriptions.push(
       this.store.select(state => state.apiWithdraw).subscribe(
         (state) => {

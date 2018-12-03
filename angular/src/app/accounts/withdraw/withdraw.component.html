@@ -31,5 +31,6 @@
       <br />
       <iframe [src]="safeSite"  class="mat-elevation-z1"></iframe>
     </div>
+    <mat-spinner *ngIf="loading$"></mat-spinner>
   </mat-sidenav-content>
 </mat-sidenav-container>
