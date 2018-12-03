@@ -1,11 +1,7 @@
 import { AsyncReactiveService } from "./async-reactive-service";
+import { EntityReactiveState } from "./entity-reactive-state";
 
-export class EntityReactiveService<T extends {
-  loading: boolean
-  error?: Error
-  ids: string[]
-  entities: { [id: string]: E }
-}, E> extends AsyncReactiveService<T> {
+export class EntityReactiveService<T extends EntityReactiveState<E>, E> extends AsyncReactiveService<T> {
   protected addEntity(id: string, entity: E) {
     const state: T = Object.assign(
       {},

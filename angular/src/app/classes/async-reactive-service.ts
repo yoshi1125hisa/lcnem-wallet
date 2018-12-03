@@ -1,9 +1,7 @@
 import { ReactiveService } from "./reactive-service";
+import { AsyncReactiveState } from "./async-reactive-state";
 
-export class AsyncReactiveService<T extends {
-  loading: boolean
-  error?: Error
-}> extends ReactiveService<T> {
+export class AsyncReactiveService<T extends AsyncReactiveState> extends ReactiveService<T> {
   protected load() {
     const state: T = Object.assign(
       {
