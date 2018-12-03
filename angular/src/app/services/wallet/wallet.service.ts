@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { EntityReactiveService } from 'src/app/classes/entity-reactive-service';
+import { RxEntityStateService } from 'src/app/classes/rx-entity-state-service';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WalletService extends EntityReactiveService<State, Wallet> {
+export class WalletService extends RxEntityStateService<State, Wallet> {
 
   constructor() {
     super(

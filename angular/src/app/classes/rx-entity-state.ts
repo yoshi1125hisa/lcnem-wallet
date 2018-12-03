@@ -1,4 +1,4 @@
-export interface EntityReactiveState<T> {
+export interface RxEntityState<T> {
   loading: boolean
   error?: Error
   ids: string[]

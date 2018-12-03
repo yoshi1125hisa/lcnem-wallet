@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { AsyncReactiveService } from 'src/app/classes/async-reactive-service';
+import { RxEffectiveStateService } from 'src/app/classes/rx-effective-state-service';
 import { Transaction, Address } from 'nem-library';
 
 @Injectable({
   providedIn: 'root'
 })
-export class HistoryService extends AsyncReactiveService<State> {
+export class HistoryService extends RxEffectiveStateService<State> {
 
   constructor() {
     super(

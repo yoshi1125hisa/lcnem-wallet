@@ -1,7 +1,7 @@
-import { ReactiveService } from "./reactive-service";
-import { AsyncReactiveState } from "./async-reactive-state";
+import { RxStateService } from "./rx-state-service";
+import { RxEffectiveState } from "./rx-effective-state";
 
-export class AsyncReactiveService<T extends AsyncReactiveState> extends ReactiveService<T> {
+export class RxEffectiveStateService<T extends RxEffectiveState> extends RxStateService<T> {
   protected load() {
     const state: T = Object.assign(
       {

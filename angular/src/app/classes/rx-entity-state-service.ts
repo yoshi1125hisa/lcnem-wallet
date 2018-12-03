@@ -1,7 +1,7 @@
-import { AsyncReactiveService } from "./async-reactive-service";
-import { EntityReactiveState } from "./entity-reactive-state";
+import { RxEffectiveStateService } from "./rx-effective-state-service";
+import { RxEntityState } from "./rx-entity-state";
 
-export class EntityReactiveService<T extends EntityReactiveState<E>, E> extends AsyncReactiveService<T> {
+export class RxEntityStateService<T extends RxEntityState<E>, E> extends RxEffectiveStateService<T> {
   protected addEntity(id: string, entity: E) {
     const state: T = Object.assign(
       {},

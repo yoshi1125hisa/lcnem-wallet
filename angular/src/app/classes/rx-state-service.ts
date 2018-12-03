@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
 
-export class ReactiveService<T> {
+export class RxStateService<T> {
   protected _subject$ = new Subject<T>()
   protected _state: T
   protected _state$ = this._subject$.asObservable()

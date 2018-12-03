@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { EntityReactiveService } from 'src/app/classes/entity-reactive-service';
-import { EntityReactiveState } from 'src/app/classes/entity-reactive-state';
+import { RxEntityStateService } from 'src/app/classes/rx-entity-state-service';
+import { RxEntityState } from 'src/app/classes/rx-entity-state';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LocalWalletService extends EntityReactiveService<State, string> {
+export class LocalWalletService extends RxEntityStateService<State, string> {
 
   constructor() {
     super(
@@ -18,6 +18,6 @@ export class LocalWalletService extends EntityReactiveService<State, string> {
   }
 }
 
-interface State extends EntityReactiveState<string> {
+interface State extends RxEntityState<string> {
 
 }
