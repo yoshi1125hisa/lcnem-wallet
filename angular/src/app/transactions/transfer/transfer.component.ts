@@ -18,7 +18,7 @@ import {
   TransactionHttp
 } from 'nem-library';
 import { Observable, of, Subscription } from 'rxjs';
-import { mergeMap, first } from 'rxjs/operators';
+import { mergeMap, first, map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
 import { LanguageService } from '../../services/language.service';
@@ -54,8 +54,8 @@ export class TransferComponent implements OnInit {
     encrypt: false,
     transferAssets: [] as {
       id: string,
-      balance: Asset,
-      amount?: number
+      amount?: number,
+      balance: Observable<Asset>
     }[],
     hidden: 0
   };
@@ -151,8 +151,18 @@ export class TransferComponent implements OnInit {
     this.forms.transferAssets.push(
       {
         id: id,
-        balance: balance,
-        amount: amount
+        amount: amount,
+        balance: this.store.select(state => state.nemBalance.assets).pipe(
+          map(
+            (assets) => {
+              return assets.find(
+                (asset) => {
+                  return id == asset.assetId.toString()
+                }
+              )!
+            }
+          )
+        )
       }
     );
   }
@@ -216,7 +226,15 @@ export class TransferComponent implements OnInit {
       }
     }
 
-    let transferMosaics = await this.getTransferMosaics();
+    const mosaics = this.forms.transferAssets.map(
+      (asset) => {
+        if(asset.id == "nem:xem") {
+          return new XEM(asset.amount || 0);
+        }
+
+        return new mosaictransferable
+      }
+    )
 
     let transaction = TransferTransaction.createWithMosaics(
       TimeWindow.createWithDeadline(),
@@ -225,35 +243,29 @@ export class TransferComponent implements OnInit {
       message
     );
 
-    let result = await this.dialog.open(TransferDialogComponent, {
+    this.dialog.open(TransferDialogComponent, {
       data: {
         transaction: transaction,
         message: this.forms.message
       }
-    }).afterClosed().toPromise();
-    if (!result) {
-      return;
-    }
-
-    let dialogRef = this.dialog.open(LoadingDialogComponent, { disableClose: true });
-
-    let signed = account.signTransaction(transaction);
-
-    this.store.dispatch(new SendTransferTransaction())
-    try {
-      let transactionHttp = new TransactionHttp(nodes);
-      await transactionHttp.announceTransaction(signed).toPromise();
-    } catch {
-      this.dialog.open(AlertDialogComponent, {
-        data: {
-          title: this.translation.error[this.lang],
-          content: ""
+    }).afterClosed().subscribe(
+      (result) => {
+        if (!result) {
+          return;
         }
-      });
-      return;
-    } finally {
-      dialogRef.close();
-    }
+    
+        const signed = account.signTransaction(transaction);
+
+        this.store.dispatch(
+          new SendTransferTransaction(
+            {
+              signedTransaction: signed
+            }
+          )
+        )
+      }
+    )
+
   }
 
   public translation = {
