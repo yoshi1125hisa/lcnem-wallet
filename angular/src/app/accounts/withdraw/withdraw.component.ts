@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
-import { HttpClient } from '@angular/common/http';
-
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
+
 import { AngularFireAuth } from '@angular/fire/auth';
+import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { lang } from '../../models/lang';
 import { WalletsService } from '../../../app/services/wallets.service';
@@ -14,82 +13,112 @@ import { UserService } from '../../services/user/user.service';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
+import { Observable, Subscription } from 'rxjs';
+import { LanguageService } from '../../services/language.service';
+import { Back, Navigate } from '../../store/router/router.actions';
+import { SendWithdrawRequest } from '../../store/api/withdraw/withdraw.actions';
 
 @Component({
   selector: 'app-withdraw',
   templateUrl: './withdraw.component.html',
-  styleUrls: ['./withdraw.component.css']
+  styleUrls: ['./wothdraw.component.css']
 })
-export class WithdrawComponent implements OnInit {
+export class WithdrawComponent implements OnInit, OnDestroy {
   public loading$: Observable<boolean>;
-  get lang() { return lang; }
-  public supportedCurrencies = ["JPY"];
-  public selectedCurrency = "JPY";
+  public get lang() { return this.language.twoLetter; }
 
-  public amount?: number;
-  public method?: string;
+  public readonly supportedCurrencies = [
+    "JPY"
+  ];
+
+  public forms: {
+    currency: string,
+    address?: string;
+    amount?: number;
+    method?: string;
+  } = {
+      currency: "JPY"
+    };
 
   public safeSite: SafeResourceUrl;
 
+  private loadingDialog?: MatDialogRef<LoadingDialogComponent>;
+  private subscriptions: Subscription[] = [];
+
   constructor(
     private store: Store<State>,
-    private router: Router,
+    private language: LanguageService,
     private dialog: MatDialog,
-    private http: HttpClient,
     private auth: AngularFireAuth,
-    private user: UserService,
-    private wallet: WalletsService,
     sanitizer: DomSanitizer
   ) {
-    this.loading$ = store.select(state => state.wallet.loading)
+    this.loading$ = store.select(state => state.apiWithdraw.loading)
+    this.subscriptions.push(
+      this.store.select(state => state.apiWithdraw).subscribe(
+        (state) => {
+          if (state.loading && !this.loadingDialog) {
+            this.loadingDialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
+          } else if (this.loadingDialog) {
+            this.loadingDialog.close();
+
+            if (state.error) {
+              this.dialog.open(
+                AlertDialogComponent,
+                {
+                  data: {
+                    title: this.translation.error[this.lang],
+                    content: ""
+                  }
+                }
+              );
+              return;
+            }
+
+            this.dialog.open(
+              AlertDialogComponent,
+              {
+                data: {
+                  title: this.translation.completed[this.lang],
+                  content: this.translation.following[this.lang]
+                }
+              }
+            ).afterClosed().subscribe(
+              (_) => {
+                this.store.dispatch(new Navigate({ commands: [""] }));
+              }
+            );
+          }
+        }
+      )
+    );
+
     this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${this.lang}.txt`);
   }
 
   ngOnInit() {
-    this.user.checkLogin().then(async () => {
-      await this.wallet.checkWallets();
-    });
   }
 
-  public async withdraw() {
-    let dialogRef = this.dialog.open(LoadingDialogComponent, { disableClose: true });
-
-    try {
-      await this.http.post(
-        "/api/withdraw",
-        {
-          email: this.auth.auth.currentUser!.email,
-          nem: this.wallet.wallets![this.wallet.currentWallet!].nem,
-          currency: this.selectedCurrency,
-          amount: this.amount,
-          method: this.method,
-          lang: this.lang
-        }
-      ).toPromise();
-    } catch {
-      this.dialog.open(AlertDialogComponent, {
-        data: {
-          title: this.translation.error[this.lang],
-          content: ""
-        }
-      });
-      return;
-    } finally {
-      dialogRef.close();
+  ngOnDestroy() {
+    for (let subscription of this.subscriptions) {
+      subscription.unsubscribe();
     }
+  }
 
-    await this.dialog.open(AlertDialogComponent, {
-      data: {
-        title: this.translation.completed[this.lang],
-        content: this.translation.following[this.lang]
+  public withdraw() {
+    this.store.dispatch(new SendWithdrawRequest(
+      {
+        email: this.auth.auth.currentUser!.email!,
+        nem: this.forms.address!,
+        currency: this.forms.currency,
+        amount: this.forms.amount!,
+        method: this.forms.method!,
+        lang: this.lang
       }
-    }).afterClosed().toPromise();
-
-    this.router.navigate([""]);
+    ));
   }
 
   public back() {
-    back(() => this.router.navigate([""]));
+    this.store.dispatch(new Back({ commands: [""] }));
   }
 
   public translation = {
