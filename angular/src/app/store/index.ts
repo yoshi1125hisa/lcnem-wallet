@@ -13,6 +13,7 @@ import * as LocalWalletReducer from './local-wallet/local-wallet.reducer';
 import * as WalletReducer from './wallet/wallet.reducer';
 import * as ContactReducer from './contact/contact.reducer';
 import * as ApiDepositReducer from './api/deposit/deposit.reducer';
+import * as ApiWithdrawReducer from './api/withdraw/withdraw.reducer';
 import * as NemAssetDefinitionReducer from './nem/asset-definition/asset-definition.reducer';
 import * as NemBalanceReducer from './nem/balance/balance.reducer';
 import * as NemHistoryReducer from './nem/history/history.reducer';
@@ -26,6 +27,7 @@ export interface State {
   localWallet: LocalWalletReducer.State,
   contact: ContactReducer.State,
   apiDeposit: ApiDepositReducer.State,
+  apiWithdraw: ApiWithdrawReducer.State,
   nemAssetDefinition: NemAssetDefinitionReducer.State,
   nemBalance: NemBalanceReducer.State,
   NemHistory: NemHistoryReducer.State,
