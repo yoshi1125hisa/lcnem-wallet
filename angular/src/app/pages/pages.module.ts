@@ -18,6 +18,10 @@ import { HistoryComponent } from './home/nem/history/history.component';
 import { TransactionComponent } from './home/nem/history/transaction/transaction.component';
 import { BalanceComponent } from './home/nem/balance/balance.component';
 import { MultisigComponent } from './home/nem/multisig/multisig.component';
+import { TransferDialogComponent } from './nem/transfer/transfer/transfer-dialog/transfer-dialog.component';
+import { CreateDialogComponent } from './account/wallets/create-dialog/create-dialog.component';
+import { ContactDialogComponent } from './contacts/contact-dialog/contact-dialog.component';
+import { ContactEditDialogComponent } from './contacts/contact-edit-dialog/contact-edit-dialog.component';
 
 @NgModule({
   declarations: [
