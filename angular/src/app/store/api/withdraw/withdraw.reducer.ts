@@ -1,8 +1,5 @@
 import { Action } from '@ngrx/store';
-import {
-  WithdrawRequestActionTypes,
-  WithdrawRequestActions
-} from './withdraw.actions';
+import { WithdrawRequestActionTypes, WithdrawRequestActions } from './withdraw.actions';
 
 export interface State {
   loading: boolean;
