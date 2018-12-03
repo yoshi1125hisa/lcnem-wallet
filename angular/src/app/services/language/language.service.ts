@@ -1,21 +1,25 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { State } from '../../store/index'
+import { Subject } from 'rxjs';
+import { ReactiveService } from '../../classes/reactive-service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LanguageService {
-  private _twoLetter = "";
-  public get twoLetter() { return this._twoLetter; }
-
-  constructor(
-    private store: Store<State>
-  ) {
-    this.store.select(state => state.language).subscribe(
-      language => {
-        this._twoLetter = language.twoLetter;
-      }
-    )
+export class LanguageService extends ReactiveService<State> {
+  constructor() {
+    super({
+      twoLetter: window.navigator.language.substr(0, 2) == "ja" ? "ja" : "en"
+    })
   }
+
+  public setLanguage(twoLetter: string) {
+    this._subject$.next({
+      twoLetter: twoLetter,
+      ...this._state
+    })
+  }
+}
+
+interface State {
+  twoLetter: string
 }

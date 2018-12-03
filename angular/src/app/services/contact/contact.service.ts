@@ -1,36 +1,28 @@
 import { Injectable } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { Subject, from } from 'rxjs';
 import { Contact } from '../../../../../firebase/functions/src/models/contact';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { ReactiveService } from '../../classes/reactive-service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ContactService {
-  private subject = new Subject<State>()
-  private state: State = {
-    loading: false,
-    ids: [],
-    contacts: {}
-  }
-  public state$ = this.subject.asObservable();
-
+export class ContactService extends ReactiveService<State> {
   constructor(
     private firestore: AngularFirestore
   ) {
-    this.subject.next(this.state)
-    this.state$.subscribe(
-      (state) => {
-        this.state = state
-      }
-    )
+    super({
+      loading: false,
+      ids: [],
+      contacts: {}
+    })
   }
 
   public loadContacts(userId: string) {
-    this.subject.next({
+    this._subject$.next({
       loading: true,
       error: undefined,
-      ...this.state
+      ...this._state
     })
 
     this.firestore.collection("users").doc(userId).collection("contacts").get().subscribe(
@@ -44,39 +36,39 @@ export class ContactService {
           state.contacts[doc.id] = doc.data() as Contact
         }
 
-        this.subject.next(state)
+        this._subject$.next(state)
       },
       (error) => {
-        this.subject.next({
+        this._subject$.next({
           loading: false,
           error: error,
-          ...this.state
+          ...this._state
         })
       }
     )
   }
 
   public addContact(userId: string, contact: Contact) {
-    this.subject.next({
+    this._subject$.next({
       loading: true,
       error: undefined,
-      ...this.state
+      ...this._state
     })
 
     from(this.firestore.collection("users").doc(userId).collection("contacts").add(contact)).subscribe(
       (document) => {
         const state: State = {
           loading: false,
-          ...this.state
+          ...this._state
         }
         state.ids.push(document.id)
         state.contacts[document.id] = contact
       },
       (error) => {
-        this.subject.next({
+        this._subject$.next({
           loading: false,
           error: error,
-          ...this.state
+          ...this._state
         })
       }
     )
