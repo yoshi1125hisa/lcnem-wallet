@@ -8,7 +8,7 @@ import { State } from '../store/index';
 import { Logout } from '../store/user/user.actions';
 import { Wallet } from '../store/wallet/wallet.model';
 import { Invoice } from '../models/invoice';
-import { LanguageService } from '../services/language.service';
+import { LanguageService } from '../services/language/language.service';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 

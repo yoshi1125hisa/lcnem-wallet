@@ -13,14 +13,16 @@
       </button>
     </mat-toolbar>
     <div class="mat-typography body-container">
-      <mat-spinner *ngIf="loading; else loaded"></mat-spinner>
+      <mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
       <ng-template #loaded>
         <form #form="ngForm" (ngSubmit)="transfer()">
+          <h3>{{translation.recipient[lang]}}</h3>
           <mat-card>
             <app-nem-address-input fxFill [(ngModel)]="forms.recipient" name="recipient" placeholder="{{translation.recipient[lang]}}"
               required></app-nem-address-input>
           </mat-card>
           <br />
+          <h3>{{translation.message[lang]}}</h3>
           <mat-card>
             <mat-form-field fxFill>
               <input matInput placeholder="{{translation.message[lang]}}" [(ngModel)]="forms.message" name="message"
@@ -29,43 +31,35 @@
             </mat-form-field>
           </mat-card>
           <br />
-          <mat-card>
-            <mat-list>
+          <div fxLayout="row">
+            <h3>{{translation.assets[lang]}}</h3>
+            <span class="fill-remaining-space"></span>
+            <button mat-icon-button color="accent" type="button" (click)="addTransferAsset()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+          <ng-container *ngFor="let asset of forms.transferAssets; let i = index">
+            <mat-card>
               <div fxLayout="row">
-                <h3 mat-subheader>{{translation.assets[lang]}}</h3>
                 <span class="fill-remaining-space"></span>
-                <button mat-icon-button color="accent" type="button" (click)="pushAsset()">
-                  <mat-icon>add</mat-icon>
+                <button mat-icon-button color="warn" type="button" (click)="deleteTransferAsset(i)">
+                  <mat-icon>clear</mat-icon>
                 </button>
               </div>
-              <ng-container *ngFor="let asset of forms.transferAssets; let i = index">
-                <mat-list-item>
-                  <mat-form-field class="fill-remaining-space">
-                    <mat-select color="accent" placeholder="{{translation.assetName[lang]}}" [(ngModel)]="asset.index"
-                      name="asset{{i}}-name" required>
-                      <ng-container *ngFor="let assetId of assetIds; let j = index">
-                        <mat-option *ngIf="assetIsNotReady(assetId) || asset.index == j" [value]="j">{{assetId}}</mat-option>
-                      </ng-container>
-                    </mat-select>
-                  </mat-form-field>
-                  <mat-form-field class="fill-remaining-space">
-                    <input matInput color="accent" placeholder="{{translation.amount[lang]}}" [(ngModel)]="asset.amount"
-                      name="asset{{i}}-amount" required pattern="\d+(\.\d+)?" />
-                  </mat-form-field>
-                  <button mat-icon-button color="warn" type="button" (click)="removeAsset(i, true)">
-                    <mat-icon>clear</mat-icon>
-                  </button>
-                </mat-list-item>
-              </ng-container>
-            </mat-list>
-            <app-assets-list [title]="translation.balance[lang]" [assets]="assets"></app-assets-list>
-          </mat-card>
+              <app-assets-list [title]="translation.balance[lang]" [assets]="[asset.balance]"></app-assets-list>
+              <mat-form-field class="fill-remaining-space" fxFill>
+                <input matInput color="accent" placeholder="{{translation.amount[lang]}}" [(ngModel)]="asset.amount"
+                  name="asset{{i}}-amount" required pattern="\d+(\.\d+)?" />
+              </mat-form-field>
+            </mat-card>
+          </ng-container>
           <br />
           <div fxLayout="row">
             <span class="fill-remaining-space"></span>
-            <button mat-raised-button type="button" [disabled]="form.invalid" (click)="share()" *ngIf="navigatorShare">{{translation.share[lang]}}</button>
+            <button mat-raised-button type="button" [disabled]="form.invalid" (click)="share()">{{translation.share[lang]}}</button>
             <button mat-raised-button color="accent" [disabled]="form.invalid">{{translation.transfer[lang]}}</button>
           </div>
+          <input type="hidden" [(ngModel)]="forms.hidden" pattern="0" />
         </form>
       </ng-template>
     </div>

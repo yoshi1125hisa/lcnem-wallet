@@ -9,7 +9,7 @@ import { Store } from '@ngrx/store';
 import { State } from '../../../store/index'
 import { AngularFireAuth } from '@angular/fire/auth';
 import { UpdateContact } from 'src/app/store/contact/contact.actions';
-import { LanguageService } from 'src/app/services/language.service';
+import { LanguageService } from 'src/app/services/language/language.service';
 import { Dictionary } from '@ngrx/entity';
 import { map } from 'rxjs/operators';
 

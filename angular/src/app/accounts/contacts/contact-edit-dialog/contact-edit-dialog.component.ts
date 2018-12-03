@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State } from '../../../store/index'
-import { LanguageService } from '../../../services/language.service';
+import { LanguageService } from '../../../services/language/language.service';
 
 @Component({
   selector: 'app-contact-edit-dialog',

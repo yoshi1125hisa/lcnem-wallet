@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { lang } from '../../models/lang';
 import { back } from '../../models/back';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../services/user/user.service';
 import { State } from '../../store/index'
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';

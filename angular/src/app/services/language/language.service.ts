@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { State } from '../store/index'
+import { State } from '../../store/index'
 
 @Injectable({
   providedIn: 'root'

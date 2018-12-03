@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   Address,
@@ -17,20 +17,22 @@ import {
   AccountHttp,
   TransactionHttp
 } from 'nem-library';
-import { Observable, of } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
+import { Observable, of, Subscription } from 'rxjs';
+import { mergeMap, first, map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
-import { LanguageService } from '../../services/language.service';
+import { LanguageService } from '../../services/language/language.service';
 import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
 import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
 import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.component';
 import { Wallet } from '../../store/wallet/wallet.model';
-import { Back } from '../../store/router/router.actions';
+import { Back, Navigate } from '../../store/router/router.actions';
 import { LoadBalances } from '../../store/nem/balance/balance.actions';
 import { Invoice } from '../../models/invoice';
 import { nodes } from '../../models/nodes';
 import { WebShareApi } from '../../store/api/share/share.actions';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { SendTransferTransaction } from '../../store/nem/transaction/transaction.actions';
 
 @Component({
   selector: 'app-transfer',
@@ -40,31 +42,73 @@ import { WebShareApi } from '../../store/api/share/share.actions';
 export class TransferComponent implements OnInit {
   public get lang() { return this.language.twoLetter; }
 
-  public currentWallet$: Observable<Wallet>;
+  public loading$: Observable<boolean>;
   public assets$: Observable<Asset[]>;
+
+  private loadingDialog?: MatDialogRef<LoadingDialogComponent>;
+  private subscriptions: Subscription[] = [];
 
   public forms = {
     recipient: "",
     message: "",
     encrypt: false,
-    transferAssets: [{}] as {
-      id?: string,
-      amount?: number
-    }[]
+    transferAssets: [] as {
+      id: string,
+      amount?: number,
+      balance: Observable<Asset>
+    }[],
+    hidden: 0
   };
 
   constructor(
     private store: Store<State>,
+    private auth: AngularFireAuth,
     private language: LanguageService,
     private dialog: MatDialog,
-    private router: Router,
     private route: ActivatedRoute
   ) {
-    this.currentWallet$ = this.store.select(state => state.wallet.currentWallet).pipe(
-      mergeMap(id => id ? this.store.select(state => state.wallet.entities[id]) : of())
-    );
+    this.loading$ = this.store.select(state => state.nemBalance.loading);
 
-    this.assets$ = this.store.select(state => state.nem.balance.assets);
+    this.assets$ = this.store.select(state => state.nemBalance.assets);
+
+    this.subscriptions.push(
+      this.store.select(state => state.NemTransaction).subscribe(
+        (state) => {
+          if (state.loading && !this.loadingDialog) {
+            this.loadingDialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
+          } else if (this.loadingDialog) {
+            this.loadingDialog.close();
+
+            if (state.error) {
+              this.dialog.open(
+                AlertDialogComponent,
+                {
+                  data: {
+                    title: this.translation.error[this.lang],
+                    content: ""
+                  }
+                }
+              );
+              return;
+            }
+
+            this.dialog.open(
+              AlertDialogComponent,
+              {
+                data: {
+                  title: this.translation.completed[this.lang],
+                  content: this.translation.completedBody[this.lang]
+                }
+              }
+            ).afterClosed().subscribe(
+              (_) => {
+                this.store.dispatch(new Navigate({ commands: [""] }));
+              }
+            );
+          }
+        }
+      )
+    )
   }
 
   ngOnInit() {
@@ -72,7 +116,17 @@ export class TransferComponent implements OnInit {
   }
 
   public load() {
-    this.store.dispatch(new LoadBalances());
+    this.store.select(state => state.wallet).pipe(first()).subscribe(
+      (wallet) => {
+        this.store.dispatch(
+          new LoadBalances(
+            {
+              address: new Address(wallet.entities[wallet.currentWallet!].nem)
+            }
+          )
+        );
+      }
+    )
 
     let invoice = this.route.snapshot.queryParamMap.get('invoice') || "";
     let invoiceData = Invoice.parse(decodeURI(invoice));
@@ -93,30 +147,38 @@ export class TransferComponent implements OnInit {
     this.store.dispatch(new Back({ commands: [""] }));
   }
 
-  public addTransferAsset(id?: string, amount?: number) {
+  public addTransferAsset(id: string, amount?: number) {
     this.forms.transferAssets.push(
       {
         id: id,
-        amount: amount
+        amount: amount,
+        balance: this.store.select(state => state.nemBalance.assets).pipe(
+          map(
+            (assets) => {
+              return assets.find(
+                (asset) => {
+                  return id == asset.assetId.toString()
+                }
+              )!
+            }
+          )
+        )
       }
     );
   }
 
   public deleteTransferAsset(index: number) {
-    if (this.forms.transferAssets.length == 1) {
-      this.forms.transferAssets[0] = {};
-      return;
-    }
     this.forms.transferAssets.splice(index, 1);
   }
 
-  public async share() {
+  public share() {
     let invoice = new Invoice();
     invoice.data.addr = this.forms.recipient;
     invoice.data.msg = this.forms.message;
-    invoice.data.assets = (await this.getTransferMosaics()).assets.map(asset => {
-      return { id: asset.assetId.toString(), amount: asset.absoluteQuantity() }
-    }
+    invoice.data.assets = this.forms.transferAssets.map(
+      (asset) => {
+        return { id: asset.id, amount: asset.amount || 0 }
+      }
     );
 
     this.store.dispatch(new WebShareApi({
@@ -125,39 +187,7 @@ export class TransferComponent implements OnInit {
     }));
   }
 
-  public async getTransferMosaics() {
-    let levy: Asset[] = [];
-
-    let transferAssets: AssetTransferable[] = [];
-
-    for (let asset of this.forms.transferAssets) {
-      let assetId = this.assetIds[asset.index!];
-      if (assetId == "nem:xem") {
-        transferAssets.push(new XEM(asset.amount!));
-        continue;
-      }
-      let definition = await this.balance.readDefinition(assetId);
-
-      let absolute = asset.amount! * Math.pow(10, definition.properties.divisibility);
-
-      if (definition.levy) {
-        if (definition.levy.type == AssetLevyType.Absolute) {
-          levy.push(new Asset(definition.levy.assetId, definition.levy.fee));
-        } else if (definition.levy.type == AssetLevyType.Percentil) {
-          levy.push(new Asset(definition.levy.assetId, definition.levy.fee * absolute / 10000));
-        }
-      }
-
-      transferAssets.push(AssetTransferable.createWithAssetDefinition(definition, absolute));
-    };
-
-    return {
-      assets: transferAssets,
-      levy: levy
-    };
-  }
-
-  public async transfer() {
+  public transfer() {
     let wallet = this.wallet.wallets![this.wallet.currentWallet!].wallet;
     if (!wallet) {
       this.dialog.open(AlertDialogComponent, {
@@ -169,21 +199,10 @@ export class TransferComponent implements OnInit {
       return;
     }
 
-    let password = new Password(this.auth.auth.currentUser!.uid);
-    let account = SimpleWallet.readFromWLT(wallet).open(password);
+    const password = new Password(this.auth.auth.currentUser!.uid);
+    const account = SimpleWallet.readFromWLT(wallet).open(password);
 
-    let recipient: Address;
-    try {
-      recipient = new Address(this.forms.recipient!);
-    } catch {
-      this.dialog.open(AlertDialogComponent, {
-        data: {
-          title: this.translation.error[this.lang],
-          content: this.translation.addressRequired[this.lang]
-        }
-      });
-      return;
-    }
+    const recipient = new Address(this.forms.recipient!);
 
     let message: Message;
     if (this.forms.encrypt) {
@@ -207,7 +226,15 @@ export class TransferComponent implements OnInit {
       }
     }
 
-    let transferMosaics = await this.getTransferMosaics();
+    const mosaics = this.forms.transferAssets.map(
+      (asset) => {
+        if(asset.id == "nem:xem") {
+          return new XEM(asset.amount || 0);
+        }
+
+        return new mosaictransferable
+      }
+    )
 
     let transaction = TransferTransaction.createWithMosaics(
       TimeWindow.createWithDeadline(),
@@ -216,43 +243,29 @@ export class TransferComponent implements OnInit {
       message
     );
 
-    let result = await this.dialog.open(TransferDialogComponent, {
+    this.dialog.open(TransferDialogComponent, {
       data: {
         transaction: transaction,
-        message: this.forms.message,
-        levy: transferMosaics.levy
+        message: this.forms.message
       }
-    }).afterClosed().toPromise();
-    if (!result) {
-      return;
-    }
-
-    let dialogRef = this.dialog.open(LoadingDialogComponent, { disableClose: true });
-
-    let signed = account.signTransaction(transaction);
-    try {
-      let transactionHttp = new TransactionHttp(nodes);
-      await transactionHttp.announceTransaction(signed).toPromise();
-    } catch {
-      this.dialog.open(AlertDialogComponent, {
-        data: {
-          title: this.translation.error[this.lang],
-          content: ""
+    }).afterClosed().subscribe(
+      (result) => {
+        if (!result) {
+          return;
         }
-      });
-      return;
-    } finally {
-      dialogRef.close();
-    }
+    
+        const signed = account.signTransaction(transaction);
 
-    await this.dialog.open(AlertDialogComponent, {
-      data: {
-        title: this.translation.completed[this.lang],
-        content: this.translation.completedBody[this.lang]
+        this.store.dispatch(
+          new SendTransferTransaction(
+            {
+              signedTransaction: signed
+            }
+          )
+        )
       }
-    }).afterClosed().toPromise();
+    )
 
-    this.router.navigate([""]);
   }
 
   public translation = {

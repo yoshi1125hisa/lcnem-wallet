@@ -1,7 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { TransferTransaction, Asset, AssetTransferable, XEM } from 'nem-library';
-import { lang } from '../../../models/lang';
+import { Store } from '@ngrx/store';
+import { State } from '../../../store';
+import { LanguageService } from 'src/app/services/language/language.service';
 
 @Component({
   selector: 'app-transfer-dialog',
@@ -9,7 +11,8 @@ import { lang } from '../../../models/lang';
   styleUrls: ['./transfer-dialog.component.css']
 })
 export class TransferDialogComponent {
-  get lang() { return lang; }
+  get lang() { return this.language.twoLetter; }
+  
   public transaction: TransferTransaction;
   public assets: Asset[];
   public fee: Asset[];
@@ -17,16 +20,33 @@ export class TransferDialogComponent {
   public Math = Math;
 
   constructor(
+    private store: Store<State>,
+    private language: LanguageService,
     @Inject(MAT_DIALOG_DATA) public data: {
       transaction: TransferTransaction
-      message: string,
-      levy: Asset[]
+      message: string
     }
   ) {
     this.transaction = data.transaction as TransferTransaction;
     this.assets = this.transaction.mosaics();
     this.fee = [new XEM(this.transaction.fee / 1000000)];
-    this.levy = data.levy;
+    this.levy = [];
+
+    /*
+    let definition = await this.balance.readDefinition(assetId);
+
+      let absolute = asset.amount! * Math.pow(10, definition.properties.divisibility);
+
+      if (definition.levy) {
+        if (definition.levy.type == AssetLevyType.Absolute) {
+          levy.push(new Asset(definition.levy.assetId, definition.levy.fee));
+        } else if (definition.levy.type == AssetLevyType.Percentil) {
+          levy.push(new Asset(definition.levy.assetId, definition.levy.fee * absolute / 10000));
+        }
+      }
+
+      transferAssets.push(AssetTransferable.createWithAssetDefinition(definition, absolute));
+    */
   }
 
   public translation = {

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { back } from '../../models/back';
 import { lang, setLang } from '../../models/lang';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../services/user/user.service';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State } from '../../store/index'

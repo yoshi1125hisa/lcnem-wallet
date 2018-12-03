@@ -5,6 +5,12 @@ import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog
 
 import { AngularFireAuth } from '@angular/fire/auth';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
+import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
+import { lang } from '../../models/lang';
+import { WalletsService } from '../../../app/services/wallets.service';
+import { back } from '../../models/back';
+import { UserService } from '../../services/user/user.service';
+import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
 import { Observable, Subscription } from 'rxjs';

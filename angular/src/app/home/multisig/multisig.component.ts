@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import { State } from '../../store/index'
-import { LanguageService } from '../../services/language.service';
+import { LanguageService } from '../../services/language/language.service';
 import { Address } from 'nem-library';
 import { first } from 'rxjs/operators';
 import { LoadMultisigs } from '../../store/nem/multisig/multisig.actions';

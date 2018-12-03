@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { State } from '../../store/index'
 import { DeleteContacts, AddContact, LoadContacts } from 'src/app/store/contact/contact.actions';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { LanguageService } from '../../services/language.service';
+import { LanguageService } from '../../services/language/language.service';
 import { Dictionary } from '@ngrx/entity';
 import { Back } from 'src/app/store/router/router.actions';
 import { map, mergeMap } from 'rxjs/operators';
