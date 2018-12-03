@@ -2,74 +2,109 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Subject, from } from 'rxjs';
 import { Contact } from '../../../../../firebase/functions/src/models/contact';
-import { ReactiveService } from '../../classes/reactive-service';
+import { EntityReactiveService } from '../../classes/entity-reactive-service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ContactService extends ReactiveService<State> {
+export class ContactService extends EntityReactiveService<State, Contact> {
   constructor(
     private firestore: AngularFirestore
   ) {
-    super({
-      loading: false,
-      ids: [],
-      contacts: {}
-    })
+    super(
+      {
+        loading: false,
+        ids: [],
+        entities: {}
+      }
+    )
   }
 
-  public loadContacts(userId: string) {
-    this._subject$.next({
-      loading: true,
-      error: undefined,
-      ...this._state
-    })
+  public loadContacts(userId: string, refresh?: boolean) {
+    if(userId === this._state.lastUserId && !refresh) {
+      return;
+    }
+    this.load()
 
     this.firestore.collection("users").doc(userId).collection("contacts").get().subscribe(
       (collection) => {
         const state: State = {
           loading: false,
           ids: collection.docs.map(doc => doc.id),
-          contacts: {}
+          entities: {},
+          lastUserId: userId
         }
         for(const doc of collection.docs) {
-          state.contacts[doc.id] = doc.data() as Contact
+          state.entities[doc.id] = doc.data() as Contact
         }
 
         this._subject$.next(state)
       },
       (error) => {
-        this._subject$.next({
-          loading: false,
-          error: error,
-          ...this._state
-        })
+        this.error(error)
       }
     )
   }
 
   public addContact(userId: string, contact: Contact) {
-    this._subject$.next({
-      loading: true,
-      error: undefined,
-      ...this._state
-    })
+    if(userId !== this._state.lastUserId) {
+      throw Error()
+    }
+    this.load()
 
     from(this.firestore.collection("users").doc(userId).collection("contacts").add(contact)).subscribe(
       (document) => {
         const state: State = {
-          loading: false,
-          ...this._state
+          ...this.addEntity(document.id, contact),
+          loading: false
         }
-        state.ids.push(document.id)
-        state.contacts[document.id] = contact
+        
+        this._subject$.next(state)
       },
       (error) => {
-        this._subject$.next({
-          loading: false,
-          error: error,
-          ...this._state
-        })
+        this.error(error)
+      }
+    )
+  }
+
+  public updateContact(userId: string, contactId: string, contact: Contact) {
+    if(userId !== this._state.lastUserId) {
+      throw Error()
+    }
+    this.load()
+
+    from(this.firestore.collection("users").doc(userId).collection("contacts").doc(contactId).set(contact)).subscribe(
+      () => {
+        const state: State = {
+          ...this.updateEntity(contactId, contact),
+          loading: false
+        }
+
+        this._subject$.next(state)
+      },
+      (error) => {
+        this.error(error)
+      }
+    )
+  }
+
+  public deleteContact(userId: string, contactId: string) {
+    if(userId !== this._state.lastUserId) {
+      throw Error()
+    }
+    this.load()
+
+    from(this.firestore.collection("users").doc(userId).collection("contacts").doc(contactId).delete()).subscribe(
+      () => {
+        const state: State = {
+          ...this.deleteEntity(contactId),
+          loading: false
+        }
+
+        this._subject$.next(state)
+      },
+      (error) => {
+        this.error(error)
       }
     )
   }
@@ -79,5 +114,6 @@ interface State {
   loading: boolean
   error?: Error
   ids: string[]
-  contacts: { [id: string]: Contact }
+  entities: { [id: string]: Contact }
+  lastUserId?: string
 }
