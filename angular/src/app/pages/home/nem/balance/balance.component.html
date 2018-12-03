@@ -1,3 +1,10 @@
-<p>
-  balance works!
-</p>
+<mat-toolbar>
+  <span class="fill-remaining-space"></span>
+  <button mat-icon-button color="accent" (click)="load(true)">
+    <mat-icon>refresh</mat-icon>
+  </button>
+</mat-toolbar>
+<mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
+<ng-template #loaded>
+  <app-assets-list [assets]="assets$ | async"></app-assets-list>
+</ng-template>

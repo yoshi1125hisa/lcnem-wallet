@@ -1,0 +1,7 @@
+.empty {
+  text-align: center;
+}
+
+mat-card mat-toolbar {
+  background: white;
+}

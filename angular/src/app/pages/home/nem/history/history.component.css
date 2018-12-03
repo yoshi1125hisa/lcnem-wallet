@@ -1,0 +1,8 @@
+.empty {
+  color: gray;
+  text-align: center;
+  margin: 1em;
+}
+mat-toolbar {
+  background: white;
+}

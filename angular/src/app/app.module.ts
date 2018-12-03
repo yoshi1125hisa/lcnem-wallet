@@ -41,7 +41,7 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 
-import { HomeComponent } from './home/home.component';
+import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './accounts/login/login.component';
 import { ScanComponent } from './transactions/scan/scan.component';
 import { TransferComponent } from './transactions/transfer/transfer.component';
@@ -59,14 +59,14 @@ import { TransferDialogComponent } from './transactions/transfer/transfer-dialog
 import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.component';
 import { PlanComponent } from './accounts/plan/plan.component';
 import { TransactionComponent } from './home/history/transaction/transaction.component';
-import { HistoryComponent } from './home/history/history.component';
+import { HistoryComponent } from './pages/home/nem/history/history.component';
 import { CreateDialogComponent } from './accounts/wallets/create-dialog/create-dialog.component';
 import { WalletsComponent } from './accounts/wallets/wallets.component';
 import { ContactDialogComponent } from './accounts/contacts/contact-dialog/contact-dialog.component';
 import { ContactEditDialogComponent } from './accounts/contacts/contact-edit-dialog/contact-edit-dialog.component';
 import { NemAddressInputComponent } from './components/nem-address-input/nem-address-input.component';
 import { MultisigComponent } from './home/multisig/multisig.component';
-import { BalanceComponent } from './home/balance/balance.component';
+import { BalanceComponent } from './pages/home/nem/balance/balance.component';
 import { LanguageMenuComponent } from './components/language-menu/language-menu.component';
 
 import { StoreModule } from '@ngrx/store';

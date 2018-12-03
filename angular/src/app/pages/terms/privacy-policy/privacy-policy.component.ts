@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { lang } from '../../models/lang';
+import { back } from '../../models/back';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-privacy-policy',
@@ -6,10 +10,26 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./privacy-policy.component.css']
 })
 export class PrivacyPolicyComponent implements OnInit {
-
-  constructor() { }
+  get lang() { return lang; }
+  public safeSite: SafeResourceUrl;
+  constructor(
+    private router: Router,
+    sanitizer: DomSanitizer
+  ) {
+    this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/privacy-policy/${this.lang}.txt`);
+  }
 
   ngOnInit() {
   }
 
+  public back() {
+    back(() => this.router.navigate([""]));
+  }
+
+  public translation = {
+    privacyPolicy: {
+      en: "Privacy Policy",
+      ja: "プライバシーポリシー"
+    } as any
+  };
 }
