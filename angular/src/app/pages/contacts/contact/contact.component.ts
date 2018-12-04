@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Contact } from '../../../../../../firebase/functions/src/models/contact';
 
 @Component({
@@ -7,14 +7,14 @@ import { Contact } from '../../../../../../firebase/functions/src/models/contact
   styleUrls: ['./contact.component.css']
 })
 export class ContactComponent implements OnInit {
-  @Input() contact?: Contact
+  @Input() contact: Contact = {} as any
+
+  @Output() delete = new EventEmitter()
+  @Output() edit = new EventEmitter()
 
   constructor() { }
 
   ngOnInit() {
-    if(!this.contact) {
-      this.contact = {} as any
-    }
   }
 
 }

@@ -1,13 +1,13 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { lang } from '../../../models/lang';
+import { Component, OnInit } from '@angular/core';
+import { LanguageService } from '../../../../services/language/language.service';
 
 @Component({
-  selector: 'app-create-dialog',
-  templateUrl: './create-dialog.component.html',
-  styleUrls: ['./create-dialog.component.css']
+  selector: 'app-wallet-create-dialog',
+  templateUrl: './wallet-create-dialog.component.html',
+  styleUrls: ['./wallet-create-dialog.component.css']
 })
-export class CreateDialogComponent implements OnInit {
-  get lang() { return lang; }
+export class WalletCreateDialogComponent implements OnInit {
+  get lang() { return this.language.state.twoLetter; }
 
   forms = {
     name: "",
@@ -17,6 +17,7 @@ export class CreateDialogComponent implements OnInit {
   }
   
   constructor(
+    private language: LanguageService
   ) {
   }
 

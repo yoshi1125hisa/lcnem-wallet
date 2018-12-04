@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatSnackBar } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { SimpleWallet, Password } from 'nem-library';
 import { Router } from '@angular/router';
 import { Observable, from } from 'rxjs';
@@ -9,11 +9,11 @@ import { LanguageService } from '../../../services/language/language.service';
 import { RouterService } from '../../../services/router/router.service';
 import { WalletService } from '../../../services/wallet/wallet.service';
 import { UserService } from '../../../services/user/user.service';
-import { CreateDialogComponent } from './create-dialog/create-dialog.component';
 import { PromptDialogComponent } from '../../../components/prompt-dialog/prompt-dialog.component';
 import { LocalWalletService } from '../../../services/wallet/local-wallet.service';
 import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
 import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
+import { WalletCreateDialogComponent } from './wallet-create-dialog/wallet-create-dialog.component';
 
 @Component({
   selector: 'app-wallets',
@@ -22,6 +22,7 @@ import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confi
 })
 export class WalletsComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
+  public lang$ = this.language.state$.pipe(map(state => state.twoLetter))
 
   public state$ = this.wallet.state$;
   public clouds$: Observable<number>;
@@ -29,7 +30,6 @@ export class WalletsComponent implements OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private snackBar: MatSnackBar,
     private router: Router,
     private _router: RouterService,
     private language: LanguageService,
@@ -68,7 +68,7 @@ export class WalletsComponent implements OnInit {
   }
 
   public addWallet() {
-    this.dialog.open(CreateDialogComponent).afterClosed().pipe(
+    this.dialog.open(WalletCreateDialogComponent).afterClosed().pipe(
       filter(result => result),
     ).subscribe(
       (result) => {
@@ -164,14 +164,6 @@ export class WalletsComponent implements OnInit {
         this.wallet.deleteWallet(uid, id)
       }
     );
-  }
-
-  public async openSnackBar(type: string) {
-    if (type == "import") {
-      this.snackBar.open(this.translation.localNotFound[this.lang], undefined, { duration: 3000 });
-    } else if (type == "plan") {
-      this.snackBar.open(this.translation.unavailablePlan[this.lang], undefined, { duration: 3000 });
-    }
   }
 
   public translation = {

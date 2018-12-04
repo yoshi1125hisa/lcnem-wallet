@@ -64,6 +64,8 @@ import { LanguageMenuComponent } from './components/language-menu/language-menu.
 import { NemAddressInputComponent } from './components/nem-address-input/nem-address-input.component';
 import { WalletsComponent } from './pages/account/wallets/wallets.component';
 import { ContactComponent } from './pages/contacts/contact/contact.component';
+import { WalletComponent } from './pages/account/wallets/wallet/wallet.component';
+import { WalletCreateDialogComponent } from './pages/account/wallets/wallet-create-dialog/wallet-create-dialog.component';
 
 @NgModule({
   declarations: [
@@ -87,7 +89,9 @@ import { ContactComponent } from './pages/contacts/contact/contact.component';
     NemAddressInputComponent,
     WalletsComponent,
     ContactComponent,
-    ContactEditDialogComponent
+    ContactEditDialogComponent,
+    WalletComponent,
+    WalletCreateDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -128,9 +132,9 @@ import { ContactComponent } from './pages/contacts/contact/contact.component';
     ConfirmDialogComponent,
     PromptDialogComponent,
     TransferDialogComponent,
-    CreateDialogComponent,
     ContactsComponent,
-    ContactEditDialogComponent
+    ContactEditDialogComponent,
+    WalletCreateDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

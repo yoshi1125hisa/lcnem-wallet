@@ -17,16 +17,7 @@
     <div class="mat-typography body-container">
       <ng-container *ngFor="let id of (state$ | async).ids">
         <mat-card>
-          <div fxLayout="row">
-            <span class="fill-remaining-space"></span>
-            <button mat-icon-button color="warn" (click)="deleteContact(id)">
-              <mat-icon>delete</mat-icon>
-            </button>
-            <button mat-icon-button color="accent" (click)="editContact(id)">
-              <mat-icon>edit</mat-icon>
-            </button>
-          </div>
-          <app-contact [contact]="(state$ | async).entities[id]"></app-contact>
+          <app-contact [contact]="(state$ | async).entities[id]" (delete)="deleteContact(id)" (edit)="editContact(id)"></app-contact>
         </mat-card>
       </ng-container>
       <p *ngIf="!(state$ | async).ids.length" class="empty">{{translation.empty[lang]}}</p>
