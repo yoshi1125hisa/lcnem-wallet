@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Subject, from } from 'rxjs';
 import { Contact } from '../../../../../firebase/functions/src/models/contact';
-import { RxEntityStateService } from '../../classes/rx-entity-state-service';
+import { RxEntityStateStore } from '../../classes/rx-entity-state-store';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ContactService extends RxEntityStateService<State, Contact> {
+export class ContactService extends RxEntityStateStore<State, Contact> {
   constructor(
     private firestore: AngularFirestore
   ) {

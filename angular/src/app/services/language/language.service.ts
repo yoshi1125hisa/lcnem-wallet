@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { RxStateService } from '../../classes/rx-state-service';
+import { RxStateStore } from '../../classes/rx-state-store';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LanguageService extends RxStateService<State> {
+export class LanguageService extends RxStateStore<State> {
   constructor() {
     super({
       twoLetter: window.navigator.language.substr(0, 2) == "ja" ? "ja" : "en"

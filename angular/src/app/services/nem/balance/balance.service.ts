@@ -1,17 +1,42 @@
 import { Injectable } from '@angular/core';
-import { Asset, Address } from 'nem-library';
-import { RxEffectiveStateService } from 'src/app/classes/rx-effective-state-service';
+import { Asset, Address, AccountHttp } from 'nem-library';
+import { RxEffectiveStateStore } from 'src/app/classes/rx-effective-state-store';
+import { nodes } from '../../../classes/nodes';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BalanceService extends RxEffectiveStateService<State> {
+export class BalanceService extends RxEffectiveStateStore<State> {
 
   constructor() {
     super(
       {
         loading: false,
         assets: []
+      }
+    )
+  }
+
+  public loadBalance(address: Address, refresh?: boolean) {
+    if(this._state.lastAddress && address.equals(this._state.lastAddress) && !refresh) {
+      return;
+    }
+    this.load()
+
+    const accountHttp = new AccountHttp(nodes);
+    accountHttp.getAssetsOwnedByAddress(address).subscribe(
+      (assets) => {
+        const state = {
+          ...this._state,
+          loading: false,
+          assets: assets,
+          lastAddress: address
+        }
+        
+        this._subject$.next(state)
+      },
+      (error) => {
+        this.error(error)
       }
     )
   }

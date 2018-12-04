@@ -1,7 +1,7 @@
-import { RxEffectiveStateService } from "./rx-effective-state-service";
+import { RxEffectiveStateStore } from "./rx-effective-state-store";
 import { RxEntityState } from "./rx-entity-state";
 
-export class RxEntityStateService<T extends RxEntityState<E>, E> extends RxEffectiveStateService<T> {
+export class RxEntityStateStore<T extends RxEntityState<E>, E> extends RxEffectiveStateStore<T> {
   protected addEntity(id: string, entity: E) {
     const state: T = Object.assign(
       {},

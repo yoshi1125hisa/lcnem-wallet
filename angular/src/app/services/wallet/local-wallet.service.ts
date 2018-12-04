@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { RxEntityStateService } from 'src/app/classes/rx-entity-state-service';
+import { RxEntityStateStore } from 'src/app/classes/rx-entity-state-store';
 import { RxEntityState } from 'src/app/classes/rx-entity-state';
 
 @Injectable({
   providedIn: 'root'
 })
-export class LocalWalletService extends RxEntityStateService<State, string> {
-
+export class LocalWalletService extends RxEntityStateStore<State, string> {
   constructor() {
     super(
       {
