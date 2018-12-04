@@ -72,7 +72,7 @@ export class DepositComponent implements OnInit {
           }
         ).afterClosed().subscribe(
           (_) => {
-            this._router.back([""])
+            this.back()
           }
         );
       },

@@ -109,6 +109,15 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
       }
     )
   }
+
+  public setCurrentWallet(id: string) {
+    const state: State = {
+      ...this._state,
+      currentWalletId: id
+    }
+
+    this._subject$.next(state)
+  }
 }
 
 

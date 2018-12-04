@@ -10,54 +10,56 @@
       <app-language-menu></app-language-menu>
     </mat-toolbar>
     <div class="mat-typography body-container">
-      <mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
+      <mat-spinner *ngIf="(state$ | async).loading; else loaded"></mat-spinner>
       <ng-template #loaded>
         <mat-card>
           <mat-list>
             <mat-divider></mat-divider>
-            <ng-container *ngFor="let id of walletIds$ | async">
-              <mat-list-item>
-                <mat-icon mat-list-icon *ngIf="!(wallets$ | async)[id].local" color="primary">cloud_done</mat-icon>
-                <mat-icon mat-list-icon *ngIf="(wallets$ | async)[id].local" color="warn">cloud_off</mat-icon>
-                <span matLine>{{(wallets$ | async)[id].name}}</span>
-                <span matLine>{{(wallets$ | async)[id].nem}}</span>
-                <span class="fill-remaining-space"></span>
-                <span>
-                  <button mat-icon-button color="warn" (click)="openSnackBar('import')" *ngIf="!(wallets$ | async)[id].wallet">
-                    <mat-icon>warning</mat-icon>
-                  </button>
-                </span>
-                <span>
-                  <button mat-icon-button color="warn" (click)="openSnackBar('plan')" *ngIf="!(wallets$ | async)[id].local && clouds > 1 && !plan">
-                    <mat-icon>warning</mat-icon>
-                  </button>
-                </span>
-                <span>
-                  <button mat-icon-button color="accent" (click)="enterWallet(id)" *ngIf="(wallets$ | async)[id].local || clouds == 1 || plan">
-                    <mat-icon>launch</mat-icon>
-                  </button>
-                </span>
-                <span>
-                  <mat-menu #walletMenu="matMenu" [overlapTrigger]="false">
-                    <button mat-menu-item (click)="renameWallet(id)">
-                      {{translation.rename[lang]}}
+            <ng-container *ngFor="let id of (state$ | async).ids">
+              <ng-container *ngFor="let wallet of [(state$ | async).entities[id]]">
+                <mat-list-item>
+                  <mat-icon mat-list-icon *ngIf="!wallet.local" color="primary">cloud_done</mat-icon>
+                  <mat-icon mat-list-icon *ngIf="wallet.local" color="warn">cloud_off</mat-icon>
+                  <span matLine>{{wallet.name}}</span>
+                  <span matLine>{{wallet.nem}}</span>
+                  <span class="fill-remaining-space"></span>
+                  <span>
+                    <button mat-icon-button color="warn" (click)="openSnackBar('import')" *ngIf="!wallet.wallet">
+                      <mat-icon>warning</mat-icon>
                     </button>
-                    <button mat-menu-item (click)="backupWallet(id)" *ngIf="(wallets$ | async)[id].wallet">
-                      {{translation.backup[lang]}}
+                  </span>
+                  <span>
+                    <button mat-icon-button color="warn" (click)="openSnackBar('plan')" *ngIf="!walelt.local && (clouds$ | async) > 1 && !plan">
+                      <mat-icon>warning</mat-icon>
                     </button>
-                    <button mat-menu-item (click)="importPrivateKey()" *ngIf="!(wallets$ | async)[id].wallet">
-                      {{translation.importPrivateKey[lang]}}
+                  </span>
+                  <span>
+                    <button mat-icon-button color="accent" (click)="enterWallet(id)" *ngIf="wallet.local || (clouds$ | async) == 1 || plan">
+                      <mat-icon>launch</mat-icon>
                     </button>
-                    <button mat-menu-item (click)="deleteWallet(id)">
-                      {{translation.delete[lang]}}
+                  </span>
+                  <span>
+                    <mat-menu #walletMenu="matMenu" [overlapTrigger]="false">
+                      <button mat-menu-item (click)="renameWallet(id)">
+                        {{translation.rename[lang]}}
+                      </button>
+                      <button mat-menu-item (click)="backupWallet(id)" *ngIf="wallet.wallet">
+                        {{translation.backup[lang]}}
+                      </button>
+                      <button mat-menu-item (click)="importPrivateKey()" *ngIf="!wallet.wallet">
+                        {{translation.importPrivateKey[lang]}}
+                      </button>
+                      <button mat-menu-item (click)="deleteWallet(id)">
+                        {{translation.delete[lang]}}
+                      </button>
+                    </mat-menu>
+                    <button mat-icon-button [matMenuTriggerFor]="walletMenu" yPosition="below">
+                      <mat-icon>more_vert</mat-icon>
                     </button>
-                  </mat-menu>
-                  <button mat-icon-button [matMenuTriggerFor]="walletMenu" yPosition="below">
-                    <mat-icon>more_vert</mat-icon>
-                  </button>
-                </span>
-              </mat-list-item>
-              <mat-divider></mat-divider>
+                  </span>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+              </ng-container>
             </ng-container>
           </mat-list>
         </mat-card>

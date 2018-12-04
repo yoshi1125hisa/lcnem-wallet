@@ -1,23 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { SimpleWallet, Password } from 'nem-library';
 import { MatDialog, MatSnackBar } from '@angular/material';
-import { Store } from '@ngrx/store';
-import { Dictionary } from '@ngrx/entity';
-import { from, Observable } from 'rxjs';
-import { map, mergeMap, toArray } from 'rxjs/operators';
-
+import { SimpleWallet, Password } from 'nem-library';
+import { Router } from '@angular/router';
+import { Observable, from } from 'rxjs';
+import { map, mergeMap, toArray, filter, first } from 'rxjs/operators';
+import { Wallet } from '../../../../../../firebase/functions/src/models/wallet';
+import { LanguageService } from '../../../services/language/language.service';
+import { RouterService } from '../../../services/router/router.service';
+import { WalletService } from '../../../services/wallet/wallet.service';
+import { UserService } from '../../../services/user/user.service';
 import { CreateDialogComponent } from './create-dialog/create-dialog.component';
-import { AlertDialogComponent } from '../../../app/components/alert-dialog/alert-dialog.component';
-import { PromptDialogComponent } from '../../../app/components/prompt-dialog/prompt-dialog.component';
-import { ConfirmDialogComponent } from '../../../app/components/confirm-dialog/confirm-dialog.component';
-import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
-import { Plan } from '../../../../../firebase/functions/src/models/plan';
-import { LanguageService } from '../../services/language/language.service';
-import { State } from '../../store/index'
-import { LoadWallets, UpdateWallet, DeleteWallet, AddWallet, SetCurrentWallet } from '../../store/wallet/wallet.actions';
-import { AddLocalWallet } from '../../store/local-wallet/local-wallet.actions';
-import { Navigate } from 'src/app/store/router/router.actions';
+import { PromptDialogComponent } from '../../../components/prompt-dialog/prompt-dialog.component';
+import { LocalWalletService } from '../../../services/wallet/local-wallet.service';
+import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
+import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-wallets',
@@ -25,40 +21,41 @@ import { Navigate } from 'src/app/store/router/router.actions';
   styleUrls: ['./wallets.component.css']
 })
 export class WalletsComponent implements OnInit {
-  public loading$: Observable<boolean>;
-  public wallets$: Observable<Dictionary<Wallet>>;
-  public walletIds$: Observable<(string | number)[]>;
+  public get lang() { return this.language.state.twoLetter; }
+
+  public state$ = this.wallet.state$;
   public clouds$: Observable<number>;
-  public plan?: Plan;
-  public get lang() { return this.language.twoLetter; }
+  public plan = ""
 
   constructor(
-    private store: Store<State>,
-    private auth: AngularFireAuth,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private language: LanguageService
+    private router: Router,
+    private _router: RouterService,
+    private language: LanguageService,
+    private user: UserService,
+    private wallet: WalletService,
+    private localWallet: LocalWalletService
   ) {
-    this.loading$ = store.select(state => state.wallet.loading);
-    this.wallets$ = store.select(state => state.wallet.entities);
-
-    this.walletIds$ = store.select(state => state.wallet.ids).pipe(
-      map((ids: (string | number)[]) => ids.filter(id => id != "multisig"))
-    )
-    this.clouds$ = this.walletIds$.pipe(
+    this.clouds$ = this.state$.pipe(
       mergeMap(
-        ids => from(ids)
-      ),
-      mergeMap(
-        id =>
-        this.wallets$.pipe(
-          map(
-            wallets => wallets[id]
+        (state) => {
+          return from(state.ids).pipe(
+            map(id => state.entities[id].local),
+            toArray(),
+            map(array => array.filter(local => !local).length)
           )
-        )
-      ),
-      toArray(),
-      map(wallets => wallets.filter(wallet => !wallet.local).length)
+        }
+      )
+    )
+
+    this.state$.pipe(
+      filter(state => state.currentWalletId ? true : false),
+      first()
+    ).subscribe(
+      () => {
+        this.router.navigate([""])
+      }
     )
   }
 
@@ -66,61 +63,38 @@ export class WalletsComponent implements OnInit {
     this.load();
   }
 
-  public load(refresh?: boolean) { // refreshの導入をする必要あり？
-    const uid = this.auth.auth.currentUser!.uid;
-    this.store.dispatch(new LoadWallets({userId: uid}))
+  public load(refresh?: boolean) {
+    this.wallet.loadWallets(this.user.state.currentUser!.uid, refresh)
   }
 
-  addWallet() {
-    const uid = this.auth.auth.currentUser!.uid;
-    let simpleWallet: SimpleWallet;
+  public addWallet() {
+    this.dialog.open(CreateDialogComponent).afterClosed().pipe(
+      filter(result => result),
+    ).subscribe(
+      (result) => {
+        const uid = this.user.state.currentUser!.uid
 
-    this.dialog.open(CreateDialogComponent).afterClosed().subscribe(
-      result => {
-        if (!result) {
-          return;
-        }
-        if (result.import) {
-          simpleWallet = SimpleWallet.createWithPrivateKey(uid, new Password(uid), result.privateKey);
-        } else {
-          simpleWallet = SimpleWallet.create(uid, new Password(uid));
-        }
+        const simpleWallet = result.import
+          ? SimpleWallet.createWithPrivateKey(uid, new Password(uid), result.privateKey)
+          : SimpleWallet.create(uid, new Password(uid))
 
         const wallet: Wallet = {
           name: result.name,
           local: result.local == 1 ? true : false,
           nem: simpleWallet.address.plain(),
           wallet: simpleWallet.writeWLTFile()
-        };
+        }
 
-        this.store.dispatch(new AddWallet({userId: uid, wallet}))
+        this.wallet.addWallet(uid, wallet)
       }
     );
   }
 
   public enterWallet(id: string) {
-    this.wallets$.pipe(
-      map(
-        wallets => wallets[id]
-      ),
-      map(
-        wallet => {
-          if (wallet) {
-            return;
-          }
-          if (id != "multisig") {
-            localStorage.setItem("currentWallet", id);
-          }
-          this.store.dispatch(new SetCurrentWallet({id}))
-          this.store.dispatch(new Navigate({ commands: [""] }))
-        }
-      )
-      // TODO: this.balance.initialize(); とかをngrxに置き換えて実装
-    )
+    this.wallet.setCurrentWallet(id);
   }
 
   public importPrivateKey(id: string) {
-    const uid = this.auth.auth.currentUser!.uid;
     this.dialog.open(PromptDialogComponent, {
       data: {
         title: this.translation.importPrivateKey[this.lang],
@@ -129,90 +103,65 @@ export class WalletsComponent implements OnInit {
           pattern: "[0-9a-f]{64}"
         }
       }
-    }).afterClosed().subscribe(
-      pk => {
-        if (!pk) {
-          return;
-        }
+    }).afterClosed().pipe(
+      filter(pk => pk)
+    ).subscribe(
+      (pk) => {
+        const uid = this.user.state.currentUser!.uid
+        const wallet = SimpleWallet.createWithPrivateKey(uid, new Password(uid), pk)
 
-        const wallet = SimpleWallet.createWithPrivateKey(uid, new Password(uid), pk);
-        this.store.dispatch(new AddLocalWallet({id: id, wallet: wallet.writeWLTFile()}))
+        this.localWallet.addLocalWallet(id, wallet.writeWLTFile())
       }
     );
   }
 
   public renameWallet(id: string) {
-    this.wallets$.pipe(
-      map(
-        wallets => wallets[id]
-      ),
-      map(
-        wallet => {
-          this.dialog.open(PromptDialogComponent, {
-            data: {
-              title: this.translation.rename[this.lang],
-              input: {
-                placeholder: this.translation.walletName[this.lang],
-                value: wallet.name
-              }
-            }
-          }).afterClosed().subscribe(
-            name => {
-              if (!name) {
-                return;
-              }
-              this.store.dispatch(new UpdateWallet({
-                userId: this.auth.auth.currentUser!.uid,
-                id,
-                wallet: {...wallet, name}
-              }))
-            }
-          );
+    const wallet = this.wallet.state.entities[id]
+    this.dialog.open(PromptDialogComponent, {
+      data: {
+        title: this.translation.rename[this.lang],
+        input: {
+          placeholder: this.translation.walletName[this.lang],
+          value: wallet.name
         }
-      )
+      }
+    }).afterClosed().pipe(
+      filter(name => name)
+    ).subscribe(
+      (name) => {
+        const uid = this.user.state.currentUser!.uid
+        this.wallet.updateWallet(uid, id, { ...wallet, name })
+      }
     )
   }
 
   public backupWallet(id: string) {
-    const uid = this.auth.auth.currentUser!.uid;
-    this.wallets$.pipe(
-      map(
-        wallets => wallets[id]
-      ),
-      map(
-        targetWallet => {
-          if (!targetWallet || !targetWallet.wallet) {
-            return
-          }
+    const uid = this.user.state.currentUser!.uid
 
-          const wallet = SimpleWallet.readFromWLT(targetWallet.wallet!);
-          const account = wallet.open(new Password(uid));
+    const wallet = SimpleWallet.readFromWLT(this.wallet.state.entities[id].wallet!);
+    const account = wallet.open(new Password(uid));
 
-          this.dialog.open(AlertDialogComponent, {
-            data: {
-              title: this.translation.backup[this.lang],
-              content: account.privateKey
-            }
-          });
-        }
-      )
-    )
+    this.dialog.open(AlertDialogComponent, {
+      data: {
+        title: this.translation.backup[this.lang],
+        content: account.privateKey
+      }
+    });
   }
 
   public deleteWallet(id: string) {
-    const uid = this.auth.auth.currentUser!.uid;
-
     this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: this.translation.deleteConfirm[this.lang],
         content: ""
       }
-    }).afterClosed().subscribe(
-      result => {
-        if (!result) {
-          return;
-        }
-        this.store.dispatch(new DeleteWallet({userId: uid, id: id}))
+    }).afterClosed().pipe(
+      filter(result => result)
+    ).subscribe(
+      (result) => {
+        const uid = this.user.state.currentUser!.uid
+
+        this.wallet.deleteWallet(uid, id)
       }
     );
   }

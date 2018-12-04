@@ -69,7 +69,7 @@ export class WithdrawComponent implements OnInit {
           }
         ).afterClosed().subscribe(
           (_) => {
-            this._router.back([""])
+            this.back()
           }
         );
       },

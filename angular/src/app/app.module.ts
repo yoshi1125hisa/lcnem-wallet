@@ -62,6 +62,7 @@ import { CreateDialogComponent } from './pages/account/wallets/create-dialog/cre
 import { ContactEditDialogComponent } from './pages/contacts/contact-edit-dialog/contact-edit-dialog.component';
 import { LanguageMenuComponent } from './components/language-menu/language-menu.component';
 import { NemAddressInputComponent } from './components/nem-address-input/nem-address-input.component';
+import { WalletsComponent } from './pages/account/wallets/wallets.component';
 
 @NgModule({
   declarations: [
@@ -82,7 +83,8 @@ import { NemAddressInputComponent } from './components/nem-address-input/nem-add
     BalanceComponent,
     MultisigComponent,
     LanguageMenuComponent,
-    NemAddressInputComponent
+    NemAddressInputComponent,
+    WalletsComponent
   ],
   imports: [
     BrowserModule,

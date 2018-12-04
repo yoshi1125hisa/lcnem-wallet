@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { back } from '../../models/back';
-import { lang, setLang } from '../../models/lang';
-import { UserService } from '../../services/user/user.service';
 import { Observable } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { State } from '../../store/index'
+import { map } from 'rxjs/operators';
+import { RouterService } from '../../../services/router/router.service';
+import { UserService } from '../../../services/user/user.service';
+import { LanguageService } from '../../../services/language/language.service';
+
 
 @Component({
   selector: 'app-login',
@@ -15,31 +14,35 @@ import { State } from '../../store/index'
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  get lang() { return this.language.state.twoLetter; }
+
   public loading$: Observable<boolean>;
-  get lang() { return lang; }
-  set lang(value: string) { setLang(value); }
   public agree = false;
   public safeSite: SafeResourceUrl;
 
   constructor(
-    public store: Store<State>,
-    public router: Router,
+    public _router: RouterService,
     private user: UserService,
+    private language: LanguageService,
     sanitizer: DomSanitizer
   ) {
-    this.loading$ = store.select(state => state.user.loading)
+    this.loading$ = this.user.state$.pipe(map(state => state.loading))
     this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/terms/${this.lang}.txt`);
   }
 
   ngOnInit() {
   }
 
-  public back() {
-    back(() => this.router.navigate([""]));
+  public setLanguage(twoLetter: string) {
+    this.language.setLanguage(twoLetter)
   }
 
-  public async login() {
-    await this.user.login();
+  public back() {
+    this._router.back([""])
+  }
+
+  public login() {
+    this.user.login()
   }
 
   public translation = {
