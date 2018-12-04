@@ -3,6 +3,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Subject, from } from 'rxjs';
 import { Contact } from '../../../../../firebase/functions/src/models/contact';
 import { RxEntityStateStore } from '../../classes/rx-entity-state-store';
+import { RxEntityState } from '../../classes/rx-entity-state';
 
 @Injectable({
   providedIn: 'root'
@@ -110,10 +111,6 @@ export class ContactService extends RxEntityStateStore<State, Contact> {
   }
 }
 
-interface State {
-  loading: boolean
-  error?: Error
-  ids: string[]
-  entities: { [id: string]: Contact }
+interface State extends RxEntityState<Contact> {
   lastUserId?: string
 }
