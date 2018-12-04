@@ -57,7 +57,6 @@ import { HistoryComponent } from './pages/home/nem/history/history.component';
 import { TransactionComponent } from './pages/home/nem/history/transaction/transaction.component';
 import { BalanceComponent } from './pages/home/nem/balance/balance.component';
 import { MultisigComponent } from './pages/home/nem/multisig/multisig.component';
-import { CommonModule } from '@angular/common';
 import { TransferDialogComponent } from './pages/nem/transfer/transfer/transfer-dialog/transfer-dialog.component';
 import { CreateDialogComponent } from './pages/account/wallets/create-dialog/create-dialog.component';
 import { ContactEditDialogComponent } from './pages/contacts/contact-edit-dialog/contact-edit-dialog.component';
