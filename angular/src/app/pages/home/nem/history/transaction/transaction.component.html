@@ -6,9 +6,9 @@
     </ng-template>
     <mat-icon color="primary" (mouseover)="openSnackBar(icon)">{{icon}}</mat-icon>
     <mat-icon color="accent" (mouseover)="openSnackBar('multisig')" *ngIf="multisig">people</mat-icon>
-    <span>{{address | async}}</span>
+    <span>{{address}}</span>
   </div>
 </mat-card>
 <app-assets-list [title]="translation.assets[lang]" [assets]="assets"></app-assets-list>
-<blockquote>{{message | async}}</blockquote>
+<blockquote>{{message}}</blockquote>
 <p>{{date}}</p>

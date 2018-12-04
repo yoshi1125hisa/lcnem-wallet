@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Store } from '@ngrx/store';
-
-import { State } from '../../../../store/index'
+import { map } from 'rxjs/operators';
+import { Asset, Address } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
-import { Asset } from 'nem-library';
+import { BalanceService } from '../../../../services/nem/balance/balance.service';
+import { WalletService } from '../../../../services/wallet/wallet.service';
 
 @Component({
   selector: 'app-balance',
@@ -16,11 +16,12 @@ export class BalanceComponent implements OnInit {
   public assets$: Observable<Asset[]>;
 
   constructor(
-    private store: Store<State>,
-    private language: LanguageService
+    private language: LanguageService,
+    private wallet: WalletService,
+    private balance: BalanceService
   ) {
-    this.loading$ = this.store.select(state => state.nemBalance.loading);
-    this.assets$ = this.store.select(state => state.nemBalance.assets);
+    this.loading$ = this.balance.state$.pipe(map(state => state.loading))
+    this.assets$ = this.balance.state$.pipe(map(state => state.assets))
   }
 
   ngOnInit() {
@@ -28,6 +29,7 @@ export class BalanceComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-
+    const address = new Address(this.wallet.state.entities[this.wallet.state.currentWalletId!].nem)
+    this.balance.loadBalance(address, refresh)
   }
 }

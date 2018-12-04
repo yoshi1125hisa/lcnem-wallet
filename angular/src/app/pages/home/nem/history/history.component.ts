@@ -1,13 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Transaction, TransactionTypes, MultisigTransaction, TransferTransaction, Address } from 'nem-library';
-import { MatTableDataSource, MatPaginator, PageEvent, MatSnackBar, MatDialog } from '@angular/material';
-import { TransactionComponent } from '../../../../home/history/transaction/transaction.component';
 import { Observable } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { State } from '../../../../store/index';
+import { first, map } from 'rxjs/operators';
 import { LanguageService } from '../../../../services/language/language.service';
-import { LoadHistorys } from 'src/app/store/nem/history/history.actions';
-import { first } from 'rxjs/operators';
+import { WalletService } from '../../../../services/wallet/wallet.service';
+import { HistoryService } from '../../../../services/nem/history/history.service';
 
 @Component({
   selector: 'app-history',
@@ -15,17 +12,18 @@ import { first } from 'rxjs/operators';
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
-  public get lang() { return this.language.twoLetter; }
+  public get lang() { return this.language.state.twoLetter; }
 
   public loading$: Observable<boolean>;
   public transactions$: Observable<Transaction[]>;
 
   constructor(
-    private store: Store<State>,
-    private language: LanguageService
+    private language: LanguageService,
+    private wallet: WalletService,
+    private history: HistoryService
   ) {
-    this.loading$ = this.store.select(state => state.NemHistory.loading);
-    this.transactions$ = this.store.select(state => state.NemHistory.transactions);
+    this.loading$ = this.history.state$.pipe(map(state => state.loading))
+    this.transactions$ = this.history.state$.pipe(map(state => state.transactions))
   }
 
   ngOnInit() {
@@ -33,17 +31,8 @@ export class HistoryComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    this.store.select(state => state.wallet).pipe(first()).subscribe(
-      (wallet) => {
-        this.store.dispatch(
-          new LoadHistorys(
-            {
-              address: new Address(wallet.entities[wallet.currentWallet!].nem)
-            }
-          )
-        );
-      }
-    )
+    const address = new Address(this.wallet.state.entities[this.wallet.state.currentWalletId!].nem)
+    this.history.loadHistories(address, refresh)
   }
 
   public translation = {

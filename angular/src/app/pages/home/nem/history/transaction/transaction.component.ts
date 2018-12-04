@@ -12,16 +12,17 @@ import {
   AssetId,
   Password,
   SimpleWallet,
-  AccountHttp
+  AccountHttp,
+  PublicAccount,
+  Message
 } from 'nem-library';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { nodes } from '../../../models/nodes';
-import { LanguageService } from '../../../services/language/language.service';
-import { Observable, of } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { State } from '../../../store';
+import { Observable, of, forkJoin } from 'rxjs';
 import { map, mergeMap, merge } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
+import { LanguageService } from '../../../../../services/language/language.service';
+import { nodes } from '../../../../../classes/nodes';
+import { WalletService } from '../../../../../services/wallet/wallet.service';
+import { UserService } from '../../../../../services/user/user.service';
 
 @Component({
   selector: 'app-transaction',
@@ -29,26 +30,27 @@ import { MatSnackBar } from '@angular/material';
   styleUrls: ['./transaction.component.css']
 })
 export class TransactionComponent implements OnInit {
-  public get lang() { return this.language.twoLetter; }
+  public get lang() { return this.language.state.twoLetter }
 
-  @Input() transaction?: Transaction;
+  @Input() transaction?: Transaction
 
-  private _transaction?: Transaction;
+  private _transaction?: Transaction
 
-  public address = of("");
-  public icon = "business";
-  public confirmed = false;
-  public multisig = false;
-  public message = of("");
+  public address = ""
+  public message = ""
 
-  public assets: Asset[] = [];
-  public date = "";
+  public icon = "business"
+  public confirmed = false
+  public multisig = false
+
+  public assets: Asset[] = []
+  public date = ""
 
   constructor(
-    private store: Store<State>,
     private snackBar: MatSnackBar,
-    private auth: AngularFireAuth,
-    private language: LanguageService
+    private language: LanguageService,
+    private user: UserService,
+    private wallet: WalletService
   ) {
   }
 
@@ -63,71 +65,41 @@ export class TransactionComponent implements OnInit {
 
     switch (this.transaction.type) {
       case TransactionTypes.MULTISIG: {
-        this._transaction = (this.transaction as MultisigTransaction).otherTransaction;
-        this.multisig = true;
+        this._transaction = (this.transaction as MultisigTransaction).otherTransaction
+        this.multisig = true
         break;
       }
 
       default: {
-        this._transaction = this.transaction;
+        this._transaction = this.transaction
         break;
       }
     }
 
-    const accountHttp = new AccountHttp(nodes);
-
-    this.address = of(this._transaction.signer!.address.pretty());
-    this.date = `${this._transaction.timeWindow.timeStamp.toLocalDate()} ${this._transaction.timeWindow.timeStamp.toLocalTime()}`;
+    this.address = this._transaction.signer!.address.pretty()
+    this.date = `${this._transaction.timeWindow.timeStamp.toLocalDate()} ${this._transaction.timeWindow.timeStamp.toLocalTime()}`
 
     switch (this._transaction.type) {
       case TransactionTypes.TRANSFER: {
-        const transferTransaction = this._transaction as TransferTransaction;
+        const transferTransaction = this._transaction as TransferTransaction
 
-        const observable = this.store.select(state => state.wallet).pipe(
-          mergeMap(
-            (wallet) => {
-              const _wallet = wallet.entities[wallet.currentWallet!].wallet;
-              if (!_wallet) {
-                return of();
-              }
-              const password = new Password(this.auth.auth.currentUser!.uid);
-              const account = SimpleWallet.readFromWLT(_wallet).open(password);
+        const accountHttp = new AccountHttp(nodes);
+        accountHttp.getFromAddress(transferTransaction.recipient).pipe(
+          map(meta => meta.publicAccount!)
+        ).subscribe(
+          (recipient) => {
+            this.message = this.decryptMessage(transferTransaction.message, transferTransaction.signer!, recipient)
 
-              return of(wallet).pipe(
-                mergeMap(
-                  (_) => {
-                    return accountHttp.getFromAddress(transferTransaction.recipient);
-                  }
-                ),
-                map(
-                  (recipient) => {
-                    if (transferTransaction.signer!.address.plain() == wallet.entities[wallet.currentWallet!].nem) {
-                      this.icon = "call_made";
-                      return {
-                        address: recipient.publicAccount!.address.pretty(),
-                        message: account.decryptMessage(transferTransaction.message, transferTransaction.signer!).payload
-                      };
-                    }
-
-                    this.icon = "call_received";
-                    return {
-                      address: transferTransaction.signer!.address.pretty(),
-                      message: account.decryptMessage(transferTransaction.message, recipient.publicAccount!).payload
-                    }
-                  }
-                )
-              );
+            if (transferTransaction.signer!.address.plain() === this.wallet.state.entities[this.wallet.state.currentWalletId!].nem) {
+              this.icon = "call_made"
+              this.address = recipient.address.pretty()
+              return
             }
-          )
-        );
 
-        this.address = observable.pipe(
-          map(observable => observable.address)
-        );
-
-        this.message = observable.pipe(
-          map(observable => observable.message)
-        );
+            this.icon = "call_received"
+            this.address = transferTransaction.signer!.address.pretty()
+          }
+        )
 
         if (transferTransaction.containsMosaics()) {
           this.assets = transferTransaction.mosaics();
@@ -135,11 +107,31 @@ export class TransactionComponent implements OnInit {
           this.assets = [new Asset(new AssetId("nem", "xem"), transferTransaction.xem().quantity)];
         }
 
-        break;
+        break
       }
     }
   }
-  
+
+  private decryptMessage(message: Message, signer: PublicAccount, recipient: PublicAccount) {
+    if (message.isPlain()) {
+      return (message as PlainMessage).plain()
+    }
+    const wallet = this.wallet.state.entities[this.wallet.state.currentWalletId!]
+
+    if (!wallet.wallet) {
+      return this.translation.importRequired[this.lang]
+    }
+
+    const password = new Password(this.user.state.currentUser!.uid)
+    const account = SimpleWallet.readFromWLT(wallet.wallet).open(password)
+
+    if (account.address.equals(signer.address)) {
+      return account.decryptMessage(message, recipient)
+    }
+
+    return account.decryptMessage(message, signer)
+  }
+
   public openSnackBar(type: string) {
     this.snackBar.open(this.translation.snackBar[type][this.lang], undefined, { duration: 3000 });
   }
