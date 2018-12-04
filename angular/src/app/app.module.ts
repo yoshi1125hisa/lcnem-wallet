@@ -63,6 +63,7 @@ import { ContactEditDialogComponent } from './pages/contacts/contact-edit-dialog
 import { LanguageMenuComponent } from './components/language-menu/language-menu.component';
 import { NemAddressInputComponent } from './components/nem-address-input/nem-address-input.component';
 import { WalletsComponent } from './pages/account/wallets/wallets.component';
+import { ContactComponent } from './pages/contacts/contact/contact.component';
 
 @NgModule({
   declarations: [
@@ -84,7 +85,9 @@ import { WalletsComponent } from './pages/account/wallets/wallets.component';
     MultisigComponent,
     LanguageMenuComponent,
     NemAddressInputComponent,
-    WalletsComponent
+    WalletsComponent,
+    ContactComponent,
+    ContactEditDialogComponent
   ],
   imports: [
     BrowserModule,

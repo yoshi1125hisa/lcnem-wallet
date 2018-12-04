@@ -1,9 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Contact } from '../../../../../../firebase/functions/src/models/contact';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { Observable } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { State } from '../../../store/index'
+import { Contact } from '../../../../../../firebase/functions/src/models/contact';
 import { LanguageService } from '../../../services/language/language.service';
 
 @Component({
@@ -12,18 +10,16 @@ import { LanguageService } from '../../../services/language/language.service';
   styleUrls: ['./contact-edit-dialog.component.css']
 })
 export class ContactEditDialogComponent implements OnInit {
-  public loading$: Observable<boolean>;
-  get lang() { return this.language.twoLetter; }
+  get lang() { return this.language.state.twoLetter; }
+
   public contact: Contact;
 
   constructor(
     private language: LanguageService,
-    private store: Store<State>,
     @Inject(MAT_DIALOG_DATA) data: {
       contact: Contact
     }
   ) {
-    this.loading$ = store.select(state => state.contact.loading)
     this.contact = JSON.parse(JSON.stringify(data.contact));
     if (!this.contact.nem) {
       this.contact.nem = [];
@@ -33,8 +29,13 @@ export class ContactEditDialogComponent implements OnInit {
   ngOnInit() {
   }
 
-  public pushNem = () => this.contact.nem.push({} as any);
-  public removeNem = (index: number) => this.contact.nem.splice(index, 1);
+  public pushNem() {
+    this.contact.nem.push({} as any)
+  }
+
+  public removeNem(index: number) {
+    this.contact.nem.splice(index, 1)
+  }
 
   public translation = {
     editContact: {

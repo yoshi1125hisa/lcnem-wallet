@@ -1,0 +1,12 @@
+<mat-list *ngIf="contact!.nem && contact!.nem.length ">
+  <h3 mat-subheader>nem</h3>
+  <mat-divider></mat-divider>
+  <ng-container *ngFor="let nem of contact!.nem; let i = index">
+    <mat-list-item>
+      <div fxFlex="50">{{nem.name}}</div>
+      <div fxFlex="50" class="address">{{nem.address}}</div>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </ng-container>
+</mat-list>
+<p *ngIf="contact!.memo">{{contact!.memo}}</p>
