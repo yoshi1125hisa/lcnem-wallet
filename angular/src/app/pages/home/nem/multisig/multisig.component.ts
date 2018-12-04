@@ -2,12 +2,11 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
-
-import { State } from '../../store/index'
-import { LanguageService } from '../../services/language/language.service';
-import { Address } from 'nem-library';
-import { first } from 'rxjs/operators';
-import { LoadMultisigs } from '../../store/nem/multisig/multisig.actions';
+import { LanguageService } from '../../../../services/language/language.service';
+import { Address, Wallet } from 'nem-library';
+import { first, mergeMap, toArray, filter, map } from 'rxjs/operators';
+import { MultisigService } from 'src/app/services/nem/multisig/multisig.service';
+import { state } from '@angular/animations';
 
 @Component({
   selector: 'app-multisig',
@@ -16,16 +15,35 @@ import { LoadMultisigs } from '../../store/nem/multisig/multisig.actions';
 })
 export class MultisigComponent implements OnInit {
   public get lang() { return this.language.twoLetter; }
-  
-  public loading$: Observable<boolean>;
+
+  public state$ = this.wallet.state$;
   public multisigs$: Observable<Address[]>;
 
   constructor(
+    private multisig: MultisigService,
+    private router: Router,
     private store: Store<State>,
     private language: LanguageService
   ) {
-    this.loading$ = this.store.select(state => state.NemMultisig.loading);
-    this.multisigs$ = this.store.select(state => state.NemMultisig.multisigs);
+    this.multisigs$ = this.state$.pipe(
+      mergeMap(
+        (state) => {
+          return from(state.ids).pipe(
+            map(id => state.entities[id].multisig),
+            toArray()
+          )
+        }
+      )
+    )
+
+    this.state$.pipe(
+      filter(state => this.state$.currentWalletId ? true : false),
+      first()
+    ).subscribe(
+      () => {
+        this.router.navigate([""])
+      }
+    )
   }
 
   ngOnInit() {
@@ -33,16 +51,12 @@ export class MultisigComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    this.store.select(state => state.wallet).pipe(first()).subscribe(
-      (wallet) => {
-        this.store.dispatch(
-          new LoadMultisigs(
-            {
-              address: new Address(wallet.entities[wallet.currentWallet!].nem)
-            }
-          )
-        );
-      }
+    this.multisigs$.pipe(
+      map(
+        (address) => {
+          address.map(address => this.multisig.loadMultisig(address, true))
+        }
+      )
     )
   }
 
