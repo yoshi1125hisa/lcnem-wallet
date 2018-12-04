@@ -1,0 +1,92 @@
+<mat-sidenav-container>
+  <mat-sidenav #sidenav class="mat-elevation-z16" [fixedInViewport]="true">
+    <mat-toolbar class="mat-elevation-z4 top-toolbar">
+      <img class="icon" src="{{photoUrl$ | async}}" />
+      <span class="fill-remaining-space"></span>
+    </mat-toolbar>
+    <div fxLayout="column">
+      <mat-nav-list>
+        <mat-list-item routerLink="/transactions/transfer">
+          <mat-icon mat-list-icon>send</mat-icon>
+          {{translation.transfer[lang]}}
+        </mat-list-item>
+        <mat-list-item routerLink="/transactions/scan">
+          <mat-icon mat-list-icon>center_focus_strong</mat-icon>
+          {{translation.scan[lang]}}
+        </mat-list-item>
+        <mat-list-item routerLink="/accounts/deposit">
+          <mat-icon mat-list-icon>call_received</mat-icon>
+          {{translation.deposit[lang]}}
+        </mat-list-item>
+        <mat-list-item routerLink="/accounts/withdraw">
+          <mat-icon mat-list-icon>call_made</mat-icon>
+          {{translation.withdraw[lang]}}
+        </mat-list-item>
+        <mat-list-item routerLink="/accounts/contacts">
+          <mat-icon mat-list-icon>contacts</mat-icon>
+          {{translation.contacts[lang]}}
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item routerLink="/accounts/wallets">
+          <mat-icon mat-list-icon>account_balance_wallet</mat-icon>
+          {{translation.wallets[lang]}}
+        </mat-list-item>
+        <mat-list-item (click)="logout()">
+          <mat-icon mat-list-icon>lock</mat-icon>
+          {{translation.logout[lang]}}
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item routerLink="/terms/terms">
+          <mat-icon mat-list-icon>list_alt</mat-icon>
+          {{translation.terms[lang]}}
+        </mat-list-item>
+        <mat-list-item routerLink="/terms/privacy-policy">
+          <mat-icon mat-list-icon>list_alt</mat-icon>
+          {{translation.privacyPolicy[lang]}}
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <a mat-list-item href="https://lcnem.cc" target="_blank">
+          <img mat-list-icon src="assets/images/lcnem.svg" />
+          LCNEM
+        </a>
+      </mat-nav-list>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="mat-elevation-z4 top-toolbar">
+      <img class="icon" src="assets/images/lcnem.svg" />
+      <span>LCNEM Wallet</span>
+      <span class="fill-remaining-space"></span>
+      <app-language-menu></app-language-menu>
+    </mat-toolbar>
+    <div class="mat-typography body-container">
+      <h3>{{translation.balance[lang]}}</h3>
+      <mat-card>
+        <app-balance></app-balance>
+      </mat-card>
+      <br />
+      <h3>{{translation.yourAddress[lang]}}</h3>
+      <mat-card>
+        <p class="address">{{(currentWallet$ | async).nem}}
+          <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyAddress()">
+            <mat-icon>input</mat-icon>
+          </button>
+        </p>
+        <img class="qr" [src]="qrUrl$ | async" />
+      </mat-card>
+      <br />
+      <h3>{{translation.cosignatoryOf[lang]}}</h3>
+      <mat-card>
+        <app-multisig></app-multisig>
+      </mat-card>
+      <br />
+      <h3>{{translation.history[lang]}}</h3>
+      <mat-card>
+        <app-history></app-history>
+      </mat-card>
+    </div>
+    <button mat-fab color="accent" class="floating-action-button" (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </mat-sidenav-content>
+</mat-sidenav-container>

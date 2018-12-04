@@ -1,0 +1,13 @@
+<mat-toolbar>
+  <span class="fill-remaining-space"></span>
+  <button mat-icon-button color="accent" (click)="load(true)">
+    <mat-icon>refresh</mat-icon>
+  </button>
+</mat-toolbar>
+<mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
+<ng-template #loaded>
+  <ng-container *ngFor="let transaction of transactions$ | async">
+    <app-transaction [transaction]="transaction"></app-transaction>
+  </ng-container>
+  <p *ngIf="!(transactions$ | async).length" class="empty">{{translation.noTransaction[lang]}}</p>
+</ng-template>

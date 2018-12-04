@@ -31,73 +31,69 @@ import {
   MatProgressBarModule,
   MatRadioModule,
   MatSnackBarModule,
-  MatTooltipModule,
-  MatTableModule,
-  MatPaginatorModule
+  MatTooltipModule
 } from '@angular/material';
 
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-
-import { HomeComponent } from './home/home.component';
-import { LoginComponent } from './accounts/login/login.component';
-import { ScanComponent } from './transactions/scan/scan.component';
-import { TransferComponent } from './transactions/transfer/transfer.component';
-import { PageNotFoundComponent } from './error/page-not-found/page-not-found.component';
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
-import { AssetsListComponent } from './components/assets-list/assets-list.component';
-import { DepositComponent } from './accounts/deposit/deposit.component';
-import { TermsComponent } from './terms/terms/terms.component';
-import { WithdrawComponent } from './accounts/withdraw/withdraw.component';
-import { ContactsComponent } from './accounts/contacts/contacts.component';
 import { AlertDialogComponent } from './components/alert-dialog/alert-dialog.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
-import { TransferDialogComponent } from './transactions/transfer/transfer-dialog/transfer-dialog.component';
-import { PrivacyPolicyComponent } from './terms/privacy-policy/privacy-policy.component';
-import { PlanComponent } from './accounts/plan/plan.component';
-import { TransactionComponent } from './home/history/transaction/transaction.component';
-import { HistoryComponent } from './home/history/history.component';
-import { CreateDialogComponent } from './accounts/wallets/create-dialog/create-dialog.component';
-import { WalletsComponent } from './accounts/wallets/wallets.component';
-import { ContactDialogComponent } from './accounts/contacts/contact-dialog/contact-dialog.component';
-import { ContactEditDialogComponent } from './accounts/contacts/contact-edit-dialog/contact-edit-dialog.component';
+import { SettingsComponent } from './pages/account/settings/settings.component';
+import { ContactsComponent } from './pages/contacts/contacts.component';
+import { LoginComponent } from './pages/account/login/login.component';
+import { TermsComponent } from './pages/terms/terms.component';
+import { QrScanComponent } from './pages/nem/qr-scan/qr-scan.component';
+import { PrivacyPolicyComponent } from './pages/terms/privacy-policy/privacy-policy.component';
+import { DepositComponent } from './pages/digital-legal-currency/deposit/deposit.component';
+import { WithdrawComponent } from './pages/digital-legal-currency/withdraw/withdraw.component';
+import { HomeComponent } from './pages/home/home.component';
+import { NemComponent } from './pages/home/nem/nem.component';
+import { HistoryComponent } from './pages/home/nem/history/history.component';
+import { TransactionComponent } from './pages/home/nem/history/transaction/transaction.component';
+import { BalanceComponent } from './pages/home/nem/balance/balance.component';
+import { MultisigComponent } from './pages/home/nem/multisig/multisig.component';
+import { ContactEditDialogComponent } from './pages/contacts/contact-edit-dialog/contact-edit-dialog.component';
+import { LanguageMenuComponent } from './components/language-menu/language-menu.component';
 import { NemAddressInputComponent } from './components/nem-address-input/nem-address-input.component';
-import { MultisigComponent } from './home/multisig/multisig.component';
-import { StoreModule } from '@ngrx/store';
-import { reducers, metaReducers } from './store';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { WalletsComponent } from './pages/account/wallets/wallets.component';
+import { ContactComponent } from './pages/contacts/contact/contact.component';
+import { WalletComponent } from './pages/account/wallets/wallet/wallet.component';
+import { WalletCreateDialogComponent } from './pages/account/wallets/wallet-create-dialog/wallet-create-dialog.component';
+import { TransferComponent } from './pages/nem/transfer/transfer.component';
+import { TransferDialogComponent } from './pages/nem/transfer/transfer-dialog/transfer-dialog.component';
+import { AssetsListComponent } from './components/assets-list/assets-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
+    SettingsComponent,
+    ContactsComponent,
     LoginComponent,
+    TermsComponent,
+    PrivacyPolicyComponent,
+    QrScanComponent,
+    DepositComponent,
+    WithdrawComponent,
+    HomeComponent,
+    NemComponent,
     HistoryComponent,
     TransactionComponent,
-    ScanComponent,
-    TransferComponent,
-    PageNotFoundComponent,
-    LoadingDialogComponent,
-    AssetsListComponent,
-    DepositComponent,
-    TermsComponent,
-    WithdrawComponent,
-    ContactsComponent,
-    AlertDialogComponent,
-    ConfirmDialogComponent,
-    PromptDialogComponent,
-    TransferDialogComponent,
-    PrivacyPolicyComponent,
-    WalletsComponent,
-    PlanComponent,
-    CreateDialogComponent,
-    ContactDialogComponent,
-    ContactEditDialogComponent,
+    BalanceComponent,
+    MultisigComponent,
+    LanguageMenuComponent,
     NemAddressInputComponent,
-    MultisigComponent
+    WalletsComponent,
+    ContactComponent,
+    ContactEditDialogComponent,
+    WalletComponent,
+    WalletCreateDialogComponent,
+    TransferComponent,
+    TransferDialogComponent,
+    AssetsListComponent
   ],
   imports: [
     BrowserModule,
@@ -130,11 +126,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     MatMenuModule,
     MatRadioModule,
     MatSnackBarModule,
-    MatTooltipModule,
-    MatTableModule,
-    MatPaginatorModule,
-    StoreModule.forRoot(reducers, { metaReducers }),
-    !environment.production ? StoreDevtoolsModule.instrument() : []
+    MatTooltipModule
   ],
   entryComponents: [
     LoadingDialogComponent,
@@ -142,10 +134,9 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     ConfirmDialogComponent,
     PromptDialogComponent,
     TransferDialogComponent,
-    CreateDialogComponent,
-    ContactDialogComponent,
+    ContactsComponent,
     ContactEditDialogComponent,
-    TransactionComponent
+    WalletCreateDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,7 +1,9 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { Asset, AssetDefinition } from 'nem-library';
-import { assetAdditionalDefinitions, AssetAdditionalDefinition } from '../../models/asset-additional-definition';
-import { BalanceService } from '../../services/balance.service';
+import { Observable, of, from } from 'rxjs';
+import { map, mergeMap, filter } from 'rxjs/operators';
+import { LanguageService } from '../../services/language/language.service';
+import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
 
 @Component({
   selector: 'app-assets-list',
@@ -9,46 +11,87 @@ import { BalanceService } from '../../services/balance.service';
   styleUrls: ['./assets-list.component.css']
 })
 export class AssetsListComponent implements OnInit {
-  @Input() public title?: string;
-  @Input() public assets?: Asset[];
-  
-  public _assets = new Array<{
+  public get lang() { return this.language.state.twoLetter; }
+
+  @Input() public title = "";
+  @Input() public assets: Asset[] = [];
+  @Input() nav = false
+
+  @Output() click = new EventEmitter()
+
+  public loading$: Observable<boolean>;
+  public assets$: Observable<{
     name: string,
     amount: number,
-    imageUrl: string,
+    imageURL: string,
     issuer?: string,
     unit?: string
-  }>();
+  }>[] = [];
 
   constructor(
-    private balance: BalanceService
-  ) { }
-
-  ngOnInit() {
-    this.refresh();
+    private language: LanguageService,
+    private assetDefinition: AssetDefinitionService
+  ) {
+    this.loading$ = this.assetDefinition.state$.pipe(map(state => state.loading))
   }
 
-  public async refresh() {
+  ngOnInit() {
     if (!this.assets) {
       return;
     }
 
-    await Promise.all(this.assets.map(asset => this.balance.readDefinition(asset.assetId.namespaceId + ":" + asset.assetId.name)));
-    
-    for(let asset of this.assets) {
-      let id = asset.assetId.namespaceId + ":" + asset.assetId.name;
+    this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
 
-      let definition = await this.balance.readDefinition(id);
-
-      let additionalDefinition = assetAdditionalDefinitions.find(a => a.name == id);
-
-      this._assets!.push({
-        name: id,
-        amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
-        imageUrl: AssetAdditionalDefinition.getImageUrl(id),
-        issuer: additionalDefinition && additionalDefinition.issuer,
-        unit: additionalDefinition && additionalDefinition.unit
-      });
-    }
+    this.assets$ = this.assets.map(
+      (asset) => {
+        return this.assetDefinition.state$.pipe(
+          map(state => state.definitions),
+          mergeMap(definitions => from(definitions)),
+          filter(definition => definition.id.equals(asset.assetId)),
+          map(
+            (definition) => {
+              const name = asset.assetId.toString()
+              const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || {}
+              return {
+                ...additionaldefinition,
+                name: name,
+                amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
+                imageURL: this.getImageURL(name)
+              }
+            }
+          )
+        )
+      }
+    )
   }
+
+  public getImageURL(name: string) {
+    if (!this.assetAdditionalDefinitions.find(a => a.name == name)) {
+      return "assets/data/mosaic.svg";
+    }
+    return "assets/data/" + name.replace(":", "/") + ".svg";
+  }
+
+  public readonly assetAdditionalDefinitions = [
+    {
+      name: "nem:xem",
+      issuer: "",
+      unit: "XEM"
+    },
+    {
+      name: "lc:jpy",
+      issuer: "LCNEM, Inc.",
+      unit: "JPY"
+    },
+    {
+      name: "oshibori:point2019",
+      issuer: "おしぼり.jp",
+      unit: "JPY"
+    },
+    {
+      name: "montoken:mot",
+      issuer: "かえもん",
+      unit: ""
+    }
+  ];
 }
