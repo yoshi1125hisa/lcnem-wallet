@@ -1,4 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material';
+import { Router } from '@angular/router';
+import { ZXingScannerComponent } from '@zxing/ngx-scanner';
+import { Observable, Subscription } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { RouterService } from '../../../services/router/router.service';
+import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
+import { Invoice } from '../../../classes/invoice';
+import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
+import { LanguageService } from '../../../services/language/language.service';
 
 @Component({
   selector: 'app-qr-scan',
@@ -6,112 +16,89 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./qr-scan.component.css']
 })
 export class QrScanComponent implements OnInit {
+  @ViewChild("scanner") scanner!: ZXingScannerComponent;
 
-  public scanning = false;
-  get lang() {
-    return lang;
-  }
+  public get lang() { return this.language.state.twoLetter }
 
-  @ViewChild("scanner")
-  scanner?: ZXingScannerComponent;
+  public processing = false
+  public availableDevices$!: Observable<MediaDeviceInfo[]>
+  public noCamera$!: Observable<boolean>
+  public permission$!: Observable<boolean>
+  public subscription?: Subscription
 
-  noCamera = false;
-  hasPermission = false;
+  public selectedDevice?: Observable<MediaDeviceInfo>
 
-  availableDevices?: MediaDeviceInfo[];
-  selected?: number;
-
-  constructor(private router: Router, private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private router: Router,
+    private _router: RouterService,
+    private language: LanguageService
+  ) { }
 
   ngOnInit() {
-    if (!this.scanner) {
-      return;
-    }
+    this.availableDevices$ = this.scanner.camerasFound.asObservable()
+    this.noCamera$ = this.scanner.camerasNotFound.asObservable()
+    this.permission$ = this.scanner.permissionResponse.asObservable()
 
-    this.scanner.camerasFound.subscribe((devices: MediaDeviceInfo[]) => {
-      this.availableDevices = devices;
-      this.selected = 0;
-    });
+    this.subscription = this.scanner.scanSuccess.pipe(
+      filter(_ => this.processing),
+      map(result => decodeURI(result))
+    ).subscribe(
+      (result: string) => {
+        this.processing = true;
+        const dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
 
-    this.scanner.camerasNotFound.subscribe(() => {
-      this.noCamera = true;
-    });
-
-    this.scanner.permissionResponse.subscribe((answer: boolean) => {
-      this.hasPermission = answer;
-    });
-
-    this.scanner.scanSuccess.subscribe((result: string) => {
-      if (this.scanning) {
-        return;
-      }
-      this.scanning = true;
-      let dialog = this.dialog.open(LoadingDialogComponent, {
-        disableClose: true
-      });
-
-      let decoded = decodeURI(result);
-      try {
-        let invoice = Invoice.parse(decoded);
-        if (
-          !invoice &&
-          decoded[0] == "N" &&
-          decoded.replace(/-/g, "").trim().length == 40
-        ) {
-          let invoiceData = new Invoice();
-          invoiceData.data.addr = decoded;
-          result = encodeURI(invoiceData.stringify());
+        if (result[0] == "N" && result.replace(/-/g, "").trim().length == 40) {
+          const invoice = new Invoice()
+          invoice.data.addr = result
+          result = invoice.stringify()
         }
 
+        const invoice = Invoice.parse(result)
         if (invoice) {
-          this.router.navigate(["transactions", "transfer"], {
-            queryParams: {
-              invoice: result
+          this.router.navigate(
+            ["transactions", "transfer"],
+            {
+              queryParams: {
+                invoice: result
+              }
             }
-          });
+          )
+
+          return
         }
-      } catch {
-        this.dialog
-          .open(AlertDialogComponent, {
+
+        dialog.close()
+
+        this.dialog.open(
+          AlertDialogComponent,
+          {
             data: {
               title: this.translation.unexpected[this.lang],
-              content: decoded
+              content: result
             }
-          })
-          .afterClosed()
-          .subscribe(() => {
-            this.scanning = false;
-          });
-      } finally {
-        dialog.close();
+          }
+        ).afterClosed().subscribe(
+          () => {
+            this.processing = false
+          }
+        )
       }
-    });
+    )
   }
 
   ngOnDestroy() {
-    if (!this.scanner) {
-      return;
-    }
+    this.subscription!.unsubscribe()
+  }
 
-    this.scanner.camerasFound.unsubscribe();
-    this.scanner.camerasNotFound.unsubscribe();
-    this.scanner.permissionResponse.unsubscribe();
-    this.scanner.scanSuccess.unsubscribe();
+  public selectDevice(index: number) {
+    this.selectedDevice = this.availableDevices$.pipe(
+      map(devices => devices[index])
+    )
   }
 
   public back() {
-    back(() => this.router.navigate([""]));
-  }
-
-  public get selectedDevice() {
-    if (this.selected === undefined) {
-      return null;
-    }
-    if (this.availableDevices === undefined) {
-      return null;
-    }
-
-    return this.availableDevices![this.selected!];
+    this._router.back([""])
   }
 
   public translation = {
