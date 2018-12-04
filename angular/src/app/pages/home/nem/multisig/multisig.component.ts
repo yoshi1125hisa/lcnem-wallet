@@ -1,12 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { LanguageService } from '../../../../services/language/language.service';
+import { map } from 'rxjs/operators';
 import { Address, Wallet } from 'nem-library';
-import { first, mergeMap, toArray, filter, map } from 'rxjs/operators';
-import { MultisigService } from 'src/app/services/nem/multisig/multisig.service';
-import { state } from '@angular/animations';
+import { LanguageService } from '../../../../services/language/language.service';
+import { MultisigService } from '../../../../services/nem/multisig/multisig.service';
+import { WalletService } from '../../../../services/wallet/wallet.service';
 
 @Component({
   selector: 'app-multisig',
@@ -14,36 +12,16 @@ import { state } from '@angular/animations';
   styleUrls: ['./multisig.component.css']
 })
 export class MultisigComponent implements OnInit {
-  public get lang() { return this.language.twoLetter; }
+  public get lang() { return this.language.state.twoLetter; }
 
-  public state$ = this.wallet.state$;
-  public multisigs$: Observable<Address[]>;
+  public loading$ = this.multisig.state$.pipe(map(state => state.loading))
+  public multisigs$ = this.multisig.state$.pipe(map(state => state.addresses))
 
   constructor(
-    private multisig: MultisigService,
-    private router: Router,
-    private store: Store<State>,
-    private language: LanguageService
+    private language: LanguageService,
+    private wallet: WalletService,
+    private multisig: MultisigService
   ) {
-    this.multisigs$ = this.state$.pipe(
-      mergeMap(
-        (state) => {
-          return from(state.ids).pipe(
-            map(id => state.entities[id].multisig),
-            toArray()
-          )
-        }
-      )
-    )
-
-    this.state$.pipe(
-      filter(state => this.state$.currentWalletId ? true : false),
-      first()
-    ).subscribe(
-      () => {
-        this.router.navigate([""])
-      }
-    )
   }
 
   ngOnInit() {
@@ -51,13 +29,8 @@ export class MultisigComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    this.multisigs$.pipe(
-      map(
-        (address) => {
-          address.map(address => this.multisig.loadMultisig(address, true))
-        }
-      )
-    )
+    const address = new Address(this.wallet.state.entities[this.wallet.state.currentWalletId!].nem)
+    this.multisig.loadMultisig(address, refresh)
   }
 
   public onClick(address: string) {
