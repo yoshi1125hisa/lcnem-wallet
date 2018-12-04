@@ -42,10 +42,47 @@ import { LoadingDialogComponent } from './components/loading-dialog/loading-dial
 import { AlertDialogComponent } from './components/alert-dialog/alert-dialog.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
+import { PagesComponent } from './pages/pages.component';
+import { SettingsComponent } from './pages/account/settings/settings.component';
+import { ContactsComponent } from './pages/contacts/contacts.component';
+import { LoginComponent } from './pages/account/login/login.component';
+import { TermsComponent } from './pages/terms/terms.component';
+import { QrScanComponent } from './pages/nem/qr-scan/qr-scan.component';
+import { TransferComponent } from './pages/nem/transfer/transfer/transfer.component';
+import { PrivacyPolicyComponent } from './pages/terms/privacy-policy/privacy-policy.component';
+import { DepositComponent } from './pages/digital-legal-currency/deposit/deposit.component';
+import { WithdrawComponent } from './pages/digital-legal-currency/withdraw/withdraw.component';
+import { HomeComponent } from './pages/home/home.component';
+import { NemComponent } from './pages/home/nem/nem.component';
+import { HistoryComponent } from './pages/home/nem/history/history.component';
+import { TransactionComponent } from './pages/home/nem/history/transaction/transaction.component';
+import { BalanceComponent } from './pages/home/nem/balance/balance.component';
+import { MultisigComponent } from './pages/home/nem/multisig/multisig.component';
+import { CommonModule } from '@angular/common';
+import { TransferDialogComponent } from './pages/nem/transfer/transfer/transfer-dialog/transfer-dialog.component';
+import { CreateDialogComponent } from './pages/account/wallets/create-dialog/create-dialog.component';
+import { ContactEditDialogComponent } from './pages/contacts/contact-edit-dialog/contact-edit-dialog.component';
+import { PagesRoutingModule } from './pages/pages-routing.module';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    PagesComponent,
+    SettingsComponent,
+    ContactsComponent,
+    LoginComponent,
+    TermsComponent,
+    PrivacyPolicyComponent,
+    QrScanComponent,
+    TransferComponent,
+    DepositComponent,
+    WithdrawComponent,
+    HomeComponent,
+    NemComponent,
+    HistoryComponent,
+    TransactionComponent,
+    BalanceComponent,
+    MultisigComponent
   ],
   imports: [
     BrowserModule,
@@ -78,13 +115,19 @@ import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.
     MatMenuModule,
     MatRadioModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    CommonModule,
+    PagesRoutingModule
   ],
   entryComponents: [
     LoadingDialogComponent,
     AlertDialogComponent,
     ConfirmDialogComponent,
-    PromptDialogComponent
+    PromptDialogComponent,
+    TransferDialogComponent,
+    CreateDialogComponent,
+    ContactsComponent,
+    ContactEditDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
