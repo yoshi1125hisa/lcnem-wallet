@@ -1,7 +1,7 @@
-import { RxStateService } from "./rx-state-service";
+import { RxStateStore } from "./rx-state-store";
 import { RxEffectiveState } from "./rx-effective-state";
 
-export class RxEffectiveStateService<T extends RxEffectiveState> extends RxStateService<T> {
+export class RxEffectiveStateStore<T extends RxEffectiveState> extends RxStateStore<T> {
   protected load() {
     const state: T = Object.assign(
       {

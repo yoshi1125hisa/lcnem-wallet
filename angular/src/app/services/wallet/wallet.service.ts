@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RxEntityStateService } from 'src/app/classes/rx-entity-state-service';
+import { RxEntityStateStore } from 'src/app/classes/rx-entity-state-store';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { from } from 'rxjs';
@@ -8,7 +8,7 @@ import { RxEntityState } from 'src/app/classes/rx-entity-state';
 @Injectable({
   providedIn: 'root'
 })
-export class WalletService extends RxEntityStateService<State, Wallet> {
+export class WalletService extends RxEntityStateStore<State, Wallet> {
 
   constructor(
     private firestore: AngularFirestore
