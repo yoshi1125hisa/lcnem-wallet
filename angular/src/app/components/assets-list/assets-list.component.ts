@@ -1,11 +1,9 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Asset, AssetDefinition } from 'nem-library';
-import { Store } from '@ngrx/store';
-import { State } from '../../store/index';
-import { Observable, of } from 'rxjs';
-import { LoadAssetDefinitions } from '../../store/nem/asset-definition/asset-definition.actions';
-import { map } from 'rxjs/operators';
+import { Observable, of, from } from 'rxjs';
+import { map, mergeMap, filter } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
+import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
 
 @Component({
   selector: 'app-assets-list',
@@ -13,10 +11,10 @@ import { LanguageService } from '../../services/language/language.service';
   styleUrls: ['./assets-list.component.css']
 })
 export class AssetsListComponent implements OnInit {
-  public get lang() { return this.language.twoLetter; }
+  public get lang() { return this.language.state.twoLetter; }
 
-  @Input() public title?: string;
-  @Input() public assets?: Asset[];
+  @Input() public title = "";
+  @Input() public assets: Asset[] = [];
 
   public loading$: Observable<boolean>;
   public assets$: Observable<{
@@ -28,10 +26,10 @@ export class AssetsListComponent implements OnInit {
   }>[] = [];
 
   constructor(
-    private store: Store<State>,
-    private language: LanguageService
+    private language: LanguageService,
+    private assetDefinition: AssetDefinitionService
   ) {
-    this.loading$ = this.store.select(state => state.nemAssetDefinition.loading);
+    this.loading$ = this.assetDefinition.state$.pipe(map(state => state.loading))
   }
 
   ngOnInit() {
@@ -39,45 +37,20 @@ export class AssetsListComponent implements OnInit {
       return;
     }
 
-    this.store.dispatch(
-      new LoadAssetDefinitions(
-        {
-          assetIds: this.assets.map(
-            (asset) => {
-              return asset.assetId;
-            }
-          )
-        }
-      )
-    );
+    this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
 
-    const definitions$ = this.store.select(state => state.nemAssetDefinition.definitions);
-
-    for (const asset of this.assets) {
-      this.assets$.push(
-        definitions$.pipe(
+    this.assets$ = this.assets.map(
+      (asset) => {
+        return this.assetDefinition.state$.pipe(
+          map(state => state.definitions),
+          mergeMap(definitions => from(definitions)),
+          filter(definition => definition.id.equals(asset.assetId)),
           map(
-            (definitions) => {
-              const name = asset.assetId.namespaceId + ":" + asset.assetId.name;
-              const definition = definitions.find(
-                (_definition) => {
-                  return _definition.id.equals(asset.assetId);
-                }
-              );
-              if (!definition) {
-                return {
-                  name: name,
-                  amount: 0,
-                  imageURL: this.getImageURL(name)
-                };
-              }
-
+            (definition) => {
+              const name = asset.assetId.toString()
+              const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || {}
               return {
-                ...this.assetAdditionalDefinitions.find(
-                  (a) => {
-                    return a.name == name;
-                  }
-                ),
+                ...additionaldefinition,
                 name: name,
                 amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
                 imageURL: this.getImageURL(name)
@@ -85,8 +58,8 @@ export class AssetsListComponent implements OnInit {
             }
           )
         )
-      )
-    }
+      }
+    )
   }
 
   public getImageURL(name: string) {

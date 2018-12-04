@@ -1,8 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { TransferTransaction, Asset, AssetTransferable, XEM } from 'nem-library';
-import { Store } from '@ngrx/store';
-import { State } from '../../../store';
 import { LanguageService } from 'src/app/services/language/language.service';
 
 @Component({
@@ -11,7 +9,7 @@ import { LanguageService } from 'src/app/services/language/language.service';
   styleUrls: ['./transfer-dialog.component.css']
 })
 export class TransferDialogComponent {
-  get lang() { return this.language.twoLetter; }
+  get lang() { return this.language.state.twoLetter; }
   
   public transaction: TransferTransaction;
   public assets: Asset[];
@@ -20,7 +18,6 @@ export class TransferDialogComponent {
   public Math = Math;
 
   constructor(
-    private store: Store<State>,
     private language: LanguageService,
     @Inject(MAT_DIALOG_DATA) public data: {
       transaction: TransferTransaction

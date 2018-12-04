@@ -47,7 +47,6 @@ import { ContactsComponent } from './pages/contacts/contacts.component';
 import { LoginComponent } from './pages/account/login/login.component';
 import { TermsComponent } from './pages/terms/terms.component';
 import { QrScanComponent } from './pages/nem/qr-scan/qr-scan.component';
-import { TransferComponent } from './pages/nem/transfer/transfer/transfer.component';
 import { PrivacyPolicyComponent } from './pages/terms/privacy-policy/privacy-policy.component';
 import { DepositComponent } from './pages/digital-legal-currency/deposit/deposit.component';
 import { WithdrawComponent } from './pages/digital-legal-currency/withdraw/withdraw.component';
@@ -57,8 +56,6 @@ import { HistoryComponent } from './pages/home/nem/history/history.component';
 import { TransactionComponent } from './pages/home/nem/history/transaction/transaction.component';
 import { BalanceComponent } from './pages/home/nem/balance/balance.component';
 import { MultisigComponent } from './pages/home/nem/multisig/multisig.component';
-import { TransferDialogComponent } from './pages/nem/transfer/transfer/transfer-dialog/transfer-dialog.component';
-import { CreateDialogComponent } from './pages/account/wallets/create-dialog/create-dialog.component';
 import { ContactEditDialogComponent } from './pages/contacts/contact-edit-dialog/contact-edit-dialog.component';
 import { LanguageMenuComponent } from './components/language-menu/language-menu.component';
 import { NemAddressInputComponent } from './components/nem-address-input/nem-address-input.component';
@@ -66,6 +63,9 @@ import { WalletsComponent } from './pages/account/wallets/wallets.component';
 import { ContactComponent } from './pages/contacts/contact/contact.component';
 import { WalletComponent } from './pages/account/wallets/wallet/wallet.component';
 import { WalletCreateDialogComponent } from './pages/account/wallets/wallet-create-dialog/wallet-create-dialog.component';
+import { TransferComponent } from './pages/nem/transfer/transfer.component';
+import { TransferDialogComponent } from './pages/nem/transfer/transfer-dialog/transfer-dialog.component';
+import { AssetsListComponent } from './components/assets-list/assets-list.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +76,6 @@ import { WalletCreateDialogComponent } from './pages/account/wallets/wallet-crea
     TermsComponent,
     PrivacyPolicyComponent,
     QrScanComponent,
-    TransferComponent,
     DepositComponent,
     WithdrawComponent,
     HomeComponent,
@@ -91,7 +90,10 @@ import { WalletCreateDialogComponent } from './pages/account/wallets/wallet-crea
     ContactComponent,
     ContactEditDialogComponent,
     WalletComponent,
-    WalletCreateDialogComponent
+    WalletCreateDialogComponent,
+    TransferComponent,
+    TransferDialogComponent,
+    AssetsListComponent
   ],
   imports: [
     BrowserModule,

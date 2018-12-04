@@ -25,8 +25,7 @@ export class WalletComponent implements OnInit {
   ngOnInit() {
   }
 
-  
-  public async openSnackBar(type: string) {
+  public openSnackBar(type: string) {
     if (type == "import") {
       this.snackBar.open(this.translation.localNotFound[this.lang], undefined, { duration: 3000 });
     }
