@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { RxEntityStateStore } from 'src/app/classes/rx-entity-state-store';
-import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { from } from 'rxjs';
-import { RxEntityState } from 'src/app/classes/rx-entity-state';
+import { RxEntityStateStore } from '../../classes/rx-entity-state-store';
+import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
+import { RxEntityState } from '../../classes/rx-entity-state';
 
 @Injectable({
   providedIn: 'root'
@@ -119,8 +119,6 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
     this._subject$.next(state)
   }
 }
-
-
 
 interface State extends RxEntityState<Wallet> {
   loading: boolean

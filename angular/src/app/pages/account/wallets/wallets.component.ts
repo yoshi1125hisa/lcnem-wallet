@@ -25,7 +25,19 @@ export class WalletsComponent implements OnInit {
   public lang$ = this.language.state$.pipe(map(state => state.twoLetter))
 
   public state$ = this.wallet.state$;
-  public clouds$: Observable<number>;
+
+  public clouds$ = this.state$.pipe(
+    mergeMap(
+      (state) => {
+        return from(state.ids).pipe(
+          map(id => state.entities[id].local),
+          toArray(),
+          map(array => array.filter(local => !local).length)
+        )
+      }
+    )
+  )
+
   public plan = ""
 
   constructor(
@@ -37,18 +49,6 @@ export class WalletsComponent implements OnInit {
     private wallet: WalletService,
     private localWallet: LocalWalletService
   ) {
-    this.clouds$ = this.state$.pipe(
-      mergeMap(
-        (state) => {
-          return from(state.ids).pipe(
-            map(id => state.entities[id].local),
-            toArray(),
-            map(array => array.filter(local => !local).length)
-          )
-        }
-      )
-    )
-
     this.state$.pipe(
       filter(state => state.currentWalletId ? true : false),
       first()

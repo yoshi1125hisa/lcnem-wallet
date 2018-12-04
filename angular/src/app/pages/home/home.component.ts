@@ -3,12 +3,10 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, first } from 'rxjs/operators';
-import { Store } from '@ngrx/store';
-import { State } from '../../store/index';
-import { Logout } from '../../store/user/user.actions';
-import { Wallet } from '../../store/wallet/wallet.model';
-import { Invoice } from '../../models/invoice';
 import { LanguageService } from '../../services/language/language.service';
+import { UserService } from '../../services/user/user.service';
+import { WalletService } from '../../services/wallet/wallet.service';
+import { Invoice } from '../../classes/invoice';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
@@ -18,43 +16,37 @@ NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  public get lang() { return this.language.twoLetter; }
+  public get lang() { return this.language.state.twoLetter; }
 
-  public photoUrl$: Observable<string>;
-  public currentWallet$: Observable<Wallet>;
-  public qrUrl$: Observable<string>;
-  public assets$: Observable<Asset[]>;
+  public photoUrl$ = this.user.state$.pipe(
+    map(state => state.currentUser),
+    map(user => user && user.photoURL ? user.photoURL : "")
+  )
+
+  public currentWallet$ = this.wallet.state$.pipe(
+    map(state => state.entities[state.currentWalletId!])
+  )
+
+  public qrUrl$ = this.currentWallet$.pipe(
+    map(currentWallet => {
+      let invoice = new Invoice();
+      invoice.data.addr = currentWallet.nem;
+      return "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
+    })
+  )
 
   constructor(
-    private store: Store<State>,
-    private auth: AngularFireAuth,
-    private language: LanguageService
+    private language: LanguageService,
+    private user: UserService,
+    private wallet: WalletService
   ) {
-    this.photoUrl$ = this.auth.authState.pipe(
-      first(),
-      map(authState => authState && authState.photoURL ? authState.photoURL : "")
-    )
-
-    this.currentWallet$ = this.store.select(state => state.wallet.currentWallet).pipe(
-      mergeMap(id => id ? this.store.select(state => state.wallet.entities[id]) : of())
-    );
-
-    this.qrUrl$ = this.currentWallet$.pipe(
-      map(currentWallet => {
-        let invoice = new Invoice();
-        invoice.data.addr = currentWallet.nem;
-        return "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
-      })
-    )
-
-    this.assets$ = this.store.select(state => state.nemBalance.assets);
   }
 
   ngOnInit() {
   }
 
   public logout() {
-    this.store.dispatch(new Logout());
+    this.user.logout()
   }
 
   public copyAddress() {

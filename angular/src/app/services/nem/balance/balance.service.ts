@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Asset, Address, AccountHttp } from 'nem-library';
-import { RxEffectiveStateStore } from 'src/app/classes/rx-effective-state-store';
+import { RxEffectiveStateStore } from '../../../classes/rx-effective-state-store';
 import { nodes } from '../../../classes/nodes';
 
 @Injectable({

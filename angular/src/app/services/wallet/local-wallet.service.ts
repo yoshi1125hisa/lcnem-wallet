@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { RxEntityStateStore } from 'src/app/classes/rx-entity-state-store';
-import { RxEntityState } from 'src/app/classes/rx-entity-state';
+import { RxEntityStateStore } from '../../classes/rx-entity-state-store';
+import { RxEntityState } from '../../classes/rx-entity-state';
 import { of } from 'rxjs';
 
 @Injectable({

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
 import { Address, AccountHttp } from 'nem-library';
 import { RxEffectiveStateStore } from '../../../classes/rx-effective-state-store';
 import { nodes } from '../../../classes/nodes';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'

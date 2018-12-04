@@ -10,7 +10,7 @@ import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dia
 @Component({
   selector: 'app-withdraw',
   templateUrl: './withdraw.component.html',
-  styleUrls: ['./wothdraw.component.css']
+  styleUrls: ['./withdraw.component.css']
 })
 export class WithdrawComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }

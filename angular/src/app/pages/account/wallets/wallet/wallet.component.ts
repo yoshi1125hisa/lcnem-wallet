@@ -1,6 +1,5 @@
-import { Component, OnInit, Input, Output } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Wallet } from '../../../../../../../firebase/functions/src/models/wallet';
-import { EventEmitter } from 'events';
 import { MatSnackBar } from '@angular/material';
 
 @Component({

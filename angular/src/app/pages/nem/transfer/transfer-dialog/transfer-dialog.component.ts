@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { TransferTransaction, Asset, AssetTransferable, XEM } from 'nem-library';
-import { LanguageService } from 'src/app/services/language/language.service';
+import { LanguageService } from '../../../../services/language/language.service';
 
 @Component({
   selector: 'app-transfer-dialog',
