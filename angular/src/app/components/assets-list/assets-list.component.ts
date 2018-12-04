@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { Asset, AssetDefinition } from 'nem-library';
 import { Observable, of, from } from 'rxjs';
 import { map, mergeMap, filter } from 'rxjs/operators';
@@ -15,6 +15,9 @@ export class AssetsListComponent implements OnInit {
 
   @Input() public title = "";
   @Input() public assets: Asset[] = [];
+  @Input() nav = false
+
+  @Output() click = new EventEmitter()
 
   public loading$: Observable<boolean>;
   public assets$: Observable<{

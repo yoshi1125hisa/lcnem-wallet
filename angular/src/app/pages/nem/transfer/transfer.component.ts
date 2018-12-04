@@ -43,6 +43,7 @@ export class TransferComponent implements OnInit, OnDestroy {
   public get lang() { return this.language.state.twoLetter; }
 
   public loading$ = this.balance.state$.pipe(map(state => state.loading))
+  public balance$ = this.balance.state$.pipe(map(state => state.assets))
 
   public forms = {
     recipient: "",
@@ -52,8 +53,7 @@ export class TransferComponent implements OnInit, OnDestroy {
       id: string,
       amount?: number,
       balance: Observable<Asset>
-    }[],
-    hidden: 0
+    }[]
   };
 
   private account$ = this.wallet.state$.pipe(
