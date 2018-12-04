@@ -1,13 +1,11 @@
 import { Component, Input, forwardRef, OnInit } from '@angular/core';
-import { NG_VALUE_ACCESSOR, ControlValueAccessor, NG_VALIDATORS, Validator, AbstractControl, ValidationErrors, FormControl } from '@angular/forms';
-import { NamespaceHttp, AccountHttp, Address } from 'nem-library';
-import { nodes } from '../../models/nodes';
-import { State } from '../../store';
-import { Store } from '@ngrx/store';
-import { LanguageService } from '../../services/language/language.service';
+import { NG_VALUE_ACCESSOR, ControlValueAccessor, NG_VALIDATORS, Validator, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Observable, of, from } from 'rxjs';
 import { debounceTime, filter, mergeMap, map, catchError, toArray } from 'rxjs/operators';
-
+import { NamespaceHttp, AccountHttp, Address } from 'nem-library';
+import { LanguageService } from '../../services/language/language.service';
+import { nodes } from '../../classes/nodes';
+import { ContactService } from '../../services/contact/contact.service';
 
 @Component({
   selector: 'app-nem-address-input',
@@ -27,7 +25,7 @@ import { debounceTime, filter, mergeMap, map, catchError, toArray } from 'rxjs/o
   ],
 })
 export class NemAddressInputComponent implements OnInit, ControlValueAccessor, Validator {
-  public get lang() { return this.language.twoLetter; }
+  public get lang() { return this.language.state.twoLetter; }
 
   @Input() placeholder?: string;
   @Input() required?: boolean;
@@ -41,8 +39,8 @@ export class NemAddressInputComponent implements OnInit, ControlValueAccessor, V
   public readonly pattern = "N[2-7A-Z]{39}";
 
   constructor(
-    private store: Store<State>,
-    private language: LanguageService
+    private language: LanguageService,
+    private contact: ContactService
   ) { }
 
   ngOnInit() {
@@ -85,7 +83,7 @@ export class NemAddressInputComponent implements OnInit, ControlValueAccessor, V
     this.suggests$ = filtered.pipe(
       mergeMap(
         (event) => {
-          return this.store.select(state => state.contact).pipe(
+          return this.contact.state$.pipe(
             mergeMap(
               (contact) => {
                 return from(contact.ids as string[]).pipe(

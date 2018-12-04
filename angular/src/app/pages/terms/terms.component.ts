@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { lang } from '../../models/lang';
-import { back } from '../../models/back';
 import { Router } from '@angular/router';
+import { LanguageService } from '../../services/language/language.service';
+import { RouterService } from '../../services/router/router.service';
 
 @Component({
   selector: 'app-terms',
@@ -10,11 +10,12 @@ import { Router } from '@angular/router';
   styleUrls: ['./terms.component.css']
 })
 export class TermsComponent implements OnInit {
-  get lang() { return lang; }
+  get lang() { return this.language.state.twoLetter; }
 
   public safeSite: SafeResourceUrl;
   constructor(
-    private router: Router,
+    private _router: RouterService,
+    private language: LanguageService,
     sanitizer: DomSanitizer
   ) {
     this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/terms/${this.lang}.txt`);
@@ -24,7 +25,7 @@ export class TermsComponent implements OnInit {
   }
 
   public back() {
-    back(() => this.router.navigate([""]))
+    this._router.back([""])
   }
 
   public translation = {

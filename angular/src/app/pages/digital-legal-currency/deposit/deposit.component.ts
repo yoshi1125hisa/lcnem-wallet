@@ -1,24 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
-import { LoadingDialogComponent } from '../../components/loading-dialog/loading-dialog.component';
-import { AlertDialogComponent } from '../../components/alert-dialog/alert-dialog.component';
-
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
-import { Store } from '@ngrx/store';
-import { State } from '../../store/index'
-import { Observable, Subscription } from 'rxjs';
-import { LanguageService } from '../../services/language/language.service';
-import { Back, Navigate } from '../../store/router/router.actions';
-import { SendDepositRequest } from '../../store/api/deposit/deposit.actions';
+import { RouterService } from '../../../services/router/router.service';
+import { UserService } from '../../../services/user/user.service';
+import { LanguageService } from '../../../services/language/language.service';
+import { ApiService } from '../../../services/api/api.service';
+import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
 
 @Component({
   selector: 'app-deposit',
   templateUrl: './deposit.component.html',
   styleUrls: ['./deposit.component.css']
 })
-export class DepositComponent implements OnInit, OnDestroy {
-  public get lang() { return this.language.twoLetter; }
+export class DepositComponent implements OnInit {
+  public get lang() { return this.language.state.twoLetter }
 
   public readonly supportedCurrencies = [
     "JPY"
@@ -28,92 +24,74 @@ export class DepositComponent implements OnInit, OnDestroy {
   };
   
   public forms: {
-    currency: string,
-    address?: string;
-    amount?: number;
-    method?: string;
+    currency: string
+    address?: string
+    amount?: number
+    method?: string
   } = {
     currency: "JPY"
   };
 
-  public safeSite: SafeResourceUrl;
-
-  private loadingDialog?: MatDialogRef<LoadingDialogComponent>;
-  private subscriptions: Subscription[] = [];
+  public loading = false
+  public error?: Error
+  public safeSite: SafeResourceUrl
 
   constructor(
-    private store: Store<State>,
-    private language: LanguageService,
     private dialog: MatDialog,
-    private auth: AngularFireAuth,
+    private _router: RouterService,
+    private user: UserService,
+    private language: LanguageService,
+    private api: ApiService,
     sanitizer: DomSanitizer
   ) {
-    this.subscriptions.push(
-      this.store.select(state => state.apiDeposit).subscribe(
-        (state) => {
-          if (state.loading && !this.loadingDialog) {
-            this.loadingDialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
-          } else if (this.loadingDialog) {
-            this.loadingDialog.close();
-
-            if(state.error) {
-              this.dialog.open(
-                AlertDialogComponent,
-                {
-                  data: {
-                    title: this.translation.error[this.lang],
-                    content: ""
-                  }
-                }
-              );
-              return;
-            }
-
-            this.dialog.open(
-              AlertDialogComponent,
-              {
-                data: {
-                  title: this.translation.completed[this.lang],
-                  content: this.translation.following[this.lang]
-                }
-              }
-            ).afterClosed().subscribe(
-              (_) => {
-                this.store.dispatch(new Navigate({ commands: [""] }));
-              }
-            );
-          }
-        }
-      )
-    );
-
     this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${this.lang}.txt`);
   }
 
   ngOnInit() {
   }
 
-  ngOnDestroy() {
-    for (let subscription of this.subscriptions) {
-      subscription.unsubscribe();
-    }
-  }
-
   public deposit() {
-    this.store.dispatch(new SendDepositRequest(
+    this.api.deposit(
       {
-        email: this.auth.auth.currentUser!.email!,
+        email: this.user.state.currentUser!.email!,
         nem: this.forms.address!,
         currency: this.forms.currency,
         amount: this.forms.amount!,
         method: this.forms.method!,
         lang: this.lang
       }
-    ));
+    ).subscribe(
+      () => {
+        this.dialog.open(
+          AlertDialogComponent,
+          {
+            data: {
+              title: this.translation.completed[this.lang],
+              content: this.translation.following[this.lang]
+            }
+          }
+        ).afterClosed().subscribe(
+          (_) => {
+            this._router.back([""])
+          }
+        );
+      },
+      (error) => {
+        this.dialog.open(
+          AlertDialogComponent,
+          {
+            data: {
+              title: this.translation.error[this.lang],
+              content: ""
+            }
+          }
+        );
+      }
+    )
   }
 
   public back() {
-    this.store.dispatch(new Back({ commands: [""] }));
+    this._router.back([""])
   }
 
   public translation = {
