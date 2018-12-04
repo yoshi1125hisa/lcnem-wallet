@@ -9,6 +9,8 @@ import { User } from '../../../../../firebase/functions/src/models/user'
 import { RxEffectiveStateStore } from '../../classes/rx-effective-state-store';
 import { RxEffectiveState } from '../../classes/rx-effective-state';
 import { from } from 'rxjs';
+import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
+import { SimpleWallet, Password } from 'nem-library';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +56,8 @@ export class UserService extends RxEffectiveStateStore<State> {
           loading: false,
           currentUser: undefined
         }
+
+        this._subject$.next(state)
       },
       (error) => {
         this.error(error)
@@ -62,11 +66,10 @@ export class UserService extends RxEffectiveStateStore<State> {
   }
 
   public loadUser(userId: string, refresh?: boolean) {
-    if(userId === this._state.lastUserId && !refresh) {
+    if (userId === this._state.lastUserId && !refresh) {
       return;
     }
     this.load()
-
 
     this.firestore.collection("users").doc(userId).get().subscribe(
       (document) => {
@@ -75,6 +78,27 @@ export class UserService extends RxEffectiveStateStore<State> {
           user: document.data() as User,
           lastUserId: userId
         }
+
+        //レガシー
+        if ((state.user as any).wallet) {
+          const account = SimpleWallet.readFromWLT((state.user as any).wallet).open(new Password(userId))
+          let wait = true;
+          document.ref.collection("wallets").add(
+            {
+              name: "1",
+              local: false,
+              nem: account.address.plain(),
+              wallet: (state.user as any).wallet
+            } as Wallet
+          ).then(() => { wait = false })
+          while (wait) { }
+
+          wait = true
+          delete (state.user as any).wallet
+          this.firestore.collection("users").doc(userId).update(state.user!).then(() => { wait = false })
+          while (wait) { }
+        }
+        //レガシー
 
         this._subject$.next(state)
       },
