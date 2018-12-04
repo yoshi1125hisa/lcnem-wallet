@@ -42,7 +42,6 @@ import { LoadingDialogComponent } from './components/loading-dialog/loading-dial
 import { AlertDialogComponent } from './components/alert-dialog/alert-dialog.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
-import { PagesComponent } from './pages/pages.component';
 import { SettingsComponent } from './pages/account/settings/settings.component';
 import { ContactsComponent } from './pages/contacts/contacts.component';
 import { LoginComponent } from './pages/account/login/login.component';
@@ -62,12 +61,10 @@ import { CommonModule } from '@angular/common';
 import { TransferDialogComponent } from './pages/nem/transfer/transfer/transfer-dialog/transfer-dialog.component';
 import { CreateDialogComponent } from './pages/account/wallets/create-dialog/create-dialog.component';
 import { ContactEditDialogComponent } from './pages/contacts/contact-edit-dialog/contact-edit-dialog.component';
-import { PagesRoutingModule } from './pages/pages-routing.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    PagesComponent,
     SettingsComponent,
     ContactsComponent,
     LoginComponent,
@@ -115,9 +112,7 @@ import { PagesRoutingModule } from './pages/pages-routing.module';
     MatMenuModule,
     MatRadioModule,
     MatSnackBarModule,
-    MatTooltipModule,
-    CommonModule,
-    PagesRoutingModule
+    MatTooltipModule
   ],
   entryComponents: [
     LoadingDialogComponent,
