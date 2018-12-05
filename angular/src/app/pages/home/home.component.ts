@@ -15,8 +15,7 @@ NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 export class HomeComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
-  public photoUrl$ = this.user.state$.pipe(
-    map(state => state.currentUser),
+  public photoUrl$ = this.user.user$.pipe(
     map(user => user && user.photoURL ? user.photoURL : "")
   )
 

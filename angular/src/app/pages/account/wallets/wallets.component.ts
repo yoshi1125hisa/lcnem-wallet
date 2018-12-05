@@ -64,7 +64,7 @@ export class WalletsComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    this.wallet.loadWallets(this.user.state.currentUser!.uid, refresh)
+    this.wallet.loadWallets(this.user.user!.uid, refresh)
   }
 
   public addWallet() {
@@ -72,7 +72,7 @@ export class WalletsComponent implements OnInit {
       filter(result => result),
     ).subscribe(
       (result) => {
-        const uid = this.user.state.currentUser!.uid
+        const uid = this.user.user!.uid
 
         const simpleWallet = result.import
           ? SimpleWallet.createWithPrivateKey(uid, new Password(uid), result.privateKey)
@@ -107,7 +107,7 @@ export class WalletsComponent implements OnInit {
       filter(pk => pk)
     ).subscribe(
       (pk) => {
-        const uid = this.user.state.currentUser!.uid
+        const uid = this.user.user!.uid
         const wallet = SimpleWallet.createWithPrivateKey(uid, new Password(uid), pk)
 
         this.localWallet.addLocalWallet(id, wallet.writeWLTFile())
@@ -129,17 +129,14 @@ export class WalletsComponent implements OnInit {
       filter(name => name)
     ).subscribe(
       (name) => {
-        const uid = this.user.state.currentUser!.uid
-        this.wallet.updateWallet(uid, id, { ...wallet, name })
+        this.wallet.updateWallet(this.user.user!.uid, id, { ...wallet, name })
       }
     )
   }
 
   public backupWallet(id: string) {
-    const uid = this.user.state.currentUser!.uid
-
     const wallet = SimpleWallet.readFromWLT(this.wallet.state.entities[id].wallet!);
-    const account = wallet.open(new Password(uid));
+    const account = wallet.open(new Password(this.user.user!.uid));
 
     this.dialog.open(AlertDialogComponent, {
       data: {
@@ -159,9 +156,7 @@ export class WalletsComponent implements OnInit {
       filter(result => result)
     ).subscribe(
       (result) => {
-        const uid = this.user.state.currentUser!.uid
-
-        this.wallet.deleteWallet(uid, id)
+        this.wallet.deleteWallet(this.user.user!.uid, id)
       }
     );
   }

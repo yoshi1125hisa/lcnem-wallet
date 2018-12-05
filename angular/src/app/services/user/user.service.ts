@@ -92,7 +92,6 @@ export class UserService extends RxEffectiveStateStore<State> {
 }
 
 interface State extends RxEffectiveState {
-  currentUser?: firebase.User
   user?: User
   lastUserId?: string
 }

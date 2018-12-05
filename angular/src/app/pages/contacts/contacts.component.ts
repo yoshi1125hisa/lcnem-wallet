@@ -33,9 +33,7 @@ export class ContactsComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    const uid = this.user.state.currentUser!.uid
-
-    this.contact.loadContacts(uid, refresh)
+    this.contact.loadContacts(this.user.user!.uid, refresh)
   }
 
   public back() {
@@ -54,8 +52,7 @@ export class ContactsComponent implements OnInit {
       filter(result => result)
     ).subscribe(
       (result) => {
-        const uid = this.user.state.currentUser!.uid
-        this.contact.addContact(uid, result)
+        this.contact.addContact(this.user.user!.uid, result)
       }
     )
   }
@@ -83,8 +80,7 @@ export class ContactsComponent implements OnInit {
       filter(result => result)
     ).subscribe(
       (result) => {
-        const uid = this.user.state.currentUser!.uid
-        this.contact.deleteContact(uid, id)
+        this.contact.deleteContact(this.user.user!.uid, id)
       }
     );
   }
