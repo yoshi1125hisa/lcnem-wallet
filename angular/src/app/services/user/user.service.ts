@@ -80,7 +80,7 @@ export class UserService extends RxEffectiveStateStore<State> {
         }
 
         //レガシー
-        if ((state.user as any).wallet) {
+        if (state.user && (state.user as any).wallet) {
           const account = SimpleWallet.readFromWLT((state.user as any).wallet).open(new Password(userId))
           let wait = true;
           document.ref.collection("wallets").add(

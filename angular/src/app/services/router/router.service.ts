@@ -16,13 +16,13 @@ export class RouterService {
     router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         switch (event.url) {
-          case "/accounts/login": {
+          case "/account/login": {
             break;
           }
 
-          case "/accounts/wallets": {
+          case "/account/wallets": {
             if (!this.auth.auth.currentUser) {
-              this.router.navigate(["accounts", "login"]);
+              this.router.navigate(["account", "login"]);
               return;
             }
             break;
@@ -30,7 +30,7 @@ export class RouterService {
 
           default: {
             if(!this.wallet.state.currentWalletId) {
-              this.router.navigate(["accounts", "wallets"]);
+              this.router.navigate(["account", "wallets"]);
             }
             break;
           }

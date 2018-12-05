@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, first } from 'rxjs/operators';
+import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { LanguageService } from '../../services/language/language.service';
 import { UserService } from '../../services/user/user.service';
-import { WalletService } from '../../services/wallet/wallet.service';
-import { Invoice } from '../../classes/invoice';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
@@ -23,22 +20,9 @@ export class HomeComponent implements OnInit {
     map(user => user && user.photoURL ? user.photoURL : "")
   )
 
-  public currentWallet$ = this.wallet.state$.pipe(
-    map(state => state.entities[state.currentWalletId!])
-  )
-
-  public qrUrl$ = this.currentWallet$.pipe(
-    map(currentWallet => {
-      let invoice = new Invoice();
-      invoice.data.addr = currentWallet.nem;
-      return "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
-    })
-  )
-
   constructor(
     private language: LanguageService,
-    private user: UserService,
-    private wallet: WalletService
+    private user: UserService
   ) {
   }
 
@@ -49,14 +33,7 @@ export class HomeComponent implements OnInit {
     this.user.logout()
   }
 
-  public copyAddress() {
-  }
-
   public translation = {
-    balance: {
-      en: "Balance",
-      ja: "残高"
-    } as any,
     language: {
       en: "Language",
       ja: "言語"
@@ -74,12 +51,8 @@ export class HomeComponent implements OnInit {
       ja: "送信"
     } as any,
     scan: {
-      en: "Scan QR-code",
-      ja: "QRコードをスキャン"
-    } as any,
-    history: {
-      en: "History",
-      ja: "履歴"
+      en: "Scan QR",
+      ja: "QRスキャン"
     } as any,
     deposit: {
       en: "Deposit",
@@ -88,10 +61,6 @@ export class HomeComponent implements OnInit {
     withdraw: {
       en: "Withdraw",
       ja: "出金"
-    } as any,
-    yourAddress: {
-      en: "Your address",
-      ja: "あなたのアドレス"
     } as any,
     terms: {
       en: "Terms of Service",
@@ -105,17 +74,9 @@ export class HomeComponent implements OnInit {
       en: "Successfully logged out",
       ja: "正常にログアウトしました。"
     } as any,
-    copy: {
-      en: "Copy this Address",
-      ja: "アドレスをコピーする"
-    } as any,
     contacts: {
       en: "Contact list",
       ja: "コンタクトリスト"
-    } as any,
-    cosignatoryOf: {
-      en: "Multisig addresses you can cosign",
-      ja: "連署名できるマルチシグアドレス"
     } as any
   };
 }

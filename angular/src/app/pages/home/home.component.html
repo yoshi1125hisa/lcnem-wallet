@@ -6,28 +6,28 @@
     </mat-toolbar>
     <div fxLayout="column">
       <mat-nav-list>
-        <mat-list-item routerLink="/transactions/transfer">
+        <mat-list-item routerLink="/nem/transfer">
           <mat-icon mat-list-icon>send</mat-icon>
           {{translation.transfer[lang]}}
         </mat-list-item>
-        <mat-list-item routerLink="/transactions/scan">
+        <mat-list-item routerLink="/nem/qr-scan">
           <mat-icon mat-list-icon>center_focus_strong</mat-icon>
           {{translation.scan[lang]}}
         </mat-list-item>
-        <mat-list-item routerLink="/accounts/deposit">
+        <mat-list-item routerLink="/digital-legal-currency/deposit">
           <mat-icon mat-list-icon>call_received</mat-icon>
           {{translation.deposit[lang]}}
         </mat-list-item>
-        <mat-list-item routerLink="/accounts/withdraw">
+        <mat-list-item routerLink="/digital-legal-currency/withdraw">
           <mat-icon mat-list-icon>call_made</mat-icon>
           {{translation.withdraw[lang]}}
         </mat-list-item>
-        <mat-list-item routerLink="/accounts/contacts">
+        <mat-list-item routerLink="/contacts">
           <mat-icon mat-list-icon>contacts</mat-icon>
           {{translation.contacts[lang]}}
         </mat-list-item>
         <mat-divider></mat-divider>
-        <mat-list-item routerLink="/accounts/wallets">
+        <mat-list-item routerLink="/account/wallets">
           <mat-icon mat-list-icon>account_balance_wallet</mat-icon>
           {{translation.wallets[lang]}}
         </mat-list-item>
@@ -36,7 +36,7 @@
           {{translation.logout[lang]}}
         </mat-list-item>
         <mat-divider></mat-divider>
-        <mat-list-item routerLink="/terms/terms">
+        <mat-list-item routerLink="/terms">
           <mat-icon mat-list-icon>list_alt</mat-icon>
           {{translation.terms[lang]}}
         </mat-list-item>
@@ -60,30 +60,7 @@
       <app-language-menu></app-language-menu>
     </mat-toolbar>
     <div class="mat-typography body-container">
-      <h3>{{translation.balance[lang]}}</h3>
-      <mat-card>
-        <app-balance></app-balance>
-      </mat-card>
-      <br />
-      <h3>{{translation.yourAddress[lang]}}</h3>
-      <mat-card>
-        <p class="address">{{(currentWallet$ | async).nem}}
-          <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyAddress()">
-            <mat-icon>input</mat-icon>
-          </button>
-        </p>
-        <img class="qr" [src]="qrUrl$ | async" />
-      </mat-card>
-      <br />
-      <h3>{{translation.cosignatoryOf[lang]}}</h3>
-      <mat-card>
-        <app-multisig></app-multisig>
-      </mat-card>
-      <br />
-      <h3>{{translation.history[lang]}}</h3>
-      <mat-card>
-        <app-history></app-history>
-      </mat-card>
+      <app-nem></app-nem>
     </div>
     <button mat-fab color="accent" class="floating-action-button" (click)="sidenav.toggle()">
       <mat-icon>menu</mat-icon>
