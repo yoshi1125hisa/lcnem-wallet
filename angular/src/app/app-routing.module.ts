@@ -11,11 +11,13 @@ import { TransferComponent } from './pages/nem/transfer/transfer.component';
 import { TermsComponent } from './pages/terms/terms.component';
 import { PrivacyPolicyComponent } from './pages/terms/privacy-policy/privacy-policy.component';
 import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
+import { WalletsComponent } from './pages/account/wallets/wallets.component';
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
   { path: "account/login", component: LoginComponent },
   { path: "account/settings", component: SettingsComponent },
+  { path: "account/wallets", component: WalletsComponent },
   { path: "contacts", component: ContactsComponent },
   { path: "digital-legal-currency/deposit", component: DepositComponent },
   { path: "digital-legal-currency/withdraw", component: WithdrawComponent },
@@ -28,6 +30,6 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+exports: [RouterModule]
 })
 export class AppRoutingModule { }
