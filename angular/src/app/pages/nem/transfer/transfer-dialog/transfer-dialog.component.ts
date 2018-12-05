@@ -25,7 +25,7 @@ export class TransferDialogComponent {
     }
   ) {
     this.transaction = data.transaction as TransferTransaction;
-    this.assets = this.transaction.mosaics();
+    this.assets = this.transaction.assets();
     this.fee = [new XEM(this.transaction.fee / 1000000)];
     this.levy = [];
 

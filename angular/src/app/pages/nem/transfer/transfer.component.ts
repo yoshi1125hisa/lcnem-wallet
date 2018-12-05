@@ -221,7 +221,7 @@ export class TransferComponent implements OnInit, OnDestroy {
     ).pipe(
       map(
         (data) => {
-          return TransferTransaction.createWithMosaics(
+          return TransferTransaction.createWithAssets(
             TimeWindow.createWithDeadline(),
             data[1].address,
             mosaics,

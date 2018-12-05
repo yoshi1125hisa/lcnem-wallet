@@ -7,16 +7,20 @@ import { RxStateStore } from '../../classes/rx-state-store';
 })
 export class LanguageService extends RxStateStore<State> {
   constructor() {
-    super({
-      twoLetter: window.navigator.language.substr(0, 2) == "ja" ? "ja" : "en"
-    })
+    super(
+      {
+        twoLetter: window.navigator.language.substr(0, 2) == "ja" ? "ja" : "en"
+      }
+    )
   }
 
   public setLanguage(twoLetter: string) {
-    this._subject$.next({
-      twoLetter: twoLetter,
-      ...this._state
-    })
+    this.streamState(
+      {
+        twoLetter: twoLetter,
+        ...this._state
+      }
+    )
   }
 }
 

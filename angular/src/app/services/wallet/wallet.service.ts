@@ -101,7 +101,6 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
           loading: false
         }
 
-
         this.streamState(state)
       },
       (error) => {

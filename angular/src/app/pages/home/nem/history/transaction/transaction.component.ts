@@ -101,8 +101,8 @@ export class TransactionComponent implements OnInit {
           }
         )
 
-        if (transferTransaction.containsMosaics()) {
-          this.assets = transferTransaction.mosaics();
+        if (transferTransaction.containAssets()) {
+          this.assets = transferTransaction.assets();
         } else {
           this.assets = [new Asset(new AssetId("nem", "xem"), transferTransaction.xem().quantity)];
         }
