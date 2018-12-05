@@ -25,15 +25,6 @@ export class UserService extends RxEffectiveStateStore<State> {
         loading: false
       }
     )
-
-    this.auth.user.subscribe(
-      (user) => {
-        if (!user) {
-          return
-        }
-        this.loadUser(user.uid)
-      }
-    )
   }
 
   public get user() { return this.auth.auth.currentUser }

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { Asset, AssetDefinition } from 'nem-library';
 import { Observable, of, from } from 'rxjs';
-import { map, mergeMap, filter } from 'rxjs/operators';
+import { map, mergeMap, filter, toArray } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
 
@@ -21,12 +21,12 @@ export class AssetsListComponent implements OnInit {
 
   public loading$: Observable<boolean>;
   public assets$: Observable<{
-    name: string,
-    amount: number,
-    imageURL: string,
-    issuer?: string,
+    name: string
+    amount: number
+    imageURL: string
+    issuer?: string
     unit?: string
-  }>[] = [];
+  }[]> = new Observable()
 
   constructor(
     private language: LanguageService,
@@ -42,26 +42,29 @@ export class AssetsListComponent implements OnInit {
 
     this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
 
-    this.assets$ = this.assets.map(
-      (asset) => {
-        return this.assetDefinition.state$.pipe(
-          map(state => state.definitions),
-          mergeMap(definitions => from(definitions)),
-          filter(definition => definition.id.equals(asset.assetId)),
-          map(
-            (definition) => {
-              const name = asset.assetId.toString()
-              const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || {}
-              return {
-                ...additionaldefinition,
-                name: name,
-                amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
-                imageURL: this.getImageURL(name)
+    this.assets$ = from(this.assets).pipe(
+      mergeMap(
+        (asset) => {
+          return this.assetDefinition.state$.pipe(
+            map(state => state.definitions),
+            mergeMap(definitions => from(definitions)),
+            filter(definition => definition.id.equals(asset.assetId)),
+            map(
+              (definition) => {
+                const name = asset.assetId.toString()
+                const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || {}
+                return {
+                  ...additionaldefinition,
+                  name: name,
+                  amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
+                  imageURL: this.getImageURL(name)
+                }
               }
-            }
+            )
           )
-        )
-      }
+        }
+      ),
+      toArray()
     )
   }
 

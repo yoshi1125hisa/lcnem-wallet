@@ -14,11 +14,12 @@ import { ShareService } from '../../../services/api/share/share.service';
 export class NemComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
-  public currentWallet$ = this.wallet.state$.pipe(
-    map(state => state.entities[state.currentWalletId!])
+  public address$ = this.wallet.state$.pipe(
+    map(state => state.entities[state.currentWalletId!].nem)
   )
 
-  public qrUrl$ = this.currentWallet$.pipe(
+  public qrUrl$ = this.wallet.state$.pipe(
+    map(state => state.entities[state.currentWalletId!]),
     map(currentWallet => {
       let invoice = new Invoice();
       invoice.data.addr = currentWallet.nem;

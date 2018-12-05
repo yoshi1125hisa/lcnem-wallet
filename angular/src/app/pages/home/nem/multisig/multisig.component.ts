@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, forkJoin } from 'rxjs';
+import { map, first } from 'rxjs/operators';
 import { Address, Wallet } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
 import { MultisigService } from '../../../../services/nem/multisig/multisig.service';
@@ -14,7 +14,12 @@ import { WalletService } from '../../../../services/wallet/wallet.service';
 export class MultisigComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
-  public loading$ = this.multisig.state$.pipe(map(state => state.loading))
+  public loading$ = forkJoin(
+    this.wallet.state$.pipe(map(state => state.loading)),
+    this.multisig.state$.pipe(map(state => state.loading))
+  ).pipe(
+    map(data => data[0] || data[1])
+  )
   public multisigs$ = this.multisig.state$.pipe(map(state => state.addresses))
 
   constructor(
@@ -29,8 +34,12 @@ export class MultisigComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    const address = new Address(this.wallet.state.entities[this.wallet.state.currentWalletId!].nem)
-    this.multisig.loadMultisig(address, refresh)
+    this.wallet.state$.pipe(first()).subscribe(
+      (state) => {
+        const address = new Address(state.entities[state.currentWalletId!].nem)
+        this.multisig.loadMultisig(address, refresh)
+      }
+    )
   }
 
   public onClick(address: string) {

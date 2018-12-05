@@ -122,7 +122,7 @@ export class TransactionComponent implements OnInit {
       return this.translation.importRequired[this.lang]
     }
 
-    const password = new Password(this.user.state.currentUser!.uid)
+    const password = new Password(this.user.user!.uid)
     const account = SimpleWallet.readFromWLT(wallet.wallet).open(password)
 
     if (account.address.equals(signer.address)) {

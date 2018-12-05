@@ -14,6 +14,6 @@
       </mat-list-item>
       <mat-divider></mat-divider>
     </ng-container>
-    <p class="empty" *ngIf="!(multisigs$ | async).length">{{translation.empty[lang]}}</p>
+    <p class="empty" *ngIf="!(multisigs$ | async)?.length">{{translation.empty[lang]}}</p>
   </mat-list>
 </ng-template>

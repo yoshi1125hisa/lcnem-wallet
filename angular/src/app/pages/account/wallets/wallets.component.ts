@@ -24,6 +24,7 @@ export class WalletsComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
   public lang$ = this.language.state$.pipe(map(state => state.twoLetter))
 
+  public loading$ = this.wallet.state$.pipe(map(state => state.loading))
   public state$ = this.wallet.state$;
 
   public clouds$ = this.state$.pipe(

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Transaction, TransactionTypes, MultisigTransaction, TransferTransaction, Address } from 'nem-library';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 import { LanguageService } from '../../../../services/language/language.service';
 import { WalletService } from '../../../../services/wallet/wallet.service';
@@ -14,16 +14,19 @@ import { HistoryService } from '../../../../services/nem/history/history.service
 export class HistoryComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
-  public loading$: Observable<boolean>;
-  public transactions$: Observable<Transaction[]>;
+  public loading$ = forkJoin(
+    this.wallet.state$.pipe(map(state => state.loading)),
+    this.history.state$.pipe(map(state => state.loading))
+  ).pipe(
+    map(data => data[0] || data[1])
+  )
+  public transactions$ = this.history.state$.pipe(map(state => state.transactions))
 
   constructor(
     private language: LanguageService,
     private wallet: WalletService,
     private history: HistoryService
   ) {
-    this.loading$ = this.history.state$.pipe(map(state => state.loading))
-    this.transactions$ = this.history.state$.pipe(map(state => state.transactions))
   }
 
   ngOnInit() {
@@ -31,8 +34,12 @@ export class HistoryComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    const address = new Address(this.wallet.state.entities[this.wallet.state.currentWalletId!].nem)
-    this.history.loadHistories(address, refresh)
+    this.wallet.state$.pipe(first()).subscribe(
+      (state) => {
+        const address = new Address(state.entities[state.currentWalletId!].nem)
+        this.history.loadHistories(address, refresh)
+      }
+    )
   }
 
   public translation = {

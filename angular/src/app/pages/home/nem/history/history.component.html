@@ -9,5 +9,5 @@
   <ng-container *ngFor="let transaction of transactions$ | async">
     <app-transaction [transaction]="transaction"></app-transaction>
   </ng-container>
-  <p *ngIf="!(transactions$ | async).length" class="empty">{{translation.noTransaction[lang]}}</p>
+  <p *ngIf="!(transactions$ | async)?.length" class="empty">{{translation.noTransaction[lang]}}</p>
 </ng-template>

@@ -10,7 +10,7 @@
       <app-language-menu></app-language-menu>
     </mat-toolbar>
     <div class="mat-typography body-container">
-      <mat-spinner *ngIf="(state$ | async).loading; else loaded"></mat-spinner>
+      <mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
       <ng-template #loaded>
         <ng-container *ngFor="let id of (state$ | async).ids">
           <mat-card>

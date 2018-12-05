@@ -5,7 +5,7 @@
 <br />
 <h3>{{translation.yourAddress[lang]}}</h3>
 <mat-card>
-  <p class="address">{{(currentWallet$ | async).nem}}
+  <p class="address">{{address$ | async}}
     <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyAddress()">
      <mat-icon>input</mat-icon>
     </button>
