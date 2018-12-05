@@ -1,11 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
+import { from } from 'rxjs';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { RouterService } from '../../../services/router/router.service';
 import { UserService } from '../../../services/user/user.service';
 import { LanguageService } from '../../../services/language/language.service';
-import { MatDialog } from '@angular/material';
 import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
 
 
@@ -14,32 +15,11 @@ import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dia
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class LoginComponent implements OnInit {
   get lang() { return this.language.state.twoLetter; }
 
   public agree = false;
   public safeSite: SafeResourceUrl;
-
-  private subscription = this.user.state$.subscribe(
-    (state) => {
-      if(state.currentUser) {
-        this.user.loadUser(state.currentUser.uid)
-        this.router.navigate([""])
-        return
-      }
-      if(state.error) {
-        this.dialog.open(
-          AlertDialogComponent,
-          {
-            data: {
-              title: "",
-              content: ""
-            }
-          }
-        )
-      }
-    }
-  )
 
   constructor(
     private router: Router,
@@ -55,10 +35,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit() {
   }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe()
-  }
-
   public setLanguage(twoLetter: string) {
     this.language.setLanguage(twoLetter)
   }
@@ -68,7 +44,22 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   public login() {
-    this.user.login()
+    from(this.user.login()).subscribe(
+      (user) => {
+        this.router.navigate([""])
+      },
+      (error) => {
+        this.dialog.open(
+          AlertDialogComponent,
+          {
+            data: {
+              title: this.translation.error[this.lang],
+              content: this.translation.errorBody[this.lang]
+            }
+          }
+        )
+      }
+    )
   }
 
   public translation = {
@@ -84,9 +75,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       en: "Error",
       ja: "エラー"
     } as any,
-    errorBodt: {
+    errorBody: {
       en: "Please retry. It is recommended to delete caches.",
       ja: "再試行してください。キャッシュを削除することが推奨されます。"
-    }
+    } as any
   };
 }

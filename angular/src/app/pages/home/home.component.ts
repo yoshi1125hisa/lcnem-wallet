@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Router } from '@angular/router';
 import { map, mergeMap, first } from 'rxjs/operators';
 import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { LanguageService } from '../../services/language/language.service';
@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit {
   )
 
   constructor(
+    private router: Router,
     private language: LanguageService,
     private user: UserService
   ) {
@@ -31,6 +32,7 @@ export class HomeComponent implements OnInit {
 
   public logout() {
     this.user.logout()
+    this.router.navigate(["account", "login"])
   }
 
   public translation = {

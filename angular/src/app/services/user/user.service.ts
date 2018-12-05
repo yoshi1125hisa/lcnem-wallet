@@ -8,7 +8,6 @@ import 'firebase/auth';
 import { User } from '../../../../../firebase/functions/src/models/user'
 import { RxEffectiveStateStore } from '../../classes/rx-effective-state-store';
 import { RxEffectiveState } from '../../classes/rx-effective-state';
-import { from } from 'rxjs';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { SimpleWallet, Password } from 'nem-library';
 
@@ -23,46 +22,29 @@ export class UserService extends RxEffectiveStateStore<State> {
   ) {
     super(
       {
-        loading: false,
-        currentUser: auth.auth.currentUser || undefined
+        loading: false
+      }
+    )
+
+    this.auth.user.subscribe(
+      (user) => {
+        if (!user) {
+          return
+        }
+        this.loadUser(user.uid)
       }
     )
   }
 
-  public login() {
-    this.streamLoadingState()
-    from(this.auth.auth.signInWithPopup(new firebase.auth!.GoogleAuthProvider)).subscribe(
-      (user) => {
-        const state: State = {
-          ...this._state,
-          loading: false,
-          currentUser: user.user || undefined
-        }
+  public get user() { return this.auth.auth.currentUser }
+  public user$ = this.auth.user
 
-        this.streamState(state)
-      },
-      (error) => {
-        this.streamErrorState(error)
-      }
-    )
+  public login() {
+    return this.auth.auth.signInWithPopup(new firebase.auth!.GoogleAuthProvider)
   }
 
   public logout() {
-    this.streamLoadingState()
-    from(this.auth.auth.signOut()).subscribe(
-      () => {
-        const state: State = {
-          ...this._state,
-          loading: false,
-          currentUser: undefined
-        }
-
-        this.streamState(state)
-      },
-      (error) => {
-        this.streamErrorState(error)
-      }
-    )
+    this.auth.auth.signOut()
   }
 
   public loadUser(userId: string, refresh?: boolean) {
