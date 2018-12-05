@@ -66,6 +66,7 @@ import { WalletCreateDialogComponent } from './pages/account/wallets/wallet-crea
 import { TransferComponent } from './pages/nem/transfer/transfer.component';
 import { TransferDialogComponent } from './pages/nem/transfer/transfer-dialog/transfer-dialog.component';
 import { AssetsListComponent } from './components/assets-list/assets-list.component';
+import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
 
 @NgModule({
   declarations: [
@@ -93,10 +94,15 @@ import { AssetsListComponent } from './components/assets-list/assets-list.compon
     WalletCreateDialogComponent,
     TransferComponent,
     TransferDialogComponent,
-    AssetsListComponent
+    AssetsListComponent,
+    PageNotFoundComponent,
+    LoadingDialogComponent,
+    AlertDialogComponent,
+    ConfirmDialogComponent,
+    PromptDialogComponent,
   ],
   imports: [
-    BrowserModule,
+  BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
@@ -134,7 +140,6 @@ import { AssetsListComponent } from './components/assets-list/assets-list.compon
     ConfirmDialogComponent,
     PromptDialogComponent,
     TransferDialogComponent,
-    ContactsComponent,
     ContactEditDialogComponent,
     WalletCreateDialogComponent
   ],
