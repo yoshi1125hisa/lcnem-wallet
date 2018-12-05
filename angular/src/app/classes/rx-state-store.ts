@@ -1,7 +1,7 @@
 import { Subject } from "rxjs";
 
 export class RxStateStore<T> {
-  protected _subject$ = new Subject<T>()
+  private _subject$ = new Subject<T>()
   protected _state: T
   protected _state$ = this._subject$.asObservable()
 
@@ -16,5 +16,9 @@ export class RxStateStore<T> {
         this._state = state
       }
     )
+  }
+
+  protected streamState(state: T) {
+    this._subject$.next(state)
   }
 }

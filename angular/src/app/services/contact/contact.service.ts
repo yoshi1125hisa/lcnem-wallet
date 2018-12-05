@@ -25,7 +25,7 @@ export class ContactService extends RxEntityStateStore<State, Contact> {
     if(userId === this._state.lastUserId && !refresh) {
       return;
     }
-    this.load()
+    this.streamLoadingState()
 
     this.firestore.collection("users").doc(userId).collection("contacts").get().subscribe(
       (collection) => {
@@ -39,10 +39,10 @@ export class ContactService extends RxEntityStateStore<State, Contact> {
           state.entities[doc.id] = doc.data() as Contact
         }
 
-        this._subject$.next(state)
+        this.streamState(state)
       },
       (error) => {
-        this.error(error)
+        this.streamErrorState(error)
       }
     )
   }
@@ -51,19 +51,19 @@ export class ContactService extends RxEntityStateStore<State, Contact> {
     if(userId !== this._state.lastUserId) {
       throw Error()
     }
-    this.load()
+    this.streamLoadingState()
 
     from(this.firestore.collection("users").doc(userId).collection("contacts").add(contact)).subscribe(
       (document) => {
         const state: State = {
-          ...this.addEntity(document.id, contact),
+          ...this.getEntityAddedState(document.id, contact),
           loading: false
         }
         
-        this._subject$.next(state)
+        this.streamState(state)
       },
       (error) => {
-        this.error(error)
+        this.streamErrorState(error)
       }
     )
   }
@@ -72,19 +72,19 @@ export class ContactService extends RxEntityStateStore<State, Contact> {
     if(userId !== this._state.lastUserId) {
       throw Error()
     }
-    this.load()
+    this.streamLoadingState()
 
     from(this.firestore.collection("users").doc(userId).collection("contacts").doc(contactId).set(contact)).subscribe(
       () => {
         const state: State = {
-          ...this.updateEntity(contactId, contact),
+          ...this.getEntityUpdatedState(contactId, contact),
           loading: false
         }
 
-        this._subject$.next(state)
+        this.streamState(state)
       },
       (error) => {
-        this.error(error)
+        this.streamErrorState(error)
       }
     )
   }
@@ -93,19 +93,19 @@ export class ContactService extends RxEntityStateStore<State, Contact> {
     if(userId !== this._state.lastUserId) {
       throw Error()
     }
-    this.load()
+    this.streamLoadingState()
 
     from(this.firestore.collection("users").doc(userId).collection("contacts").doc(contactId).delete()).subscribe(
       () => {
         const state: State = {
-          ...this.deleteEntity(contactId),
+          ...this.getEntityDeletedState(contactId),
           loading: false
         }
 
-        this._subject$.next(state)
+        this.streamState(state)
       },
       (error) => {
-        this.error(error)
+        this.streamErrorState(error)
       }
     )
   }

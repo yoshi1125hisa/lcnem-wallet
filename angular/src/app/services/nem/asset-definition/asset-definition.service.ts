@@ -25,7 +25,7 @@ export class AssetDefinitionService extends RxEffectiveStateStore<State> {
       return;
     }
 
-    this.load();
+    this.streamLoadingState();
 
     const assetHttp = new AssetHttp(nodes);
     from(filteredId).pipe(
@@ -40,7 +40,7 @@ export class AssetDefinitionService extends RxEffectiveStateStore<State> {
         }
       },
       (error) => {
-        this.error(error)
+        this.streamErrorState(error)
       }
     )
     

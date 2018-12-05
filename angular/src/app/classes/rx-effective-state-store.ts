@@ -2,27 +2,23 @@ import { RxStateStore } from "./rx-state-store";
 import { RxEffectiveState } from "./rx-effective-state";
 
 export class RxEffectiveStateStore<T extends RxEffectiveState> extends RxStateStore<T> {
-  protected load() {
-    const state: T = Object.assign(
-      {
-        loading: true,
-        error: undefined
-      },
-      this._state
-    )
+  protected streamLoadingState() {
+    const state: T = {
+      ...this._state as any,
+      loading: true,
+      error: undefined
+    } 
 
-    this._subject$.next(state)
+    this.streamState(state)
   }
 
-  protected error(error: Error) {
-    const state: T = Object.assign(
-      {
-        loading: false,
-        error: error
-      },
-      this._state
-    )
+  protected streamErrorState(error: Error) {
+    const state: T = {
+      ...this._state as any,
+      loading: false,
+      error: error
+    }
 
-    this._subject$.next(state)
+    this.streamState(state)
   }
 }

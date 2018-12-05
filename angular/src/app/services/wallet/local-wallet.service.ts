@@ -33,7 +33,7 @@ export class LocalWalletService extends RxEntityStateStore<State, string> {
 
 
   public loadLocalWallets() {
-    this.load()
+    this.streamLoadingState()
 
     of(this.loadLocalStorage()).subscribe(
       (localWallets) => {
@@ -44,37 +44,37 @@ export class LocalWalletService extends RxEntityStateStore<State, string> {
           entities: localWallets
         }
 
-        this._subject$.next(state)
+        this.streamState(state)
       },
       (error) => {
-        this.error(error)
+        this.streamErrorState(error)
       }
     )
   }
 
   public addLocalWallet(id: string, wallet: string) {
-    this.load()
+    this.streamLoadingState()
 
     const state: State = {
-      ...this.addEntity(id, wallet),
+      ...this.getEntityAddedState(id, wallet),
       loading: false
     }
     
     this.setLocalStorage(state.entities)
 
-    this._subject$.next(state)
+    this.streamState(state)
   }
 
   public deleteLocalWallet(id: string) {
-    this.load()
+    this.streamLoadingState()
 
     const state: State = {
-      ...this.deleteEntity(id),
+      ...this.getEntityDeletedState(id),
       loading: false
     }
     this.setLocalStorage(state.entities)
 
-    this._subject$.next(state)
+    this.streamState(state)
   }
 }
 

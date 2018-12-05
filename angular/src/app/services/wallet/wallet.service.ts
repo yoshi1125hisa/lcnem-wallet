@@ -26,7 +26,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
     if (userId === this._state.lastUserId && !refresh) {
       return
     }
-    this.load()
+    this.streamLoadingState()
 
     this.firestore.collection("users").doc(userId).collection("wallets").get().subscribe(
       (collection) => {
@@ -40,10 +40,10 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
           state.entities[doc.id] = doc.data() as Wallet
         }
 
-        this._subject$.next(state)
+        this.streamState(state)
       },
       (error) => {
-        this.error(error)
+        this.streamErrorState(error)
       }
     )
   }
@@ -52,18 +52,18 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
     if (userId !== this._state.lastUserId) {
       throw Error()
     }
-    this.load()
+    this.streamLoadingState()
     from(this.firestore.collection("users").doc(userId).collection("wallets").add(wallet)).subscribe(
       (document) => {
         const state: State = {
-          ...this.addEntity(document.id, wallet),
+          ...this.getEntityAddedState(document.id, wallet),
           loading: false
         }
 
-        this._subject$.next(state)
+        this.streamState(state)
       },
       (error) => {
-        this.error(error)
+        this.streamErrorState(error)
       }
     )
   }
@@ -72,18 +72,18 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
     if (userId !== this._state.lastUserId) {
       throw Error()
     }
-    this.load()
+    this.streamLoadingState()
     from(this.firestore.collection("users").doc(userId).collection("wallets").doc(walletId).set(wallet)).subscribe(
       () => {
         const state: State = {
-          ...this.updateEntity(walletId, wallet),
+          ...this.getEntityUpdatedState(walletId, wallet),
           loading: false
         }
 
-        this._subject$.next(state)
+        this.streamState(state)
       },
       (error) => {
-        this.error(error)
+        this.streamErrorState(error)
       }
     )
   }
@@ -92,20 +92,20 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
     if (userId !== this._state.lastUserId) {
       throw Error()
     }
-    this.load()
+    this.streamLoadingState()
 
     from(this.firestore.collection("users").doc(userId).collection("wallets").doc(walletId).delete()).subscribe(
       () => {
         const state: State = {
-          ...this.deleteEntity(walletId),
+          ...this.getEntityDeletedState(walletId),
           loading: false
         }
 
 
-        this._subject$.next(state)
+        this.streamState(state)
       },
       (error) => {
-        this.error(error)
+        this.streamErrorState(error)
       }
     )
   }
@@ -116,7 +116,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
       currentWalletId: id
     }
 
-    this._subject$.next(state)
+    this.streamState(state)
   }
 }
 

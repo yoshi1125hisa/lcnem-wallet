@@ -30,7 +30,7 @@ export class UserService extends RxEffectiveStateStore<State> {
   }
 
   public login() {
-    this.load()
+    this.streamLoadingState()
     from(this.auth.auth.signInWithPopup(new firebase.auth!.GoogleAuthProvider)).subscribe(
       (user) => {
         const state: State = {
@@ -39,16 +39,16 @@ export class UserService extends RxEffectiveStateStore<State> {
           currentUser: user.user || undefined
         }
 
-        this._subject$.next(state)
+        this.streamState(state)
       },
       (error) => {
-        this.error(error)
+        this.streamErrorState(error)
       }
     )
   }
 
   public logout() {
-    this.load()
+    this.streamLoadingState()
     from(this.auth.auth.signOut()).subscribe(
       () => {
         const state: State = {
@@ -57,10 +57,10 @@ export class UserService extends RxEffectiveStateStore<State> {
           currentUser: undefined
         }
 
-        this._subject$.next(state)
+        this.streamState(state)
       },
       (error) => {
-        this.error(error)
+        this.streamErrorState(error)
       }
     )
   }
@@ -69,7 +69,7 @@ export class UserService extends RxEffectiveStateStore<State> {
     if (userId === this._state.lastUserId && !refresh) {
       return;
     }
-    this.load()
+    this.streamLoadingState()
 
     this.firestore.collection("users").doc(userId).get().subscribe(
       (document) => {
@@ -100,10 +100,10 @@ export class UserService extends RxEffectiveStateStore<State> {
         }
         //レガシー
 
-        this._subject$.next(state)
+        this.streamState(state)
       },
       (error) => {
-        this.error(error)
+        this.streamErrorState(error)
       }
     )
   }
