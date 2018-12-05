@@ -53,7 +53,7 @@ export class DepositComponent implements OnInit {
   public deposit() {
     this.api.deposit(
       {
-        email: this.user.state.currentUser!.email!,
+        email: this.user.user!.email!,
         nem: this.forms.address!,
         currency: this.forms.currency,
         amount: this.forms.amount!,

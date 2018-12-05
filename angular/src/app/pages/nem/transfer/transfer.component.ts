@@ -64,7 +64,7 @@ export class TransferComponent implements OnInit, OnDestroy {
           this.openSnackBar("import")
           return null
         }
-        const password = new Password(this.user.state.currentUser!.uid);
+        const password = new Password(this.user.user!.uid);
         return SimpleWallet.readFromWLT(wallet.wallet).open(password);
       }
     )

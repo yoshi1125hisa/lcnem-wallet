@@ -50,7 +50,7 @@ export class WithdrawComponent implements OnInit {
   public withdraw() {
     this.api.withdraw(
       {
-        email: this.user.state.currentUser!.email!,
+        email: this.user.user!.email!,
         nem: this.forms.address!,
         currency: this.forms.currency,
         amount: this.forms.amount!,
