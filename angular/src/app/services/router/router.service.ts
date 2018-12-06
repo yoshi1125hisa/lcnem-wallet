@@ -14,7 +14,7 @@ export class RouterService {
     private wallet: WalletService
   ) {
     this.auth.user$.subscribe(
-      (user) => {
+      (user) => {console.log(user)
         if(!user) {
           this.router.navigate(["account", "login"])
         }
@@ -22,7 +22,7 @@ export class RouterService {
     )
 
     this.wallet.state$.subscribe(
-      (state) => {
+      (state) => {console.log(state)
         if(!state.loading && !state.currentWalletId) {
           this.router.navigate(["account", "wallets"])
         }

@@ -8,7 +8,7 @@
       <mat-icon>input</mat-icon>
     </button>
   </p>
-  <img class="qr" [src]="qrUrl$ | async" />
+  <img class="qr" [src]="(qrUrl$ | async) || ''" />
 </mat-card>
 <br />
 <h3>{{translation.cosignatoryOf[lang]}}</h3>
