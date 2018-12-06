@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Asset, AssetDefinition } from 'nem-library';
 import { Observable, of, from } from 'rxjs';
 import { map, mergeMap, filter, toArray } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { AssetDefinitionService } from '../../services/nem/asset-definition/asse
   templateUrl: './assets-list.component.html',
   styleUrls: ['./assets-list.component.css']
 })
-export class AssetsListComponent implements OnInit {
+export class AssetsListComponent implements OnInit, OnChanges {
   public get lang() { return this.language.state.twoLetter; }
 
   @Input() public title = "";
@@ -36,8 +36,16 @@ export class AssetsListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.load()
+  }
+
+  ngOnChanges(changes: any) {
+    this.load()
+  }
+
+  public load() {
     if (!this.assets) {
-      return;
+      return
     }
 
     this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))

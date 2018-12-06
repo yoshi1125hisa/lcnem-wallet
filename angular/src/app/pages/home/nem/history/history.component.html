@@ -1,9 +1,9 @@
-<mat-toolbar>
+<div fxLayout="row">
   <span class="fill-remaining-space"></span>
   <button mat-icon-button color="accent" (click)="load(true)">
     <mat-icon>refresh</mat-icon>
   </button>
-</mat-toolbar>
+</div>
 <mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
 <ng-template #loaded>
   <ng-container *ngFor="let transaction of transactions$ | async">

@@ -8,7 +8,7 @@
     <mat-icon color="accent" (mouseover)="openSnackBar('multisig')" *ngIf="multisig">people</mat-icon>
     <span>{{address}}</span>
   </div>
+  <app-assets-list [title]="translation.assets[lang]" [assets]="assets"></app-assets-list>
+  <blockquote>{{message}}</blockquote>
+  <p>{{date}}</p>
 </mat-card>
-<app-assets-list [title]="translation.assets[lang]" [assets]="assets"></app-assets-list>
-<blockquote>{{message}}</blockquote>
-<p>{{date}}</p>

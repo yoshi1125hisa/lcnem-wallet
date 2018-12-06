@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { from } from 'rxjs';
+import { from, Subject } from 'rxjs';
 import { RxEntityStateStore } from '../../classes/rx-entity-state-store';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { RxEntityState } from '../../classes/rx-entity-state';
@@ -28,24 +28,33 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
     }
     this.streamLoadingState()
 
+    const subject$ = new Subject()
+
     this.firestore.collection("users").doc(userId).collection("wallets").get().subscribe(
       (collection) => {
+        const currentWalletId = localStorage.getItem("currentWallet") || undefined
         const state: State = {
           loading: false,
           ids: collection.docs.map(doc => doc.id),
           entities: {},
-          currentWalletId: userId
+          currentWalletId: currentWalletId
         }
         for (const doc of collection.docs) {
           state.entities[doc.id] = doc.data() as Wallet
         }
 
         this.streamState(state)
+        subject$.next()
+        subject$.complete()
       },
       (error) => {
         this.streamErrorState(error)
+        subject$.next()
+        subject$.complete()
       }
     )
+
+    return subject$
   }
 
   public addWallet(userId: string, wallet: Wallet) {
@@ -110,6 +119,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
   }
 
   public setCurrentWallet(id: string) {
+    localStorage.setItem("currentWallet", id)
     const state: State = {
       ...this._state,
       currentWalletId: id

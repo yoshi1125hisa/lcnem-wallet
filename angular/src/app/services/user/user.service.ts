@@ -10,6 +10,7 @@ import { RxEffectiveStateStore } from '../../classes/rx-effective-state-store';
 import { RxEffectiveState } from '../../classes/rx-effective-state';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { SimpleWallet, Password } from 'nem-library';
+import { first } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,16 @@ export class UserService extends RxEffectiveStateStore<State> {
     )
   }
 
-  public get user() { return this.auth.auth.currentUser }
+  public get user() {
+    let wait = true
+    this.auth.user.pipe(first()).toPromise().then(
+      (user) => {
+        wait = false
+      }
+    )
+    while(wait) {}
+    return this.auth.auth.currentUser
+  }
   public user$ = this.auth.user
 
   public login() {

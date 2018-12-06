@@ -5,6 +5,7 @@ import { LanguageService } from '../../../services/language/language.service';
 import { WalletService } from '../../../services/wallet/wallet.service';
 import { Invoice } from '../../../classes/invoice';
 import { ShareService } from '../../../services/api/share/share.service';
+import { UserService } from '../../../services/user/user.service';
 
 @Component({
   selector: 'app-nem',
@@ -29,6 +30,7 @@ export class NemComponent implements OnInit {
 
   constructor(
     private language: LanguageService,
+    private user: UserService,
     private wallet: WalletService,
     private share: ShareService
   ) {

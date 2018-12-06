@@ -118,6 +118,7 @@ export class TransferComponent implements OnInit, OnDestroy {
   }
 
   public load() {
+    this.wallet.loadWallets(this.user.user!.uid)
     this.balance.loadBalance(
       new Address(this.wallet.state.entities[this.wallet.state.currentWalletId!].nem)
     )
