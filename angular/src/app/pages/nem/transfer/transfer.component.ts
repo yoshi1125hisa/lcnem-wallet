@@ -28,7 +28,7 @@ import { Invoice } from '../../../classes/invoice';
 import { RouterService } from '../../../services/router/router.service';
 import { ShareService } from '../../../services/api/share/share.service';
 import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
-import { UserService } from '../../../services/user/user.service';
+import { AuthService } from '../../../services/auth/auth.service';
 import { nodes } from '../../../classes/nodes';
 import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
 import { AssetDefinitionService } from '../../../services/nem/asset-definition/asset-definition.service';
@@ -64,7 +64,7 @@ export class TransferComponent implements OnInit, OnDestroy {
           this.openSnackBar("import")
           return null
         }
-        const password = new Password(this.user.user!.uid);
+        const password = new Password(this.auth.user!.uid);
         return SimpleWallet.readFromWLT(wallet.wallet).open(password);
       }
     )
@@ -101,7 +101,7 @@ export class TransferComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private _router: RouterService,
     private language: LanguageService,
-    private user: UserService,
+    private auth: AuthService,
     private wallet: WalletService,
     private balance: BalanceService,
     private assetDefinition: AssetDefinitionService,
@@ -118,24 +118,30 @@ export class TransferComponent implements OnInit, OnDestroy {
   }
 
   public load() {
-    this.wallet.loadWallets(this.user.user!.uid)
-    this.balance.loadBalance(
-      new Address(this.wallet.state.entities[this.wallet.state.currentWalletId!].nem)
-    )
-
-    let invoice = this.route.snapshot.queryParamMap.get('invoice') || "";
-    let invoiceData = Invoice.parse(decodeURI(invoice));
-
-    if (invoiceData) {
-      this.forms.recipient = invoiceData.data.addr;
-      this.forms.message = invoiceData.data.msg;
-
-      if (invoiceData.data.assets) {
-        for (let asset of invoiceData.data.assets) {
-          this.addTransferAsset(asset.id, asset.amount);
+    this.wallet.state$.pipe(
+      filter(state => !state.loading),
+      first()
+    ).subscribe(
+      (state) => {
+        this.balance.loadBalance(
+          new Address(state.entities[state.currentWalletId!].nem)
+        )
+    
+        let invoice = this.route.snapshot.queryParamMap.get('invoice') || "";
+        let invoiceData = Invoice.parse(decodeURI(invoice));
+    
+        if (invoiceData) {
+          this.forms.recipient = invoiceData.data.addr;
+          this.forms.message = invoiceData.data.msg;
+    
+          if (invoiceData.data.assets) {
+            for (let asset of invoiceData.data.assets) {
+              this.addTransferAsset(asset.id, asset.amount);
+            }
+          }
         }
       }
-    }
+    )
   }
 
   public back() {

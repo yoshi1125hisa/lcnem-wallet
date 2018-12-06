@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { LocalWalletService } from './local-wallet.service';
+import { AuthService } from './auth.service';
 
-describe('LocalWalletService', () => {
+describe('AuthService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: LocalWalletService = TestBed.get(LocalWalletService);
+    const service: AuthService = TestBed.get(AuthService);
     expect(service).toBeTruthy();
   });
 });

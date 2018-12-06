@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
-
-import * as firebase from 'firebase/app';
-import 'firebase/auth';
 
 import { User } from '../../../../../firebase/functions/src/models/user'
 import { RxEffectiveStateStore } from '../../classes/rx-effective-state-store';
@@ -18,7 +14,7 @@ import { first } from 'rxjs/operators';
 export class UserService extends RxEffectiveStateStore<State> {
 
   constructor(
-    private auth: AngularFireAuth,
+    
     private firestore: AngularFirestore
   ) {
     super(
@@ -26,26 +22,6 @@ export class UserService extends RxEffectiveStateStore<State> {
         loading: false
       }
     )
-  }
-
-  public get user() {
-    let wait = true
-    this.auth.user.pipe(first()).toPromise().then(
-      (user) => {
-        wait = false
-      }
-    )
-    while(wait) {}
-    return this.auth.auth.currentUser
-  }
-  public user$ = this.auth.user
-
-  public login() {
-    return this.auth.auth.signInWithPopup(new firebase.auth!.GoogleAuthProvider)
-  }
-
-  public logout() {
-    this.auth.auth.signOut()
   }
 
   public loadUser(userId: string, refresh?: boolean) {

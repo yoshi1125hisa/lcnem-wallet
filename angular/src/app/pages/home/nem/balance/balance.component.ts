@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, forkJoin } from 'rxjs';
-import { map, first } from 'rxjs/operators';
+import { map, first, filter } from 'rxjs/operators';
 import { Asset, Address } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
 import { BalanceService } from '../../../../services/nem/balance/balance.service';
@@ -12,12 +12,7 @@ import { WalletService } from '../../../../services/wallet/wallet.service';
   styleUrls: ['./balance.component.css']
 })
 export class BalanceComponent implements OnInit {
-  public loading$ = forkJoin(
-    this.wallet.state$.pipe(map(state => state.loading)),
-    this.balance.state$.pipe(map(state => state.loading))
-  ).pipe(
-    map(data => data[0] || data[1])
-  )
+  public loading$ = this.balance.state$.pipe(map(state => state.loading))
   public assets$ = this.balance.state$.pipe(map(state => state.assets))
 
   constructor(
@@ -32,7 +27,10 @@ export class BalanceComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    this.wallet.state$.pipe(first()).subscribe(
+    this.wallet.state$.pipe(
+      filter(state => !state.loading),
+      first()
+    ).subscribe(
       (state) => {
         const address = new Address(state.entities[state.currentWalletId!].nem)
         this.balance.loadBalance(address, refresh)

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { map, mergeMap, first } from 'rxjs/operators';
 import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { LanguageService } from '../../services/language/language.service';
-import { UserService } from '../../services/user/user.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
@@ -15,14 +15,14 @@ NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 export class HomeComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
-  public photoUrl$ = this.user.user$.pipe(
+  public photoUrl$ = this.auth.user$.pipe(
     map(user => user && user.photoURL ? user.photoURL : "")
   )
 
   constructor(
     private router: Router,
     private language: LanguageService,
-    private user: UserService
+    private auth: AuthService
   ) {
   }
 
@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit {
   }
 
   public logout() {
-    this.user.logout()
+    this.auth.logout()
     this.router.navigate(["account", "login"])
   }
 

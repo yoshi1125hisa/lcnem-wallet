@@ -8,9 +8,8 @@ import { Wallet } from '../../../../../../firebase/functions/src/models/wallet';
 import { LanguageService } from '../../../services/language/language.service';
 import { RouterService } from '../../../services/router/router.service';
 import { WalletService } from '../../../services/wallet/wallet.service';
-import { UserService } from '../../../services/user/user.service';
+import { AuthService } from '../../../services/auth/auth.service';
 import { PromptDialogComponent } from '../../../components/prompt-dialog/prompt-dialog.component';
-import { LocalWalletService } from '../../../services/wallet/local-wallet.service';
 import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
 import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
 import { WalletCreateDialogComponent } from './wallet-create-dialog/wallet-create-dialog.component';
@@ -46,9 +45,8 @@ export class WalletsComponent implements OnInit {
     private router: Router,
     private _router: RouterService,
     private language: LanguageService,
-    private user: UserService,
+    private auth: AuthService,
     private wallet: WalletService,
-    private localWallet: LocalWalletService
   ) {
     this.state$.pipe(
       filter(state => state.currentWalletId ? true : false),
@@ -65,7 +63,7 @@ export class WalletsComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    this.wallet.loadWallets(this.user.user!.uid, refresh)
+    this.wallet.loadWallets(this.auth.user!.uid, refresh)
   }
 
   public addWallet() {
@@ -73,7 +71,7 @@ export class WalletsComponent implements OnInit {
       filter(result => result),
     ).subscribe(
       (result) => {
-        const uid = this.user.user!.uid
+        const uid = this.auth.user!.uid
 
         const simpleWallet = result.import
           ? SimpleWallet.createWithPrivateKey(uid, new Password(uid), result.privateKey)
@@ -81,7 +79,7 @@ export class WalletsComponent implements OnInit {
 
         const wallet: Wallet = {
           name: result.name,
-          local: result.local == 1 ? true : false,
+          local: result.local == 1 ? true: false,
           nem: simpleWallet.address.plain(),
           wallet: simpleWallet.writeWLTFile()
         }
@@ -108,10 +106,10 @@ export class WalletsComponent implements OnInit {
       filter(pk => pk)
     ).subscribe(
       (pk) => {
-        const uid = this.user.user!.uid
+        const uid = this.auth.user!.uid
         const wallet = SimpleWallet.createWithPrivateKey(uid, new Password(uid), pk)
 
-        this.localWallet.addLocalWallet(id, wallet.writeWLTFile())
+        this.wallet.addLocalWallet(id, wallet.writeWLTFile())
       }
     );
   }
@@ -130,14 +128,14 @@ export class WalletsComponent implements OnInit {
       filter(name => name)
     ).subscribe(
       (name) => {
-        this.wallet.updateWallet(this.user.user!.uid, id, { ...wallet, name })
+        this.wallet.updateWallet(this.auth.user!.uid, id, { ...wallet, name })
       }
     )
   }
 
   public backupWallet(id: string) {
     const wallet = SimpleWallet.readFromWLT(this.wallet.state.entities[id].wallet!);
-    const account = wallet.open(new Password(this.user.user!.uid));
+    const account = wallet.open(new Password(this.auth.user!.uid));
 
     this.dialog.open(AlertDialogComponent, {
       data: {
@@ -157,7 +155,7 @@ export class WalletsComponent implements OnInit {
       filter(result => result)
     ).subscribe(
       (result) => {
-        this.wallet.deleteWallet(this.user.user!.uid, id)
+        this.wallet.deleteWallet(this.auth.user!.uid, id)
       }
     );
   }
