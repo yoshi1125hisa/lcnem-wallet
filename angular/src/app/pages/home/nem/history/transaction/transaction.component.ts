@@ -22,7 +22,7 @@ import { MatSnackBar } from '@angular/material';
 import { LanguageService } from '../../../../../services/language/language.service';
 import { nodes } from '../../../../../classes/nodes';
 import { WalletService } from '../../../../../services/wallet/wallet.service';
-import { UserService } from '../../../../../services/user/user.service';
+import { AuthService } from '../../../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-transaction',
@@ -49,7 +49,7 @@ export class TransactionComponent implements OnInit {
   constructor(
     private snackBar: MatSnackBar,
     private language: LanguageService,
-    private user: UserService,
+    private auth: AuthService,
     private wallet: WalletService
   ) {
   }
@@ -122,7 +122,7 @@ export class TransactionComponent implements OnInit {
       return this.translation.importRequired[this.lang]
     }
 
-    const password = new Password(this.user.user!.uid)
+    const password = new Password(this.auth.user!.uid)
     const account = SimpleWallet.readFromWLT(wallet.wallet).open(password)
 
     if (account.address.equals(signer.address)) {

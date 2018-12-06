@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { map, mergeMap, first } from 'rxjs/operators';
+import { map, mergeMap, first, filter } from 'rxjs/operators';
 import { LanguageService } from '../../../services/language/language.service';
 import { WalletService } from '../../../services/wallet/wallet.service';
 import { Invoice } from '../../../classes/invoice';
@@ -15,10 +15,12 @@ export class NemComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
   public address$ = this.wallet.state$.pipe(
+    filter(state => state.currentWalletId !== undefined),
     map(state => state.entities[state.currentWalletId!].nem)
   )
 
   public qrUrl$ = this.wallet.state$.pipe(
+    filter(state => state.currentWalletId !== undefined),
     map(state => state.entities[state.currentWalletId!]),
     map(currentWallet => {
       let invoice = new Invoice();

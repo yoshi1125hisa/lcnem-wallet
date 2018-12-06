@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { UserService } from '../user/user.service';
 import { WalletService } from '../wallet/wallet.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +10,10 @@ export class RouterService {
 
   constructor(
     private router: Router,
-    private user: UserService,
+    private auth: AuthService,
     private wallet: WalletService
   ) {
-    this.user.user$.subscribe(
+    this.auth.user$.subscribe(
       (user) => {
         if(!user) {
           this.router.navigate(["account", "login"])

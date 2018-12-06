@@ -119,7 +119,7 @@ export class TransferComponent implements OnInit, OnDestroy {
 
   public load() {
     this.wallet.state$.pipe(
-      filter(state => !state.loading),
+      filter(state => state.currentWalletId !== undefined),
       first()
     ).subscribe(
       (state) => {

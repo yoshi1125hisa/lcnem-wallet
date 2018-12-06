@@ -5,7 +5,7 @@ import { from } from 'rxjs';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { RouterService } from '../../../services/router/router.service';
-import { UserService } from '../../../services/user/user.service';
+import { AuthService } from '../../../services/auth/auth.service';
 import { LanguageService } from '../../../services/language/language.service';
 import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
 
@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private dialog: MatDialog,
     private _router: RouterService,
-    private user: UserService,
+    private auth: AuthService,
     private language: LanguageService,
     sanitizer: DomSanitizer
   ) {
@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit {
   }
 
   public login() {
-    from(this.user.login()).subscribe(
+    from(this.auth.login()).subscribe(
       (user) => {
         this.router.navigate([""])
       },

@@ -6,7 +6,7 @@ import { filter } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { RouterService } from '../../services/router/router.service';
 import { ContactService } from '../../services/contact/contact.service';
-import { UserService } from '../../services/user/user.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-contacts',
@@ -23,7 +23,7 @@ export class ContactsComponent implements OnInit {
     private dialog: MatDialog,
     private _router: RouterService,
     private language: LanguageService,
-    private user: UserService,
+    private auth: AuthService,
     private contact: ContactService
   ) {
   }
@@ -33,7 +33,7 @@ export class ContactsComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    this.contact.loadContacts(this.user.user!.uid, refresh)
+    this.contact.loadContacts(this.auth.user!.uid, refresh)
   }
 
   public back() {
@@ -52,7 +52,7 @@ export class ContactsComponent implements OnInit {
       filter(result => result)
     ).subscribe(
       (result) => {
-        this.contact.addContact(this.user.user!.uid, result)
+        this.contact.addContact(this.auth.user!.uid, result)
       }
     )
   }
@@ -80,7 +80,7 @@ export class ContactsComponent implements OnInit {
       filter(result => result)
     ).subscribe(
       (result) => {
-        this.contact.deleteContact(this.user.user!.uid, id)
+        this.contact.deleteContact(this.auth.user!.uid, id)
       }
     );
   }

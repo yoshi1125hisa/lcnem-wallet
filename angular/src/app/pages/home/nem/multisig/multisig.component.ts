@@ -30,7 +30,7 @@ export class MultisigComponent implements OnInit {
 
   public load(refresh?: boolean) {
     this.wallet.state$.pipe(
-      filter(state => !state.loading),
+      filter(state => state.currentWalletId !== undefined),
       first()
     ).subscribe(
       (state) => {

@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { LanguageService } from '../../../services/language/language.service';
-import { UserService } from '../../../services/user/user.service';
 import { ApiService } from '../../../services/api/api.service';
 import { RouterService } from '../../../services/router/router.service';
 import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-withdraw',
@@ -36,7 +36,7 @@ export class WithdrawComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private _router: RouterService,
-    private user: UserService,
+    private auth: AuthService,
     private language: LanguageService,
     private api: ApiService,
     sanitizer: DomSanitizer
@@ -50,7 +50,7 @@ export class WithdrawComponent implements OnInit {
   public withdraw() {
     this.api.withdraw(
       {
-        email: this.user.user!.email!,
+        email: this.auth.user!.email!,
         nem: this.forms.address!,
         currency: this.forms.currency,
         amount: this.forms.amount!,

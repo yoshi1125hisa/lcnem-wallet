@@ -3,10 +3,10 @@ import { MatDialog } from '@angular/material';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { RouterService } from '../../../services/router/router.service';
-import { UserService } from '../../../services/user/user.service';
 import { LanguageService } from '../../../services/language/language.service';
 import { ApiService } from '../../../services/api/api.service';
 import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-deposit',
@@ -39,7 +39,7 @@ export class DepositComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private _router: RouterService,
-    private user: UserService,
+    private auth: AuthService,
     private language: LanguageService,
     private api: ApiService,
     sanitizer: DomSanitizer
@@ -53,7 +53,7 @@ export class DepositComponent implements OnInit {
   public deposit() {
     this.api.deposit(
       {
-        email: this.user.user!.email!,
+        email: this.auth.user!.email!,
         nem: this.forms.address!,
         currency: this.forms.currency,
         amount: this.forms.amount!,
