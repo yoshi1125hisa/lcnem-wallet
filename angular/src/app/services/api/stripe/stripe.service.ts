@@ -7,7 +7,7 @@ import { Observable, Subject } from 'rxjs';
 })
 export class StripeService {
 
-  constructor() { }
+  constructor() { ;console.log("stripe")}
 
   public charge(
     paymentResponse: PaymentResponse

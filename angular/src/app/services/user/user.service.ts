@@ -14,14 +14,13 @@ import { first } from 'rxjs/operators';
 export class UserService extends RxEffectiveStateStore<State> {
 
   constructor(
-    
     private firestore: AngularFirestore
   ) {
     super(
       {
         loading: false
       }
-    )
+    );console.log("user")
   }
 
   public loadUser(userId: string, refresh?: boolean) {
@@ -41,7 +40,7 @@ export class UserService extends RxEffectiveStateStore<State> {
         //レガシー
         if (state.user && (state.user as any).wallet) {
           const account = SimpleWallet.readFromWLT((state.user as any).wallet).open(new Password(userId))
-          let wait = true;
+       
           document.ref.collection("wallets").add(
             {
               name: "1",
@@ -49,13 +48,12 @@ export class UserService extends RxEffectiveStateStore<State> {
               nem: account.address.plain(),
               wallet: (state.user as any).wallet
             } as Wallet
-          ).then(() => { wait = false })
-          while (wait) { }
-
-          wait = true
-          delete (state.user as any).wallet
-          this.firestore.collection("users").doc(userId).update(state.user!).then(() => { wait = false })
-          while (wait) { }
+          ).then(
+            () => {
+              delete (state.user as any).wallet
+              this.firestore.collection("users").doc(userId).update(state.user!)
+            }
+          )
         }
         //レガシー
 

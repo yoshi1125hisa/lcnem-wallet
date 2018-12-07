@@ -18,7 +18,7 @@ export class ContactService extends RxEntityStateStore<State, Contact> {
         ids: [],
         entities: {}
       }
-    )
+    );console.log("contact")
   }
 
   public loadContacts(userId: string, refresh?: boolean) {

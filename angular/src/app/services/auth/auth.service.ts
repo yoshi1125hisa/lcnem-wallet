@@ -15,7 +15,7 @@ export class AuthService {
   constructor(
     private auth: AngularFireAuth,
     private wallet: WalletService
-  ) {console.log("z")
+  ) {
     this.user$.subscribe(
       (user) => {
         if (!user) {

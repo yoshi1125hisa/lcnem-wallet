@@ -12,7 +12,7 @@ export class RouterService {
     private router: Router,
     private auth: AuthService,
     private wallet: WalletService
-  ) {
+  ) {console.log("_router")
     this.auth.user$.subscribe(
       (user) => {console.log(user)
         if(!user) {
