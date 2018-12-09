@@ -67,7 +67,7 @@ export class WalletsComponent implements OnInit {
       filter(user => user != null),
       first()
     ).subscribe(
-      (user) => {
+      (user) => {console.log(user)
         this.wallet.loadWallets(this.auth.user!.uid, refresh)
       }
     )

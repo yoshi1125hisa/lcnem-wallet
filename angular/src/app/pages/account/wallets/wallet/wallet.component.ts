@@ -11,7 +11,7 @@ import { LanguageService } from '../../../../services/language/language.service'
 export class WalletComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter }
 
-  @Input() wallet: Wallet = {} as any
+  @Input() wallet?: Wallet
 
   @Output() enter = new EventEmitter()
   @Output() backup = new EventEmitter()

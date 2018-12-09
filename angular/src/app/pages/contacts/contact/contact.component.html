@@ -7,10 +7,10 @@
     <mat-icon>edit</mat-icon>
   </button>
 </div>
-<mat-list *ngIf="contact.nem && contact.nem.length ">
+<mat-list *ngIf="contact?.nem?.length ">
   <h3 mat-subheader>nem</h3>
   <mat-divider></mat-divider>
-  <ng-container *ngFor="let nem of contact.nem; let i = index">
+  <ng-container *ngFor="let nem of contact?.nem; let i = index">
     <mat-list-item>
       <span matLine>{{nem.name}}</span>
       <span matLine>{{nem.address}}</span>
@@ -18,4 +18,4 @@
     <mat-divider></mat-divider>
   </ng-container>
 </mat-list>
-<p *ngIf="contact.memo">{{contact!.memo}}</p>
+<p *ngIf="contact?.memo">{{contact?.memo}}</p>

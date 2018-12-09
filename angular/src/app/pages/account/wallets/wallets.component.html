@@ -14,7 +14,7 @@
       <ng-template #loaded>
         <ng-container *ngFor="let id of (state$ | async)?.ids">
           <mat-card>
-            <app-wallet (backup)="backupWallet(id)" (delete)="deleteWallet(id)" (enter)="enterWallet(id)" (import)="importPrivateKey(id)"
+            <app-wallet [wallet]="(state$ | async)?.entities[id]" (backup)="backupWallet(id)" (delete)="deleteWallet(id)" (enter)="enterWallet(id)" (import)="importPrivateKey(id)"
               (rename)="renameWallet(id)"></app-wallet>
           </mat-card>
           <br />
