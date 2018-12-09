@@ -21,6 +21,7 @@
           <mat-card>
             <app-contact [contact]="state.entities[id]" (delete)="deleteContact(id)" (edit)="editContact(id)"></app-contact>
           </mat-card>
+          <br />
         </ng-container>
         <p *ngIf="!state.ids.length" class="empty">{{translation.empty[lang]}}</p>
       </ng-template>

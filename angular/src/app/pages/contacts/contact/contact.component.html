@@ -1,4 +1,5 @@
 <div fxLayout="row">
+  <span>{{contact?.name}}</span>
   <span class="fill-remaining-space"></span>
   <button mat-icon-button color="warn" (click)="delete.emit()">
     <mat-icon>delete</mat-icon>
@@ -7,10 +8,10 @@
     <mat-icon>edit</mat-icon>
   </button>
 </div>
-<mat-list *ngIf="contact?.nem?.length ">
+<mat-list *ngIf="contact?.nem?.length">
   <h3 mat-subheader>nem</h3>
   <mat-divider></mat-divider>
-  <ng-container *ngFor="let nem of contact?.nem; let i = index">
+  <ng-container *ngFor="let nem of contact!.nem">
     <mat-list-item>
       <span matLine>{{nem.name}}</span>
       <span matLine>{{nem.address}}</span>

@@ -38,7 +38,7 @@ export class ContactsComponent implements OnInit {
       first()
     ).subscribe(
       (user) => {
-        this.contact.loadContacts(this.auth.user!.uid, refresh)
+        this.contact.loadContacts(user!.uid, refresh)
       }
     )
   }

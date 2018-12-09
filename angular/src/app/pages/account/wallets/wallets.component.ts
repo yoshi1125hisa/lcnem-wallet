@@ -88,8 +88,15 @@ export class WalletsComponent implements OnInit {
   }
 
   public enterWallet(id: string) {
+    this.wallet.state$.pipe(
+      filter(state => state.currentWalletId !== undefined),
+      first()
+    ).subscribe(
+      () => {
+        this.router.navigate([""])
+      }
+    )
     this.wallet.setCurrentWallet(id);
-    this.router.navigate([""])
   }
 
   public importPrivateKey(id: string) {
