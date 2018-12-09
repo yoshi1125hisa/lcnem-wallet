@@ -12,6 +12,13 @@ import { WalletService } from '../../../../services/wallet/wallet.service';
   styleUrls: ['./balance.component.css']
 })
 export class BalanceComponent implements OnInit {
+  public loading$ = forkJoin(
+    this.wallet.state$,
+    this.balance.state$
+  ).pipe(
+    map(fork => fork[0].loading || fork[1].loading)
+  )
+
   public state$ = this.balance.state$
 
   constructor(

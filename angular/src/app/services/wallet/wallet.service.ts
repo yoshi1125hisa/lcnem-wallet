@@ -43,16 +43,17 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
 
     this.firestore.collection("users").doc(userId).collection("wallets").get().subscribe(
       (collection) => {
-        const local = this.loadLocalWallets()
+        const localWallets = this.loadLocalWallets()
         const state: State = {
           loading: false,
           ids: collection.docs.map(doc => doc.id),
-          entities: {}
+          entities: {},
+          currentWalletId: localStorage.getItem("currentWallet") || undefined
         }
         for (const doc of collection.docs) {
           state.entities[doc.id] = doc.data() as Wallet
-          if (local[doc.id]) {
-            state.entities[doc.id].wallet = local[doc.id]
+          if (localWallets[doc.id]) {
+            state.entities[doc.id].wallet = localWallets[doc.id]
           }
         }
 
@@ -65,9 +66,9 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
   }
 
   public addLocalWallet(id: string, wallet: string) {
-    const local = this.loadLocalWallets()
-    local[id] = wallet
-    this.setLocalWallet(local)
+    const localWallets = this.loadLocalWallets()
+    localWallets[id] = wallet
+    this.setLocalWallet(localWallets)
   }
 
   public addWallet(userId: string, wallet: Wallet) {
@@ -77,13 +78,15 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
     this.streamLoadingState()
 
     const _wallet = { ...wallet }
-    const local = _wallet.local ? _wallet.wallet : null
     if (_wallet.local) {
-      delete wallet.wallet
+      delete _wallet.wallet
     }
 
     from(this.firestore.collection("users").doc(userId).collection("wallets").add(_wallet)).subscribe(
       (document) => {
+        if(wallet.local) {
+          this.addLocalWallet(document.id, wallet.wallet || "")
+        }
         const state: State = {
           ...this.getEntityAddedState(document.id, wallet),
           loading: false

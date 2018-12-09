@@ -14,6 +14,13 @@ import { WalletService } from '../../../../services/wallet/wallet.service';
 export class MultisigComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
+  public loading$ = forkJoin(
+    this.wallet.state$,
+    this.wallet.state$
+  ).pipe(
+    map(fork => fork[0].loading || fork[1].loading)
+  )
+
   public state$ = this.multisig.state$
 
   constructor(

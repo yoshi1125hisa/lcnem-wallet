@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { ContactEditDialogComponent } from './contact-edit-dialog/contact-edit-dialog.component';
-import { filter, first } from 'rxjs/operators';
+import { filter, first, map } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { RouterService } from '../../services/router/router.service';
 import { ContactService } from '../../services/contact/contact.service';
 import { AuthService } from '../../services/auth/auth.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-contacts',
@@ -16,6 +17,13 @@ import { AuthService } from '../../services/auth/auth.service';
 
 export class ContactsComponent implements OnInit {
   get lang() { return this.language.state.twoLetter }
+
+  public loading$ = forkJoin(
+    this.auth.user$,
+    this.contact.state$
+  ).pipe(
+    map(fork => fork[0] === null || fork[1].loading)
+  )
 
   public state$ = this.contact.state$;
 
@@ -34,7 +42,7 @@ export class ContactsComponent implements OnInit {
 
   public load(refresh?: boolean) {
     this.auth.user$.pipe(
-      filter(user => user != null),
+      filter(user => user !== null),
       first()
     ).subscribe(
       (user) => {

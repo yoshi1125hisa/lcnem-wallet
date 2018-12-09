@@ -1,12 +1,12 @@
-<mat-card *ngIf="state$ | async as state">
-  <mat-toolbar>
-    <span class="fill-remaining-space"></span>
-    <button mat-icon-button color="accent" (click)="load(true)">
-      <mat-icon>refresh</mat-icon>
-    </button>
-  </mat-toolbar>
-  <mat-spinner *ngIf="state.loading; else loaded"></mat-spinner>
-  <ng-template #loaded>
+<mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
+<ng-template #loaded>
+  <mat-card *ngIf="state$ | async as state">
+    <mat-toolbar>
+      <span class="fill-remaining-space"></span>
+      <button mat-icon-button color="accent" (click)="load(true)">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </mat-toolbar>
     <mat-list>
       <mat-divider></mat-divider>
       <ng-container *ngFor="let address of state.multisigs">
@@ -17,5 +17,5 @@
       </ng-container>
     </mat-list>
     <p class="empty" *ngIf="!state.addresses.length">{{translation.empty[lang]}}</p>
-  </ng-template>
-</mat-card>
+  </mat-card>
+</ng-template>

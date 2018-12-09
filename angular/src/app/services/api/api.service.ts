@@ -8,7 +8,7 @@ export class ApiService {
 
   constructor(
     private http: HttpClient
-  ) { console.log("api")}
+  ) { }
 
   public deposit(
     data: {

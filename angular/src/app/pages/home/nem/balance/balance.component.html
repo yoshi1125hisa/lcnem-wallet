@@ -1,12 +1,12 @@
-<mat-card *ngIf="state$ | async as state">
-  <div fxLayout="row">
-    <span class="fill-remaining-space"></span>
-    <button mat-icon-button color="accent" (click)="load(true)">
-      <mat-icon>refresh</mat-icon>
-    </button>
-  </div>
-  <mat-spinner *ngIf="state.loading; else loaded"></mat-spinner>
-  <ng-template #loaded>
+<mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
+<ng-template #loaded>
+  <mat-card *ngIf="state$ | async as state">
+    <div fxLayout="row">
+      <span class="fill-remaining-space"></span>
+      <button mat-icon-button color="accent" (click)="load(true)">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
     <app-assets-list [assets]="state.assets"></app-assets-list>
-  </ng-template>
-</mat-card>
+  </mat-card>
+</ng-template>

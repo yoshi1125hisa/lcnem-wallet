@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { SimpleWallet, Password } from 'nem-library';
 import { Router } from '@angular/router';
-import { Observable, from } from 'rxjs';
+import { Observable, from, forkJoin } from 'rxjs';
 import { map, mergeMap, toArray, filter, first } from 'rxjs/operators';
 import { Wallet } from '../../../../../../firebase/functions/src/models/wallet';
 import { LanguageService } from '../../../services/language/language.service';
@@ -22,6 +22,14 @@ import { WalletCreateDialogComponent } from './wallet-create-dialog/wallet-creat
 export class WalletsComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
   public lang$ = this.language.state$.pipe(map(state => state.twoLetter))
+
+  
+  public loading$ = forkJoin(
+    this.auth.user$,
+    this.wallet.state$
+  ).pipe(
+    map(fork => !fork[0] || fork[1].loading)
+  )
 
   public state$ = this.wallet.state$;
 
@@ -92,7 +100,7 @@ export class WalletsComponent implements OnInit {
       filter(state => state.currentWalletId !== undefined),
       first()
     ).subscribe(
-      () => {
+      (state) => {
         this.router.navigate([""])
       }
     )
@@ -100,15 +108,18 @@ export class WalletsComponent implements OnInit {
   }
 
   public importPrivateKey(id: string) {
-    this.dialog.open(PromptDialogComponent, {
-      data: {
-        title: this.translation.importPrivateKey[this.lang],
-        input: {
-          placeholder: this.translation.privateKey[this.lang],
-          pattern: "[0-9a-f]{64}"
+    this.dialog.open(
+      PromptDialogComponent,
+      {
+        data: {
+          title: this.translation.importPrivateKey[this.lang],
+          input: {
+            placeholder: this.translation.privateKey[this.lang],
+            pattern: "[0-9a-f]{64}"
+          }
         }
       }
-    }).afterClosed().pipe(
+    ).afterClosed().pipe(
       filter(pk => pk)
     ).subscribe(
       (pk) => {
