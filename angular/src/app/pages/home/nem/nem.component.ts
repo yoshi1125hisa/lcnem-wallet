@@ -23,7 +23,7 @@ export class NemComponent implements OnInit {
     filter(state => state.currentWalletId !== undefined),
     map(state => state.entities[state.currentWalletId!]),
     map(currentWallet => {
-      let invoice = new Invoice();
+      const invoice = new Invoice();
       invoice.data.addr = currentWallet.nem;
       return "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
     })

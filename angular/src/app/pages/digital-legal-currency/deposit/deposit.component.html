@@ -11,6 +11,7 @@
     </mat-toolbar>
     <div class="mat-typography body-container">
       <form #form="ngForm" (ngSubmit)="deposit()">
+        <app-nem-address-input placeholder="{{translation.address[lang]}}" [(ngModel)]="forms.address" name="address" required></app-nem-address-input>
         <mat-form-field fxFill>
           <mat-select placeholder="{{translation.currency[lang]}}" [(ngModel)]="forms.currency" name="currency"
             required>

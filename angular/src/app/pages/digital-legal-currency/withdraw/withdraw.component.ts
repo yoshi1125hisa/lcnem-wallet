@@ -6,6 +6,7 @@ import { ApiService } from '../../../services/api/api.service';
 import { RouterService } from '../../../services/router/router.service';
 import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
 import { AuthService } from '../../../services/auth/auth.service';
+import { WalletService } from '../../../services/wallet/wallet.service';
 
 @Component({
   selector: 'app-withdraw',
@@ -13,34 +14,40 @@ import { AuthService } from '../../../services/auth/auth.service';
   styleUrls: ['./withdraw.component.css']
 })
 export class WithdrawComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter; }
+  public get lang() { return this.language.state.twoLetter }
 
   public readonly supportedCurrencies = [
     "JPY"
   ];
 
   public forms: {
-    currency: string,
-    address?: string;
-    amount?: number;
-    method?: string;
+    address?: string
+    currency: string
+    amount?: number
+    method?: string
   } = {
-      currency: "JPY"
-    };
+    currency: "JPY"
+  }
 
-  public safeSite: SafeResourceUrl;
-
-  public loading = false;
-  public error?: Error;
+  public safeSite: SafeResourceUrl
 
   constructor(
     private dialog: MatDialog,
     private _router: RouterService,
     private auth: AuthService,
+    private wallet: WalletService,
     private language: LanguageService,
     private api: ApiService,
     sanitizer: DomSanitizer
   ) {
+    const subscription = this.wallet.state$.subscribe(
+      (state) => {
+        if (state.currentWalletId) {
+          this.forms.address = state.entities[state.currentWalletId].nem
+        }
+        subscription.unsubscribe()
+      }
+    )
     this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${this.lang}.txt`);
   }
 
@@ -123,6 +130,10 @@ export class WithdrawComponent implements OnInit {
     withdraw: {
       en: "Withdraw",
       ja: "出金"
+    } as any,
+    address: {
+      en: "Address",
+      ja: "アドレス"
     } as any
   };
 }

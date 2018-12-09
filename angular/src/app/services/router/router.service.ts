@@ -22,27 +22,26 @@ export class RouterService {
               break
             }
             case "/account/wallets": {
-              this.auth.user$.pipe(
-                first()
-              ).subscribe(
+              const subscription = this.auth.user$.subscribe(
                 (user) => {
                   if (!user) {
                     this.router.navigate(["account", "login"])
                   }
+                  subscription.unsubscribe()
                 }
               )
               break
             }
             case "/":
             case "/nem/transfer": {
-              this.wallet.state$.pipe(
-                filter(state => !state.loading),
-                first()
+              const subscription = this.wallet.state$.pipe(
+                filter(state => !state.loading)
               ).subscribe(
                 (state) => {
                   if (!state.currentWalletId) {
                     this.router.navigate(["account", "wallets"])
                   }
+                  subscription.unsubscribe()
                 }
               )
               break
