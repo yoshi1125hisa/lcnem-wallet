@@ -23,7 +23,6 @@ export class WalletsComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
   public lang$ = this.language.state$.pipe(map(state => state.twoLetter))
 
-  public loading$ = this.wallet.state$.pipe(map(state => state.loading))
   public state$ = this.wallet.state$;
 
   public clouds$ = this.state$.pipe(
@@ -48,14 +47,6 @@ export class WalletsComponent implements OnInit {
     private auth: AuthService,
     private wallet: WalletService,
   ) {
-    this.state$.pipe(
-      filter(state => state.currentWalletId ? true : false),
-      first()
-    ).subscribe(
-      () => {
-        this.router.navigate([""])
-      }
-    )
   }
 
   ngOnInit() {
@@ -67,8 +58,8 @@ export class WalletsComponent implements OnInit {
       filter(user => user != null),
       first()
     ).subscribe(
-      (user) => {console.log(user)
-        this.wallet.loadWallets(this.auth.user!.uid, refresh)
+      (user) => {
+        this.wallet.loadWallets(user!.uid, refresh)
       }
     )
   }
@@ -98,6 +89,7 @@ export class WalletsComponent implements OnInit {
 
   public enterWallet(id: string) {
     this.wallet.setCurrentWallet(id);
+    this.router.navigate([""])
   }
 
   public importPrivateKey(id: string) {

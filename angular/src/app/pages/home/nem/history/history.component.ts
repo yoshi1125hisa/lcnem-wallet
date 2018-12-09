@@ -14,8 +14,7 @@ import { HistoryService } from '../../../../services/nem/history/history.service
 export class HistoryComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
-  public loading$ = this.history.state$.pipe(map(state => state.loading))
-  public transactions$ = this.history.state$.pipe(map(state => state.transactions))
+  public state$ = this.history.state$
 
   constructor(
     private language: LanguageService,

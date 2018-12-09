@@ -1,15 +1,17 @@
 <ng-template #temp>
   <h3 mat-subheader *ngIf="title">{{title}}</h3>
   <mat-divider></mat-divider>
-  <ng-container *ngFor="let asset of assets$ | async">
-    <mat-list-item (click)="click.emit({value: asset.name})">
-      <img mat-list-icon src="{{asset.imageUrl}}" />
-      <span mat-line>{{asset.name}}</span>
-      <small mat-line>{{asset.issuer}}</small>
-      <span class="fill-remaining-space"></span>
-      <span class="right">{{asset.amount}}<br />{{asset.unit}}</span>
-    </mat-list-item>
-    <mat-divider></mat-divider>
+  <ng-container *ngIf="assets$ | async as _assets">
+    <ng-container *ngFor="let asset of _assets">
+      <mat-list-item (click)="click.emit({value: asset.name})">
+        <img mat-list-icon src="{{asset.imageURL}}" />
+        <span mat-line>{{asset.name}}</span>
+        <small mat-line>{{asset.issuer}}</small>
+        <span class="fill-remaining-space"></span>
+        <span class="right">{{asset.amount}}<br />{{asset.unit}}</span>
+      </mat-list-item>
+      <mat-divider></mat-divider>
+    </ng-container>
   </ng-container>
 </ng-template>
 <mat-list *ngIf="!nav">

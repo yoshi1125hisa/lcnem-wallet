@@ -12,8 +12,7 @@ import { WalletService } from '../../../../services/wallet/wallet.service';
   styleUrls: ['./balance.component.css']
 })
 export class BalanceComponent implements OnInit {
-  public loading$ = this.balance.state$.pipe(map(state => state.loading))
-  public assets$ = this.balance.state$.pipe(map(state => state.assets))
+  public state$ = this.balance.state$
 
   constructor(
     private language: LanguageService,
@@ -31,7 +30,7 @@ export class BalanceComponent implements OnInit {
       filter(state => state.currentWalletId !== undefined),
       first()
     ).subscribe(
-      (state) => {console.log(state)
+      (state) => {
         const address = new Address(state.entities[state.currentWalletId!].nem)
         this.balance.loadBalance(address, refresh)
       }

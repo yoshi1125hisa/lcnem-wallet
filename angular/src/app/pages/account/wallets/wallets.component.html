@@ -9,12 +9,12 @@
       <span class="fill-remaining-space"></span>
       <app-language-menu></app-language-menu>
     </mat-toolbar>
-    <div class="mat-typography body-container">
-      <mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
+    <div class="mat-typography body-container" *ngIf="state$ | async as state">
+      <mat-spinner *ngIf="state.loading; else loaded"></mat-spinner>
       <ng-template #loaded>
-        <ng-container *ngFor="let id of (state$ | async)?.ids">
+        <ng-container *ngFor="let id of state.ids">
           <mat-card>
-            <app-wallet [wallet]="(state$ | async)?.entities[id]" (backup)="backupWallet(id)" (delete)="deleteWallet(id)" (enter)="enterWallet(id)" (import)="importPrivateKey(id)"
+            <app-wallet [wallet]="state.entities[id]" (backup)="backupWallet(id)" (delete)="deleteWallet(id)" (enter)="enterWallet(id)" (import)="importPrivateKey(id)"
               (rename)="renameWallet(id)"></app-wallet>
           </mat-card>
           <br />

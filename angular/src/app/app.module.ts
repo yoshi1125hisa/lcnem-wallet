@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -67,6 +67,7 @@ import { TransferComponent } from './pages/nem/transfer/transfer.component';
 import { TransferDialogComponent } from './pages/nem/transfer/transfer-dialog/transfer-dialog.component';
 import { AssetsListComponent } from './components/assets-list/assets-list.component';
 import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
+import { RouterService } from './services/router/router.service';
 
 @NgModule({
   declarations: [
@@ -143,7 +144,14 @@ import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-fou
     ContactEditDialogComponent,
     WalletCreateDialogComponent
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (_router: RouterService) => () => _router,
+      deps: [RouterService],
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

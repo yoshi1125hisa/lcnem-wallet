@@ -3,12 +3,13 @@
 <br />
 <h3>{{translation.yourAddress[lang]}}</h3>
 <mat-card>
-  <p class="address">{{address$ | async}}
+  <p class="address" *ngIf="address$ | async as address">
+    {{address}}
     <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyAddress()">
       <mat-icon>input</mat-icon>
     </button>
   </p>
-  <img class="qr" [src]="(qrUrl$ | async) || ''" />
+  <img class="qr" *ngIf="qrUrl$ | async as qrUrl" [src]="qrUrl" />
 </mat-card>
 <br />
 <h3>{{translation.cosignatoryOf[lang]}}</h3>

@@ -15,7 +15,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
   ) {
     super(
       {
-        loading: false,
+        loading: true,
         ids: [],
         entities: {}
       }

@@ -14,8 +14,7 @@ import { WalletService } from '../../../../services/wallet/wallet.service';
 export class MultisigComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
-  public loading$ = this.multisig.state$.pipe(map(state => state.loading))
-  public multisigs$ = this.multisig.state$.pipe(map(state => state.addresses))
+  public state$ = this.multisig.state$
 
   constructor(
     private language: LanguageService,

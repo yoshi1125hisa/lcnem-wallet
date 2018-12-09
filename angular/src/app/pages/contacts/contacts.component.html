@@ -14,13 +14,16 @@
         <mat-icon>add</mat-icon>
       </button>
     </mat-toolbar>
-    <div class="mat-typography body-container">
-      <ng-container *ngFor="let id of (state$ | async).ids">
-        <mat-card>
-          <app-contact [contact]="(state$ | async).entities[id]" (delete)="deleteContact(id)" (edit)="editContact(id)"></app-contact>
-        </mat-card>
-      </ng-container>
-      <p *ngIf="!(state$ | async).ids.length" class="empty">{{translation.empty[lang]}}</p>
+    <div class="mat-typography body-container" *ngIf="state$ | async as state">
+      <mat-spinner *ngIf="state.loading; else loaded"></mat-spinner>
+      <ng-template #loaded>
+        <ng-container *ngFor="let id of state.ids">
+          <mat-card>
+            <app-contact [contact]="state.entities[id]" (delete)="deleteContact(id)" (edit)="editContact(id)"></app-contact>
+          </mat-card>
+        </ng-container>
+        <p *ngIf="!state.ids.length" class="empty">{{translation.empty[lang]}}</p>
+      </ng-template>
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

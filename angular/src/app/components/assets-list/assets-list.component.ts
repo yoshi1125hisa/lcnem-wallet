@@ -13,8 +13,8 @@ import { AssetDefinitionService } from '../../services/nem/asset-definition/asse
 export class AssetsListComponent implements OnInit, OnChanges {
   public get lang() { return this.language.state.twoLetter; }
 
-  @Input() public title = "";
-  @Input() public assets: Asset[] = [];
+  @Input() public title?: string;
+  @Input() public assets?: Asset[];
   @Input() nav = false
 
   @Output() click = new EventEmitter()
