@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { ContactEditDialogComponent } from './contact-edit-dialog/contact-edit-dialog.component';
-import { filter } from 'rxjs/operators';
+import { filter, first } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { RouterService } from '../../services/router/router.service';
 import { ContactService } from '../../services/contact/contact.service';
@@ -33,7 +33,14 @@ export class ContactsComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    this.contact.loadContacts(this.auth.user!.uid, refresh)
+    this.auth.user$.pipe(
+      filter(user => user != null),
+      first()
+    ).subscribe(
+      (user) => {
+        this.contact.loadContacts(this.auth.user!.uid, refresh)
+      }
+    )
   }
 
   public back() {

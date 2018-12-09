@@ -10,13 +10,13 @@ import { WalletService } from '../wallet/wallet.service';
 })
 export class AuthService {
   public get user() { return this.auth.auth.currentUser }
-  public get user$() { return this.auth.user }
+  public get user$() { return this.auth.authState }
 
   constructor(
     private auth: AngularFireAuth,
     private wallet: WalletService
   ) {
-    this.user$.subscribe(
+    this.auth.authState.subscribe(
       (user) => {
         if (!user) {
           return

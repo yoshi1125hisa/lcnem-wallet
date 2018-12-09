@@ -20,7 +20,7 @@ export class UserService extends RxEffectiveStateStore<State> {
       {
         loading: false
       }
-    );console.log("user")
+    )
   }
 
   public loadUser(userId: string, refresh?: boolean) {

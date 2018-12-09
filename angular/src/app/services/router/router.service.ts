@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
-import { WalletService } from '../wallet/wallet.service';
-import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,26 +7,8 @@ import { AuthService } from '../auth/auth.service';
 export class RouterService {
 
   constructor(
-    private router: Router,
-    private auth: AuthService,
-    private wallet: WalletService
-  ) {console.log("_router")
-    this.auth.user$.subscribe(
-      (user) => {console.log(user)
-        if(!user) {
-          this.router.navigate(["account", "login"])
-        }
-      }
-    )
-
-    this.wallet.state$.subscribe(
-      (state) => {console.log(state)
-        if(!state.loading && !state.currentWalletId) {
-          this.router.navigate(["account", "wallets"])
-        }
-      }
-    )
-  }
+    private router: Router
+  ) { }
 
   public back(commands: any[], extras?: NavigationExtras) {
     if(history.length > 1) {
