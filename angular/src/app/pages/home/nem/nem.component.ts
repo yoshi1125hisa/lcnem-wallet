@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
 import { map, mergeMap, first, filter } from 'rxjs/operators';
 import { LanguageService } from '../../../services/language/language.service';
 import { WalletService } from '../../../services/wallet/wallet.service';

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, combineLatest } from 'rxjs';
 import { map, first, filter } from 'rxjs/operators';
 import { Address, Wallet } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
@@ -14,7 +14,7 @@ import { WalletService } from '../../../../services/wallet/wallet.service';
 export class MultisigComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
-  public loading$ = forkJoin(
+  public loading$ = combineLatest(
     this.wallet.state$,
     this.wallet.state$
   ).pipe(

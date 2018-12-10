@@ -7,7 +7,7 @@ import { LanguageService } from '../../services/language/language.service';
 import { RouterService } from '../../services/router/router.service';
 import { ContactService } from '../../services/contact/contact.service';
 import { AuthService } from '../../services/auth/auth.service';
-import { forkJoin } from 'rxjs';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-contacts',
@@ -18,7 +18,7 @@ import { forkJoin } from 'rxjs';
 export class ContactsComponent implements OnInit {
   get lang() { return this.language.state.twoLetter }
 
-  public loading$ = forkJoin(
+  public loading$ = combineLatest(
     this.auth.user$,
     this.contact.state$
   ).pipe(

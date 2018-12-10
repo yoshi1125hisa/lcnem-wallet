@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { SimpleWallet, Password } from 'nem-library';
 import { Router } from '@angular/router';
-import { Observable, from, forkJoin } from 'rxjs';
+import { from, combineLatest } from 'rxjs';
 import { map, mergeMap, toArray, filter, first } from 'rxjs/operators';
 import { Wallet } from '../../../../../../firebase/functions/src/models/wallet';
 import { LanguageService } from '../../../services/language/language.service';
@@ -24,7 +24,7 @@ export class WalletsComponent implements OnInit {
   public lang$ = this.language.state$.pipe(map(state => state.twoLetter))
 
   
-  public loading$ = forkJoin(
+  public loading$ = combineLatest(
     this.auth.user$,
     this.wallet.state$
   ).pipe(

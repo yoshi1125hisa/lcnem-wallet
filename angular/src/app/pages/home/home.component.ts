@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, mergeMap, first } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { LanguageService } from '../../services/language/language.service';
 import { AuthService } from '../../services/auth/auth.service';

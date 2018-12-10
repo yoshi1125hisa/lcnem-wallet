@@ -7,15 +7,17 @@
         <mat-icon>refresh</mat-icon>
       </button>
     </mat-toolbar>
-    <mat-list>
+    <mat-list *ngIf="state.addresses.length; else empty">
       <mat-divider></mat-divider>
-      <ng-container *ngFor="let address of state.multisigs">
+      <ng-container *ngFor="let address of state.addresses">
         <mat-list-item>
           <span>{{address.pretty()}}</span>
         </mat-list-item>
         <mat-divider></mat-divider>
       </ng-container>
     </mat-list>
-    <p class="empty" *ngIf="!state.addresses.length">{{translation.empty[lang]}}</p>
+    <ng-template #empty>
+      <p class="empty">{{translation.empty[lang]}}</p>
+    </ng-template>
   </mat-card>
 </ng-template>

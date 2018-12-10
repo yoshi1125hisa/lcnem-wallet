@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, forkJoin } from 'rxjs';
+import { merge, combineLatest } from 'rxjs';
 import { map, first, filter } from 'rxjs/operators';
 import { Asset, Address } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
@@ -12,7 +12,7 @@ import { WalletService } from '../../../../services/wallet/wallet.service';
   styleUrls: ['./balance.component.css']
 })
 export class BalanceComponent implements OnInit {
-  public loading$ = forkJoin(
+  public loading$ = combineLatest(
     this.wallet.state$,
     this.balance.state$
   ).pipe(

@@ -30,7 +30,7 @@ export class HistoryService extends RxEffectiveStateStore<State> {
       accountHttp.unconfirmedTransactions(address),
       accountHttp.allTransactions(address)
     ).pipe(
-      map(data => data[0].concat(data[1])),
+      map(fork => fork[0].concat(fork[1])),
     ).subscribe(
       (transactions) => {
         const state = {
