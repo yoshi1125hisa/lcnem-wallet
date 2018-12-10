@@ -33,13 +33,13 @@ export class BalanceComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    const subscription = this.wallet.state$.pipe(
-      filter(state => state.currentWalletId !== undefined)
+    this.wallet.state$.pipe(
+      filter(state => state.currentWalletId !== undefined),
+      first()
     ).subscribe(
       (state) => {
         const address = new Address(state.entities[state.currentWalletId!].nem)
         this.balance.loadBalance(address, refresh)
-        subscription.unsubscribe()
       }
     )
   }

@@ -8,6 +8,7 @@ import { ApiService } from '../../../services/api/api.service';
 import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
 import { AuthService } from '../../../services/auth/auth.service';
 import { WalletService } from '../../../services/wallet/wallet.service';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-deposit',
@@ -44,12 +45,13 @@ export class DepositComponent implements OnInit {
     private api: ApiService,
     sanitizer: DomSanitizer
   ) {
-    const subscription = this.wallet.state$.subscribe(
+    this.wallet.state$.pipe(
+      first()
+    ).subscribe(
       (state) => {
         if (state.currentWalletId) {
           this.forms.address = state.entities[state.currentWalletId].nem
         }
-        subscription.unsubscribe()
       }
     )
     this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${this.lang}.txt`);

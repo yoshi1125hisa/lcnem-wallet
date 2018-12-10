@@ -41,12 +41,12 @@ export class ContactsComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    const subscription = this.auth.user$.pipe(
-      filter(user => user !== null)
+    this.auth.user$.pipe(
+      filter(user => user !== null),
+      first()
     ).subscribe(
       (user) => {
         this.contact.loadContacts(user!.uid, refresh)
-        subscription.unsubscribe()
       }
     )
   }

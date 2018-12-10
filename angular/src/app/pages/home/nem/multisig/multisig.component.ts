@@ -35,13 +35,13 @@ export class MultisigComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    const subscription = this.wallet.state$.pipe(
-      filter(state => state.currentWalletId !== undefined)
+    this.wallet.state$.pipe(
+      filter(state => state.currentWalletId !== undefined),
+      first()
     ).subscribe(
       (state) => {
         const address = new Address(state.entities[state.currentWalletId!].nem)
         this.multisig.loadMultisig(address, refresh)
-        subscription.unsubscribe()
       }
     )
   }

@@ -62,12 +62,12 @@ export class WalletsComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    const subscription = this.auth.user$.pipe(
-      filter(user => user != null)
+    this.auth.user$.pipe(
+      filter(user => user != null),
+      first()
     ).subscribe(
       (user) => {
         this.wallet.loadWallets(user!.uid, refresh)
-        subscription.unsubscribe()
       }
     )
   }
