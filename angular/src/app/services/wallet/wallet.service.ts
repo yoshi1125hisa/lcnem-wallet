@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { from, Subject, forkJoin } from 'rxjs';
-import { RxEntityStateStore } from '../../classes/rx-entity-state-store';
+import { from } from 'rxjs';
+import { RxEntityStateStore, RxEntityState } from 'rx-state-store-js';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
-import { RxEntityState } from '../../classes/rx-entity-state';
 
 @Injectable({
   providedIn: 'root'

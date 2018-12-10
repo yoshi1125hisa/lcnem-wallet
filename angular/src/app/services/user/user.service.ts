@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-
-import { User } from '../../../../../firebase/functions/src/models/user'
-import { RxEffectiveStateStore } from '../../classes/rx-effective-state-store';
-import { RxEffectiveState } from '../../classes/rx-effective-state';
-import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { SimpleWallet, Password } from 'nem-library';
-import { first } from 'rxjs/operators';
+import { RxEffectiveStateStore, RxEffectiveState } from 'rx-state-store-js';
+import { User } from '../../../../../firebase/functions/src/models/user'
+import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 
 @Injectable({
   providedIn: 'root'

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Transaction, Address, AccountHttp } from 'nem-library';
-import { RxEffectiveStateStore } from '../../../classes/rx-effective-state-store';
+import { RxEffectiveStateStore } from 'rx-state-store-js';
 import { nodes } from '../../../classes/nodes';
 
 @Injectable({

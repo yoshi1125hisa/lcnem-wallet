@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RxEffectiveStateStore } from '../../../classes/rx-effective-state-store';
+import { RxEffectiveStateStore } from 'rx-state-store-js';
 import { AssetDefinition, AssetId, AssetHttp, Address } from 'nem-library';
 import { nodes } from '../../../classes/nodes';
 import { from } from 'rxjs';
