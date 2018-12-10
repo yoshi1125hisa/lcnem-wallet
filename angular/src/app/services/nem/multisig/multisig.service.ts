@@ -34,6 +34,7 @@ export class MultisigService extends RxEffectiveStateStore<State> {
     ).subscribe(
       (addresses) => {
         const state: State = {
+          ...this._state,
           loading: false,
           addresses: addresses,
           lastAddress: address

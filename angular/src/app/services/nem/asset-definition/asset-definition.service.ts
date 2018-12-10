@@ -38,6 +38,8 @@ export class AssetDefinitionService extends RxEffectiveStateStore<State> {
           loading: false,
           definitions: definitions
         }
+
+        this.streamState(state)
       },
       (error) => {
         this.streamErrorState(error)
