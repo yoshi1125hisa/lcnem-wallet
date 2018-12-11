@@ -33,10 +33,10 @@ export class HistoryService extends RxEffectiveStateStore<State> {
       map(fork => fork[0].concat(fork[1])),
     ).subscribe(
       (transactions) => {
-        const state = {
+        const state: State = {
           ...this._state,
           loading: false,
-          assets: transactions,
+          transactions: transactions,
           lastAddress: address
         }
 

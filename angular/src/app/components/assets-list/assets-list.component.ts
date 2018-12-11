@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Asset, AssetDefinition } from 'nem-library';
 import { Observable, of, from } from 'rxjs';
-import { map, mergeMap, filter, toArray } from 'rxjs/operators';
+import { map, mergeMap, filter, toArray, take } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
 
@@ -11,15 +11,15 @@ import { AssetDefinitionService } from '../../services/nem/asset-definition/asse
   styleUrls: ['./assets-list.component.css']
 })
 export class AssetsListComponent implements OnInit, OnChanges {
-  public get lang() { return this.language.state.twoLetter; }
+  public get lang() { return this.language.state.twoLetter }
 
-  @Input() public title?: string;
-  @Input() public assets?: Asset[];
+  @Input() public title?: string
+  @Input() public assets?: Asset[]
   @Input() nav = false
 
   @Output() click = new EventEmitter()
 
-  public loading$: Observable<boolean>;
+  public loading$ = this.assetDefinition.state$.pipe(map(state => state.loading))
   public assets$: Observable<{
     name: string
     amount: number
@@ -32,11 +32,9 @@ export class AssetsListComponent implements OnInit, OnChanges {
     private language: LanguageService,
     private assetDefinition: AssetDefinitionService
   ) {
-    this.loading$ = this.assetDefinition.state$.pipe(map(state => state.loading))
   }
 
   ngOnInit() {
-    this.load()
   }
 
   ngOnChanges(changes: any) {
@@ -57,6 +55,7 @@ export class AssetsListComponent implements OnInit, OnChanges {
             map(state => state.definitions),
             mergeMap(definitions => from(definitions)),
             filter(definition => definition.id.equals(asset.assetId)),
+            take(1),
             map(
               (definition) => {
                 const name = asset.assetId.toString()
