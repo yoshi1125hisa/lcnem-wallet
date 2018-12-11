@@ -45,8 +45,6 @@ export class WalletsComponent implements OnInit {
     )
   )
 
-  public plan = ""
-
   constructor(
     private dialog: MatDialog,
     private router: Router,

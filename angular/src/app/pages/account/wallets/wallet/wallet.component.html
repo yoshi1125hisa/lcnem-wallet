@@ -35,7 +35,10 @@
   <button mat-icon-button color="warn" (click)="openSnackBar('import')" *ngIf="!wallet?.wallet">
     <mat-icon>warning</mat-icon>
   </button>
-  <button mat-icon-button color="accent" (click)="enter.emit()">
+  <button mat-icon-button color="warn" (click)="openSnackBar('plan')" *ngIf="!wallet?.local && !availablnInPlan">
+    <mat-icon>warning</mat-icon>
+  </button>
+  <button mat-icon-button color="accent" (click)="enter.emit()" *ngIf="wallet?.local || availablnInPlan">
     <mat-icon>launch</mat-icon>
   </button>
 </div>
