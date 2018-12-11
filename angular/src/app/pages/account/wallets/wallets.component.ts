@@ -132,7 +132,8 @@ export class WalletsComponent implements OnInit {
   }
 
   public renameWallet(id: string) {
-    const wallet = this.wallet.state.entities[id]
+    const wallet = this.wallet.state.entities[id];
+    
     this.dialog.open(PromptDialogComponent, {
       data: {
         title: this.translation.rename[this.lang],

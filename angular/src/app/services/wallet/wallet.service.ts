@@ -47,7 +47,8 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
           loading: false,
           ids: collection.docs.map(doc => doc.id),
           entities: {},
-          currentWalletId: localStorage.getItem("currentWallet") || undefined
+          currentWalletId: localStorage.getItem("currentWallet") || undefined,
+          lastUserId: userId
         }
         for (const doc of collection.docs) {
           state.entities[doc.id] = doc.data() as Wallet
