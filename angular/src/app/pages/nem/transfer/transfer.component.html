@@ -7,7 +7,7 @@
       </button>
       <span>{{translation.transfer[lang]}}</span>
       <span class="fill-remaining-space"></span>
-      <button mat-icon-button routerLink="/transactions/scan">
+      <button mat-icon-button routerLink="/nem/qr-scan">
         <mat-icon>center_focus_strong</mat-icon>
       </button>
     </mat-toolbar>
@@ -17,16 +17,15 @@
         <form #form="ngForm" (ngSubmit)="transfer()">
           <h3>{{translation.recipient[lang]}}</h3>
           <mat-card>
-            <app-nem-address-input fxFill [(ngModel)]="forms.recipient" name="recipient" placeholder="{{translation.recipient[lang]}}" (keyup)="this.onRecipientChange()"
+            <app-nem-address-input fxFill [(ngModel)]="forms.recipient" name="recipient" placeholder="{{translation.recipient[lang]}}" (change)="forms.recipient$.next($event)"
               required></app-nem-address-input>
           </mat-card>
           <br />
           <h3>{{translation.message[lang]}}</h3>
           <mat-card>
             <mat-form-field fxFill>
-              <input matInput placeholder="{{translation.message[lang]}}" [(ngModel)]="forms.message" name="message"
-                [required]="forms.encrypt">
-              <mat-slide-toggle fxFill matSuffix [(ngModel)]="forms.encrypt" name="encrypt" [disabled]="!data.publicAccount">{{translation.encryption[lang]}}</mat-slide-toggle>
+              <input matInput placeholder="{{translation.message[lang]}}" [(ngModel)]="forms.message" name="message" [required]="forms.encryption$ | async" (change)="forms.message$.next($event)">
+              <mat-slide-toggle fxFill matSuffix [(ngModel)]="forms.encryption" name="encrypt" (change)="forms.encryption$.next($event)">{{translation.encryption[lang]}}</mat-slide-toggle>
             </mat-form-field>
           </mat-card>
           <br />
@@ -34,7 +33,10 @@
             <h3>{{translation.assets[lang]}}</h3>
             <span class="fill-remaining-space"></span>
           </div>
-          <app-assets-list [title]="translation.balance[lang]" [assets]="balance$ | async" [nav]="true" (click)="addTransferAsset($event.value)"></app-assets-list>
+          <mat-card>
+            <app-assets-list [title]="translation.balance[lang]" [assets]="balance$ | async" [nav]="true" (clickAsset)="addTransferAsset($event)"></app-assets-list>
+          </mat-card>
+          <br />
           <ng-container *ngFor="let asset of forms.transferAssets; let i = index">
             <mat-card>
               <div fxLayout="row">
@@ -43,18 +45,18 @@
                   <mat-icon>clear</mat-icon>
                 </button>
               </div>
-              <app-assets-list [title]="translation.balance[lang]" [assets]="[asset.balance | async]"></app-assets-list>
+              <app-assets-list [assets]="[asset.balance$ | async]"></app-assets-list>
               <mat-form-field class="fill-remaining-space" fxFill>
                 <input matInput color="accent" placeholder="{{translation.amount[lang]}}" [(ngModel)]="asset.amount"
                   name="asset{{i}}-amount" required pattern="\d+(\.\d+)?" />
               </mat-form-field>
             </mat-card>
+            <br />
           </ng-container>
-          <br />
           <div fxLayout="row">
             <span class="fill-remaining-space"></span>
-            <button mat-raised-button type="button" [disabled]="form.invalid" (click)="shareInvoice()">{{translation.share[lang]}}</button>
-            <button mat-raised-button color="accent" [disabled]="form.invalid || !data.ready" (click)="transfer()">{{translation.transfer[lang]}}</button>
+            <button mat-raised-button type="button" [disabled]="form.invalid || !forms.transferAssets.length" (click)="shareInvoice()">{{translation.share[lang]}}</button>
+            <button mat-raised-button color="accent" [disabled]="form.invalid || !forms.transferAssets.length">{{translation.transfer[lang]}}</button>
           </div>
         </form>
       </ng-template>

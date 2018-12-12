@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { MatDialog, MatDialogRef, MatSnackBar, MatSlideToggleChange } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   Address,
   PlainMessage,
-  Message,
   TransferTransaction,
   Asset,
   TimeWindow,
@@ -15,12 +14,10 @@ import {
   SimpleWallet,
   AccountHttp,
   TransactionHttp,
-  Account,
-  PublicAccount,
   SignedTransaction
 } from 'nem-library';
-import { Observable, of, Subscription, from, Subject, forkJoin, combineLatest } from 'rxjs';
-import { mergeMap, first, map, filter } from 'rxjs/operators';
+import { Observable, of, from, combineLatest, BehaviorSubject } from 'rxjs';
+import { mergeMap, first, map, filter, catchError, merge } from 'rxjs/operators';
 import { WalletService } from '../../../services/wallet/wallet.service';
 import { BalanceService } from '../../../services/nem/balance/balance.service';
 import { LanguageService } from '../../../services/language/language.service';
@@ -33,14 +30,29 @@ import { nodes } from '../../../classes/nodes';
 import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
 import { AssetDefinitionService } from '../../../services/nem/asset-definition/asset-definition.service';
 import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.component';
+import { Tuple } from '../../../classes/tuple';
 
 @Component({
   selector: 'app-transfer',
   templateUrl: './transfer.component.html',
   styleUrls: ['./transfer.component.css']
 })
-export class TransferComponent implements OnInit {
+export class TransferComponent implements OnInit, OnDestroy {
   public get lang() { return this.language.state.twoLetter; }
+
+  public forms = {
+    recipient: "",
+    recipient$: new BehaviorSubject<TextEvent | undefined>(undefined),
+    message: "",
+    message$: new BehaviorSubject<TextEvent | undefined>(undefined),
+    encryption: "",
+    encryption$: new BehaviorSubject<MatSlideToggleChange | undefined>(undefined),
+    transferAssets: [] as {
+      id: string,
+      amount?: number,
+      balance$: Observable<Asset>
+    }[]
+  }
 
   public loading$ = combineLatest(
     this.wallet.state$,
@@ -51,23 +63,43 @@ export class TransferComponent implements OnInit {
 
   public balance$ = this.balance.state$.pipe(map(state => state.assets))
 
-  public forms = {
-    recipient: "",
-    message: "",
-    encrypt: false,
-    transferAssets: [] as {
-      id: string,
-      amount?: number,
-      balance: Observable<Asset>
-    }[]
-  }
+  public account$ = combineLatest(
+    this.auth.user$,
+    this.wallet.state$
+  ).pipe(
+    map(([user, wallet]) => Tuple(new Password(user!.uid), wallet.entities[wallet.currentWalletId!].wallet!)),
+    map(([password, wallet]) => SimpleWallet.readFromWLT(wallet).open(password)),
+    catchError(e => of(null))
+  )
 
-  public data: {
-    recipient?: PublicAccount
-    ready: boolean
-  } = {
-    ready: false
-  }
+  public recipient$ = this.forms.recipient$.asObservable().pipe(
+    filter(event => !!event),
+    map(event => new Address(event!.data)),
+    catchError(e => of(null))
+  )
+
+  public message$ = combineLatest(
+    this.recipient$.pipe(
+      map(recipient => Tuple(recipient, new AccountHttp(nodes))),
+      mergeMap(([recipient, accountHttp]) => accountHttp.getFromAddress(recipient!)),
+      map(meta => meta.publicAccount),
+      catchError(e => of(null))
+    ),
+    this.forms.message$.asObservable().pipe(
+      map(event => event && event.data || "")
+    ),
+    this.forms.encryption$.pipe(
+      map(event => event && event.checked)
+    ),
+    this.account$
+  ).pipe(
+    map(
+      ([recipient, message, encryption, account]) => encryption
+        ? account!.encryptMessage(message, recipient!)
+        : PlainMessage.create(message)
+    ),
+    catchError(e => of(null))
+  )
 
   constructor(
     private dialog: MatDialog,
@@ -85,7 +117,13 @@ export class TransferComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.load();
+    this.load()
+  }
+
+  ngOnDestroy() {
+    this.forms.recipient$.complete()
+    this.forms.message$.complete()
+    this.forms.encryption$.complete()
   }
 
   public load() {
@@ -98,16 +136,16 @@ export class TransferComponent implements OnInit {
           new Address(state.entities[state.currentWalletId!].nem)
         )
 
-        let invoice = this.route.snapshot.queryParamMap.get('invoice') || "";
-        let invoiceData = Invoice.parse(decodeURI(invoice));
+        let invoice = this.route.snapshot.queryParamMap.get('invoice') || ""
+        let invoiceData = Invoice.parse(decodeURI(invoice))
 
         if (invoiceData) {
-          this.forms.recipient = invoiceData.data.addr;
-          this.forms.message = invoiceData.data.msg;
+          this.forms.recipient = invoiceData.data.addr
+          this.forms.message = invoiceData.data.msg
 
           if (invoiceData.data.assets) {
             for (let asset of invoiceData.data.assets) {
-              this.addTransferAsset(asset.id, asset.amount);
+              this.addTransferAsset(asset.id, asset.amount)
             }
           }
         }
@@ -119,38 +157,19 @@ export class TransferComponent implements OnInit {
     this._router.back([""])
   }
 
-  public onRecipientChange() {
-    this.data.ready = false
-    const accountHttp = new AccountHttp(nodes)
-    const address = new Address(this.forms.recipient)
-
-    accountHttp.getFromAddress(address).pipe(
-      map(meta => meta.publicAccount)
-    ).subscribe(
-      (publicAccount) => {
-        this.data.recipient = publicAccount
-        this.data.ready = true
-      }
-    )
-  }
-
-  public createMessage(account: Account, message: string, encrytion: boolean, publicAccount?: PublicAccount) {
-    if (!encrytion) {
-      return PlainMessage.create(message)
-    }
-    if (!publicAccount) {
-      throw Error()
-    }
-
-    return account.encryptMessage(message, publicAccount)
-  }
 
   public addTransferAsset(id: string, amount?: number) {
+    if (!id) {
+      return
+    }
+    if (this.forms.transferAssets.find(asset => asset.id === id)) {
+      return
+    }
     this.forms.transferAssets.push(
       {
         id: id,
         amount: amount,
-        balance: this.balance.state$.pipe(
+        balance$: this.balance.state$.pipe(
           mergeMap(state => from(state.assets)),
           filter(asset => asset.assetId.toString() === id)
         )
@@ -159,23 +178,23 @@ export class TransferComponent implements OnInit {
   }
 
   public deleteTransferAsset(index: number) {
-    this.forms.transferAssets.splice(index, 1);
+    this.forms.transferAssets.splice(index, 1)
   }
 
   public shareInvoice() {
-    let invoice = new Invoice();
+    const invoice = new Invoice();
     invoice.data.addr = this.forms.recipient;
     invoice.data.msg = this.forms.message;
     invoice.data.assets = this.forms.transferAssets.map(
       (asset) => {
         return { id: asset.id, amount: asset.amount || 0 }
       }
-    );
+    )
 
     this.share.share(
       location.href + "?invoice=" + encodeURI(invoice.stringify()),
       "LCNEM Wallet"
-    );
+    )
   }
 
   public getMosaicTransferable() {
@@ -192,24 +211,26 @@ export class TransferComponent implements OnInit {
   }
 
   public transfer() {
-    this.wallet.state$.pipe(
-      first(),
-      map(state => state.entities[state.currentWalletId!])
+    combineLatest(
+      this.account$,
+      this.recipient$,
+      this.message$
     ).subscribe(
-      (wallet) => {
-        if (!wallet.wallet) {
-          this.openSnackBar("import")
-          return null
+      ([account, recipient, message]) => {
+        if (!account) {
+          this.openDialog("import")
+          return
         }
-        const password = new Password(this.auth.user!.uid);
-        const account = SimpleWallet.readFromWLT(wallet.wallet).open(password);
 
-
+        if (!message) {
+          this.openDialog("message")
+          return
+        }
         const transaction = TransferTransaction.createWithAssets(
           TimeWindow.createWithDeadline(),
-          new Address(this.forms.recipient),
+          recipient!,
           this.getMosaicTransferable(),
-          this.createMessage(account, this.forms.message, this.forms.encrypt, this.data.recipient)
+          message
         );
 
         this.dialog.open(
@@ -250,7 +271,7 @@ export class TransferComponent implements OnInit {
           () => {
             this.router.navigate([""])
           }
-        );
+        )
       },
       (error) => {
         this.dialog.open(
@@ -269,9 +290,28 @@ export class TransferComponent implements OnInit {
     )
   }
 
-  public openSnackBar(type: string) {
+  public openDialog(type: string) {
     if (type == "import") {
-      this.snackBar.open(this.translation.importRequired[this.lang], undefined, { duration: 3000 });
+      this.dialog.open(
+        AlertDialogComponent,
+        {
+          data: {
+            title: this.translation.error[this.lang],
+            content: this.translation.importRequired[this.lang]
+          }
+        }
+      )
+    }
+    if (type == "message") {
+      this.dialog.open(
+        AlertDialogComponent,
+        {
+          data: {
+            title: this.translation.error[this.lang],
+            content: this.translation.noPublicKey[this.lang]
+          }
+        }
+      )
     }
   }
 
@@ -344,5 +384,5 @@ export class TransferComponent implements OnInit {
       en: "Failed to get the recipient public key for encryption.",
       ja: "暗号化のための宛先の公開鍵取得に失敗しました。"
     } as any
-  };
+  }
 }

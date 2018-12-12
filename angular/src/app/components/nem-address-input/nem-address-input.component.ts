@@ -1,11 +1,13 @@
-import { Component, Input, forwardRef, OnInit } from '@angular/core';
+import { Component, Input, forwardRef, OnInit, OnDestroy } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, NG_VALIDATORS, Validator, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Observable, of, from } from 'rxjs';
-import { debounceTime, filter, mergeMap, map, catchError, toArray } from 'rxjs/operators';
+import { Observable, of, from, Subject, combineLatest, BehaviorSubject } from 'rxjs';
+import { debounceTime, filter, mergeMap, map, catchError, toArray, first, merge, retry } from 'rxjs/operators';
 import { NamespaceHttp, AccountHttp, Address } from 'nem-library';
 import { LanguageService } from '../../services/language/language.service';
 import { nodes } from '../../classes/nodes';
 import { ContactService } from '../../services/contact/contact.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { Tuple } from '../../classes/tuple';
 
 @Component({
   selector: 'app-nem-address-input',
@@ -24,113 +26,74 @@ import { ContactService } from '../../services/contact/contact.service';
     }
   ],
 })
-export class NemAddressInputComponent implements OnInit, ControlValueAccessor, Validator {
+export class NemAddressInputComponent implements OnInit, OnDestroy, ControlValueAccessor, Validator {
   public get lang() { return this.language.state.twoLetter; }
 
   @Input() placeholder?: string;
   @Input() required?: boolean;
 
-  public hint$ = new Observable<string>();
-  public suggests$ = new Observable<{
-    name: string,
-    address: string
-  }[]>();
+  private subject$ = new BehaviorSubject<KeyboardEvent | undefined>(undefined)
+  private filtered$ = this.subject$.asObservable().pipe(
+    filter(event => !!event),
+    filter(event => event!.keyCode < 37 || 40 < event!.keyCode),
+    debounceTime(600)
+  )
 
-  public readonly pattern = "N[2-7A-Z]{39}";
+  public contacts$ = combineLatest(
+    this.filtered$,
+    this.contact.state$
+  ).pipe(
+    map(([event, contact]) => Tuple(event, contact.ids.map(id => contact.entities[id].nem).reduce((_, __) => _.concat(__)))),
+    map(([event, nem]) => nem.filter(n => n.name.startsWith((<HTMLInputElement>event!.target).value)))
+  )
+
+  public namespace$ = this.filtered$.pipe(
+    map(event => Tuple(event, new NamespaceHttp(nodes))),
+    mergeMap(([event, namespaceHttp]) => namespaceHttp.getNamespace((<HTMLInputElement>event!.target).value)),
+    catchError(e => of(null))
+  )
+
+  public suggests$ = combineLatest(
+    this.contacts$,
+    this.namespace$
+  ).pipe(
+    map(([contacts, namespace]) => namespace
+      ? [{ name: namespace.name, address: namespace.owner.plain() }, ...contacts]
+      : contacts),
+  )
+
+  public readonly pattern = "N[2-7A-Z]{39}"
 
   constructor(
     private language: LanguageService,
+    private auth: AuthService,
     private contact: ContactService
   ) { }
 
   ngOnInit() {
+    this.load()
   }
 
-  public onKeyup(
-    event: {
-      value: string;
-      keyCode: number
-    }
-  ) {
+  ngOnDestroy() {
+    this.subject$.complete()
+  }
+
+  public load(refresh?: boolean) {
+    this.auth.user$.pipe(
+      filter(user => user !== null),
+      first()
+    ).subscribe(
+      (user) => {
+        this.contact.loadContacts(user!.uid, refresh)
+      }
+    )
+  }
+
+  public onKeyup(event: KeyboardEvent) {
     if (this.value.replace(/-/g, "").trim().toUpperCase().match(/^N[A-Z2-7]{39}$/)) {
       this.value = this.value.replace(/-/g, "");
-      event.value = this.value;
     }
-    const filtered = of(event).pipe(
-      filter(event => event.value ? true : false),
-      filter(event => event.keyCode < 37 || 40 < event.keyCode),
-      debounceTime(1000)
-    );
-
-    this.hint$ = filtered.pipe(
-      mergeMap(
-        (event) => {
-          const accountHttp = new AccountHttp(nodes);
-          const address = new Address(this.value);
-          return accountHttp.allTransactions(address);
-        }
-      ),
-      map(
-        (transactions) => {
-          if(!transactions.length) {
-            return this.translations.unknownAddress[this.lang];
-          }
-          return "";
-        }
-      )
-    )
-
-    this.suggests$ = filtered.pipe(
-      mergeMap(
-        (event) => {
-          return this.contact.state$.pipe(
-            mergeMap(
-              (contact) => {
-                return from(contact.ids as string[]).pipe(
-                  filter(id => contact.entities[id].name.startsWith(event.value)),
-                  map(id => contact.entities[id])
-                )
-              }
-            ),
-            mergeMap(
-              (entity) => {
-                return from(entity.nem).pipe(
-                  map(
-                    (nem) => {
-                      return {
-                        name: entity.name + " " + nem.name,
-                        address: nem.address
-                      }
-                    }
-                  )
-                )
-              }
-            )
-          )
-        }
-      ),
-      toArray(),
-      mergeMap(
-        (suggests) => {
-          const namespaceHttp = new NamespaceHttp(nodes);
-          return namespaceHttp.getNamespace(this.value).pipe(
-            map(
-              (namespace) => {
-                return [
-                  ...suggests,
-                  {
-                    name: this.value + ".nem",
-                    address: namespace.owner.plain()
-                  }
-                ]
-              }
-            ),
-            catchError((e) => of(suggests))
-          )
-        }
-      ),
-      
-    )
+    this.subject$.next(event)
   }
 
   public translations = {

@@ -2,16 +2,18 @@
 <app-balance></app-balance>
 <br />
 <h3>{{translation.yourAddress[lang]}}</h3>
-<mat-card>
-  <mat-spinner *ngIf="loading$ | async"></mat-spinner>
-  <p class="address" *ngIf="address$ | async as address">
-    {{address}}
-    <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyAddress()">
-      <mat-icon>input</mat-icon>
-    </button>
-  </p>
-  <img class="qr" *ngIf="qrUrl$ | async as qrUrl" [src]="qrUrl" />
-</mat-card>
+<mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
+<ng-template #loaded>
+  <mat-card>
+    <p class="address" *ngIf="address$ | async as address">
+      {{address}}
+      <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyAddress()">
+        <mat-icon>input</mat-icon>
+      </button>
+    </p>
+    <img class="qr" *ngIf="qrUrl$ | async as qrUrl" [src]="qrUrl" />
+  </mat-card>
+</ng-template>
 <br />
 <h3>{{translation.cosignatoryOf[lang]}}</h3>
 <app-multisig></app-multisig>

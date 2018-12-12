@@ -2,7 +2,7 @@
   <h3 mat-subheader *ngIf="title">{{title}}</h3>
   <mat-divider></mat-divider>
   <ng-container *ngFor="let asset of assets$ | async">
-    <mat-list-item (click)="click.emit({value: asset.name})">
+    <mat-list-item (click)="clickAsset.emit(asset.name)">
       <img mat-list-icon src="{{asset.imageURL}}" />
       <span mat-line>{{asset.name}}</span>
       <small mat-line>{{asset.issuer}}</small>

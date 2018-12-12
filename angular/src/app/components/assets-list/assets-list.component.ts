@@ -17,7 +17,7 @@ export class AssetsListComponent implements OnInit {
   @Input() public assets?: Asset[]
   @Input() nav = false
 
-  @Output() click = new EventEmitter()
+  @Output() clickAsset = new EventEmitter()
 
   public loading$ = this.assetDefinition.state$.pipe(map(state => state.loading))
   public assets$: Observable<{
