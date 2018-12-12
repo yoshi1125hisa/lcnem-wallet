@@ -17,7 +17,7 @@ import {
   SignedTransaction
 } from 'nem-library';
 import { Observable, of, from, combineLatest, BehaviorSubject } from 'rxjs';
-import { mergeMap, first, map, filter, catchError, merge } from 'rxjs/operators';
+import { mergeMap, first, map, filter, catchError, merge, publish } from 'rxjs/operators';
 import { WalletService } from '../../../services/wallet/wallet.service';
 import { BalanceService } from '../../../services/nem/balance/balance.service';
 import { LanguageService } from '../../../services/language/language.service';
@@ -58,7 +58,7 @@ export class TransferComponent implements OnInit, OnDestroy {
     this.wallet.state$,
     this.balance.state$
   ).pipe(
-    map(fork => fork[0].loading || fork[1].loading)
+    map(([wallet, balance]) => wallet.loading || balance.loading)
   )
 
   public balance$ = this.balance.state$.pipe(map(state => state.assets))
@@ -66,7 +66,7 @@ export class TransferComponent implements OnInit, OnDestroy {
   public account$ = combineLatest(
     this.auth.user$,
     this.wallet.state$
-  ).pipe(
+  ).pipe(map(_ => {console.log(_);return _}),
     map(([user, wallet]) => Tuple(new Password(user!.uid), wallet.entities[wallet.currentWalletId!].wallet!)),
     map(([password, wallet]) => SimpleWallet.readFromWLT(wallet).open(password)),
     catchError(e => of(null))
@@ -74,7 +74,8 @@ export class TransferComponent implements OnInit, OnDestroy {
 
   public recipient$ = this.forms.recipient$.asObservable().pipe(
     filter(event => !!event),
-    map(event => new Address(event!.data)),
+    map(event => (event!.target as HTMLInputElement).value),
+    map(value => new Address(value)),
     catchError(e => of(null))
   )
 
@@ -86,7 +87,7 @@ export class TransferComponent implements OnInit, OnDestroy {
       catchError(e => of(null))
     ),
     this.forms.message$.asObservable().pipe(
-      map(event => event && event.data || "")
+      map(event => event && (event!.target as HTMLInputElement).value || "")
     ),
     this.forms.encryption$.pipe(
       map(event => event && event.checked)
@@ -157,7 +158,6 @@ export class TransferComponent implements OnInit, OnDestroy {
     this._router.back([""])
   }
 
-
   public addTransferAsset(id: string, amount?: number) {
     if (!id) {
       return
@@ -215,13 +215,14 @@ export class TransferComponent implements OnInit, OnDestroy {
       this.account$,
       this.recipient$,
       this.message$
+    ).pipe(
+      first()
     ).subscribe(
       ([account, recipient, message]) => {
         if (!account) {
           this.openDialog("import")
           return
         }
-
         if (!message) {
           this.openDialog("message")
           return
