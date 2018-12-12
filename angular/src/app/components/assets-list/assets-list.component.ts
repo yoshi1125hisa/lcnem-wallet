@@ -10,7 +10,7 @@ import { AssetDefinitionService } from '../../services/nem/asset-definition/asse
   templateUrl: './assets-list.component.html',
   styleUrls: ['./assets-list.component.css']
 })
-export class AssetsListComponent implements OnInit, OnChanges {
+export class AssetsListComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter }
 
   @Input() public title?: string
@@ -35,9 +35,6 @@ export class AssetsListComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-  }
-
-  ngOnChanges(changes: any) {
     this.load()
   }
 

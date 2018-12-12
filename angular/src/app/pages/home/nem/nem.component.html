@@ -3,6 +3,7 @@
 <br />
 <h3>{{translation.yourAddress[lang]}}</h3>
 <mat-card>
+  <mat-spinner *ngIf="loading$ | async"></mat-spinner>
   <p class="address" *ngIf="address$ | async as address">
     {{address}}
     <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyAddress()">

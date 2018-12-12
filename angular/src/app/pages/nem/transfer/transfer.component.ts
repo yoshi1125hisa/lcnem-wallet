@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
@@ -19,7 +19,7 @@ import {
   PublicAccount,
   SignedTransaction
 } from 'nem-library';
-import { Observable, of, Subscription, from, Subject, forkJoin } from 'rxjs';
+import { Observable, of, Subscription, from, Subject, forkJoin, combineLatest } from 'rxjs';
 import { mergeMap, first, map, filter } from 'rxjs/operators';
 import { WalletService } from '../../../services/wallet/wallet.service';
 import { BalanceService } from '../../../services/nem/balance/balance.service';
@@ -39,10 +39,16 @@ import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.compo
   templateUrl: './transfer.component.html',
   styleUrls: ['./transfer.component.css']
 })
-export class TransferComponent implements OnInit, OnDestroy {
+export class TransferComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
-  public loading$ = this.balance.state$.pipe(map(state => state.loading))
+  public loading$ = combineLatest(
+    this.wallet.state$,
+    this.balance.state$
+  ).pipe(
+    map(fork => fork[0].loading || fork[1].loading)
+  )
+
   public balance$ = this.balance.state$.pipe(map(state => state.assets))
 
   public forms = {
@@ -54,45 +60,14 @@ export class TransferComponent implements OnInit, OnDestroy {
       amount?: number,
       balance: Observable<Asset>
     }[]
-  };
+  }
 
-  private account$ = this.wallet.state$.pipe(
-    map(state => state.entities[state.currentWalletId!]),
-    map(
-      (wallet) => {
-        if (!wallet.wallet) {
-          this.openSnackBar("import")
-          return null
-        }
-        const password = new Password(this.auth.user!.uid);
-        return SimpleWallet.readFromWLT(wallet.wallet).open(password);
-      }
-    )
-  )
-
-  private recipientPublicAccount$ = new Subject<PublicAccount>()
-  private messageForm$ = new Subject<[string, boolean]>()
-
-  private message$: Observable<Message> = this.messageForm$.pipe(
-    mergeMap(
-      (form) => {
-        if (!form[1]) {
-          return of(PlainMessage.create(this.forms.message))
-        }
-
-        return forkJoin(
-          this.account$,
-          this.recipientPublicAccount$
-        ).pipe(
-          map(
-            (data) => {
-              return data[0]!.encryptMessage(form[0], data[1])
-            }
-          )
-        )
-      }
-    )
-  )
+  public data: {
+    recipient?: PublicAccount
+    ready: boolean
+  } = {
+    ready: false
+  }
 
   constructor(
     private dialog: MatDialog,
@@ -113,10 +88,6 @@ export class TransferComponent implements OnInit, OnDestroy {
     this.load();
   }
 
-  ngOnDestroy() {
-    this.recipientPublicAccount$.complete()
-  }
-
   public load() {
     this.wallet.state$.pipe(
       filter(state => state.currentWalletId !== undefined),
@@ -126,14 +97,14 @@ export class TransferComponent implements OnInit, OnDestroy {
         this.balance.loadBalance(
           new Address(state.entities[state.currentWalletId!].nem)
         )
-    
+
         let invoice = this.route.snapshot.queryParamMap.get('invoice') || "";
         let invoiceData = Invoice.parse(decodeURI(invoice));
-    
+
         if (invoiceData) {
           this.forms.recipient = invoiceData.data.addr;
           this.forms.message = invoiceData.data.msg;
-    
+
           if (invoiceData.data.assets) {
             for (let asset of invoiceData.data.assets) {
               this.addTransferAsset(asset.id, asset.amount);
@@ -148,32 +119,30 @@ export class TransferComponent implements OnInit, OnDestroy {
     this._router.back([""])
   }
 
-  public onRecipientKeyup() {
-    this.forms.encrypt = false
+  public onRecipientChange() {
+    this.data.ready = false
     const accountHttp = new AccountHttp(nodes)
     const address = new Address(this.forms.recipient)
-    accountHttp.getFromAddress(address).pipe(
-      map(
-        (meta) => {
-          if (!meta.publicAccount) {
-            const publicAccount = {
-              address: address
-            }
-            return publicAccount as PublicAccount
-          }
 
-          return meta.publicAccount
-        }
-      )
+    accountHttp.getFromAddress(address).pipe(
+      map(meta => meta.publicAccount)
     ).subscribe(
       (publicAccount) => {
-        this.recipientPublicAccount$.next(publicAccount)
+        this.data.recipient = publicAccount
+        this.data.ready = true
       }
     )
   }
 
-  public onMessageChange() {
-    this.messageForm$.next([this.forms.message, this.forms.encrypt])
+  public createMessage(account: Account, message: string, encrytion: boolean, publicAccount?: PublicAccount) {
+    if (!encrytion) {
+      return PlainMessage.create(message)
+    }
+    if (!publicAccount) {
+      throw Error()
+    }
+
+    return account.encryptMessage(message, publicAccount)
   }
 
   public addTransferAsset(id: string, amount?: number) {
@@ -186,7 +155,7 @@ export class TransferComponent implements OnInit, OnDestroy {
           filter(asset => asset.assetId.toString() === id)
         )
       }
-    );
+    )
   }
 
   public deleteTransferAsset(index: number) {
@@ -209,8 +178,8 @@ export class TransferComponent implements OnInit, OnDestroy {
     );
   }
 
-  public transfer() {
-    const mosaics = this.forms.transferAssets.map(
+  public getMosaicTransferable() {
+    return this.forms.transferAssets.map(
       (asset) => {
         if (asset.id == "nem:xem") {
           return new XEM(asset.amount || 0);
@@ -220,24 +189,29 @@ export class TransferComponent implements OnInit, OnDestroy {
         return AssetTransferable.createWithAssetDefinition(definition, asset.amount || 0)
       }
     )
+  }
 
-    forkJoin(
-      this.account$,
-      this.recipientPublicAccount$,
-      this.message$
-    ).pipe(
-      map(
-        (data) => {
-          return TransferTransaction.createWithAssets(
-            TimeWindow.createWithDeadline(),
-            data[1].address,
-            mosaics,
-            data[2]
-          );
-        }
-      )
+  public transfer() {
+    this.wallet.state$.pipe(
+      first(),
+      map(state => state.entities[state.currentWalletId!])
     ).subscribe(
-      (transaction) => {
+      (wallet) => {
+        if (!wallet.wallet) {
+          this.openSnackBar("import")
+          return null
+        }
+        const password = new Password(this.auth.user!.uid);
+        const account = SimpleWallet.readFromWLT(wallet.wallet).open(password);
+
+
+        const transaction = TransferTransaction.createWithAssets(
+          TimeWindow.createWithDeadline(),
+          new Address(this.forms.recipient),
+          this.getMosaicTransferable(),
+          this.createMessage(account, this.forms.message, this.forms.encrypt, this.data.recipient)
+        );
+
         this.dialog.open(
           TransferDialogComponent,
           {
@@ -250,11 +224,8 @@ export class TransferComponent implements OnInit, OnDestroy {
           filter(result => result)
         ).subscribe(
           () => {
-            this.account$.pipe(first()).subscribe(
-              (account) => {
-                account!.signTransaction(transaction)
-              }
-            )
+            const signed = account!.signTransaction(transaction)
+            this.announceTransaction(signed)
           }
         )
       }

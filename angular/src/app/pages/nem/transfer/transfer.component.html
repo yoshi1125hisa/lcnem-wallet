@@ -17,7 +17,7 @@
         <form #form="ngForm" (ngSubmit)="transfer()">
           <h3>{{translation.recipient[lang]}}</h3>
           <mat-card>
-            <app-nem-address-input fxFill [(ngModel)]="forms.recipient" name="recipient" placeholder="{{translation.recipient[lang]}}"
+            <app-nem-address-input fxFill [(ngModel)]="forms.recipient" name="recipient" placeholder="{{translation.recipient[lang]}}" (keyup)="this.onRecipientChange()"
               required></app-nem-address-input>
           </mat-card>
           <br />
@@ -26,7 +26,7 @@
             <mat-form-field fxFill>
               <input matInput placeholder="{{translation.message[lang]}}" [(ngModel)]="forms.message" name="message"
                 [required]="forms.encrypt">
-              <mat-slide-toggle fxFill matSuffix [(ngModel)]="forms.encrypt" name="encrypt" [disabled]="!(account$ | async) || !(recipientPublicAccount$ | async)">{{translation.encryption[lang]}}</mat-slide-toggle>
+              <mat-slide-toggle fxFill matSuffix [(ngModel)]="forms.encrypt" name="encrypt" [disabled]="!data.publicAccount">{{translation.encryption[lang]}}</mat-slide-toggle>
             </mat-form-field>
           </mat-card>
           <br />
@@ -43,7 +43,7 @@
                   <mat-icon>clear</mat-icon>
                 </button>
               </div>
-              <app-assets-list [title]="translation.balance[lang]" [assets]="[asset.balance]"></app-assets-list>
+              <app-assets-list [title]="translation.balance[lang]" [assets]="[asset.balance | async]"></app-assets-list>
               <mat-form-field class="fill-remaining-space" fxFill>
                 <input matInput color="accent" placeholder="{{translation.amount[lang]}}" [(ngModel)]="asset.amount"
                   name="asset{{i}}-amount" required pattern="\d+(\.\d+)?" />
@@ -54,7 +54,7 @@
           <div fxLayout="row">
             <span class="fill-remaining-space"></span>
             <button mat-raised-button type="button" [disabled]="form.invalid" (click)="shareInvoice()">{{translation.share[lang]}}</button>
-            <button mat-raised-button color="accent" [disabled]="form.invalid || !(account$ | async)" (click)="transfer()">{{translation.transfer[lang]}}</button>
+            <button mat-raised-button color="accent" [disabled]="form.invalid || !data.ready" (click)="transfer()">{{translation.transfer[lang]}}</button>
           </div>
         </form>
       </ng-template>

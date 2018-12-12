@@ -13,6 +13,8 @@ import { ShareService } from '../../../services/api/share/share.service';
 export class NemComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
+  public loading$ = this.wallet.state$.pipe(map(state => state.loading))
+
   public address$ = this.wallet.state$.pipe(
     filter(state => state.currentWalletId !== undefined),
     map(state => state.entities[state.currentWalletId!].nem)
