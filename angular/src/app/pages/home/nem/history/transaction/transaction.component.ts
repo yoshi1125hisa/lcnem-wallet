@@ -99,7 +99,6 @@ export class TransactionComponent implements OnInit, OnChanges {
 
             if (transferTransaction.recipient.plain() === this.wallet.state.entities[this.wallet.state.currentWalletId!].nem) {
               this.icon = "call_received"
-              this.address = transferTransaction.signer!.address.pretty()
 
               return
             }
