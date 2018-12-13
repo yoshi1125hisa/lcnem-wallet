@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { SimpleWallet, Password } from 'nem-library';
 import { Router } from '@angular/router';
-import { Observable, from, forkJoin } from 'rxjs';
+import { from, combineLatest } from 'rxjs';
 import { map, mergeMap, toArray, filter, first } from 'rxjs/operators';
 import { Wallet } from '../../../../../../firebase/functions/src/models/wallet';
 import { LanguageService } from '../../../services/language/language.service';
 import { RouterService } from '../../../services/router/router.service';
 import { WalletService } from '../../../services/wallet/wallet.service';
 import { AuthService } from '../../../services/auth/auth.service';
+import { UserService } from '../../../services/user/user.service';
 import { PromptDialogComponent } from '../../../components/prompt-dialog/prompt-dialog.component';
 import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
 import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
@@ -21,16 +22,20 @@ import { WalletCreateDialogComponent } from './wallet-create-dialog/wallet-creat
 })
 export class WalletsComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
-  public lang$ = this.language.state$.pipe(map(state => state.twoLetter))
 
-  
-  public loading$ = forkJoin(
+  public loading$ = combineLatest(
     this.auth.user$,
+    this.user.state$,
     this.wallet.state$
   ).pipe(
-    map(fork => !fork[0] || fork[1].loading)
+    map(([auth, user, wallet]) => !auth || user.loading || wallet.loading)
   )
 
+  public plan$ = this.user.state$.pipe(
+    filter(state => !!state.user),
+    map(state => state.user!),
+    map(user => user.plan)
+  )
   public state$ = this.wallet.state$;
 
   public clouds$ = this.state$.pipe(
@@ -45,14 +50,13 @@ export class WalletsComponent implements OnInit {
     )
   )
 
-  public plan = ""
-
   constructor(
     private dialog: MatDialog,
     private router: Router,
     private _router: RouterService,
     private language: LanguageService,
     private auth: AuthService,
+    private user: UserService,
     private wallet: WalletService,
   ) {
   }
@@ -62,12 +66,13 @@ export class WalletsComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    const subscription = this.auth.user$.pipe(
-      filter(user => user != null)
+    this.auth.user$.pipe(
+      filter(user => user != null),
+      first()
     ).subscribe(
       (user) => {
+        this.user.loadUser(user!.uid, refresh)
         this.wallet.loadWallets(user!.uid, refresh)
-        subscription.unsubscribe()
       }
     )
   }
@@ -85,7 +90,7 @@ export class WalletsComponent implements OnInit {
 
         const wallet: Wallet = {
           name: result.name,
-          local: result.local == 1 ? true: false,
+          local: result.local == 1 ? true : false,
           nem: simpleWallet.address.plain(),
           wallet: simpleWallet.writeWLTFile()
         }
@@ -132,7 +137,8 @@ export class WalletsComponent implements OnInit {
   }
 
   public renameWallet(id: string) {
-    const wallet = this.wallet.state.entities[id]
+    const wallet = this.wallet.state.entities[id];
+
     this.dialog.open(PromptDialogComponent, {
       data: {
         title: this.translation.rename[this.lang],

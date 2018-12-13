@@ -7,7 +7,7 @@ import { LanguageService } from '../../services/language/language.service';
 import { RouterService } from '../../services/router/router.service';
 import { ContactService } from '../../services/contact/contact.service';
 import { AuthService } from '../../services/auth/auth.service';
-import { forkJoin } from 'rxjs';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-contacts',
@@ -18,7 +18,7 @@ import { forkJoin } from 'rxjs';
 export class ContactsComponent implements OnInit {
   get lang() { return this.language.state.twoLetter }
 
-  public loading$ = forkJoin(
+  public loading$ = combineLatest(
     this.auth.user$,
     this.contact.state$
   ).pipe(
@@ -34,6 +34,7 @@ export class ContactsComponent implements OnInit {
     private auth: AuthService,
     private contact: ContactService
   ) {
+    this.contact.state$.subscribe(_ => console.log(_))
   }
 
   ngOnInit() {
@@ -41,12 +42,12 @@ export class ContactsComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    const subscription = this.auth.user$.pipe(
-      filter(user => user !== null)
+    this.auth.user$.pipe(
+      filter(user => user !== null),
+      first()
     ).subscribe(
       (user) => {
         this.contact.loadContacts(user!.uid, refresh)
-        subscription.unsubscribe()
       }
     )
   }
@@ -79,6 +80,12 @@ export class ContactsComponent implements OnInit {
         data: {
           contact: this.contact.state.entities[id]
         }
+      }
+    ).afterClosed().pipe(
+      filter(name => name)
+    ).subscribe(
+      (name) => {
+        this.contact.updateContact(this.auth.user!.uid, id, name)
       }
     )
   }

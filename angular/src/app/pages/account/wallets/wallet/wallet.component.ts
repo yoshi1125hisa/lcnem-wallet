@@ -12,6 +12,7 @@ export class WalletComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter }
 
   @Input() wallet?: Wallet
+  @Input() availablnInPlan?: boolean
 
   @Output() enter = new EventEmitter()
   @Output() backup = new EventEmitter()
@@ -30,6 +31,8 @@ export class WalletComponent implements OnInit {
   public openSnackBar(type: string) {
     if (type == "import") {
       this.snackBar.open(this.translation.localNotFound[this.lang], undefined, { duration: 3000 });
+    } else if (type == "plan") {
+      this.snackBar.open(this.translation.unavailablePlan[this.lang], undefined, { duration: 3000 });
     }
   }
 
@@ -53,6 +56,10 @@ export class WalletComponent implements OnInit {
     localNotFound: {
       en: "The private key is not imported so some functions which require the private key are not available.",
       ja: "秘密鍵がインポートされていないため、秘密鍵が必要な一部の機能が制限されます。"
+    } as any,
+    unavailablePlan: {
+      en: "More than one private key in Free plan is not supported.",
+      ja: "Freeプランでは、複数のクラウド秘密鍵はサポートされていません。"
     } as any
   }
 }

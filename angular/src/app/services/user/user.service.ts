@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-
-import { User } from '../../../../../firebase/functions/src/models/user'
-import { RxEffectiveStateStore } from '../../classes/rx-effective-state-store';
-import { RxEffectiveState } from '../../classes/rx-effective-state';
-import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { SimpleWallet, Password } from 'nem-library';
-import { first } from 'rxjs/operators';
+import { RxEffectiveStateStore, RxEffectiveState } from 'rx-state-store-js';
+import { User } from '../../../../../firebase/functions/src/models/user'
+import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 
 @Injectable({
   providedIn: 'root'
@@ -38,23 +35,24 @@ export class UserService extends RxEffectiveStateStore<State> {
         }
 
         //レガシー
-        if (state.user && (state.user as any).wallet) {
-          const account = SimpleWallet.readFromWLT((state.user as any).wallet).open(new Password(userId))
-       
-          document.ref.collection("wallets").add(
-            {
-              name: "1",
-              local: false,
-              nem: account.address.plain(),
-              wallet: (state.user as any).wallet
-            } as Wallet
-          ).then(
-            () => {
-              delete (state.user as any).wallet
-              this.firestore.collection("users").doc(userId).update(state.user!)
-            }
-          )
+        const migration = async () => {
+          if (state.user && (state.user as any).wallet) {
+            const account = SimpleWallet.readFromWLT((state.user as any).wallet).open(new Password(userId))
+
+            await document.ref.collection("wallets").add(
+              {
+                name: "1",
+                local: false,
+                nem: account.address.plain(),
+                wallet: (state.user as any).wallet
+              } as Wallet
+            )
+            delete (state.user as any).wallet
+            
+            await this.firestore.collection("users").doc(userId).set(state.user!)
+          }
         }
+        migration()
         //レガシー
 
         this.streamState(state)

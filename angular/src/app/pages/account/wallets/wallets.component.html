@@ -1,6 +1,6 @@
-<mat-sidenav-container>
-  <mat-sidenav></mat-sidenav>
-  <mat-sidenav-content>
+<mat-drawer-container>
+  <mat-drawer></mat-drawer>
+  <mat-drawer-content>
     <mat-toolbar class="mat-elevation-z4 top-toolbar">
       <button mat-icon-button>
         <mat-icon>account_balance_wallet</mat-icon>
@@ -15,7 +15,7 @@
         <ng-container *ngIf="state$ | async as state">
           <ng-container *ngFor="let id of state.ids">
             <mat-card>
-              <app-wallet [wallet]="state.entities[id]" (backup)="backupWallet(id)" (delete)="deleteWallet(id)" (enter)="enterWallet(id)"
+              <app-wallet [wallet]="state.entities[id]" [availablnInPlan]="(clouds$ | async) <= 1 || (plan$ | async)" (backup)="backupWallet(id)" (delete)="deleteWallet(id)" (enter)="enterWallet(id)"
                 (import)="importPrivateKey(id)" (rename)="renameWallet(id)"></app-wallet>
             </mat-card>
             <br />
@@ -27,5 +27,5 @@
         </ng-container>
       </ng-template>
     </div>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  </mat-drawer-content>
+</mat-drawer-container>

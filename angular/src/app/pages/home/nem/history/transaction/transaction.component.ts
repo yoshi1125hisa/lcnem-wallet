@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit, OnChanges } from '@angular/core';
 
 import {
   Address,
@@ -29,7 +29,7 @@ import { AuthService } from '../../../../../services/auth/auth.service';
   templateUrl: './transaction.component.html',
   styleUrls: ['./transaction.component.css']
 })
-export class TransactionComponent implements OnInit {
+export class TransactionComponent implements OnInit, OnChanges {
   public get lang() { return this.language.state.twoLetter }
 
   @Input() transaction?: Transaction
@@ -55,13 +55,18 @@ export class TransactionComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.load();
+  }
+
+  ngOnChanges(changes: any) {
+    this.load()
   }
 
   private load() {
     if (!this.transaction) {
       return;
     }
+    
+    this.confirmed = this.transaction.isConfirmed()
 
     switch (this.transaction.type) {
       case TransactionTypes.MULTISIG: {

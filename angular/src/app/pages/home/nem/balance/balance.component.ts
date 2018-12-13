@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, forkJoin } from 'rxjs';
+import { merge, combineLatest } from 'rxjs';
 import { map, first, filter } from 'rxjs/operators';
 import { Asset, Address } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
@@ -12,7 +12,7 @@ import { WalletService } from '../../../../services/wallet/wallet.service';
   styleUrls: ['./balance.component.css']
 })
 export class BalanceComponent implements OnInit {
-  public loading$ = forkJoin(
+  public loading$ = combineLatest(
     this.wallet.state$,
     this.balance.state$
   ).pipe(
@@ -33,13 +33,13 @@ export class BalanceComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    const subscription = this.wallet.state$.pipe(
-      filter(state => state.currentWalletId !== undefined)
+    this.wallet.state$.pipe(
+      filter(state => state.currentWalletId !== undefined),
+      first()
     ).subscribe(
       (state) => {
         const address = new Address(state.entities[state.currentWalletId!].nem)
         this.balance.loadBalance(address, refresh)
-        subscription.unsubscribe()
       }
     )
   }

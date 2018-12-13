@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Address, AccountHttp } from 'nem-library';
-import { RxEffectiveStateStore } from '../../../classes/rx-effective-state-store';
+import { RxEffectiveStateStore } from 'rx-state-store-js';
 import { nodes } from '../../../classes/nodes';
 
 @Injectable({
@@ -34,6 +34,7 @@ export class MultisigService extends RxEffectiveStateStore<State> {
     ).subscribe(
       (addresses) => {
         const state: State = {
+          ...this._state,
           loading: false,
           addresses: addresses,
           lastAddress: address

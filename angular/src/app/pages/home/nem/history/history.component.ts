@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Transaction, TransactionTypes, MultisigTransaction, TransferTransaction, Address } from 'nem-library';
-import { Observable, forkJoin } from 'rxjs';
+import { Address } from 'nem-library';
+import { Observable, forkJoin, combineLatest } from 'rxjs';
 import { first, map, filter } from 'rxjs/operators';
 import { LanguageService } from '../../../../services/language/language.service';
 import { WalletService } from '../../../../services/wallet/wallet.service';
@@ -14,7 +14,7 @@ import { HistoryService } from '../../../../services/nem/history/history.service
 export class HistoryComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
-  public loading$ = forkJoin(
+  public loading$ = combineLatest(
     this.wallet.state$,
     this.wallet.state$
   ).pipe(
@@ -35,13 +35,13 @@ export class HistoryComponent implements OnInit {
   }
 
   public load(refresh?: boolean) {
-    const subscription = this.wallet.state$.pipe(
-      filter(state => state.currentWalletId !== undefined)
+    this.wallet.state$.pipe(
+      filter(state => state.currentWalletId !== undefined),
+      first()
     ).subscribe(
       (state) => {
         const address = new Address(state.entities[state.currentWalletId!].nem)
         this.history.loadHistories(address, refresh)
-        subscription.unsubscribe()
       }
     )
   }

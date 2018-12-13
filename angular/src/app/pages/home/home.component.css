@@ -11,7 +11,7 @@
   max-height: 300px;
 }
 
-mat-sidenav mat-nav-list mat-icon.mat-list-icon {
+mat-drawer mat-nav-list mat-icon.mat-list-icon {
   color: gray;
   margin-right: 1em;
 }

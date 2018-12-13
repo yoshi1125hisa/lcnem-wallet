@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Transaction, Address, AccountHttp } from 'nem-library';
-import { RxEffectiveStateStore } from '../../../classes/rx-effective-state-store';
+import { RxEffectiveStateStore } from 'rx-state-store-js';
 import { nodes } from '../../../classes/nodes';
 
 @Injectable({
@@ -30,13 +30,13 @@ export class HistoryService extends RxEffectiveStateStore<State> {
       accountHttp.unconfirmedTransactions(address),
       accountHttp.allTransactions(address)
     ).pipe(
-      map(data => data[0].concat(data[1])),
+      map(fork => fork[0].concat(fork[1])),
     ).subscribe(
       (transactions) => {
-        const state = {
+        const state: State = {
           ...this._state,
           loading: false,
-          assets: transactions,
+          transactions: transactions,
           lastAddress: address
         }
 

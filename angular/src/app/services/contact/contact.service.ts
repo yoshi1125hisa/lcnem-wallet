@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Subject, from } from 'rxjs';
+import { from } from 'rxjs';
+import { RxEntityStateStore, RxEntityState } from 'rx-state-store-js'
 import { Contact } from '../../../../../firebase/functions/src/models/contact';
-import { RxEntityStateStore } from '../../classes/rx-entity-state-store';
-import { RxEntityState } from '../../classes/rx-entity-state';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +36,11 @@ export class ContactService extends RxEntityStateStore<State, Contact> {
         }
         for(const doc of collection.docs) {
           state.entities[doc.id] = doc.data() as Contact
+
+          //レガシー
+          if(!state.entities[doc.id].nem[0].address) {
+            state.entities[doc.id].nem = state.entities[doc.id].nem.map((nem: any) => {return {name: "", address: nem}})
+          }
         }
 
         this.streamState(state)
