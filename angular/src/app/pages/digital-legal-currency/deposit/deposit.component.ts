@@ -92,7 +92,7 @@ export class DepositComponent implements OnInit {
           {
             data: {
               title: this.translation.error[this.lang],
-              content: error
+              content: ""
             }
           }
         );
