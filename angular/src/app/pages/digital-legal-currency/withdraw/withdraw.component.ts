@@ -19,7 +19,7 @@ export class WithdrawComponent implements OnInit {
 
   public readonly supportedCurrencies = [
     "JPY"
-  ];
+  ]
 
   public forms: {
     address?: string
