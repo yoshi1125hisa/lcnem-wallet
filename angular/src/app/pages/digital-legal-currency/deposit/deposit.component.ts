@@ -134,8 +134,8 @@ export class DepositComponent implements OnInit {
       ja: "方法"
     } as any,
     paypal: {
-      en: "Paypal",
-      ja: "Paypal"
+      en: "PayPal",
+      ja: "PayPal"
     } as any,
     address: {
       en: "Address",
