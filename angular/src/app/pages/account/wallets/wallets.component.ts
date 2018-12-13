@@ -23,7 +23,7 @@ export class WalletsComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
   public lang$ = this.language.state$.pipe(map(state => state.twoLetter))
 
-  
+
   public loading$ = combineLatest(
     this.auth.user$,
     this.wallet.state$
@@ -83,7 +83,7 @@ export class WalletsComponent implements OnInit {
 
         const wallet: Wallet = {
           name: result.name,
-          local: result.local == 1 ? true: false,
+          local: result.local == 1 ? true : false,
           nem: simpleWallet.address.plain(),
           wallet: simpleWallet.writeWLTFile()
         }
@@ -131,7 +131,7 @@ export class WalletsComponent implements OnInit {
 
   public renameWallet(id: string) {
     const wallet = this.wallet.state.entities[id];
-    
+
     this.dialog.open(PromptDialogComponent, {
       data: {
         title: this.translation.rename[this.lang],

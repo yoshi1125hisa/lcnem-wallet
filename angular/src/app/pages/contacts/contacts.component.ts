@@ -88,7 +88,6 @@ export class ContactsComponent implements OnInit {
         this.contact.updateContact(this.auth.user!.uid, id, name)
       }
     )
-    )
   }
 
   public deleteContact(id: string) {
