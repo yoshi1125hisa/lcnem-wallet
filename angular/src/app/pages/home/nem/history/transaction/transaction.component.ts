@@ -90,23 +90,25 @@ export class TransactionComponent implements OnInit, OnChanges {
       case TransactionTypes.TRANSFER: {
         const transferTransaction = this._transaction as TransferTransaction
 
-        const accountHttp = new AccountHttp(nodes);
-        accountHttp.getFromAddress(transferTransaction.recipient).pipe(
-          map(meta => meta.publicAccount!)
-        ).subscribe(
-          (recipient) => {
-            this.message = this.decryptMessage(transferTransaction.message, transferTransaction.signer!, recipient)
+        if (transferTransaction.recipient.plain() === this.wallet.state.entities[this.wallet.state.currentWalletId!].nem) {
+          this.icon = "call_received"
+        } else {
+          this.icon = "call_made"
+          this.address = transferTransaction.recipient.pretty()
+        }
 
-            if (transferTransaction.recipient.plain() === this.wallet.state.entities[this.wallet.state.currentWalletId!].nem) {
-              this.icon = "call_received"
-
-              return
+        if (transferTransaction.message.isPlain()) {
+          this.message = (transferTransaction.message as PlainMessage).plain()
+        } else if (transferTransaction.message.isEncrypted()) {
+          const accountHttp = new AccountHttp(nodes);
+          accountHttp.getFromAddress(transferTransaction.recipient).pipe(
+            map(meta => meta.publicAccount)
+          ).subscribe(
+            (recipient) => {
+              this.message = this.decryptMessage(transferTransaction.message, transferTransaction.signer!, recipient!)
             }
-
-            this.icon = "call_made"
-            this.address = recipient.address.pretty()
-          }
-        )
+          )
+        }
 
         if (transferTransaction.containAssets()) {
           this.assets = transferTransaction.assets();
@@ -120,9 +122,6 @@ export class TransactionComponent implements OnInit, OnChanges {
   }
 
   private decryptMessage(message: Message, signer: PublicAccount, recipient: PublicAccount) {
-    if (message.isPlain()) {
-      return (message as PlainMessage).plain()
-    }
     const wallet = this.wallet.state.entities[this.wallet.state.currentWalletId!]
 
     if (!wallet.wallet) {
