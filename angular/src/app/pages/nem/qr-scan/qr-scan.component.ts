@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatSelectChange } from '@angular/material';
 import { Router } from '@angular/router';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
-import { Observable, Subscription, BehaviorSubject, Subject } from 'rxjs';
+import { Observable, Subscription, BehaviorSubject, Subject, of, combineLatest } from 'rxjs';
 import { filter, map, first, takeUntil } from 'rxjs/operators';
 import { RouterService } from '../../../services/router/router.service';
 import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
@@ -21,13 +21,13 @@ export class QrScanComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter }
 
   public processing = false
-  public availableDevices$!: Observable<MediaDeviceInfo[]>
+  public selectedDevice?: MediaDeviceInfo
+  public availableDevices: MediaDeviceInfo[] = []
+
   public noCamera$!: Observable<boolean>
   public permission$!: Observable<boolean>
 
   private unsubscribe$ = new Subject()
-
-  public selectedDevice$ = new BehaviorSubject<MediaDeviceInfo | undefined>(undefined)
 
   constructor(
     private dialog: MatDialog,
@@ -37,19 +37,25 @@ export class QrScanComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.availableDevices$ = this.scanner.camerasFound.asObservable()
     this.noCamera$ = this.scanner.camerasNotFound.asObservable()
     this.permission$ = this.scanner.permissionResponse.asObservable()
 
+    this.scanner.camerasFound.pipe(
+      takeUntil(this.unsubscribe$)
+    ).subscribe(
+      (devices) => {
+        this.availableDevices = devices
+      }
+    )
+
     this.scanner.scanSuccess.pipe(
       takeUntil(this.unsubscribe$),
-      filter(_ => this.processing),
+      filter(_ => !this.processing),
       map(result => decodeURI(result))
     ).subscribe(
       (result: string) => {
         this.processing = true;
-        const dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
-
+        
         if (result[0] == "N" && result.replace(/-/g, "").trim().length == 40) {
           const invoice = new Invoice()
           invoice.data.addr = result
@@ -59,7 +65,7 @@ export class QrScanComponent implements OnInit {
         const invoice = Invoice.parse(result)
         if (invoice) {
           this.router.navigate(
-            ["transactions", "transfer"],
+            ["nem", "transfer"],
             {
               queryParams: {
                 invoice: result
@@ -69,8 +75,6 @@ export class QrScanComponent implements OnInit {
 
           return
         }
-
-        dialog.close()
 
         this.dialog.open(
           AlertDialogComponent,
@@ -90,24 +94,16 @@ export class QrScanComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.selectedDevice$.complete()
     this.unsubscribe$.next()
     this.unsubscribe$.complete()
   }
 
-  public selectDevice(event: MatSelectChange) {
-    this.availableDevices$.pipe(
-      first(),
-      map(devices => devices[event.value])
-    ).subscribe(
-      (device) => {
-        this.selectedDevice$.next(device)
-      }
-    )
-  }
-
   public back() {
     this._router.back([""])
+  }
+
+  public selectionChange(event: MatSelectChange) {
+    this.selectedDevice = this.availableDevices[event.value]
   }
 
   public translation = {
