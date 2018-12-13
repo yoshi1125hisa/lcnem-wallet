@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSelectChange } from '@angular/material';
 import { Router } from '@angular/router';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
-import { Observable, Subscription } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { Observable, Subscription, BehaviorSubject, Subject } from 'rxjs';
+import { filter, map, first, takeUntil } from 'rxjs/operators';
 import { RouterService } from '../../../services/router/router.service';
 import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
 import { Invoice } from '../../../classes/invoice';
@@ -24,9 +24,10 @@ export class QrScanComponent implements OnInit {
   public availableDevices$!: Observable<MediaDeviceInfo[]>
   public noCamera$!: Observable<boolean>
   public permission$!: Observable<boolean>
-  public subscription?: Subscription
 
-  public selectedDevice?: Observable<MediaDeviceInfo>
+  private unsubscribe$ = new Subject()
+
+  public selectedDevice$ = new BehaviorSubject<MediaDeviceInfo | undefined>(undefined)
 
   constructor(
     private dialog: MatDialog,
@@ -40,7 +41,8 @@ export class QrScanComponent implements OnInit {
     this.noCamera$ = this.scanner.camerasNotFound.asObservable()
     this.permission$ = this.scanner.permissionResponse.asObservable()
 
-    this.subscription = this.scanner.scanSuccess.pipe(
+    this.scanner.scanSuccess.pipe(
+      takeUntil(this.unsubscribe$),
       filter(_ => this.processing),
       map(result => decodeURI(result))
     ).subscribe(
@@ -88,12 +90,19 @@ export class QrScanComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.subscription!.unsubscribe()
+    this.selectedDevice$.complete()
+    this.unsubscribe$.next()
+    this.unsubscribe$.complete()
   }
 
-  public selectDevice(index: number) {
-    this.selectedDevice = this.availableDevices$.pipe(
-      map(devices => devices[index])
+  public selectDevice(event: MatSelectChange) {
+    this.availableDevices$.pipe(
+      first(),
+      map(devices => devices[event.value])
+    ).subscribe(
+      (device) => {
+        this.selectedDevice$.next(device)
+      }
     )
   }
 
@@ -109,6 +118,10 @@ export class QrScanComponent implements OnInit {
     noPermission: {
       en: "Permissions required.",
       ja: "カメラ許可が必要です。"
+    } as any,
+    pleaseSelect: {
+      en: "Please select the device.",
+      ja: "カメラデバイスを選択してください。"
     } as any,
     scan: {
       en: "Scan QR-code",

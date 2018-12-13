@@ -10,18 +10,23 @@
     </mat-toolbar>
     <div class="mat-typography body-container">
       <mat-form-field fxFill>
-        <mat-select placeholder="{{translation.selectCamera[lang]}}" (selectionChange)="($event.value)">
+        <mat-select placeholder="{{translation.selectCamera[lang]}}" (selectionChange)="selectDevice($event)">
           <mat-option *ngFor="let device of availableDevices$ | async; let i = index" [value]="i">{{device.label}}</mat-option>
         </mat-select>
       </mat-form-field>
-      <zxing-scanner fxFill #scanner [device]="selectedDevice | async" [hidden]="!(selectedDevice | async)">
+      <zxing-scanner fxFill #scanner [device]="selectedDevice$ | async" [hidden]="!(selectedDevice$ | async)">
       </zxing-scanner>
       <p *ngIf="noCamera$ | async">
         {{translation.noCamera[lang]}}
       </p>
-      <p *ngIf="!(hasPermission$ | async)">
+      <p *ngIf="!(permission$ | async); else permitted">
         {{translation.noPermission[lang]}}
       </p>
+      <ng-template #permitted>
+        <p *ngIf="!(selectedDevice$ | async)">
+          {{translation.pleaseSelect[lang]}}
+        </p>
+      </ng-template>
     </div>
   </mat-drawer-content>
 </mat-drawer-container>
