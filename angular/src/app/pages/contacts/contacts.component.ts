@@ -33,7 +33,8 @@ export class ContactsComponent implements OnInit {
     private language: LanguageService,
     private auth: AuthService,
     private contact: ContactService
-  ) {this.contact.state$.subscribe(_ => console.log(_))
+  ) {
+    this.contact.state$.subscribe(_ => console.log(_))
   }
 
   ngOnInit() {
@@ -79,6 +80,12 @@ export class ContactsComponent implements OnInit {
         data: {
           contact: this.contact.state.entities[id]
         }
+      }
+    ).afterClosed().pipe(
+      filter(name => name)
+    ).subscribe(
+      (name) => {
+        this.contact.updateContact(this.auth.user!.uid, id, name)
       }
     )
   }
