@@ -34,7 +34,6 @@ export class ContactsComponent implements OnInit {
     private auth: AuthService,
     private contact: ContactService
   ) {
-    this.contact.state$.subscribe(_ => console.log(_))
   }
 
   ngOnInit() {
