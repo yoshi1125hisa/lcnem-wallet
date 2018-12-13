@@ -65,23 +65,25 @@ export class TransactionComponent implements OnInit, OnChanges {
     if (!this.transaction) {
       return;
     }
-    
+
     this.confirmed = this.transaction.isConfirmed()
 
     switch (this.transaction.type) {
       case TransactionTypes.MULTISIG: {
         this._transaction = (this.transaction as MultisigTransaction).otherTransaction
+        this.address = this.transaction.signer!.address.pretty()
         this.multisig = true
         break;
       }
 
       default: {
         this._transaction = this.transaction
+        this.address = this._transaction.signer!.address.pretty()
         break;
       }
     }
 
-    this.address = this._transaction.signer!.address.pretty()
+
     this.date = `${this._transaction.timeWindow.timeStamp.toLocalDate()} ${this._transaction.timeWindow.timeStamp.toLocalTime()}`
 
     switch (this._transaction.type) {
@@ -95,14 +97,15 @@ export class TransactionComponent implements OnInit, OnChanges {
           (recipient) => {
             this.message = this.decryptMessage(transferTransaction.message, transferTransaction.signer!, recipient)
 
-            if (transferTransaction.signer!.address.plain() === this.wallet.state.entities[this.wallet.state.currentWalletId!].nem) {
-              this.icon = "call_made"
-              this.address = recipient.address.pretty()
+            if (transferTransaction.recipient.plain() === this.wallet.state.entities[this.wallet.state.currentWalletId!].nem) {
+              this.icon = "call_received"
+              this.address = transferTransaction.signer!.address.pretty()
+
               return
             }
 
-            this.icon = "call_received"
-            this.address = transferTransaction.signer!.address.pretty()
+            this.icon = "call_made"
+            this.address = recipient.address.pretty()
           }
         )
 
