@@ -32,6 +32,7 @@
   <mat-divider></mat-divider>
 </mat-list>
 <div fxLayout="row">
+  <span class="fill-remaining-space"></span>
   <button mat-icon-button color="warn" (click)="openSnackBar('import')" *ngIf="!wallet?.wallet">
     <mat-icon>warning</mat-icon>
   </button>

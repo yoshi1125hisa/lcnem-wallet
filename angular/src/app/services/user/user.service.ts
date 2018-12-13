@@ -35,23 +35,24 @@ export class UserService extends RxEffectiveStateStore<State> {
         }
 
         //レガシー
-        if (state.user && (state.user as any).wallet) {
-          const account = SimpleWallet.readFromWLT((state.user as any).wallet).open(new Password(userId))
-       
-          document.ref.collection("wallets").add(
-            {
-              name: "1",
-              local: false,
-              nem: account.address.plain(),
-              wallet: (state.user as any).wallet
-            } as Wallet
-          ).then(
-            () => {
-              delete (state.user as any).wallet
-              this.firestore.collection("users").doc(userId).update(state.user!)
-            }
-          )
+        const migration = async () => {
+          if (state.user && (state.user as any).wallet) {
+            const account = SimpleWallet.readFromWLT((state.user as any).wallet).open(new Password(userId))
+
+            await document.ref.collection("wallets").add(
+              {
+                name: "1",
+                local: false,
+                nem: account.address.plain(),
+                wallet: (state.user as any).wallet
+              } as Wallet
+            )
+            delete (state.user as any).wallet
+            
+            await this.firestore.collection("users").doc(userId).set(state.user!)
+          }
         }
+        migration()
         //レガシー
 
         this.streamState(state)
