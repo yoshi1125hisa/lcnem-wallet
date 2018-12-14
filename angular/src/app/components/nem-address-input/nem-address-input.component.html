@@ -1,10 +1,9 @@
 <mat-form-field fxFill>
   <input matInput [(ngModel)]="value" placeholder="{{placeholder}}"
-    [matAutocomplete]="nemSuggest" (keyup)="onChange($event.keyCode)" [required]="required" pattern="{{pattern}}">
-    <mat-hint *ngIf="hint">{{hint}}</mat-hint>
+    [matAutocomplete]="nemSuggest" (keyup)="onKeyup($event)" [required]="required" pattern="{{pattern}}" #input>
 </mat-form-field>
 <mat-autocomplete #nemSuggest="matAutocomplete">
-  <mat-option *ngFor="let suggest of suggests" [value]="suggest.address">
+  <mat-option *ngFor="let suggest of suggests$ | async" [value]="suggest.address">
     <span class="suggest-name" *ngIf="suggest.name">{{suggest.name}}</span>
     {{suggest.address}}
   </mat-option>

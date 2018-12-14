@@ -1,7 +1,9 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Asset, AssetDefinition } from 'nem-library';
-import { assetAdditionalDefinitions, AssetAdditionalDefinition } from '../../models/asset-additional-definition';
-import { BalanceService } from '../../services/balance.service';
+import { Observable, of, from } from 'rxjs';
+import { map, mergeMap, filter, toArray, take } from 'rxjs/operators';
+import { LanguageService } from '../../services/language/language.service';
+import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
 
 @Component({
   selector: 'app-assets-list',
@@ -9,46 +11,94 @@ import { BalanceService } from '../../services/balance.service';
   styleUrls: ['./assets-list.component.css']
 })
 export class AssetsListComponent implements OnInit {
-  @Input() public title?: string;
-  @Input() public assets?: Asset[];
-  
-  public _assets = new Array<{
-    name: string,
-    amount: number,
-    imageUrl: string,
-    issuer?: string,
+  public get lang() { return this.language.state.twoLetter }
+
+  @Input() public title?: string
+  @Input() public assets?: Asset[]
+  @Input() nav = false
+
+  @Output() clickAsset = new EventEmitter()
+
+  public loading$ = this.assetDefinition.state$.pipe(map(state => state.loading))
+  public assets$: Observable<{
+    name: string
+    amount: number
+    imageURL: string
+    issuer?: string
     unit?: string
-  }>();
+  }[]> = new Observable()
 
   constructor(
-    private balance: BalanceService
-  ) { }
+    private language: LanguageService,
+    private assetDefinition: AssetDefinitionService
+  ) {
+  }
 
   ngOnInit() {
-    this.refresh();
+    this.load()
   }
 
-  public async refresh() {
+  public load() {
     if (!this.assets) {
-      return;
+      return
     }
 
-    await Promise.all(this.assets.map(asset => this.balance.readDefinition(asset.assetId.namespaceId + ":" + asset.assetId.name)));
-    
-    for(let asset of this.assets) {
-      let id = asset.assetId.namespaceId + ":" + asset.assetId.name;
+    this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
 
-      let definition = await this.balance.readDefinition(id);
-
-      let additionalDefinition = assetAdditionalDefinitions.find(a => a.name == id);
-
-      this._assets!.push({
-        name: id,
-        amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
-        imageUrl: AssetAdditionalDefinition.getImageUrl(id),
-        issuer: additionalDefinition && additionalDefinition.issuer,
-        unit: additionalDefinition && additionalDefinition.unit
-      });
-    }
+    this.assets$ = from(this.assets).pipe(
+      mergeMap(
+        (asset) => {
+          return this.assetDefinition.state$.pipe(
+            map(state => state.definitions),
+            mergeMap(definitions => from(definitions)),
+            filter(definition => definition.id.equals(asset.assetId)),
+            take(1),
+            map(
+              (definition) => {
+                const name = asset.assetId.toString()
+                const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || {}
+                return {
+                  ...additionaldefinition,
+                  name: name,
+                  amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
+                  imageURL: this.getImageURL(name)
+                }
+              }
+            )
+          )
+        }
+      ),
+      toArray()
+    )
   }
+
+  public getImageURL(name: string) {
+    if (!this.assetAdditionalDefinitions.find(a => a.name == name)) {
+      return "assets/data/mosaic.svg";
+    }
+    return "assets/data/" + name.replace(":", "/") + ".svg";
+  }
+
+  public readonly assetAdditionalDefinitions = [
+    {
+      name: "nem:xem",
+      issuer: "",
+      unit: "XEM"
+    },
+    {
+      name: "lc:jpy",
+      issuer: "LCNEM, Inc.",
+      unit: "JPY"
+    },
+    {
+      name: "oshibori:point2019",
+      issuer: "おしぼり.jp",
+      unit: "JPY"
+    },
+    {
+      name: "montoken:mot",
+      issuer: "かえもん",
+      unit: ""
+    }
+  ];
 }

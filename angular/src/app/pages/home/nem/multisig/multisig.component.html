@@ -1,0 +1,23 @@
+<mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
+<ng-template #loaded>
+  <mat-card *ngIf="state$ | async as state">
+    <mat-toolbar>
+      <span class="fill-remaining-space"></span>
+      <button mat-icon-button color="accent" (click)="load(true)">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </mat-toolbar>
+    <mat-list *ngIf="state.addresses.length; else empty">
+      <mat-divider></mat-divider>
+      <ng-container *ngFor="let address of state.addresses">
+        <mat-list-item>
+          <span>{{address.pretty()}}</span>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+      </ng-container>
+    </mat-list>
+    <ng-template #empty>
+      <p class="empty">{{translation.empty[lang]}}</p>
+    </ng-template>
+  </mat-card>
+</ng-template>

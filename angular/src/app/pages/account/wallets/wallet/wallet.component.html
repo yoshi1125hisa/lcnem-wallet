@@ -1,0 +1,45 @@
+<div fxLayout="row">
+  <mat-icon mat-list-icon *ngIf="!wallet?.local" color="primary">cloud_done</mat-icon>
+  <mat-icon mat-list-icon *ngIf="wallet?.local" color="primary">cloud_off</mat-icon>
+  <h3>{{wallet?.name}}</h3>
+  <span class="fill-remaining-space"></span>
+  <span>
+    <mat-menu #walletMenu="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item (click)="rename.emit()">
+        {{translation.rename[lang]}}
+      </button>
+      <button mat-menu-item (click)="backup.emit()" *ngIf="wallet?.wallet">
+        {{translation.backup[lang]}}
+      </button>
+      <button mat-menu-item (click)="import.emit()" *ngIf="!wallet?.wallet">
+        {{translation.importPrivateKey[lang]}}
+      </button>
+      <button mat-menu-item (click)="delete.emit()">
+        {{translation.delete[lang]}}
+      </button>
+    </mat-menu>
+    <button mat-icon-button [matMenuTriggerFor]="walletMenu" yPosition="below">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+  </span>
+</div>
+<mat-list>
+  <h3 matSubheader>nem</h3>
+  <mat-divider></mat-divider>
+  <mat-list-item>
+    <span>{{wallet?.nem}}</span>
+  </mat-list-item>
+  <mat-divider></mat-divider>
+</mat-list>
+<div fxLayout="row">
+  <span class="fill-remaining-space"></span>
+  <button mat-icon-button color="warn" (click)="openSnackBar('import')" *ngIf="!wallet?.wallet">
+    <mat-icon>warning</mat-icon>
+  </button>
+  <button mat-icon-button color="warn" (click)="openSnackBar('plan')" *ngIf="!wallet?.local && !availablnInPlan">
+    <mat-icon>warning</mat-icon>
+  </button>
+  <button mat-icon-button color="accent" (click)="enter.emit()" *ngIf="wallet?.local || availablnInPlan">
+    <mat-icon>launch</mat-icon>
+  </button>
+</div>

@@ -2,7 +2,7 @@
 export type PlanType = "Standard" | "Premium";
 
 export interface Plan {
-  type: PlanType;
-  year: number;
-  month: number;
+  type: PlanType
+  year: number
+  month: number
 }
