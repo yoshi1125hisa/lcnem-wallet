@@ -14,21 +14,22 @@ import { _payPlan } from './pay-plan';
 admin.initializeApp({
   credential: admin.credential.cert(JSON.parse(JSON.stringify(functions.config().service_account).replace(/\\\\n/g, "\\n"))),
   databaseURL: "https://ticket-p2p.firebaseio.com"
-});
+})
 
-export let deposit: functions.HttpsFunction;
-export let withdraw: functions.HttpsFunction;
-export let payPlan: functions.HttpsFunction;
+export const deposit: functions.HttpsFunction
+  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "deposit")
+    ? _deposit
+    : null
 
-if (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "deposit") {
-  deposit = _deposit;
-}
-if (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "withdraw") {
-  withdraw = _withdraw;
-}
-if (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "payPlan") {
-  payPlan = _payPlan;
-}
+export const withdraw: functions.HttpsFunction
+  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "withdraw")
+    ? _withdraw
+    : null
+
+export const payPlan: functions.HttpsFunction
+  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "payPlan")
+    ? _payPlan
+    : null
 
 /*
  const account = Account.createWithPrivateKey(functions.config().nem.private_key);

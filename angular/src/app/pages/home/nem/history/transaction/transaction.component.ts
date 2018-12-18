@@ -65,46 +65,50 @@ export class TransactionComponent implements OnInit, OnChanges {
     if (!this.transaction) {
       return;
     }
-    
+
     this.confirmed = this.transaction.isConfirmed()
 
     switch (this.transaction.type) {
       case TransactionTypes.MULTISIG: {
         this._transaction = (this.transaction as MultisigTransaction).otherTransaction
+        this.address = this.transaction.signer!.address.pretty()
         this.multisig = true
         break;
       }
 
       default: {
         this._transaction = this.transaction
+        this.address = this._transaction.signer!.address.pretty()
         break;
       }
     }
 
-    this.address = this._transaction.signer!.address.pretty()
+
     this.date = `${this._transaction.timeWindow.timeStamp.toLocalDate()} ${this._transaction.timeWindow.timeStamp.toLocalTime()}`
 
     switch (this._transaction.type) {
       case TransactionTypes.TRANSFER: {
         const transferTransaction = this._transaction as TransferTransaction
 
-        const accountHttp = new AccountHttp(nodes);
-        accountHttp.getFromAddress(transferTransaction.recipient).pipe(
-          map(meta => meta.publicAccount!)
-        ).subscribe(
-          (recipient) => {
-            this.message = this.decryptMessage(transferTransaction.message, transferTransaction.signer!, recipient)
+        if (transferTransaction.recipient.plain() === this.wallet.state.entities[this.wallet.state.currentWalletId!].nem) {
+          this.icon = "call_received"
+        } else {
+          this.icon = "call_made"
+          this.address = transferTransaction.recipient.pretty()
+        }
 
-            if (transferTransaction.signer!.address.plain() === this.wallet.state.entities[this.wallet.state.currentWalletId!].nem) {
-              this.icon = "call_made"
-              this.address = recipient.address.pretty()
-              return
+        if (transferTransaction.message.isPlain()) {
+          this.message = (transferTransaction.message as PlainMessage).plain()
+        } else if (transferTransaction.message.isEncrypted()) {
+          const accountHttp = new AccountHttp(nodes);
+          accountHttp.getFromAddress(transferTransaction.recipient).pipe(
+            map(meta => meta.publicAccount)
+          ).subscribe(
+            (recipient) => {
+              this.message = this.decryptMessage(transferTransaction.message, transferTransaction.signer!, recipient!)
             }
-
-            this.icon = "call_received"
-            this.address = transferTransaction.signer!.address.pretty()
-          }
-        )
+          )
+        }
 
         if (transferTransaction.containAssets()) {
           this.assets = transferTransaction.assets();
@@ -118,9 +122,6 @@ export class TransactionComponent implements OnInit, OnChanges {
   }
 
   private decryptMessage(message: Message, signer: PublicAccount, recipient: PublicAccount) {
-    if (message.isPlain()) {
-      return (message as PlainMessage).plain()
-    }
     const wallet = this.wallet.state.entities[this.wallet.state.currentWalletId!]
 
     if (!wallet.wallet) {

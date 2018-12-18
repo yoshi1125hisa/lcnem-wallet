@@ -23,7 +23,7 @@ export class DepositComponent implements OnInit {
   ]
   public readonly minimum = {
     "JPY": 1000
-  }
+  } as { [lang: string]: number }
 
   public forms: {
     address?: string
@@ -31,8 +31,8 @@ export class DepositComponent implements OnInit {
     amount?: number
     method?: string
   } = {
-      currency: "JPY"
-    };
+    currency: "JPY"
+  }
 
   public safeSite: SafeResourceUrl
 
@@ -134,8 +134,8 @@ export class DepositComponent implements OnInit {
       ja: "方法"
     } as any,
     paypal: {
-      en: "Paypal",
-      ja: "Paypal"
+      en: "PayPal",
+      ja: "PayPal"
     } as any,
     address: {
       en: "Address",
