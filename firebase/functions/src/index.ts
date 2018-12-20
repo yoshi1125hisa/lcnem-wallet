@@ -3,7 +3,6 @@ import * as admin from 'firebase-admin';
 
 import { _deposit } from './deposit';
 import { _withdraw } from './withdraw';
-import { _payPlan } from './pay-plan';
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -24,11 +23,6 @@ export const deposit: functions.HttpsFunction
 export const withdraw: functions.HttpsFunction
   = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "withdraw")
     ? _withdraw
-    : null
-
-export const payPlan: functions.HttpsFunction
-  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "payPlan")
-    ? _payPlan
     : null
 
 /*
