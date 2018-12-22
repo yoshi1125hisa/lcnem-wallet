@@ -4,6 +4,7 @@ import { Observable, of, from } from 'rxjs';
 import { map, mergeMap, filter, toArray, take } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
+import { RateService } from 'src/app/services/rate/rate.service';
 
 @Component({
   selector: 'app-assets-list',
@@ -26,9 +27,11 @@ export class AssetsListComponent implements OnInit {
     imageURL: string
     issuer?: string
     unit?: string
+    rate?: number
   }[]> = new Observable()
 
   constructor(
+    private rate: RateService,
     private language: LanguageService,
     private assetDefinition: AssetDefinitionService
   ) {

@@ -14,17 +14,16 @@ export class RateService extends RxEffectiveStateStore<State> {
   ) {
     super(
       {
-        loading: false,
-        current: "USD"
+        loading: false
       }
     )
   }
-  public loadRate(current: string) {
+  public loadRate(currency: string) {
     this.firestore.doc("rates").get().subscribe(
       (document) => {
         const state: State = {
           loading: false,
-          current: current,
+          currency: currency,
           rate: document.data() as Rate
         }
         this.streamState(state)
@@ -37,6 +36,6 @@ export class RateService extends RxEffectiveStateStore<State> {
 
 
 interface State extends RxEffectiveState {
-  current: string
+  currency?: string
   rate?: Rate
 }
