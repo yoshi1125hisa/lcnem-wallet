@@ -36,9 +36,5 @@ export class RateService extends RxEffectiveStateStore<State> {
 
 interface State {
   current: string
-  xem?: number
-  btc?: number
-  eht?: number
-  jpy?: number
-  usd: 1
+  rate?: Rate
 }
