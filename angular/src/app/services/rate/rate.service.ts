@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { RxEffectiveStateStore, RxEffectiveState } from 'rx-state-store-js';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Rate } from '../../../../../firebase/functions/src/models/rate'
+import { stat } from 'fs';
 
 
 @Injectable({
@@ -39,6 +40,15 @@ export class RateService extends RxEffectiveStateStore<State> {
       (error) => {
         this.streamErrorState(error)
       })
+  }
+
+  public changeCurrency(currency: string) {
+    const state: State = {
+      loading: false,
+      currency: currency,
+      rate: this._state.rate
+    }
+    this.streamState(state)
   }
 }
 
