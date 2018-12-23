@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { RxEffectiveStateStore, RxEffectiveState } from 'rx-state-store-js';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Rate } from '../../../../../firebase/functions/src/models/rate'
-import { stat } from 'fs';
 
 
 @Injectable({

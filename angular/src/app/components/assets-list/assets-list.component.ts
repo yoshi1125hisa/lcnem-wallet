@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Asset, AssetDefinition } from 'nem-library';
-import { Observable, of, from, forkJoin } from 'rxjs';
+import { Observable, from } from 'rxjs';
 import { map, mergeMap, filter, toArray, take } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
