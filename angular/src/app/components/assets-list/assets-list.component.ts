@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Asset, AssetDefinition } from 'nem-library';
-import { Observable, of, from } from 'rxjs';
+import { Observable, of, from, forkJoin } from 'rxjs';
 import { map, mergeMap, filter, toArray, take } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
@@ -72,6 +72,25 @@ export class AssetsListComponent implements OnInit {
         }
       ),
       toArray()
+    )
+
+    this.assets$.pipe(
+      mergeMap(
+        state => {
+          return this.rate.state$.pipe(
+            map((rate) => {
+              const asset = state.find(a => a.name === "nem:xem")
+              if (asset) {
+                asset.rate = rate.rate.xem
+                if (rate.currency == "JPY") {
+                  asset.rate /= rate.rate.jpy
+                }
+              }
+            }
+            )
+          )
+        }
+      )
     )
   }
 

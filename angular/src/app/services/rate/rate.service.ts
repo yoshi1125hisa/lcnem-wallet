@@ -14,7 +14,15 @@ export class RateService extends RxEffectiveStateStore<State> {
   ) {
     super(
       {
-        loading: false
+        loading: false,
+        rate: {
+          currency: "USD",
+          xem: 1,
+          btc: 1,
+          eth: 1,
+          jpy: 1,
+          usd: 1
+        }
       }
     )
   }
@@ -37,5 +45,5 @@ export class RateService extends RxEffectiveStateStore<State> {
 
 interface State extends RxEffectiveState {
   currency?: string
-  rate?: Rate
+  rate: Rate
 }
