@@ -1,5 +1,7 @@
+export type Currency = "USD" | "JPY"
+
 export interface Rate {
-    current: string
+    currency: Currency
     jpy: number
     usd: number
     xem: number

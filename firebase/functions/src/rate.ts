@@ -9,7 +9,7 @@ export const _rate = functions.https.onRequest((req, res) => {
             () => {
                 const rates = res
                 admin.firestore().doc("rates")
-                    .update(rates)
+                    .set(rates)
                     .then(
                         () => {
                             res.status(200).send

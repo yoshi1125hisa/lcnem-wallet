@@ -45,7 +45,6 @@ export class AssetsListComponent implements OnInit {
     if (!this.assets) {
       return
     }
-
     this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
 
     this.assets$ = from(this.assets).pipe(
@@ -64,7 +63,8 @@ export class AssetsListComponent implements OnInit {
                   ...additionaldefinition,
                   name: name,
                   amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
-                  imageURL: this.getImageURL(name)
+                  imageURL: this.getImageURL(name),
+
                 }
               }
             )
@@ -80,6 +80,10 @@ export class AssetsListComponent implements OnInit {
       return "assets/data/mosaic.svg";
     }
     return "assets/data/" + name.replace(":", "/") + ".svg";
+  }
+
+  public getRate(name: string) {
+    return 1
   }
 
   public readonly assetAdditionalDefinitions = [

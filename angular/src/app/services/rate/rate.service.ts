@@ -18,12 +18,12 @@ export class RateService extends RxEffectiveStateStore<State> {
       }
     )
   }
-  public loadRate(currency: string) {
+
+  public loadRate() {
     this.firestore.doc("rates").get().subscribe(
       (document) => {
         const state: State = {
           loading: false,
-          currency: currency,
           rate: document.data() as Rate
         }
         this.streamState(state)
