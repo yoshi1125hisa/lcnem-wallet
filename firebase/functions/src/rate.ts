@@ -5,10 +5,10 @@ import * as admin from 'firebase-admin';
 export const _rate = functions.https.onRequest((req, res) => {
     try {
         request.get(
-            'http://data.fixer.io/api/' + 'latest' + '?access_key=' + functions.config().fixer.api_access_key,
+            'http://apilayer.net/api/' + 'live' + '?access_key=' + functions.config().currency_layer.api_key + 'format=1',
             (error, res, body) => {
                 const jsonResponse = JSON.parse(body)
-                const jpy = jsonResponse.data.findindex
+                const jpy = jsonResponse.quotes.USDJPY
                 admin.firestore().collection("rates").doc("rateId").set({
                     rates: [{ "JPY": jpy }, { "USD": 1 }]
                 })
