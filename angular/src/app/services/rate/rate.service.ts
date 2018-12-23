@@ -15,23 +15,18 @@ export class RateService extends RxEffectiveStateStore<State> {
     super(
       {
         loading: false,
-        rate: {
-          currency: "USD",
-          xem: 1,
-          btc: 1,
-          eth: 1,
-          jpy: 1,
-          usd: 1
-        }
+        currency: "USD",
+        rate: {} as Rate
       }
     )
   }
 
-  public loadRate() {
+  public loadRate(currency: string) {
     this.firestore.doc("rates").get().subscribe(
       (document) => {
         const state: State = {
           loading: false,
+          currency: currency,
           rate: document.data() as Rate
         }
         this.streamState(state)
@@ -45,7 +40,7 @@ export class RateService extends RxEffectiveStateStore<State> {
     const state: State = {
       loading: false,
       currency: currency,
-      rate: this._state.rate
+      ...this._state
     }
     this.streamState(state)
   }
@@ -53,6 +48,6 @@ export class RateService extends RxEffectiveStateStore<State> {
 
 
 interface State extends RxEffectiveState {
-  currency?: string
+  currency: string
   rate: Rate
 }
