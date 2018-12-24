@@ -46,7 +46,5 @@ export class BalanceComponent implements OnInit {
     )
   }
 
-  public changeBaseCurrency(currency: string) {
-    this.rate.changeCurrency(currency)
-  }
+
 }

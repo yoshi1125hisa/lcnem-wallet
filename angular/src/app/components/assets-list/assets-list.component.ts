@@ -99,6 +99,11 @@ export class AssetsListComponent implements OnInit {
     return "assets/data/" + name.replace(":", "/") + ".svg";
   }
 
+  public chageBase(currency: string) {
+    this.rate.changeCurrency(currency)
+    this.load()
+  }
+
   public readonly assetAdditionalDefinitions = [
     {
       name: "nem:xem",
