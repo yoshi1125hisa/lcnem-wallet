@@ -5,7 +5,6 @@ import { map, mergeMap, filter, toArray, take } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
 import { RateService } from 'src/app/services/rate/rate.service';
-import { state } from '@angular/animations';
 
 @Component({
   selector: 'app-assets-list',
@@ -22,7 +21,6 @@ export class AssetsListComponent implements OnInit {
   @Output() clickAsset = new EventEmitter()
 
   public loading$ = this.assetDefinition.state$.pipe(map(state => state.loading))
-  @Input() public currency$s = this.rate.state$.pipe(map(state => state.currency))
   public assets$: Observable<{
     name: string
     amount: number
@@ -30,6 +28,7 @@ export class AssetsListComponent implements OnInit {
     issuer?: string
     unit?: string
     rate?: number
+    base?: string
   }[]> = new Observable()
 
   constructor(
@@ -82,9 +81,10 @@ export class AssetsListComponent implements OnInit {
             map((rate) => {
               const asset = state.find(a => a.name === "nem:xem")
               if (asset) {
-                asset.rate = rate.rate.xem
-                if (rate.currency == "JPY") {
-                  asset.rate /= rate.rate.jpy
+                asset.rate = rate.rate["XEM"]
+                asset.base = rate.base
+                if (asset.base == "JPY") {
+                  asset.rate /= rate.rate["JPY"]
                 }
               }
             }
@@ -100,10 +100,6 @@ export class AssetsListComponent implements OnInit {
       return "assets/data/mosaic.svg";
     }
     return "assets/data/" + name.replace(":", "/") + ".svg";
-  }
-
-  public getRate(name: string) {
-    return 1
   }
 
   public readonly assetAdditionalDefinitions = [
