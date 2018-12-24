@@ -37,7 +37,7 @@ export const _rate = functions.https.onRequest((req, res) => {
             rate[`${name}`] = price
 
             admin.firestore().collection("rates").doc("rateId").set({
-              rates: rate
+              rate
             })
           }
         })
