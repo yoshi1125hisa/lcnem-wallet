@@ -99,7 +99,7 @@ export class AssetsListComponent implements OnInit {
     return "assets/data/" + name.replace(":", "/") + ".svg";
   }
 
-  public chageBase(currency: string) {
+  public changeCurrency(currency: string) {
     this.rate.changeCurrency(currency)
     this.load()
   }
@@ -126,4 +126,11 @@ export class AssetsListComponent implements OnInit {
       unit: ""
     }
   ];
+
+  public translation = {
+    currency: {
+      en: "Currency",
+      ja: "通貨"
+    } as any
+  };
 }
