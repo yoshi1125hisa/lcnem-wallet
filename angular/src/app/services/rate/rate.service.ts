@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { RxEffectiveStateStore, RxEffectiveState } from 'rx-state-store-js';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Rate } from '../../../../../firebase/functions/src/models/rate'
+import { map, first } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { Key } from 'protractor';
 
 
 @Injectable({
@@ -22,18 +25,25 @@ export class RateService extends RxEffectiveStateStore<State> {
   }
 
   public loadRate() {
-    this.firestore.doc("rates").get().subscribe(
-      (document) => {
-        const state: State = {
-          loading: false,
-          currency: this._state.currency,
-          rate: document.data() as Rate
+
+
+    const state: State = {
+      loading: false,
+      currency: this._state.currency,
+      rate: {}
+    }
+
+    this.firestore.collection("rates").get()
+      .subscribe(
+        (document) => {
+          for (const doc of document.docs) {
+
+          }
         }
-        this.streamState(state)
-      },
-      (error) => {
-        this.streamErrorState(error)
-      })
+      )
+
+
+
   }
 
   public changeCurrency(currency: string) {
