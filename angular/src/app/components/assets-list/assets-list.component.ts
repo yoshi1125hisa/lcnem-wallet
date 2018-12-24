@@ -21,6 +21,7 @@ export class AssetsListComponent implements OnInit {
   @Output() clickAsset = new EventEmitter()
 
   public loading$ = this.assetDefinition.state$.pipe(map(state => state.loading))
+  public currency$ = this.rate.state$.pipe(map(state => state.currency))
   public assets$: Observable<{
     name: string
     amount: number
@@ -28,7 +29,6 @@ export class AssetsListComponent implements OnInit {
     issuer?: string
     unit?: string
     rate?: number
-    base?: string
   }[]> = new Observable()
 
   constructor(
@@ -47,6 +47,7 @@ export class AssetsListComponent implements OnInit {
       return
     }
     this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
+    this.rate.loadRate()
 
     this.assets$ = from(this.assets).pipe(
       mergeMap(
@@ -81,8 +82,7 @@ export class AssetsListComponent implements OnInit {
             map((rate) => {
               const asset = state.find(a => a.name === "nem:xem")
               if (asset) {
-                asset.base = rate.base
-                asset.rate = rate.rate["XEM"] / rate.rate[asset.base]
+                asset.rate = rate.rate["XEM"] / rate.rate[rate.currency]
               }
             }
             )

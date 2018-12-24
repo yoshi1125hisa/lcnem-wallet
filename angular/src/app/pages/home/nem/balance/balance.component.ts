@@ -5,7 +5,6 @@ import { Asset, Address } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
 import { BalanceService } from '../../../../services/nem/balance/balance.service';
 import { WalletService } from '../../../../services/wallet/wallet.service';
-import { RateService } from 'src/app/services/rate/rate.service';
 
 @Component({
   selector: 'app-balance',
@@ -23,7 +22,6 @@ export class BalanceComponent implements OnInit {
   public state$ = this.balance.state$
 
   constructor(
-    private rate: RateService,
     private language: LanguageService,
     private wallet: WalletService,
     private balance: BalanceService
@@ -45,6 +43,5 @@ export class BalanceComponent implements OnInit {
       }
     )
   }
-
 
 }
