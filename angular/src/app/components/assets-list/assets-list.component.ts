@@ -5,6 +5,7 @@ import { map, mergeMap, filter, toArray, take } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
 import { RateService } from 'src/app/services/rate/rate.service';
+import { state } from '@angular/animations';
 
 @Component({
   selector: 'app-assets-list',
@@ -21,6 +22,7 @@ export class AssetsListComponent implements OnInit {
   @Output() clickAsset = new EventEmitter()
 
   public loading$ = this.assetDefinition.state$.pipe(map(state => state.loading))
+  @Input() public currency$s = this.rate.state$.pipe(map(state => state.currency))
   public assets$: Observable<{
     name: string
     amount: number
