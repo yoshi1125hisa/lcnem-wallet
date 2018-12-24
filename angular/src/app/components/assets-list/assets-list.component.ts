@@ -4,7 +4,7 @@ import { Observable, from } from 'rxjs';
 import { map, mergeMap, filter, toArray, take } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
-import { RateService } from 'src/app/services/rate/rate.service';
+import { RateService } from '../../services/rate/rate.service';
 
 @Component({
   selector: 'app-assets-list',
