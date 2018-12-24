@@ -81,11 +81,8 @@ export class AssetsListComponent implements OnInit {
             map((rate) => {
               const asset = state.find(a => a.name === "nem:xem")
               if (asset) {
-                asset.rate = rate.rate["XEM"]
                 asset.base = rate.base
-                if (asset.base == "JPY") {
-                  asset.rate /= rate.rate["JPY"]
-                }
+                asset.rate = rate.rate["XEM"] / rate.rate[asset.base]
               }
             }
             )
