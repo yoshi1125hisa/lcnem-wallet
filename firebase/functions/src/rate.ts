@@ -10,7 +10,8 @@ export const _rate = functions.https.onRequest((req, res) => {
         const jsonResponse = JSON.parse(body)
         const jpy = jsonResponse.quotes.USDJPY
         admin.firestore().collection("rates").doc("rateId").set({
-          rates: [{ "JPY": jpy }, { "USD": 1 }]
+          "JPY": jpy,
+          "USD": 1
         })
       }
     )
