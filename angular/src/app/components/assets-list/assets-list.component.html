@@ -17,7 +17,9 @@
       <small mat-line>{{asset.issuer}}</small>
       <span class="fill-remaining-space"></span>
       <span class="right">{{asset.amount}}<br />{{asset.unit}}</span>
-      <span class="left">{{asset.rate}} <br />{{currency$ | async}}</span>
+      <div [ngIf]=asset.rate>
+        <span class="left">{{asset.rate}} <br />{{currency$ | async}}</span>
+      </div>
     </mat-list-item>
     <mat-divider></mat-divider>
   </ng-container>

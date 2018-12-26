@@ -29,6 +29,7 @@ export class AssetsListComponent implements OnInit {
     issuer?: string
     unit?: string
     rate?: number
+    symbol?: string
   }[]> = new Observable()
 
   constructor(
@@ -77,14 +78,19 @@ export class AssetsListComponent implements OnInit {
 
     this.assets$.pipe(
       mergeMap(
-        state => {
+        (assets) => {
           return this.rate.state$.pipe(
             map((rate) => {
-              const asset = state.find(a => a.name === "nem:xem")
-              if (asset) {
-                asset.rate = rate.rate["XEM"] / rate.rate[rate.currency]
-              } else {
-                rate.currency = ""
+              for (var asset of assets) {
+                Object.keys(rate.rate).forEach(function (key) {
+                  rate.rate.forEach(function (rate) {
+                    asset.symbol = key
+                    let arrays = ["BTC", "ETH", "XEM"]
+                    if (arrays.indexOf(key)) {
+                      asset.rate = rate[asset.symbol] / rate[rate.currency]
+                    }
+                  })
+                })
               }
             }
             )
