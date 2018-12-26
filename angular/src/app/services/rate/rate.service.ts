@@ -21,7 +21,7 @@ export class RateService extends RxEffectiveStateStore<State> {
   }
 
   public loadRate() {
-    this.firestore.collection("rates").doc("FXBqe8slKHLvGB6Nrw1n").get().subscribe(
+    this.firestore.collection("rates").doc("rate").get().subscribe(
       (document) => {
         console.log(document)
         const state: State = {
