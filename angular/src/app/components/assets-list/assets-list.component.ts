@@ -66,7 +66,7 @@ export class AssetsListComponent implements OnInit {
                   ...additionaldefinition,
                   name: name,
                   amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
-                  imageURL: this.getImageURL(name),
+                  imageURL: this.getImageURL(name)
                 }
               }
             )
