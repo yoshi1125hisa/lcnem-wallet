@@ -3,7 +3,6 @@ import { RxEffectiveStateStore, RxEffectiveState } from 'rx-state-store-js';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Rate } from '../../../../../firebase/functions/src/models/rate';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -22,12 +21,13 @@ export class RateService extends RxEffectiveStateStore<State> {
   }
 
   public loadRate() {
-    this.firestore.collection("rates").get().subscribe(
+    this.firestore.collection("rates").doc("FXBqe8slKHLvGB6Nrw1n").get().subscribe(
       (document) => {
+        console.log(document)
         const state: State = {
           loading: false,
           currency: this._state.currency,
-          rate: document.docs[0].data()
+          rate: document.data() as Rate
         }
         this.streamState(state)
       },
