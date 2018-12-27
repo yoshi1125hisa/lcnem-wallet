@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
-import { Asset, AssetDefinition } from 'nem-library';
+import { Asset, AssetDefinition, XEM } from 'nem-library';
 import { Observable, from } from 'rxjs';
 import { map, mergeMap, filter, toArray, take, subscribeOn } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
@@ -60,43 +60,28 @@ export class AssetsListComponent implements OnInit {
             take(1),
             map(
               (definition) => {
-                const name = asset.assetId.toString()
-                const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || {}
-                return {
-                  ...additionaldefinition,
-                  name: name,
-                  amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
-                  imageURL: this.getImageURL(name)
-                }
+                this.rate.state$.pipe(
+                  map(
+                    (rate) => {
+                      const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || {}
+                      const name = asset.assetId.toString()
+                      return {
+                        ...additionaldefinition,
+                        name: name,
+                        amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
+                        imageURL: this.getImageURL(name),
+                        rate: rate.rate["XEM"],
+                        symbol: "XEM"
+                      }
+                    }
+                  ),
+                )
               }
             )
           )
         }
       ),
       toArray()
-    )
-
-    this.assets$.pipe(
-      mergeMap(
-        (assets) => {
-          return this.rate.state$.pipe(
-            map((rate) => {
-              for (var asset of assets) {
-                Object.keys(rate.rate).forEach(function (key) {
-                  rate.rate.forEach(function (rate) {
-                    asset.symbol = key
-                    let arrays = ["BTC", "ETH", "XEM"]
-                    if (arrays.indexOf(key)) {
-                      asset.rate = rate[asset.symbol] / rate[rate.currency]
-                    }
-                  })
-                })
-              }
-            }
-            )
-          )
-        }
-      )
     )
   }
 
