@@ -7,7 +7,12 @@
       <span mat-line>{{asset.name}}</span>
       <small mat-line>{{asset.issuer}}</small>
       <span class="fill-remaining-space"></span>
-      <span class="right">{{asset.amount}}&nbsp;</span><span class="right unit">{{asset.unit}}</span>
+      <span *ngIf="asset.unit=='XEM'" mat-line class="right">{{asset.amount}} {{asset.unit}}</span>
+      <span *ngIf="asset.unit!='XEM'" mat-line class="right">
+        <span>{{asset.amount}}</span>
+        <span class="rate">{{asset.unit}}</span>
+      </span>
+      
     </mat-list-item>
     <mat-divider></mat-divider>
   </ng-container>
