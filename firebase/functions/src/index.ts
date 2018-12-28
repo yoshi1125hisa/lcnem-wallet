@@ -13,7 +13,7 @@ import { _payPlan } from './pay-plan';
 // });
 admin.initializeApp({
   credential: admin.credential.cert(JSON.parse(JSON.stringify(functions.config().service_account).replace(/\\\\n/g, "\\n"))),
-  databaseURL: "https://ticket-p2p.firebaseio.com"
+  databaseURL: "https://lcnem-wallet.firebaseio.com"
 })
 
 export const deposit: functions.HttpsFunction
