@@ -60,15 +60,15 @@ export class AssetsListComponent implements OnInit {
             take(1),
             map(
               (definition) => {
-                const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || {}
                 const name = asset.assetId.toString()
+                const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || {}
                 return {
                   ...additionaldefinition,
                   name: name,
                   amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
                   imageURL: this.getImageURL(name),
-                  rate: this.rate.state.rate.rate,
-                  symbol: "XEM"
+                  rate: this.rate.state.rate[additionaldefinition.unit] / this.rate.state.rate[this.rate.state.currency],
+                  symbol: additionaldefinition.unit
                 }
               }
             )
