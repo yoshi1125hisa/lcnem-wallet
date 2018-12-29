@@ -1,14 +1,5 @@
 <ng-template #temp>
   <h3 mat-subheader *ngIf="title">{{title}}</h3>
-  <mat-menu #currency="matMenu">
-    <button mat-menu-item (click)="changeCurrency('JPY')">
-      JPY
-    </button>
-    <button mat-menu-item (click)="changeCurrency('USD')">
-      USD
-    </button>
-    <button mat-button [matMenuTriggerFor]="currency">translation.currency[lang]</button>
-  </mat-menu>
   <mat-divider></mat-divider>
   <ng-container *ngFor="let asset of assets$ | async">
     <mat-list-item (click)="clickAsset.emit(asset.name)">
@@ -16,10 +7,7 @@
       <span mat-line>{{asset.name}}</span>
       <small mat-line>{{asset.issuer}}</small>
       <span class="fill-remaining-space"></span>
-      <span class="right">{{asset.amount}}<br />{{asset.unit}}</span>
-      <div *ngIf="asset.rate">
-        <span class="left">{{asset.rate}} <br />{{asset.qupteCurrency}</span>
-      </div>
+      <span class="right">{{asset.amount}}&nbsp;</span><span class="right unit">{{asset.unit}}</span>
     </mat-list-item>
     <mat-divider></mat-divider>
   </ng-container>

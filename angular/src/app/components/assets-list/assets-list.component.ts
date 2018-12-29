@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Asset, AssetDefinition, XEM } from 'nem-library';
 import { Observable, from } from 'rxjs';
-import { map, mergeMap, filter, toArray, take, subscribeOn } from 'rxjs/operators';
+import { map, mergeMap, filter, toArray, take, pluck, flatMap } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
 import { RateService } from '../../services/rate/rate.service';
@@ -21,6 +21,7 @@ export class AssetsListComponent implements OnInit {
   @Output() clickAsset = new EventEmitter()
 
   public loading$ = this.assetDefinition.state$.pipe(map(state => state.loading))
+  public quoteCurrency$ = this.rate.state$.pipe(pluck('currency'))
   public assets$: Observable<{
     name: string
     amount: number
@@ -28,7 +29,6 @@ export class AssetsListComponent implements OnInit {
     issuer?: string
     unit?: string
     rate?: number
-    quoteCurrency?: string
   }[]> = new Observable()
 
   constructor(
@@ -57,18 +57,23 @@ export class AssetsListComponent implements OnInit {
             mergeMap(definitions => from(definitions)),
             filter(definition => definition.id.equals(asset.assetId)),
             take(1),
-            map(
+            flatMap(
               (definition) => {
-                const name = asset.assetId.toString()
-                const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || { name: "", issuer: "", unit: "" }
-                return {
-                  ...additionaldefinition,
-                  name: name,
-                  amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
-                  imageURL: this.getImageURL(name),
-                  rate: this.rate.state.rate[additionaldefinition.unit] / this.rate.state.rate[this.rate.state.currency] || undefined,
-                  quoteCurrency: this.rate.state.currency
-                }
+                return this.rate.state$.pipe(
+                  map(
+                    (rate) => {
+                      const name = asset.assetId.toString()
+                      const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || { name: "", issuer: "", unit: "" }
+                      return {
+                        ...additionaldefinition,
+                        name: name,
+                        amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
+                        imageURL: this.getImageURL(name),
+                        rate: rate.rate[additionaldefinition.unit] / rate.rate[rate.currency] || undefined
+                      }
+                    }
+                  )
+                )
               }
             )
           )
@@ -115,7 +120,7 @@ export class AssetsListComponent implements OnInit {
   ];
 
   public translation = {
-    currency: {
+    qucurrency: {
       en: "Currency",
       ja: "通貨"
     } as any
