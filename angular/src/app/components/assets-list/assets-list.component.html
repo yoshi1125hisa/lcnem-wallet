@@ -18,7 +18,7 @@
       <span class="fill-remaining-space"></span>
       <span class="right">{{asset.amount}}<br />{{asset.unit}}</span>
       <div [ngIf]=asset.rate>
-        <span class="left">{{asset.rate}} <br />{{currency$ | async}}</span>
+        <span class="left">{{asset.rate}} <br />{{asset.qupteCurrency}</span>
       </div>
     </mat-list-item>
     <mat-divider></mat-divider>

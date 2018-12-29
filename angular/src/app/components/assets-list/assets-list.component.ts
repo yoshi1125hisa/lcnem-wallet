@@ -21,7 +21,6 @@ export class AssetsListComponent implements OnInit {
   @Output() clickAsset = new EventEmitter()
 
   public loading$ = this.assetDefinition.state$.pipe(map(state => state.loading))
-  public currency$ = this.rate.state$.pipe(map(state => state.currency))
   public assets$: Observable<{
     name: string
     amount: number
@@ -29,7 +28,7 @@ export class AssetsListComponent implements OnInit {
     issuer?: string
     unit?: string
     rate?: number
-    symbol?: string
+    quoteCurrency?: string
   }[]> = new Observable()
 
   constructor(
@@ -68,7 +67,7 @@ export class AssetsListComponent implements OnInit {
                   amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
                   imageURL: this.getImageURL(name),
                   rate: this.rate.state.rate[additionaldefinition.unit] / this.rate.state.rate[this.rate.state.currency],
-                  symbol: additionaldefinition.unit
+                  quoteCurrency: this.rate.state.currency
                 }
               }
             )
@@ -90,6 +89,7 @@ export class AssetsListComponent implements OnInit {
     this.rate.changeCurrency(currency)
     this.load()
   }
+
 
   public readonly assetAdditionalDefinitions = [
     {
