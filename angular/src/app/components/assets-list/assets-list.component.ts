@@ -61,7 +61,7 @@ export class AssetsListComponent implements OnInit {
               (definition) => {
                 const name = asset.assetId.toString()
                 const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || {}
-                const rate = this.rate.state.rate[additionaldefinition.unit || undefined] / this.rate.state.rate[this.rate.state.currency] || undefined
+                const rate = this.rate.state.rate["XEM"] / this.rate.state.rate[this.rate.state.currency] || undefined
                 return {
                   ...additionaldefinition,
                   name: name,
