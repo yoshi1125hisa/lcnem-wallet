@@ -17,7 +17,7 @@
       <small mat-line>{{asset.issuer}}</small>
       <span class="fill-remaining-space"></span>
       <span class="right">{{asset.amount}}<br />{{asset.unit}}</span>
-      <div [ngIf]=asset.rate>
+      <div *ngIf="asset.rate">
         <span class="left">{{asset.rate}} <br />{{asset.qupteCurrency}</span>
       </div>
     </mat-list-item>

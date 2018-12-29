@@ -61,12 +61,13 @@ export class AssetsListComponent implements OnInit {
               (definition) => {
                 const name = asset.assetId.toString()
                 const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || {}
+                const rate = this.rate.state.rate[additionaldefinition.unit || undefined] / this.rate.state.rate[this.rate.state.currency] || undefined
                 return {
                   ...additionaldefinition,
                   name: name,
                   amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
                   imageURL: this.getImageURL(name),
-                  rate: this.rate.state.rate[additionaldefinition.unit] / this.rate.state.rate[this.rate.state.currency],
+                  rate: rate,
                   quoteCurrency: this.rate.state.currency
                 }
               }
