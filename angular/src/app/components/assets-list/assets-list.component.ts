@@ -67,7 +67,7 @@ export class AssetsListComponent implements OnInit {
                   name: name,
                   amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
                   imageURL: this.getImageURL(name),
-                  rate: this.rate.state.rate["XEM"],
+                  rate: this.rate.state.rate.rate,
                   symbol: "XEM"
                 }
               }
