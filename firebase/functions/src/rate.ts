@@ -13,7 +13,7 @@ export const _rate = functions.https.onRequest(async (req, res) => {
         admin.firestore().collection("rates").doc("rate").set({
           "JPY": jpy,
           "USD": 1
-        })
+        }).then(() => { return })
       }
     )
 
@@ -38,7 +38,7 @@ export const _rate = functions.https.onRequest(async (req, res) => {
             const rate = {}
             rate[`${name}`] = price
 
-            admin.firestore().collection("rates").doc("rate").set(rate)
+            admin.firestore().collection("rates").doc("rate").set(rate).then(() => { return })
           }
         })
     )
