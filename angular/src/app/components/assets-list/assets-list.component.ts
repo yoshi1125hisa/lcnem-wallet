@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Asset, AssetDefinition, XEM } from 'nem-library';
 import { Observable, from } from 'rxjs';
-import { map, mergeMap, filter, toArray, take, pluck, flatMap } from 'rxjs/operators';
+import { map, mergeMap, filter, toArray, take, pluck } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
 import { RateService } from '../../services/rate/rate.service';
@@ -57,7 +57,7 @@ export class AssetsListComponent implements OnInit {
             mergeMap(definitions => from(definitions)),
             filter(definition => definition.id.equals(asset.assetId)),
             take(1),
-            flatMap(
+            mergeMap(
               (definition) => {
                 return this.rate.state$.pipe(
                   map(
@@ -79,6 +79,10 @@ export class AssetsListComponent implements OnInit {
           )
         }
       ),
+      map(state => {
+        console.log(state)
+        return state
+      }),
       toArray()
     )
   }
