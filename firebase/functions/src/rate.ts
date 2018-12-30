@@ -8,8 +8,8 @@ export const _rate = functions.https.onRequest((req, res) => {
       'http://apilayer.net/api/' + 'live' + '?access_key=' + functions.config().currency_layer.api_key + 'format=1',
       (error, res, body) => {
         const jsonResponse = JSON.parse(body)
-        const jpy = jsonResponse.quotes.USDJPY
-        admin.firestore().collection("rates").doc("rateId").set({
+        const jpy = jsonResponse['quotes']['USDJPY']
+        admin.firestore().collection("rates").doc("rate").set({
           "JPY": jpy,
           "USD": 1
         })
@@ -32,14 +32,12 @@ export const _rate = functions.https.onRequest((req, res) => {
           if (error) {
           } else {
             var jsonResponse = JSON.parse(body);
-            var name = String(jsonResponse.data.id.name)
-            var price = jsonResponse.data.id.quote.USD.price;
+            var name = String(jsonResponse['data'][`${id}`]['name'])
+            var price = jsonResponse['data'][`${id}`]['quote']['USD']['price'];
             var rate = {}
             rate[`${name}`] = price
 
-            admin.firestore().collection("rates").doc("rateId").set({
-              rate
-            })
+            admin.firestore().collection("rates").doc("rate").set(rate)
           }
         })
     )
