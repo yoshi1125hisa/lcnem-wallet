@@ -123,7 +123,7 @@ export class AssetsListComponent implements OnInit {
   ];
 
   public translation = {
-    qucurrency: {
+    quoteCurrency: {
       en: "Currency",
       ja: "通貨"
     } as any
