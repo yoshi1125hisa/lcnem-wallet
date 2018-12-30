@@ -99,7 +99,6 @@ export class AssetsListComponent implements OnInit {
     this.load()
   }
 
-
   public readonly assetAdditionalDefinitions = [
     {
       name: "nem:xem",
