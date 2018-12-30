@@ -2,9 +2,9 @@ import * as functions from 'firebase-functions';
 import * as request from 'request';
 import * as admin from 'firebase-admin';
 
-export const _rate = functions.https.onRequest((req, res) => {
+export const _rate = functions.https.onRequest(async (req, res) => {
   try {
-    request.get(
+    await request.get(
       'http://apilayer.net/api/' + 'live' + '?access_key=' + functions.config().currency_layer.api_key + 'format=1',
       (error, res, body) => {
         const jsonResponse = JSON.parse(body)
@@ -22,7 +22,7 @@ export const _rate = functions.https.onRequest((req, res) => {
     const eth = "1027";
     const ids = [btc, xem, eth]
 
-    ids.map(
+    await ids.map(
       id =>
         request.get({
           uri: 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=' + id,
@@ -32,16 +32,17 @@ export const _rate = functions.https.onRequest((req, res) => {
         }, function (error, res, body) {
           if (error) {
           } else {
-            var jsonResponse = JSON.parse(body);
-            var name = String(jsonResponse['data'][`${id}`]['name'])
-            var price = jsonResponse['data'][`${id}`]['quote']['USD']['price'];
-            var rate = {}
+            const jsonResponse = JSON.parse(body);
+            const name = String(jsonResponse['data'][`${id}`]['name'])
+            const price = jsonResponse['data'][`${id}`]['quote']['USD']['price'];
+            const rate = {}
             rate[`${name}`] = price
 
             admin.firestore().collection("rates").doc("rate").set(rate)
           }
         })
     )
+    res.status(200).send()
   } catch (e) {
     console.error(e)
     res.status(400).send(e.message)
