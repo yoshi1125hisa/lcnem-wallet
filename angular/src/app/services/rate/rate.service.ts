@@ -43,7 +43,6 @@ export class RateService extends RxEffectiveStateStore<State> {
       ...this._state
     }
     this.streamState(state)
-    this.loadRate()
   }
 }
 
