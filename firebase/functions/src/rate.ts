@@ -51,10 +51,12 @@ export const _rate = functions.https.onRequest((req, res) => {
     )
     others.push(jpy)
 
-    Promise.all(others).then(function (message) {
-      message.forEach(async function (el) {
-        await admin.firestore().collection("rates").doc("rate").set(el)
+    Promise.all(others).then(async function (message) {
+      var obj = Object()
+      message.forEach(function (el) {
+        obj.assign(el)
       })
+      await admin.firestore().collection("rates").doc("rate").set(obj)
     }).then(function () {
       res.status(200).send()
     })
