@@ -7,8 +7,8 @@
       JPY
     </button>
   </mat-menu>
-  <div class="right button" *ngIf="quoteCurrency$ | async">
-    <button [matMenuTriggerFor]="currencyMenu" yPosition="below">
+  <div class="right">
+    <button mat-list-icon [matMenuTriggerFor]="currencyMenu">
       {{translation.quoteCurrency[lang]}}
     </button>
   </div>

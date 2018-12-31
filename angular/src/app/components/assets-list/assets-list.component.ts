@@ -69,10 +69,10 @@ export class AssetsListComponent implements OnInit {
                         name: name,
                         amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
                         imageURL: this.getImageURL(name),
-                        rate: rate.rate[rate.currency] ? rate.rate[additionaldefinition.unit] / rate.rate[rate.currency] : undefined
+                        rate: rate.rate[rate.currency] && rate.rate[additionaldefinition.unit] / rate.rate[rate.currency]
                       }
                     }
-                  )
+                  ),
                 )
               }
             ),
