@@ -16,13 +16,12 @@ export const _rate = functions.https.onRequest((req, res) => {
       }
     )
 
-    const enum CryptIds {
-      BTC = "1",
-      XEM = "873",
-      ETH = "1027"
+    const ids = {
+      BTC: "1",
+      XEM: "873",
+      ETH: "1027"
     }
-    const cryptIds = [CryptIds.BTC, CryptIds.XEM, CryptIds.ETH]
-    const cryptPromisses = cryptIds.map<{}>(
+    const cryptoPromisses = Object.keys(ids).map<{}>(
       async (id) => {
         await new Promise(
           function (resolve, reject) {
@@ -39,7 +38,7 @@ export const _rate = functions.https.onRequest((req, res) => {
                   const name = String(jsonResponse['data'][`${id}`]['name'])
                   const price = jsonResponse['data'][`${id}`]['quote']['USD']['price'];
                   const rate = {}
-                  resolve(rate[`${name}`] = price)
+                  resolve(rate[name] = price)
                 }
               }
             )
@@ -47,7 +46,7 @@ export const _rate = functions.https.onRequest((req, res) => {
         )
       }
     )
-    const ratePromisses = cryptPromisses
+    const ratePromisses = cryptoPromisses
     ratePromisses.push(jpyPromise)
 
     Promise.all(ratePromisses).then(async function (message) {
