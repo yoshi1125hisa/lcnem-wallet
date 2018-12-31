@@ -96,7 +96,6 @@ export class AssetsListComponent implements OnInit {
 
   public changeCurrency(currency: string) {
     this.rate.changeCurrency(currency)
-    this.load()
   }
 
   public readonly assetAdditionalDefinitions = [

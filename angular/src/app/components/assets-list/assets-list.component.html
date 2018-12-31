@@ -14,6 +14,17 @@
       </span>
     </mat-list-item>
     <mat-divider></mat-divider>
+    <mat-menu #currencyMenu="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item (click)="changeCurrency('USD')">
+        USD
+      </button>
+      <button mat-menu-item (click)="changeCurrency('JPY')">
+        JPY
+      </button>
+    </mat-menu>
+    <button mat-icon-button [matMenuTriggerFor]="currencyMenu" yPosition="below" class="fill-remaining-space">
+      {{translation.quoteCurrency[lang]}}
+    </button>
   </ng-container>
 </ng-template>
 <mat-list *ngIf="!nav">
