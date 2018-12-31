@@ -14,7 +14,7 @@ export class RateService extends RxEffectiveStateStore<State> {
     super(
       {
         loading: false,
-        currency: 'USD',
+        currency: "USD",
         rate: {} as Rate
       }
     )
@@ -37,14 +37,13 @@ export class RateService extends RxEffectiveStateStore<State> {
   }
 
   public changeCurrency(currency: string) {
-    this.streamState(
-      {
-        loading: false,
-        currency: currency,
-        ...this._state
-      }
-    )
     this.streamLoadingState()
+    const state: State = {
+      loading: false,
+      currency: currency,
+      rate: this._state.rate
+    }
+    this.streamState(state)
   }
 }
 
