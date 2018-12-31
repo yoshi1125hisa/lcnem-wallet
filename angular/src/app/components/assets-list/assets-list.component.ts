@@ -84,12 +84,6 @@ export class AssetsListComponent implements OnInit {
           )
         }
       ),
-      map(
-        (state) => {
-          console.log(state)
-          return state
-        }
-      ),
       toArray()
     )
   }
