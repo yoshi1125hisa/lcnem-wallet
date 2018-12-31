@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RxEffectiveStateStore, RxEffectiveState } from 'rx-state-store-js';
+import { RxEffectiveStateStore } from 'rx-state-store-js';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Rate } from '../../../../../firebase/functions/src/models/rate';
 
@@ -44,11 +44,13 @@ export class RateService extends RxEffectiveStateStore<State> {
         ...this._state
       }
     )
+    this.streamLoadingState()
   }
 }
 
 
-interface State extends RxEffectiveState {
+interface State {
+  loading: boolean
   currency: string
   rate: Rate
 }

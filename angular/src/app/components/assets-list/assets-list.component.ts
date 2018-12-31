@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Asset, AssetDefinition, XEM } from 'nem-library';
-import { Observable, from } from 'rxjs';
-import { map, mergeMap, filter, toArray, take, first, } from 'rxjs/operators';
+import { Observable, from, combineLatest } from 'rxjs';
+import { map, mergeMap, filter, toArray, take, first } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
 import { RateService } from '../../services/rate/rate.service';
@@ -20,7 +20,12 @@ export class AssetsListComponent implements OnInit {
 
   @Output() clickAsset = new EventEmitter()
 
-  public loading$ = this.assetDefinition.state$.pipe(map(state => state.loading))
+  public loading$ = combineLatest(
+    this.assetDefinition.state$,
+    this.rate.state$
+  ).pipe(
+    map(fork => fork[0].loading || fork[1].loading)
+  )
   public quoteCurrency$ = this.rate.state$.pipe(map(state => state.currency))
   public assets$: Observable<{
     name: string
@@ -48,6 +53,7 @@ export class AssetsListComponent implements OnInit {
     }
     this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
     this.rate.loadRate()
+
     this.assets$ = from(this.assets).pipe(
       mergeMap(
         (asset) => {
