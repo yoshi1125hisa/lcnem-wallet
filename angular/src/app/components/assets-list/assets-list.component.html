@@ -12,6 +12,7 @@
         <span>{{asset.amount}}</span>
         <span class="rate">{{asset.unit}}</span>
       </span>
+      <span *ngIf="asset.rate" mat-line class="right rate">{{asset.rate}} {{quoteCurrency$ | async}}</span>
     </mat-list-item>
     <mat-divider></mat-divider>
   </ng-container>
@@ -23,9 +24,11 @@
       JPY
     </button>
   </mat-menu>
-  <button mat-icon-button [matMenuTriggerFor]="currencyMenu" yPosition="below" class="fill-remaining-space">
-    {{translation.quoteCurrency[lang]}}
-  </button>
+  <div class="right button" *ngIf="quoteCurrency$ | async">
+    <button [matMenuTriggerFor]="currencyMenu" yPosition="below">
+      {{translation.quoteCurrency[lang]}}
+    </button>
+  </div>
 </ng-template>
 <mat-list *ngIf="!nav">
   <ng-container *ngTemplateOutlet="temp"></ng-container>

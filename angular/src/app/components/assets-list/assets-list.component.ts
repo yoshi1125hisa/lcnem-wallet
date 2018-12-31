@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Asset, AssetDefinition, XEM } from 'nem-library';
 import { Observable, from } from 'rxjs';
-import { map, mergeMap, filter, toArray, take, pluck } from 'rxjs/operators';
+import { map, mergeMap, filter, toArray, take, first, } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
 import { RateService } from '../../services/rate/rate.service';
@@ -21,7 +21,7 @@ export class AssetsListComponent implements OnInit {
   @Output() clickAsset = new EventEmitter()
 
   public loading$ = this.assetDefinition.state$.pipe(map(state => state.loading))
-  public quoteCurrency$ = this.rate.state$.pipe(pluck('currency'))
+  public quoteCurrency$ = this.rate.state$.pipe(map(state => state.currency))
   public assets$: Observable<{
     name: string
     amount: number
@@ -48,7 +48,7 @@ export class AssetsListComponent implements OnInit {
     }
     this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
     this.rate.loadRate()
-
+    const length = this.assets.length
     this.assets$ = from(this.assets).pipe(
       mergeMap(
         (asset) => {
@@ -60,6 +60,7 @@ export class AssetsListComponent implements OnInit {
             mergeMap(
               (definition) => {
                 return this.rate.state$.pipe(
+                  first(),
                   map(
                     (rate) => {
                       const name = asset.assetId.toString()
@@ -69,13 +70,13 @@ export class AssetsListComponent implements OnInit {
                         name: name,
                         amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
                         imageURL: this.getImageURL(name),
-                        rate: rate.rate[additionaldefinition.unit] / rate.rate[rate.currency] || undefined
+                        rate: rate.rate[rate.currency] ? rate.rate[additionaldefinition.unit] / rate.rate[rate.currency] : undefined
                       }
                     }
                   )
                 )
               }
-            )
+            ),
           )
         }
       ),
@@ -92,6 +93,7 @@ export class AssetsListComponent implements OnInit {
 
   public changeCurrency(currency: string) {
     this.rate.changeCurrency(currency)
+    this.load()
   }
 
   public readonly assetAdditionalDefinitions = [
@@ -120,7 +122,7 @@ export class AssetsListComponent implements OnInit {
   public translation = {
     quoteCurrency: {
       en: "Currency",
-      ja: "通貨"
+      ja: "通貨変更"
     } as any
   };
 }
