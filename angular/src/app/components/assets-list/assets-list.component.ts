@@ -48,7 +48,6 @@ export class AssetsListComponent implements OnInit {
     }
     this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
     this.rate.loadRate()
-    const length = this.assets.length
     this.assets$ = from(this.assets).pipe(
       mergeMap(
         (asset) => {
