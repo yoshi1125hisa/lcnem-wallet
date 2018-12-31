@@ -53,7 +53,6 @@ export class AssetsListComponent implements OnInit {
     }
     this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
     this.rate.loadRate()
-
     this.assets$ = from(this.assets).pipe(
       mergeMap(
         (asset) => {
