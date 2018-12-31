@@ -39,8 +39,9 @@ export class RateService extends RxEffectiveStateStore<State> {
   public changeCurrency(currency: string) {
     this.streamState(
       {
-        ...this._state,
-        currency: currency
+        loading: false,
+        currency: currency,
+        ...this._state
       }
     )
   }
