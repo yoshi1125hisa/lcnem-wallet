@@ -20,12 +20,6 @@ export class AssetsListComponent implements OnInit {
 
   @Output() clickAsset = new EventEmitter()
 
-  public loading$ = combineLatest(
-    this.assetDefinition.state$,
-    this.rate.state$
-  ).pipe(
-    map(fork => fork[0].loading || fork[1].loading)
-  )
   public quoteCurrency$ = this.rate.state$.pipe(map(state => state.currency))
   public assets$: Observable<{
     name: string
