@@ -15,36 +15,29 @@ export class RouterService {
     private wallet: WalletService
   ) {
     this.router.events.subscribe(
-      (event) => {
+      async (event) => {
         if (event instanceof NavigationStart) {
           switch (event.url) {
             case "/account/login": {
               break
             }
             case "/account/wallets": {
-              this.auth.user$.pipe(
-                first()
-              ).subscribe(
-                (user) => {
-                  if (!user) {
-                    this.router.navigate(["account", "login"])
-                  }
-                }
-              )
+              const user = await this.auth.user$.pipe(first()).toPromise()
+              if (!user) {
+                this.router.navigate(["account", "login"])
+                return
+              }
               break
             }
-            case "/":
-            case "/nem/transfer": {
-              this.wallet.state$.pipe(
+            default: {
+              const state = await this.wallet.state$.pipe(
                 filter(state => !state.loading),
                 first()
-              ).subscribe(
-                (state) => {
-                  if (!state.currentWalletId) {
-                    this.router.navigate(["account", "wallets"])
-                  }
-                }
-              )
+              ).toPromise()
+              
+              if (!state.currentWalletId) {
+                this.router.navigate(["account", "wallets"])
+              }
               break
             }
           }
