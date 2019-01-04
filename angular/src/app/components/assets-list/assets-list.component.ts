@@ -12,7 +12,7 @@ import { RateService } from '../../services/rate/rate.service';
   styleUrls: ['./assets-list.component.css']
 })
 export class AssetsListComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter }
+  get lang() { return this.language.state.twoLetter }
 
   @Input() public title?: string
   @Input() public assets?: Asset[]
@@ -30,12 +30,16 @@ export class AssetsListComponent implements OnInit {
     rate?: number
   }[]> = new Observable()
 
+
+
   constructor(
     private rate: RateService,
     private language: LanguageService,
     private assetDefinition: AssetDefinitionService
   ) {
+
   }
+
 
   ngOnInit() {
     this.load()
@@ -46,7 +50,7 @@ export class AssetsListComponent implements OnInit {
       return
     }
     this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
-    this.rate.loadRate()
+    this.rate.loadRate(new Date())
     this.assets$ = from(this.assets).pipe(
       mergeMap(
         (asset) => {

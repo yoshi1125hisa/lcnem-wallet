@@ -20,8 +20,8 @@ export class RateService extends RxEffectiveStateStore<State> {
     )
   }
 
-  public loadRate() {
-    if (this._state.lastLoading) {
+  public loadRate(lastLoading: Date) {
+    if (lastLoading == this._state.lastLoading) {
       return;
     }
     this.firestore.collection("rates").get().subscribe(
@@ -30,7 +30,7 @@ export class RateService extends RxEffectiveStateStore<State> {
           loading: false,
           currency: this._state.currency,
           rate: document.docs[0].data() as Rate,
-          lastLoading: "data"
+          lastLoading: new Date()
         }
         this.streamState(state)
       },
@@ -56,5 +56,5 @@ interface State {
   loading: boolean
   currency: string
   rate: Rate
-  lastLoading?: string
+  lastLoading?: Date
 }
