@@ -211,8 +211,9 @@ export class TransferComponent implements OnInit, OnDestroy {
           return new XEM(asset.amount || 0);
         }
         const definition = this.assetDefinition.state.definitions.find(definition => definition.id.toString() === asset.id)!
+        const amount = (asset.amount || 0) * Math.pow(10, definition.properties.divisibility)
 
-        return AssetTransferable.createWithAssetDefinition(definition, asset.amount || 0)
+        return AssetTransferable.createWithAssetDefinition(definition, amount)
       }
     )
   }
