@@ -1,23 +1,43 @@
-<mat-sidenav-container class="example-container">
-  <mat-sidenav #sidenav [mode]="mode.value">
-    <p><button mat-button (click)="sidenav.toggle()">Plan Select</button>
-    <p>
-      <mat-radio-group class="example-radio-group" [formCOntrol]="mode">
-        <label>Mode:</label>
-        <mat-radio-button value="free">Free</mat-radio-button>>
-        <mat-radio-button value="Standard">Standard</mat-radio-button>
-      </mat-radio-group>>
-    </p>
-  </mat-sidenav>
-
-  <mat-sidenav-content>
-    <p><button mat-button (click)="sidenav.toggle()">Free</button>
-    <p>
-      <mat-radio-group class="example-radio-group" [formControl]="mode">
-        <label>Mode:</label>
-        <mat-radio-button value="free">Free</mat-radio-button>
-        <mat-radio-button value="standard">Standard</mat-radio-button>
-      </mat-radio-group>
-    </p>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+<mat-drawer-container>
+  <mat-drawer></mat-drawer>
+  <mat-drawer-content>
+    <mat-toolbar class="mat-elevation-z4 top-toolbar">
+      <button mat-icon-button (click)="back()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span>{{translation.setting[lang]}}</span>
+      <span class="fill-remaining-space"></span>
+    </mat-toolbar>
+    <div class="mat-typography body-container">
+      <h1>{{translation.plan[lang]}}</h1>
+      <span class="fill-remaining-space"></span>
+      <p>
+        <mat-radio-group class="radio-group" [(ngModel)]="searchTypeSelected">
+          <label>
+            <h1>Plan:</h1>
+          </label>
+          <div>
+            <mat-radio-button name="plan" [value]="searchTypes" [checked]="searchTypeSelected == 'free'">Free</mat-radio-button>
+          </div>
+          <div>
+            <mat-radio-button name="plan" [value]="searchTypes" (change)="openCheckout()" [checked]="searchTypeSelected == 'standard'">Standard</mat-radio-button>
+          </div>
+        </mat-radio-group>
+      </p>
+      <ng-container>
+        <div>
+          <h2>{{translation.freeTitle[lang]}}</h2>
+          <span class="fill-remaining-space"></span>
+        </div>
+        <div>{{translation.freeContent[lang]}}</div>
+        <span class="fill-remaining-space"></span>
+      </ng-container>
+      <ng-container>
+        <div>
+          <h2>{{translation.standardTitle[lang]}}</h2>
+        </div>
+        <div>{{translation.standardContent[lang]}}</div>
+      </ng-container>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>

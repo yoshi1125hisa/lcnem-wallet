@@ -1,17 +1,13 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { Observable, Subject } from 'rxjs';
-import * as firebase from 'firebase/app';
 import 'firebase/auth';
-import { HttpClient } from '@angular/common/http';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { AuthService } from '../../../services/auth/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { MatCalendarBody } from '@angular/material';
-import { doesNotReject } from 'assert';
-import { stripeCharge, supportedInstruments } from '../../../../stripe'
+import { database } from 'firebase';
+import { stripeCharge, supportedInstruments } from '../../../../stripe';
 
-declare const stripe: any;
-declare const elements: any;
+declare const Stripe: any;
+
 
 @Injectable({
   providedIn: 'root'
@@ -19,81 +15,84 @@ declare const elements: any;
 export class StripeService {
 
   constructor(
-    private http: HttpClient,
-    private auth: AngularFireAuth,
+    private auth: AuthService,
     private firestore: AngularFirestore,
-  ) { ; console.log("stripe") }
+  ) { console.log("stripe"); }
 
-  public charge() {
+  public async charge() {
 
-    var form: any = document.getElementById('payment-form');
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
+    Stripe.setPublishableKey(environment.stripe.pk);
 
-      stripe.createToken(card).then(function (result) {
-        if (result.error) {
-          var errorElement = document.getElementById('card-errors');
-          errorElement.textContent = result.error.message;
-        } else {
-          stripeTokenHandler(result.token);
-        }
-      });
-    });
+    const uid = this.auth.user!.uid;
 
-    function stripeTokenHandler(token) {
-      var form = document.getElementById('payment-form');
-      var hiddenInput = document.createElement('input');
-      hiddenInput.setAttribute('type', 'hidden');
-      hiddenInput.setAttribute('name', 'stripeToken');
-      hiddenInput.setAttribute('value', token.id);
-      form.appendChild(hiddenInput);
+    const supportedInstruments = [{
+      supportedMethods: ['basic-card'],
+      data: {
+        supportedNetworks: [
+          'visa',
+          'mastercard'
+        ]
+      }
+    }]
 
-      form.submit();
+    let details = {
+      displayItems: [{
+        label: 'LCNEM Wallet Standard Plan Fee Per Month',
+        amount: { currency: 'JPY', value: '200' }
+      }],
+      total: {
+        label: 'LCNEM Wallet Standard Plan Total Fee Per Month',
+        amount: { currency: 'JPY', value: '200' }
+      }
+    };
+
+    const request = new PaymentRequest(supportedInstruments, details, { requestShipping: false });
+
+    const result = await request.show();
+    if (!result) {
+      return;
     }
 
-    var stripe = require("stripe")("sk_test_6obhPUDZ2BkjAXTOjZbwoa8e");
-
-    stripe.products.create({
-      name: 'lcnem-wallet',
-      type: 'service',
-    }, function (err, product) {
-      // asynchronously called
+    const token: any = Stripe.card.createToken({
+      number: result.details.cardNumber,
+      cvc: result.details.cardSecurityCode,
+      exp_month: result.details.expiryMonth,
+      exp_year: result.details.expiryYear
     });
 
-    stripe.plans.create({
-      currency: 'jpy',
-      interval: 'month',
-      product: '{{PRODUCT_ID}', //Product IDを指定
-      nickname: 'Standard',
-      amount: 200,
-    }, function (err, plan) {
-      // asynchronously called
-    });
-
-    let customer = stripe.Customer.create({
-      email: body.email,
-      description: body.description
-        source: body.stripeToken.id
-    }), (err, customer) => {
+    Stripe.Customer.create({
+      email: this.auth.user!.email,
+      source: token,
+      id: uid,
+    }, (err: any, customer: any) => {
 
       if (!err && customer) {
-        stripe.subscriptions.create({
+        Stripe.subscriptions.create({
           customer: customer.id,
-          trial_end: new Date("2019-01-01T00:00:00").getTime() / 1000,
-          plan: "プランID"
-        }, (err, subscription) => {
+          trial_end: this.get1stDayOfNextMonth().getTime() / 1000,
+          items: [{ plan: "plan_EFWnnrtQXB3tR6" }]
+        }, (err: any, subscription: any) => {
           if (!err && subscription) {
-            return done(null, { "my_msg": "OK" });
+            this.firestore.collection("users").doc(uid).set({
+              plan: "Standard",
+              subscription_id: subscription.id
+            }, { merge: true });
+            return JSON.stringify({ message: "OK" });
           } else {
-            return doesNotReject(null, { "message": JSON.stringify(err, null, 2) });
+            return JSON.stringify({ message: err });
           }
         });
       } else {
-        return done(null, {
-          "message:" JSON.stringify(err, null, 2)
-        });
+        return JSON.stringify({ message: err });
       }
     }
+    );
   }
-}
+
+  private get1stDayOfNextMonth(): Date {
+    const date = new Date();
+    date.setDate(1);
+    date.setMonth(date.getMonth() + 1);
+    return date;
+  }
 }

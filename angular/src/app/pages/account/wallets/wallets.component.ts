@@ -82,7 +82,7 @@ export class WalletsComponent implements OnInit {
       filter(result => result),
     ).subscribe(
       (result) => {
-        const uid = this.auth.user!.uid
+        const uid = this.auth.user!.uid 
 
         const simpleWallet = result.import
           ? SimpleWallet.createWithPrivateKey(uid, new Password(uid), result.privateKey)

@@ -66,7 +66,7 @@ export class TransferComponent implements OnInit, OnDestroy {
   public account$ = combineLatest(
     this.auth.user$,
     this.wallet.state$
-  ).pipe(map(_ => {console.log(_);return _}),
+  ).pipe(
     map(([user, wallet]) => Tuple(new Password(user!.uid), wallet.entities[wallet.currentWalletId!].wallet!)),
     map(([password, wallet]) => SimpleWallet.readFromWLT(wallet).open(password)),
     catchError(e => of(null))

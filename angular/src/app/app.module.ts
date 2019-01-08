@@ -7,7 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { HttpClientModule } from '@angular/common/http';
 
@@ -68,7 +68,6 @@ import { TransferDialogComponent } from './pages/nem/transfer/transfer-dialog/tr
 import { AssetsListComponent } from './components/assets-list/assets-list.component';
 import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
 import { RouterService } from './services/router/router.service';
-import { PayStripeComponent } from './pay-stripe/pay-stripe.component';
 
 @NgModule({
   declarations: [
@@ -102,7 +101,6 @@ import { PayStripeComponent } from './pay-stripe/pay-stripe.component';
     AlertDialogComponent,
     ConfirmDialogComponent,
     PromptDialogComponent,
-    PayStripeComponent,
   ],
   imports: [
     BrowserModule,

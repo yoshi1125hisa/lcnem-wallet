@@ -47,6 +47,18 @@ export class RouterService {
               )
               break
             }
+            case "/account/settings": {
+              this.auth.user$.pipe(
+                first()
+              ).subscribe(
+                (user) => {
+                  if (!user) {
+                    this.router.navigate(["account", "login"])
+                  }
+                }
+              )
+              break
+            }
           }
         }
       }
