@@ -3,9 +3,12 @@ import * as admin from 'firebase-admin';
 
 import { _deposit } from './deposit';
 import { _withdraw } from './withdraw';
+<<<<<<< HEAD
+=======
 import { _sign } from './sign';
 import { _refreshAccessToken } from './refresh-access-token';
 import { _rate } from './rate';
+>>>>>>> 5e64869ff5e4a7c4f1205ae314c82059e06f36b0
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -15,7 +18,7 @@ import { _rate } from './rate';
 // });
 admin.initializeApp({
   credential: admin.credential.cert(JSON.parse(JSON.stringify(functions.config().service_account).replace(/\\\\n/g, "\\n"))),
-  databaseURL: "https://ticket-p2p.firebaseio.com"
+  databaseURL: "https://lcnem-wallet.firebaseio.com"
 })
 
 export const deposit: functions.HttpsFunction
@@ -28,6 +31,8 @@ export const withdraw: functions.HttpsFunction
     ? _withdraw
     : null
 
+<<<<<<< HEAD
+=======
 export const sign: functions.HttpsFunction
   = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "sign")
     ? _sign
@@ -43,6 +48,7 @@ export const rate: functions.HttpsFunction
     ? _rate
     : null
 
+>>>>>>> 5e64869ff5e4a7c4f1205ae314c82059e06f36b0
 /*
 const account = Account.createWithPrivateKey(functions.config().nem.private_key);
     const signed = account.signTransaction(TransferTransaction.create(

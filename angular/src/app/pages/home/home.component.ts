@@ -78,6 +78,10 @@ export class HomeComponent implements OnInit {
     contacts: {
       en: "Contact list",
       ja: "コンタクトリスト"
+    } as any,
+    setting: {
+      en: "Setting",
+      ja: "設定"
     } as any
   };
 }

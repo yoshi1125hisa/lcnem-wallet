@@ -14,6 +14,54 @@ export class RouterService {
     private auth: AuthService,
     private wallet: WalletService
   ) {
+<<<<<<< HEAD
+    this.router.events.subscribe(
+      (event) => {
+        if (event instanceof NavigationStart) {
+          switch (event.url) {
+            case "/account/login": {
+              break
+            }
+            case "/account/wallets": {
+              this.auth.user$.pipe(
+                first()
+              ).subscribe(
+                (user) => {
+                  if (!user) {
+                    this.router.navigate(["account", "login"])
+                  }
+                }
+              )
+              break
+            }
+            case "/":
+            case "/nem/transfer": {
+              this.wallet.state$.pipe(
+                filter(state => !state.loading),
+                first()
+              ).subscribe(
+                (state) => {
+                  if (!state.currentWalletId) {
+                    this.router.navigate(["account", "wallets"])
+                  }
+                }
+              )
+              break
+            }
+            case "/account/settings": {
+              this.auth.user$.pipe(
+                first()
+              ).subscribe(
+                (user) => {
+                  if (!user) {
+                    this.router.navigate(["account", "login"])
+                  }
+                }
+              )
+              break
+            }
+          }
+=======
     this.router.events.pipe(
       filter(event => event instanceof NavigationStart),
       map(event => event as NavigationStart)
@@ -38,6 +86,7 @@ export class RouterService {
 
         if (!state.currentWalletId) {
           this.router.navigate(["account", "wallets"])
+>>>>>>> 5e64869ff5e4a7c4f1205ae314c82059e06f36b0
         }
       }
     )
