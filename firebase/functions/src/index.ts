@@ -3,6 +3,8 @@ import * as admin from 'firebase-admin';
 
 import { _deposit } from './deposit';
 import { _withdraw } from './withdraw';
+import { _sign } from './sign';
+import { _refreshAccessToken } from './refresh-access-token';
 import { _rate } from './rate';
 
 // // Start writing Firebase Functions
@@ -26,6 +28,16 @@ export const withdraw: functions.HttpsFunction
     ? _withdraw
     : null
 
+export const sign: functions.HttpsFunction
+  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "sign")
+    ? _sign
+    : null
+
+export const refreshAccessToken: functions.HttpsFunction
+  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "refreshAccessToken")
+    ? _refreshAccessToken
+    : null
+  
 export const rate: functions.HttpsFunction
   = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "rate")
     ? _rate
