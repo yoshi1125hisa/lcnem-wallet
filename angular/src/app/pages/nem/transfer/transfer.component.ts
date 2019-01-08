@@ -191,8 +191,15 @@ export class TransferComponent implements OnInit, OnDestroy {
       }
     )
 
+    const url = location.href + "?invoice=" + encodeURI(invoice.stringify())
+
+    if(!(navigator as any).share) {
+      this.share.copy(url)
+      this.snackBar.open(this.translation.copyCompleted[this.lang], undefined, { duration: 3000 });
+      return
+    }
     this.share.share(
-      location.href + "?invoice=" + encodeURI(invoice.stringify()),
+      url,
       "LCNEM Wallet"
     )
   }
@@ -204,8 +211,9 @@ export class TransferComponent implements OnInit, OnDestroy {
           return new XEM(asset.amount || 0);
         }
         const definition = this.assetDefinition.state.definitions.find(definition => definition.id.toString() === asset.id)!
+        const amount = (asset.amount || 0) * Math.pow(10, definition.properties.divisibility)
 
-        return AssetTransferable.createWithAssetDefinition(definition, asset.amount || 0)
+        return AssetTransferable.createWithAssetDefinition(definition, amount)
       }
     )
   }
@@ -384,6 +392,10 @@ export class TransferComponent implements OnInit, OnDestroy {
     noPublicKey: {
       en: "Failed to get the recipient public key for encryption.",
       ja: "暗号化のための宛先の公開鍵取得に失敗しました。"
+    } as any,
+    copyCompleted: {
+      en: "Copied",
+      ja: "コピーしました"
     } as any
   }
 }

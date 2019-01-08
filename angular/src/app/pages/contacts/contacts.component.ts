@@ -22,7 +22,7 @@ export class ContactsComponent implements OnInit {
     this.auth.user$,
     this.contact.state$
   ).pipe(
-    map(fork => fork[0] === null || fork[1].loading)
+    map(([auth, contact]) => auth === null || contact.loading)
   )
 
   public state$ = this.contact.state$;
@@ -40,15 +40,13 @@ export class ContactsComponent implements OnInit {
     this.load()
   }
 
-  public load(refresh?: boolean) {
-    this.auth.user$.pipe(
+  public async load(refresh?: boolean) {
+    const user = await this.auth.user$.pipe(
       filter(user => user !== null),
       first()
-    ).subscribe(
-      (user) => {
-        this.contact.loadContacts(user!.uid, refresh)
-      }
-    )
+    ).toPromise()
+
+    this.contact.loadContacts(user!.uid, refresh)
   }
 
   public back() {

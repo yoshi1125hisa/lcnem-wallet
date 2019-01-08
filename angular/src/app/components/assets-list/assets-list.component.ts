@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
-import { Asset, AssetDefinition } from 'nem-library';
-import { Observable, of, from } from 'rxjs';
-import { map, mergeMap, filter, toArray, take } from 'rxjs/operators';
+import { Asset, AssetDefinition, XEM } from 'nem-library';
+import { Observable, from, combineLatest } from 'rxjs';
+import { map, mergeMap, filter, toArray, take, first } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
+import { RateService } from '../../services/rate/rate.service';
 
 @Component({
   selector: 'app-assets-list',
@@ -11,7 +12,7 @@ import { AssetDefinitionService } from '../../services/nem/asset-definition/asse
   styleUrls: ['./assets-list.component.css']
 })
 export class AssetsListComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter }
+  get lang() { return this.language.state.twoLetter }
 
   @Input() public title?: string
   @Input() public assets?: Asset[]
@@ -19,20 +20,26 @@ export class AssetsListComponent implements OnInit {
 
   @Output() clickAsset = new EventEmitter()
 
-  public loading$ = this.assetDefinition.state$.pipe(map(state => state.loading))
+  public quoteCurrency$ = this.rate.state$.pipe(map(state => state.currency))
   public assets$: Observable<{
     name: string
     amount: number
     imageURL: string
     issuer?: string
     unit?: string
+    rate?: number
   }[]> = new Observable()
 
+
+
   constructor(
+    private rate: RateService,
     private language: LanguageService,
     private assetDefinition: AssetDefinitionService
   ) {
+
   }
+
 
   ngOnInit() {
     this.load()
@@ -42,9 +49,8 @@ export class AssetsListComponent implements OnInit {
     if (!this.assets) {
       return
     }
-
     this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
-
+    this.rate.loadRate(new Date())
     this.assets$ = from(this.assets).pipe(
       mergeMap(
         (asset) => {
@@ -53,18 +59,26 @@ export class AssetsListComponent implements OnInit {
             mergeMap(definitions => from(definitions)),
             filter(definition => definition.id.equals(asset.assetId)),
             take(1),
-            map(
+            mergeMap(
               (definition) => {
-                const name = asset.assetId.toString()
-                const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || {}
-                return {
-                  ...additionaldefinition,
-                  name: name,
-                  amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
-                  imageURL: this.getImageURL(name)
-                }
+                return this.rate.state$.pipe(
+                  first(),
+                  map(
+                    (rate) => {
+                      const name = asset.assetId.toString()
+                      const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || { name: "", issuer: "", unit: "" }
+                      return {
+                        ...additionaldefinition,
+                        name: name,
+                        amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
+                        imageURL: this.getImageURL(name),
+                        rate: rate.rate[rate.currency] && rate.rate[additionaldefinition.unit] / rate.rate[rate.currency]
+                      }
+                    }
+                  ),
+                )
               }
-            )
+            ),
           )
         }
       ),
@@ -77,6 +91,10 @@ export class AssetsListComponent implements OnInit {
       return "assets/data/mosaic.svg";
     }
     return "assets/data/" + name.replace(":", "/") + ".svg";
+  }
+
+  public changeCurrency(currency: string) {
+    this.rate.changeCurrency(currency)
   }
 
   public readonly assetAdditionalDefinitions = [
@@ -101,4 +119,11 @@ export class AssetsListComponent implements OnInit {
       unit: ""
     }
   ];
+
+  public translation = {
+    quoteCurrency: {
+      en: "Currency",
+      ja: "通貨変更"
+    } as any
+  };
 }

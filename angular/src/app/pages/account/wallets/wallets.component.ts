@@ -65,16 +65,14 @@ export class WalletsComponent implements OnInit {
     this.load();
   }
 
-  public load(refresh?: boolean) {
-    this.auth.user$.pipe(
+  public async load(refresh?: boolean) {
+    const user = await this.auth.user$.pipe(
       filter(user => user != null),
       first()
-    ).subscribe(
-      (user) => {
-        this.user.loadUser(user!.uid, refresh)
-        this.wallet.loadWallets(user!.uid, refresh)
-      }
-    )
+    ).toPromise()
+
+    this.user.loadUser(user!.uid, refresh)
+    this.wallet.loadWallets(user!.uid, refresh)
   }
 
   public addWallet() {
