@@ -43,4 +43,5 @@ export class BalanceComponent implements OnInit {
       }
     )
   }
+
 }
