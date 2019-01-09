@@ -10,6 +10,9 @@ export const environment = {
   },
   stripe: {
     pk: "pk_live_U7J2IacDFZyCvYILl45onao9",
-    test: ""
+    test: false
+  },
+  plan: {
+    plan_id:
   }
 };

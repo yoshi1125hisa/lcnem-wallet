@@ -22,11 +22,19 @@
           <mat-icon mat-list-icon>call_made</mat-icon>
           {{translation.withdraw[lang]}}
         </mat-list-item>
+
         <mat-list-item routerLink="/contacts">
           <mat-icon mat-list-icon>contacts</mat-icon>
           {{translation.contacts[lang]}}
         </mat-list-item>
         <mat-divider></mat-divider>
+
+        <mat-list-item routerLink="/account/settings">
+          <mat-icon mat-list-icon>brightness_5</mat-icon>
+          {{translation.setting[lang]}}
+        </mat-list-item>
+        <mat-divider></mat-divider>
+
         <mat-list-item routerLink="/account/wallets">
           <mat-icon mat-list-icon>account_balance_wallet</mat-icon>
           {{translation.wallets[lang]}}

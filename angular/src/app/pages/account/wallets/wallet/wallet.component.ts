@@ -30,9 +30,9 @@ export class WalletComponent implements OnInit {
 
   public openSnackBar(type: string) {
     if (type == "import") {
-      this.snackBar.open(this.translation.localNotFound[this.lang], undefined, { duration: 3000 });
+      this.snackBar.open(this.translation.localNotFound[this.lang], undefined, { duration: 3000 })
     } else if (type == "plan") {
-      this.snackBar.open(this.translation.unavailablePlan[this.lang], undefined, { duration: 3000 });
+      this.snackBar.open(this.translation.unavailablePlan[this.lang], undefined, { duration: 3000 })
     }
   }
 
