@@ -13,7 +13,7 @@ export class RateService extends RxEffectiveStateStore<State> {
   ) {
     super(
       {
-        loading: false,
+        loading: true,
         currency: "USD",
         rate: {} as Rate
       }
