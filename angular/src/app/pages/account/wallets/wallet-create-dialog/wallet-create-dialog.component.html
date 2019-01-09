@@ -5,7 +5,7 @@
         <input matInput placeholder="{{translation.name[lang]}}" [(ngModel)]="forms.name" name="namey" required />
       </mat-form-field>
         <mat-slide-toggle fxFill [(ngModel)]="forms.advanced" name="advanced">{{translation.advanced[lang]}}</mat-slide-toggle>
-      <ng-container>
+      <ng-container *ngIf="forms.advanced">
         <br />
         <mat-radio-group [(ngModel)]="forms.local" name="local" required>
           <span>{{translation.localOrCloud[lang]}}</span>
