@@ -1,4 +1,20 @@
 <ng-template #temp>
+
+  <h3 mat-subheader *ngIf="title">{{title}}</h3>
+  <mat-divider></mat-divider>
+  <ng-container *ngFor="let asset of assets$ | async">
+    <mat-list-item (click)="clickAsset.emit(asset.name)">
+      <img mat-list-icon src="{{asset.imageURL}}" />
+      <span mat-line>{{asset.name}}</span>
+      <small mat-line>{{asset.issuer}}</small>
+      <span class="fill-remaining-space"></span>
+      <span class="right">
+        <span mat-line>{{asset.amount}} {{asset.unit}}</span>
+        <span mat-line class="rate">{{asset.rate}} {{quoteCurrency$ | async}}</span>
+      </span>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </ng-container>
   <mat-menu #currencyMenu="matMenu" [overlapTrigger]="false">
     <button mat-menu-item (click)="changeCurrency('USD')">
       USD
@@ -9,26 +25,9 @@
   </mat-menu>
   <div class="right">
     <button mat-button [matMenuTriggerFor]="currencyMenu">
-      {{translation.quoteCurrency[lang]}}
+      {{quoteCurrency$ | async}}
     </button>
   </div>
-  <h3 mat-subheader *ngIf="title">{{title}}</h3>
-  <mat-divider></mat-divider>
-  <ng-container *ngFor="let asset of assets$ | async">
-    <mat-list-item (click)="clickAsset.emit(asset.name)">
-      <img mat-list-icon src="{{asset.imageURL}}" />
-      <span mat-line>{{asset.name}}</span>
-      <small mat-line>{{asset.issuer}}</small>
-      <span class="fill-remaining-space"></span>
-      <span *ngIf="asset.unit=='XEM'" mat-line class="right">{{asset.amount}} {{asset.unit}}</span>
-      <span *ngIf="asset.unit!='XEM'" mat-line class="right">
-        <span>{{asset.amount}}</span>
-        <span class="rate">{{asset.unit}}</span>
-      </span>
-      <span *ngIf="asset.rate" mat-line class="right rate">{{asset.rate}} {{quoteCurrency$ | async}}</span>
-    </mat-list-item>
-    <mat-divider></mat-divider>
-  </ng-container>
 </ng-template>
 <mat-list *ngIf="!nav">
   <ng-container *ngTemplateOutlet="temp"></ng-container>
