@@ -58,10 +58,11 @@ export class AssetsListComponent implements OnInit {
             map(state => state.definitions),
             mergeMap(definitions => from(definitions)),
             filter(definition => definition.id.equals(asset.assetId)),
-            take(1),
+            first(),
             mergeMap(
               (definition) => {
                 return this.rate.state$.pipe(
+                  filter(state => state.loading == false),
                   first(),
                   map(
                     (rate) => {
