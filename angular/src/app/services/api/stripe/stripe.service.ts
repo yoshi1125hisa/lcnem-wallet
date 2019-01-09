@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../services/auth/auth.service';
-import { AngularFirestore } from '@angular/fire/firestore';
 
 declare const Stripe: any;
 declare const uid: any;
-
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +14,7 @@ export class StripeService {
   constructor(
     private auth: AuthService,
     private firestore: AngularFirestore,
-  ) { console.log("stripe"); }
+  ) { }
 
   public charge() {
     return new Promise(
@@ -70,7 +69,7 @@ export class StripeService {
               Stripe.subscriptions.create(
                 {
                   customer: customer.id,
-                  trial_end: this.get1stDayOfNextMonth().getTime() / 1000,
+                  trial_end: this.getFirstDayOfNextMonth().getTime() / 1000,
                   items: [{ plan: "plan_EFWnnrtQXB3tR6" }]
                 },
                 (err: any, subscription: any) => {
@@ -94,10 +93,11 @@ export class StripeService {
     )
   }
 
-  private get1stDayOfNextMonth(): Date {
+  private getFirstDayOfNextMonth(): Date {
     const date = new Date();
     date.setDate(1);
     date.setMonth(date.getMonth() + 1);
+
     return date;
   }
 }
