@@ -1,7 +1,8 @@
 import { Timestamp } from "@google-cloud/firestore";
 
 export interface Permission {
-  clientToken: string
+  userId: string
+  walletId: string
   accessToken: string
   refreshToken: string
   expire: Timestamp
