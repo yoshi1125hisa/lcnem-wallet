@@ -15,10 +15,6 @@ service cloud.firestore {
       match /plans/{plan} {
         allow read: if request.auth.uid == user;
       }
-
-      match /clients/{client} {
-        allow read: if request.auth.uid == user;
-      }
     }
   }
 }
