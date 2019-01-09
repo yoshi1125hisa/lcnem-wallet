@@ -11,6 +11,7 @@ export class WalletCreateDialogComponent implements OnInit {
 
   forms = {
     name: "",
+    advanced: false,
     local: 0,
     import: 0,
     privateKey: "",
@@ -32,6 +33,10 @@ export class WalletCreateDialogComponent implements OnInit {
     name: {
       en: "Name",
       ja: "名前"
+    } as any,
+    advanced: {
+      en: "Advanced",
+      ja: "上級者向け"
     } as any,
     localOrCloud: {
       en: "",
@@ -59,11 +64,11 @@ export class WalletCreateDialogComponent implements OnInit {
     } as any,
     cloudDescription: {
       en: "",
-      ja: "秘密鍵はこちらで保管します(初心者向け)。"
+      ja: "秘密鍵はウォレットクラウドで保管します。高度なセキュリティをお求めの方はローカル保存をご利用ください。"
     } as any,
     localDescription: {
       en: "",
-      ja: "秘密鍵はお客様管理となります(上級者向け)。リスクが低いです。"
+      ja: "秘密鍵はお客様自己管理となります。リスクが低いです。"
     } as any
   }
 }
