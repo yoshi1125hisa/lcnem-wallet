@@ -4,6 +4,7 @@ import { SimpleWallet, Password } from 'nem-library';
 import { RxEffectiveStateStore, RxEffectiveState } from 'rx-state-store-js';
 import { User } from '../../../../../firebase/functions/src/models/user'
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
+import { from } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +55,27 @@ export class UserService extends RxEffectiveStateStore<State> {
         }
         migration()
         //レガシー
+
+        this.streamState(state)
+      },
+      (error) => {
+        this.streamErrorState(error)
+      }
+    )
+  }
+
+  public updateUser(userId: string, user: User) {
+    if(userId !== this._state.lastUserId) {
+      throw Error()
+    }
+    this.streamLoadingState()
+
+    from(this.firestore.collection("users").doc(userId).set(user)).subscribe(
+      () => {
+        const state: State = {
+          user,
+          loading: false
+        }
 
         this.streamState(state)
       },
