@@ -1,4 +1,4 @@
-import { FormControl } from '@angular/forms'
+import { FormControl, FormsModule } from '@angular/forms'
 import { Component, Inject, ViewChild, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { LanguageService } from '../../../services/language/language.service';
@@ -6,7 +6,8 @@ import { StripeService } from '../../../services/api/stripe/stripe.service'
 import { AuthService } from '../../../services/auth/auth.service';
 import { RouterService } from '../../../services/router/router.service';
 import { UserService } from '../../../services/user/user.service';
-import { first, filter } from 'rxjs/operators';
+import { map, first, filter } from 'rxjs/operators';
+import { pipe } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-settings',
@@ -15,10 +16,6 @@ import { first, filter } from 'rxjs/operators';
 })
 
 export class SettingsComponent implements OnInit {
-
-  searchTypeSelected!: string;
-  searchTypes: string[] = ['free', 'standard'];
-
 
   constructor(
     private language: LanguageService,
@@ -31,11 +28,15 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
     this.load()
   }
-
   public get lang() { return this.language.state.twoLetter }
 
+  public plan$ = this.user.state$.pipe(map(state => state.user!.plan))
+
+  forms = {
+    plan: 0
+  }
+
   private dialog!: MatDialog;
-  mode = new FormControl("over");
 
   @Input() formControl: any
 
@@ -53,8 +54,20 @@ export class SettingsComponent implements OnInit {
       filter(user => user != null),
       first()
     ).toPromise()
-
+    
+    switch(await this.user.state$.pipe(
+      first(),
+      map(state => state.user!.plan)
+    ).toPromise()) {
+      case undefined : {
+        this.forms.plan = 0
+      }
+      case "Standard": {
+        this.forms.plan = 1
+      } 
+    }
     this.user.loadUser(user!.uid, refresh)
+
   }
 
   public translation = {

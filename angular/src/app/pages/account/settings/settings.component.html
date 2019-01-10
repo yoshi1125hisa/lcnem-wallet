@@ -11,19 +11,21 @@
     <div class="mat-typography body-container">
       <h1>{{translation.plan[lang]}}</h1>
       <span class="fill-remaining-space"></span>
-      <p>
-        <mat-radio-group class="radio-group" [(ngModel)]="searchTypeSelected">
+
+      <ng-container>
+        <mat-radio-group class="radio-group" [(ngModel)]="forms.plan">
           <label>
             <h1>Plan:</h1>
           </label>
           <div>
-            <mat-radio-button name="plan" [value]="searchTypes" [checked]="searchTypeSelected == 'free'">Free</mat-radio-button>
+            <mat-radio-button name="plan" [value]="0">Free</mat-radio-button>
           </div>
           <div>
-            <mat-radio-button name="plan" [value]="searchTypes" (change)="openCheckout()" [checked]="searchTypeSelected == 'standard'">Standard</mat-radio-button>
+            <mat-radio-button name="plan" [value]="1" (change)="openCheckout()">Standard</mat-radio-button>
           </div>
         </mat-radio-group>
-      </p>
+      </ng-container>
+
       <ng-container>
         <div>
           <h2>{{translation.freeTitle[lang]}}</h2>

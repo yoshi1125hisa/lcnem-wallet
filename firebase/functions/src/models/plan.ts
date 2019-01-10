@@ -1,5 +1,5 @@
 //Freeはundefinedで表現
-export type PlanType = "Standard" | "Premium";
+export type PlanType = "null" | "Standard";
 
 export interface Plan {
   type: PlanType
