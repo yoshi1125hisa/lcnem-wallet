@@ -28,6 +28,7 @@ export class AssetsListComponent implements OnInit {
     issuer?: string
     unit?: string
     rate?: number
+    unitRate?: number
   }[]> = new Observable()
 
 
@@ -68,12 +69,15 @@ export class AssetsListComponent implements OnInit {
                     (rate) => {
                       const name = asset.assetId.toString()
                       const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || { name: "", issuer: "", unit: "" }
+                      const unitRate = rate.rate[rate.currency] && rate.rate[additionaldefinition.unit] / rate.rate[rate.currency]
+                      const amount = asset.quantity / Math.pow(10, definition.properties.divisibility)
                       return {
                         ...additionaldefinition,
                         name: name,
                         amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
                         imageURL: this.getImageURL(name),
-                        rate: rate.rate[rate.currency] && rate.rate[additionaldefinition.unit] / rate.rate[rate.currency]
+                        rate: amount * unitRate,
+                        unitRate: unitRate
                       }
                     }
                   ),
@@ -96,6 +100,10 @@ export class AssetsListComponent implements OnInit {
 
   public changeCurrency(currency: string) {
     this.rate.changeCurrency(currency)
+  }
+
+  public multiplyRate(amount: number, unitRate: number) {
+    return amount * unitRate
   }
 
   public readonly assetAdditionalDefinitions = [
