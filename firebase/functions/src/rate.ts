@@ -11,7 +11,6 @@ export const _rate = functions.https.onRequest((req, res) => {
           function (error, response, body) {
             if (!error && response) {
               const jsonResponse = JSON.parse(body)
-              console.log(jsonResponse)
               rate['JPY'] = jsonResponse['quotes']['USDJPY']
               resolve(
                 rate
@@ -32,7 +31,6 @@ export const _rate = functions.https.onRequest((req, res) => {
           }, function (error, response, body) {
             if (!error && response) {
               const jsonResponse = JSON.parse(body);
-              console.log(jsonResponse)
               rate['BTC'] = jsonResponse['data']['BTC']['quote']['USD']['price'];
               rate['XEM'] = jsonResponse['data']['XEM']['quote']['USD']['price'];
               rate['ETH'] = jsonResponse['data']['ETH']['quote']['USD']['price'];
