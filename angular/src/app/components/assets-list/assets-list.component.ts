@@ -102,10 +102,6 @@ export class AssetsListComponent implements OnInit {
     this.rate.changeCurrency(currency)
   }
 
-  public multiplyRate(amount: number, unitRate: number) {
-    return amount * unitRate
-  }
-
   public readonly assetAdditionalDefinitions = [
     {
       name: "nem:xem",
