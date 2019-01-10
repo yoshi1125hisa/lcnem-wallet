@@ -3,6 +3,7 @@ import * as request from 'request';
 import * as admin from 'firebase-admin';
 export const _rate = functions.https.onRequest((req, res) => {
   try {
+    const rate = {}
     const jpyPromise = new Promise(
       function (resolve, reject) {
         request.get(
@@ -11,8 +12,9 @@ export const _rate = functions.https.onRequest((req, res) => {
             if (!error && response) {
               const jsonResponse = JSON.parse(body)
               console.log(jsonResponse)
+              rate['JPY'] = 1 / jsonResponse['quotes']['USDJPY']
               resolve(
-                { "JPY": 1 / jsonResponse['quotes']['USDJPY'] }
+                rate
               )
             }
           }
@@ -31,7 +33,6 @@ export const _rate = functions.https.onRequest((req, res) => {
             if (!error && response) {
               const jsonResponse = JSON.parse(body);
               console.log(jsonResponse)
-              const rate = {}
               rate['BTC'] = jsonResponse['data']['BTC']['quote']['USD']['price'];
               rate['XEM'] = jsonResponse['data']['XEM']['quote']['USD']['price'];
               rate['ETH'] = jsonResponse['data']['ETH']['quote']['USD']['price'];
@@ -48,10 +49,9 @@ export const _rate = functions.https.onRequest((req, res) => {
     Promise.all([cryptoPromise, jpyPromise])
       .then(
         async function (message) {
-          console.log(message)
           await admin.firestore().collection("rates").doc("rate").set(
             message[0],
-            message[1],
+            message[1]
           )
         }
       ).then(
