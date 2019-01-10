@@ -12,7 +12,7 @@ export const _rate = functions.https.onRequest((req, res) => {
             if (!error && response) {
               const jsonResponse = JSON.parse(body)
               console.log(jsonResponse)
-              rate['JPY'] = 1 / jsonResponse['quotes']['USDJPY']
+              rate['JPY'] = jsonResponse['quotes']['USDJPY']
               resolve(
                 rate
               )
