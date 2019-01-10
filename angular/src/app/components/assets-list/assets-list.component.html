@@ -10,9 +10,9 @@
       <span class="fill-remaining-space"></span>
       <span class="right">
         <span mat-line>{{asset.amount}} {{asset.unit}}</span>
-        <span mat-line matTooltip="1 {{asset.unit}} {{asset.unitRate | number: '1.2-3'}} {{quoteCurrency$ | async}}"
+        <span mat-line matTooltip="1 {{asset.unit}} {{asset.unitRate | number: '1.0-3'}} {{quoteCurrency$ | async}}"
           *ngIf="asset.unitRate" class="rate">
-          {{asset.rate | number: '1.2-3'}} {{quoteCurrency$ | async}}
+          {{asset.rate | number: '1.0-3'}} {{quoteCurrency$ | async}}
         </span>
       </span>
     </mat-list-item>
