@@ -33,8 +33,8 @@ export class AssetsListComponent implements OnInit {
   }[]> = new Observable()
 
   constructor(
-    private rate: RateService,
     private language: LanguageService,
+    private rate: RateService,
     private assetDefinition: AssetDefinitionService
   ) {
 
@@ -51,42 +51,48 @@ export class AssetsListComponent implements OnInit {
     this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
     this.rate.loadRate()
 
-    this.assets$ = from(this.assets).pipe(
+    this.assets$ = combineLatest(
+      from(this.assets).pipe(
+        mergeMap(
+          (asset) => {
+            return this.assetDefinition.state$.pipe(
+              map(state => state.definitions),
+              mergeMap(definitions => from(definitions)),
+              filter(definition => definition.id.equals(asset.assetId)),
+              first(),
+              map(definition => Tuple(asset, definition))
+            )
+          }
+        ),
+        toArray()
+      ),
+      this.rate.state$.pipe(
+        filter(state => state.loading == false)
+      )
+    ).pipe(
       mergeMap(
-        (asset) => {
-          return this.assetDefinition.state$.pipe(
-            map(state => state.definitions),
-            mergeMap(definitions => from(definitions)),
-            filter(definition => definition.id.equals(asset.assetId)),
-            first(),
-            mergeMap(
-              (definition) => {
-                return this.rate.state$.pipe(
-                  filter(state => state.loading == false),
-                  first(),
-                  map(
-                    (rate) => {
-                      const name = asset.assetId.toString()
-                      const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || { name: "", issuer: "", unit: "" }
-                      const unitRate = rate.rate[rate.currency] && rate.rate[additionaldefinition.unit] / rate.rate[rate.currency]
-                      const amount = asset.quantity / Math.pow(10, definition.properties.divisibility)
-                      return {
-                        ...additionaldefinition,
-                        name: name,
-                        amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
-                        imageURL: this.getImageURL(name),
-                        rate: amount * unitRate,
-                        unitRate: unitRate
-                      }
-                    }
-                  ),
-                )
+        ([array, rate]) => {
+          return from(array).pipe(
+            map(
+              ([asset, definition]) => {
+                const name = asset.assetId.toString()
+                const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || { name: "", issuer: "", unit: "" }
+                const unitRate = rate.rate[rate.currency] && rate.rate[additionaldefinition.unit] / rate.rate[rate.currency]
+                const amount = asset.quantity / Math.pow(10, definition.properties.divisibility)
+                return {
+                  ...additionaldefinition,
+                  name: name,
+                  amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
+                  imageURL: this.getImageURL(name),
+                  rate: amount * unitRate,
+                  unitRate: unitRate
+                }
               }
             ),
+            toArray()
           )
         }
-      ),
-      toArray()
+      )
     )
   }
 
@@ -95,10 +101,6 @@ export class AssetsListComponent implements OnInit {
       return "assets/data/mosaic.svg";
     }
     return "assets/data/" + name.replace(":", "/") + ".svg";
-  }
-
-  public changeCurrency(currency: string) {
-    this.rate.changeCurrency(currency)
   }
 
   public readonly assetAdditionalDefinitions = [

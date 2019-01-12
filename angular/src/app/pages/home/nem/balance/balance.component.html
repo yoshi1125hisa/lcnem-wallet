@@ -3,6 +3,22 @@
   <mat-card *ngIf="state$ | async as state">
     <div fxLayout="row">
       <span class="fill-remaining-space"></span>
+      <mat-menu #currencyMenu="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item (click)="changeCurrency('USD')">
+          USD
+        </button>
+        <button mat-menu-item (click)="changeCurrency('JPY')">
+          JPY
+        </button>
+        <button mat-menu-item (click)="changeCurrency('BTC')">
+          BTC
+        </button>
+      </mat-menu>
+      <div class="right">
+        <button mat-button [matMenuTriggerFor]="currencyMenu">
+          {{quoteCurrency$ | async}}
+        </button>
+      </div>
       <button mat-icon-button color="accent" (click)="load(true)">
         <mat-icon>refresh</mat-icon>
       </button>
