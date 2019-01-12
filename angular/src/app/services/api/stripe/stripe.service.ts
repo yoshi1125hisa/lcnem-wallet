@@ -4,7 +4,6 @@ import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../services/auth/auth.service';
 
 declare const Stripe: any;
-declare const uid: any;
 
 @Injectable({
   providedIn: 'root'

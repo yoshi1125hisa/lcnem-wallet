@@ -1,13 +1,10 @@
-import { FormControl, FormsModule } from '@angular/forms'
 import { Component, Inject, ViewChild, Input, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
 import { LanguageService } from '../../../services/language/language.service';
 import { StripeService } from '../../../services/api/stripe/stripe.service'
 import { AuthService } from '../../../services/auth/auth.service';
 import { RouterService } from '../../../services/router/router.service';
 import { UserService } from '../../../services/user/user.service';
 import { map, first, filter } from 'rxjs/operators';
-import { pipe } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-settings',
@@ -24,21 +21,15 @@ export class SettingsComponent implements OnInit {
     private user: UserService,
     private _router: RouterService,
   ) { }
+  public get lang() { return this.language.state.twoLetter }
+
+  public forms = {
+    plan: 0
+  }
 
   ngOnInit() {
     this.load()
   }
-  public get lang() { return this.language.state.twoLetter }
-
-  public plan$ = this.user.state$.pipe(map(state => state.user!.plan))
-
-  forms = {
-    plan: 0
-  }
-
-  private dialog!: MatDialog;
-
-  @Input() formControl: any
 
   public openCheckout() {
     this.stripeService.charge();
@@ -49,13 +40,15 @@ export class SettingsComponent implements OnInit {
   }
 
   public async load(refresh?: boolean) {
-    console.log(this.auth.user);
     const user = await this.auth.user$.pipe(
       filter(user => user != null),
       first()
     ).toPromise()
+
+    this.user.loadUser(user!.uid, refresh)
     
     switch(await this.user.state$.pipe(
+      filter(state => !state.loading),
       first(),
       map(state => state.user!.plan)
     ).toPromise()) {
@@ -66,8 +59,6 @@ export class SettingsComponent implements OnInit {
         this.forms.plan = 1
       } 
     }
-    this.user.loadUser(user!.uid, refresh)
-
   }
 
   public translation = {
