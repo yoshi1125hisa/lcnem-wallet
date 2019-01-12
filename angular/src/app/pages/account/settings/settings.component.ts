@@ -76,7 +76,7 @@ export class SettingsComponent implements OnInit {
     } as any,
     freeContent: {
       en: "",
-      ja: "Freeプラン内容"
+      ja: "内容；クラウドウォレットを一つのみ作成可能です。<br> 料金：無料"
     } as any,
     standardTitle: {
       en: "",
@@ -84,7 +84,7 @@ export class SettingsComponent implements OnInit {
     } as any,
     standardContent: {
       en: "",
-      ja: "Standardプラン内容"
+      ja: "内容；クラウドウォレットを複数個作成可能です。<br>料金:月額200JPY（登録翌月の月初めより請求が発生致します。）"
     } as any,
   }
 
