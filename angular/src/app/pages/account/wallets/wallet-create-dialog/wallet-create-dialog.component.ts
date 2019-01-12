@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LanguageService } from '../../../../services/language/language.service';
+import { WalletService } from '../../../../services/wallet/wallet.service';
 
 @Component({
   selector: 'app-wallet-create-dialog',
@@ -18,9 +19,16 @@ export class WalletCreateDialogComponent implements OnInit {
   }
   
   constructor(
-    private language: LanguageService
+    private language: LanguageService,
+    private appWallet: WalletService
+
   ) {
   }
+
+  public checkWallet() {
+    this.appWallet.checkWallet()
+  }
+
 
   ngOnInit() {
   }
