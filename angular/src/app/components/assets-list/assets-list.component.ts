@@ -40,7 +40,6 @@ export class AssetsListComponent implements OnInit {
 
   }
 
-
   ngOnInit() {
     this.load()
   }
@@ -55,25 +54,29 @@ export class AssetsListComponent implements OnInit {
     this.assets$ = combineLatest(
       of(this.assets),
       this.rate.state$.pipe(
-        filter(state => state.loading == false),
-        first()
+        filter(state => !state.loading)
       ),
       this.assetDefinition.state$.pipe(
-        filter(state => state.loading == false),
-        map(state => state.definitions),
-        first()
+        filter(state => !state.loading),
+        map(state => state.definitions)
       )
     ).pipe(
-      map(_ => {console.log(_);return _}),
       mergeMap(
         ([assets, rate, definitions]) => {
           return from(assets).pipe(
-            map(asset => Tuple(asset, definitions.find(d => d.id.equals(asset.assetId))!)),
+            mergeMap(
+              (asset) => {
+                return from(definitions).pipe(
+                  filter(definition => definition.id.equals(asset.assetId)),
+                  map(definition => Tuple(asset, definition))
+                )
+              }
+            ),
             map(
               ([asset, definition]) => {
                 const name = asset.assetId.toString()
                 const additionalDefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || { name: "", issuer: "", unit: "" }
-                const unitRate = rate.rate[rate.currency] && rate.rate[additionalDefinition.unit] / rate.rate[rate.currency]
+                const unitRate = rate.rate[additionalDefinition.unit] / rate.rate[rate.currency]
                 const amount = asset.quantity / Math.pow(10, definition.properties.divisibility)
                 return {
                   ...additionalDefinition,
@@ -84,11 +87,11 @@ export class AssetsListComponent implements OnInit {
                   unitRate: unitRate
                 }
               }
-            )
+            ),
+            toArray()
           )
         }
-      ),
-      toArray()
+      )
     )
   }
 

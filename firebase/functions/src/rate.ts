@@ -18,7 +18,7 @@ export const _rate = functions.https.onRequest(
               }
               const jsonResponse = JSON.parse(body)
               rate['USD'] = 1
-              rate['JPY'] = jsonResponse['quotes']['USDJPY']
+              rate['JPY'] = 1 / jsonResponse['quotes']['USDJPY']
 
               resolve(rate)
             }

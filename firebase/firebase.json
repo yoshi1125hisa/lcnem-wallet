@@ -23,12 +23,8 @@
         "function": "withdraw"
       },
       {
-        "source": "/api/sign",
-        "function": "sign"
-      },
-      {
-        "source": "/api/refresh-access-token",
-        "function": "refreshAccessToken"
+        "source": "/api/rate",
+        "function": "rate"
       },
       {
         "source": "**",

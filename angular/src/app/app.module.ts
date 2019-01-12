@@ -8,7 +8,6 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
 import { FormsModule } from '@angular/forms';
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { HttpClientModule } from '@angular/common/http';
 
 import {
@@ -109,7 +108,6 @@ import { RouterService } from './services/router/router.service';
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     FormsModule,
     HttpClientModule,
-    FlexLayoutModule,
     ZXingScannerModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,

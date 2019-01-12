@@ -21,7 +21,7 @@ export class RateService extends RxEffectiveStateStore<State> {
   }
 
   public loadRate(refresh?: boolean) {
-    if ((new Date()).valueOf() == (this.state.lastLoading && this.state.lastLoading!.valueOf()) && !refresh) {
+    if (this.state.lastLoading && (new Date()).valueOf() == this.state.lastLoading!.valueOf() && !refresh) {
       return
     }
     

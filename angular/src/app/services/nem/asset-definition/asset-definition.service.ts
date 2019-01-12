@@ -3,7 +3,7 @@ import { RxEffectiveStateStore } from 'rx-state-store-js';
 import { AssetDefinition, AssetId, AssetHttp, Address, PublicAccount, XEM } from 'nem-library';
 import { nodes } from '../../../classes/nodes';
 import { from, of } from 'rxjs';
-import { mergeMap, toArray, map, catchError } from 'rxjs/operators';
+import { mergeMap, toArray, map, filter, first } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -14,48 +14,40 @@ export class AssetDefinitionService extends RxEffectiveStateStore<State> {
     super(
       {
         loading: false,
-        definitions: []
+        definitions: [
+          new AssetDefinition(
+            new PublicAccount(),
+            XEM.MOSAICID,
+            "",
+            {
+              initialSupply: XEM.INITIALSUPPLY,
+              supplyMutable: XEM.SUPPLYMUTABLE,
+              transferable: XEM.TRANSFERABLE,
+              divisibility: XEM.DIVISIBILITY
+            }
+          )
+        ]
       }
     )
   }
 
   public loadAssetDefinitions(ids: AssetId[]) {
-    const filteredId = ids.filter(id => !this._state.definitions.find(definition => definition.id.equals(id)))
-    if(!filteredId.length) {
+    const unloadedId = ids.filter(id => !this._state.definitions.find(definition => definition.id.equals(id)))
+    if(!unloadedId.length) {
       return;
     }
 
-    this.streamLoadingState();
+    this.streamLoadingState()
 
     const assetHttp = new AssetHttp(nodes);
-    from(filteredId).pipe(
-      mergeMap(
-        (id) => {
-          if(id.toString() === "nem:xem") {
-            return of(
-              new AssetDefinition(
-                new PublicAccount(),
-                XEM.MOSAICID,
-                "",
-                {
-                  initialSupply: XEM.INITIALSUPPLY,
-                  supplyMutable: XEM.SUPPLYMUTABLE,
-                  transferable: XEM.TRANSFERABLE,
-                  divisibility: XEM.DIVISIBILITY
-                }
-              )
-            )
-          }
-          return assetHttp.getAssetDefinition(id)
-        }
-      ),
+    from(unloadedId).pipe(
+      mergeMap(id => assetHttp.getAssetDefinition(id)),
       toArray()
     ).subscribe(
       (definitions) => {
         const state: State = {
-          ...this._state,
           loading: false,
-          definitions: definitions
+          definitions: this._state.definitions.concat(definitions)
         }
 
         this.streamState(state)
@@ -64,7 +56,6 @@ export class AssetDefinitionService extends RxEffectiveStateStore<State> {
         this.streamErrorState(error)
       }
     )
-    
   }
 }
 
