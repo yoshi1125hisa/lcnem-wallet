@@ -32,8 +32,6 @@ export class AssetsListComponent implements OnInit {
     unitRate?: number
   }[]> = new Observable()
 
-
-
   constructor(
     private rate: RateService,
     private language: LanguageService,
@@ -66,6 +64,7 @@ export class AssetsListComponent implements OnInit {
         first()
       )
     ).pipe(
+      map(_ => {console.log(_);return _}),
       mergeMap(
         ([assets, rate, definitions]) => {
           return from(assets).pipe(
