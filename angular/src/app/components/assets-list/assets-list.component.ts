@@ -51,47 +51,42 @@ export class AssetsListComponent implements OnInit {
     this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
     this.rate.loadRate()
 
-    this.assets$ = combineLatest(
-      of(this.assets),
-      this.rate.state$.pipe(
-        filter(state => !state.loading)
-      ),
-      this.assetDefinition.state$.pipe(
-        filter(state => !state.loading),
-        map(state => state.definitions)
-      )
-    ).pipe(
+    this.assets$ = from(this.assets).pipe(
       mergeMap(
-        ([assets, rate, definitions]) => {
-          return from(assets).pipe(
+        (asset) => {
+          return this.assetDefinition.state$.pipe(
+            map(state => state.definitions),
+            mergeMap(definitions => from(definitions)),
+            filter(definition => definition.id.equals(asset.assetId)),
+            first(),
             mergeMap(
-              (asset) => {
-                return from(definitions).pipe(
-                  filter(definition => definition.id.equals(asset.assetId)),
-                  map(definition => Tuple(asset, definition))
+              (definition) => {
+                return this.rate.state$.pipe(
+                  filter(state => state.loading == false),
+                  first(),
+                  map(
+                    (rate) => {
+                      const name = asset.assetId.toString()
+                      const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || { name: "", issuer: "", unit: "" }
+                      const unitRate = rate.rate[rate.currency] && rate.rate[additionaldefinition.unit] / rate.rate[rate.currency]
+                      const amount = asset.quantity / Math.pow(10, definition.properties.divisibility)
+                      return {
+                        ...additionaldefinition,
+                        name: name,
+                        amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
+                        imageURL: this.getImageURL(name),
+                        rate: amount * unitRate,
+                        unitRate: unitRate
+                      }
+                    }
+                  ),
                 )
               }
             ),
-            map(
-              ([asset, definition]) => {
-                const name = asset.assetId.toString()
-                const additionalDefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || { name: "", issuer: "", unit: "" }
-                const unitRate = rate.rate[additionalDefinition.unit] / rate.rate[rate.currency]
-                const amount = asset.quantity / Math.pow(10, definition.properties.divisibility)
-                return {
-                  ...additionalDefinition,
-                  name: name,
-                  amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
-                  imageURL: this.getImageURL(name),
-                  rate: amount * unitRate,
-                  unitRate: unitRate
-                }
-              }
-            ),
-            toArray()
           )
         }
-      )
+      ),
+      toArray()
     )
   }
 
