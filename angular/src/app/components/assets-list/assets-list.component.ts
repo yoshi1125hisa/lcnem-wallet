@@ -1,10 +1,11 @@
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Asset, AssetDefinition, XEM } from 'nem-library';
-import { Observable, from, combineLatest } from 'rxjs';
+import { Observable, from, combineLatest, of } from 'rxjs';
 import { map, mergeMap, filter, toArray, take, first } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
 import { RateService } from '../../services/rate/rate.service';
+import { Tuple } from '../../classes/tuple';
 
 @Component({
   selector: 'app-assets-list',
@@ -51,39 +52,40 @@ export class AssetsListComponent implements OnInit {
       return
     }
     this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
-    this.rate.loadRate(new Date())
-    this.assets$ = from(this.assets).pipe(
+    this.rate.loadRate()
+
+    this.assets$ = combineLatest(
+      of(this.assets),
+      this.rate.state$.pipe(
+        filter(state => state.loading == false),
+        first()
+      ),
+      this.assetDefinition.state$.pipe(
+        filter(state => state.loading == false),
+        map(state => state.definitions),
+        first()
+      )
+    ).pipe(
       mergeMap(
-        (asset) => {
-          return this.assetDefinition.state$.pipe(
-            map(state => state.definitions),
-            mergeMap(definitions => from(definitions)),
-            filter(definition => definition.id.equals(asset.assetId)),
-            first(),
-            mergeMap(
-              (definition) => {
-                return this.rate.state$.pipe(
-                  filter(state => state.loading == false),
-                  first(),
-                  map(
-                    (rate) => {
-                      const name = asset.assetId.toString()
-                      const additionaldefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || { name: "", issuer: "", unit: "" }
-                      const unitRate = rate.rate[rate.currency] && rate.rate[additionaldefinition.unit] / rate.rate[rate.currency]
-                      const amount = asset.quantity / Math.pow(10, definition.properties.divisibility)
-                      return {
-                        ...additionaldefinition,
-                        name: name,
-                        amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
-                        imageURL: this.getImageURL(name),
-                        rate: amount * unitRate,
-                        unitRate: unitRate
-                      }
-                    }
-                  ),
-                )
+        ([assets, rate, definitions]) => {
+          return from(assets).pipe(
+            map(asset => Tuple(asset, definitions.find(d => d.id.equals(asset.assetId))!)),
+            map(
+              ([asset, definition]) => {
+                const name = asset.assetId.toString()
+                const additionalDefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || { name: "", issuer: "", unit: "" }
+                const unitRate = rate.rate[rate.currency] && rate.rate[additionalDefinition.unit] / rate.rate[rate.currency]
+                const amount = asset.quantity / Math.pow(10, definition.properties.divisibility)
+                return {
+                  ...additionalDefinition,
+                  name: name,
+                  amount: asset.quantity / Math.pow(10, definition.properties.divisibility),
+                  imageURL: this.getImageURL(name),
+                  rate: amount * unitRate,
+                  unitRate: unitRate
+                }
               }
-            ),
+            )
           )
         }
       ),
