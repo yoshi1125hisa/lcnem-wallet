@@ -18,7 +18,7 @@ export class BalanceService extends RxEffectiveStateStore<State> {
   }
 
   public loadBalance(address: Address, refresh?: boolean) {
-    if(this._state.lastAddress && address.equals(this._state.lastAddress) && !refresh) {
+    if(this.state.lastAddress && address.equals(this.state.lastAddress) && !refresh) {
       return;
     }
     this.streamLoadingState()
@@ -27,7 +27,7 @@ export class BalanceService extends RxEffectiveStateStore<State> {
     accountHttp.getAssetsOwnedByAddress(address).subscribe(
       (assets) => {
         const state = {
-          ...this._state,
+          ...this.state,
           loading: false,
           assets: assets,
           lastAddress: address

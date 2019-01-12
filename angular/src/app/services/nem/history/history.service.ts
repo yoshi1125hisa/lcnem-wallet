@@ -20,7 +20,7 @@ export class HistoryService extends RxEffectiveStateStore<State> {
   }
 
   public loadHistories(address: Address, refresh?: boolean) {
-    if(this._state.lastAddress && address.equals(this._state.lastAddress) && !refresh) {
+    if(this.state.lastAddress && address.equals(this.state.lastAddress) && !refresh) {
       return;
     }
     this.streamLoadingState()
@@ -34,7 +34,7 @@ export class HistoryService extends RxEffectiveStateStore<State> {
     ).subscribe(
       (transactions) => {
         const state: State = {
-          ...this._state,
+          ...this.state,
           loading: false,
           transactions: transactions,
           lastAddress: address

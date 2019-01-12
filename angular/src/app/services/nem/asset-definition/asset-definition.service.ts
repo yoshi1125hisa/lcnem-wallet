@@ -32,7 +32,7 @@ export class AssetDefinitionService extends RxEffectiveStateStore<State> {
   }
 
   public loadAssetDefinitions(ids: AssetId[]) {
-    const unloadedId = ids.filter(id => !this._state.definitions.find(definition => definition.id.equals(id)))
+    const unloadedId = ids.filter(id => !this.state.definitions.find(definition => definition.id.equals(id)))
     if(!unloadedId.length) {
       return;
     }
@@ -47,7 +47,7 @@ export class AssetDefinitionService extends RxEffectiveStateStore<State> {
       (definitions) => {
         const state: State = {
           loading: false,
-          definitions: this._state.definitions.concat(definitions)
+          definitions: this.state.definitions.concat(definitions)
         }
 
         this.streamState(state)

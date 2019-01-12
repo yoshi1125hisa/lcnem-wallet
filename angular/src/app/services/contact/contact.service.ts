@@ -21,7 +21,7 @@ export class ContactService extends RxEntityStateStore<State, Contact> {
   }
 
   public loadContacts(userId: string, refresh?: boolean) {
-    if(userId === this._state.lastUserId && !refresh) {
+    if(userId === this.state.lastUserId && !refresh) {
       return;
     }
     this.streamLoadingState()
@@ -52,7 +52,7 @@ export class ContactService extends RxEntityStateStore<State, Contact> {
   }
 
   public addContact(userId: string, contact: Contact) {
-    if(userId !== this._state.lastUserId) {
+    if(userId !== this.state.lastUserId) {
       throw Error()
     }
     this.streamLoadingState()
@@ -73,7 +73,7 @@ export class ContactService extends RxEntityStateStore<State, Contact> {
   }
 
   public updateContact(userId: string, contactId: string, contact: Contact) {
-    if(userId !== this._state.lastUserId) {
+    if(userId !== this.state.lastUserId) {
       throw Error()
     }
     this.streamLoadingState()
@@ -94,7 +94,7 @@ export class ContactService extends RxEntityStateStore<State, Contact> {
   }
 
   public deleteContact(userId: string, contactId: string) {
-    if(userId !== this._state.lastUserId) {
+    if(userId !== this.state.lastUserId) {
       throw Error()
     }
     this.streamLoadingState()

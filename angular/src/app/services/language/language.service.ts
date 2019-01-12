@@ -16,7 +16,7 @@ export class LanguageService extends RxStateStore<State> {
   public setLanguage(twoLetter: string) {
     this.streamState(
       {
-        ...this._state,
+        ...this.state,
         twoLetter: twoLetter
       }
     )

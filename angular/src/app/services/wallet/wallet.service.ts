@@ -35,7 +35,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
   }
 
   public loadWallets(userId: string, refresh?: boolean) {
-    if (userId === this._state.lastUserId && !refresh) {
+    if (userId === this.state.lastUserId && !refresh) {
       return
     }
     this.streamLoadingState()
@@ -72,7 +72,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
   }
 
   public addWallet(userId: string, wallet: Wallet) {
-    if (userId !== this._state.lastUserId) {
+    if (userId !== this.state.lastUserId) {
       throw Error()
     }
     this.streamLoadingState()
@@ -101,7 +101,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
   }
 
   public updateWallet(userId: string, walletId: string, wallet: Wallet) {
-    if (userId !== this._state.lastUserId) {
+    if (userId !== this.state.lastUserId) {
       throw Error()
     }
     this.streamLoadingState()
@@ -128,7 +128,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
   }
 
   public deleteWallet(userId: string, walletId: string) {
-    if (userId !== this._state.lastUserId) {
+    if (userId !== this.state.lastUserId) {
       throw Error()
     }
     this.streamLoadingState()
@@ -155,7 +155,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
       localStorage.setItem("currentWallet", id)
     }
     const state: State = {
-      ...this._state,
+      ...this.state,
       currentWalletId: id
     }
 

@@ -22,7 +22,7 @@ export class UserService extends RxEffectiveStateStore<State> {
   }
 
   public loadUser(userId: string, refresh?: boolean) {
-    if (userId === this._state.lastUserId && !refresh) {
+    if (userId === this.state.lastUserId && !refresh) {
       return;
     }
     this.streamLoadingState()
@@ -65,7 +65,7 @@ export class UserService extends RxEffectiveStateStore<State> {
   }
 
   public updateUser(userId: string, user: User) {
-    if(userId !== this._state.lastUserId) {
+    if(userId !== this.state.lastUserId) {
       throw Error()
     }
     this.streamLoadingState()
