@@ -13,6 +13,6 @@ export const environment = {
     test: false
   },
   plan: {
-    plan_id:
+    planId: "plan_EFWnnrtQXB3tR6"
   }
 };
