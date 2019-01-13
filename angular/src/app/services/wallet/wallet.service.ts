@@ -15,6 +15,18 @@ import { AuthService } from '../auth/auth.service';
 export class WalletService extends RxEntityStateStore<State, Wallet> {
   get lang() { return this.language.state.twoLetter }
 
+  public cloudCapacity$ = combineLatest(
+    this.user.state$.pipe(
+      filter(state => !state.loading),
+    ),
+    this.state$.pipe(
+      map(state => state.ids.map(id => state.entities[id])),
+      map(wallets => wallets.filter(wallet => !wallet.local).length)
+    )
+  ).pipe(
+    map(([user, clouds]) => user.user!.plan !== undefined ? 1 : 1 - clouds)
+  )
+
   constructor(
     private firestore: AngularFirestore,
     private language: LanguageService,
@@ -50,18 +62,6 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
       return {}
     }
   }
-
-  public multiCloudAvailable$ = combineLatest(
-    this.user.state$.pipe(
-      filter(state => !state.loading),
-    ),
-    this.state$.pipe(
-      map(state => state.ids.map(id => state.entities[id])),
-      map(wallets => wallets.filter(wallet => !wallet.local).length)
-    )
-  ).pipe(
-    map(([user, clouds]) => user.user!.plan !== undefined || clouds < 1)
-  )
 
   public loadWallets(userId: string, refresh?: boolean) {
     if (userId === this.state.lastUserId && !refresh) {
@@ -190,7 +190,6 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
 
     this.streamState(state)
   }
-
 }
 
 interface State extends RxEntityState<Wallet> {

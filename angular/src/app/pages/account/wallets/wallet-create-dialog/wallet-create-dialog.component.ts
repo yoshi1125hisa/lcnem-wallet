@@ -18,7 +18,7 @@ export class WalletCreateDialogComponent implements OnInit {
     privateKey: "",
   }
   
-  public multiCloudAvailable$ = this.wallet.multiCloudAvailable$
+  public cloudCapacity$ = this.wallet.cloudCapacity$
   
   constructor(
     private language: LanguageService,

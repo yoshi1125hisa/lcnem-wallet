@@ -20,7 +20,7 @@ export class WalletComponent implements OnInit {
   @Output() delete = new EventEmitter()
   @Output() import = new EventEmitter()
 
-  public multiCloudAvailable$ = this._wallet.multiCloudAvailable$
+  public cloudCapacity$ = this._wallet.cloudCapacity$
 
   constructor(
     private snackBar: MatSnackBar,

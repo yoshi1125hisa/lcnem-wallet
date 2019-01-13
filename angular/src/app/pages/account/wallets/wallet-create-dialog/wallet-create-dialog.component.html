@@ -26,13 +26,15 @@
       </ng-container>
     </mat-dialog-content>
 
-    <p *ngIf="(multiCloudAvailable$ | async) && forms.local == 0">
+    <p *ngIf="(cloudCapacity$ | async) <= 0 && forms.local === 0">
       <mat-icon>warning</mat-icon>
       {{translation.error[lang]}}
       {{translation.errorBody[lang]}}
     </p>
 
-    <mat-dialog-actions>
+    <mat-dialog-actions fxLayout="row">
+      <span class="fill-remaining-space"></span>
+      <button mat-raised-button mat-dialog-close color="accent">Cancel</button>
       <button mat-raised-button [mat-dialog-close]="forms" color="accent" [disabled]="form.invalid">OK</button>
     </mat-dialog-actions>
   </form>
