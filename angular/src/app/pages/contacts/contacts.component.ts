@@ -25,7 +25,7 @@ export class ContactsComponent implements OnInit {
     map(([auth, contact]) => auth === null || contact.loading)
   )
 
-  public state$ = this.contact.state$;
+  public state$ = this.contact.state$
 
   constructor(
     private dialog: MatDialog,
@@ -53,55 +53,55 @@ export class ContactsComponent implements OnInit {
     this._router.back([""])
   }
 
-  public createContact() {
-    this.dialog.open(
+  public async createContact() {
+    const result = await this.dialog.open(
       ContactEditDialogComponent,
       {
         data: {
           contact: {}
         }
       }
-    ).afterClosed().pipe(
-      filter(result => result)
-    ).subscribe(
-      (result) => {
-        this.contact.addContact(this.auth.user!.uid, result)
-      }
-    )
+    ).afterClosed().toPromise()
+
+    if (!result) {
+      return
+    }
+
+    this.contact.addContact(this.auth.user!.uid, result)
   }
 
-  public editContact(id: string) {
-    this.dialog.open(
+  public async editContact(id: string) {
+    const name = await this.dialog.open(
       ContactEditDialogComponent,
       {
         data: {
           contact: this.contact.state.entities[id]
         }
       }
-    ).afterClosed().pipe(
-      filter(name => name)
-    ).subscribe(
-      (name) => {
-        this.contact.updateContact(this.auth.user!.uid, id, name)
-      }
-    )
+    ).afterClosed().toPromise()
+
+    if (!name) {
+      return
+    }
+
+    this.contact.updateContact(this.auth.user!.uid, id, name)
   }
 
-  public deleteContact(id: string) {
-    this.dialog.open(
+  public async deleteContact(id: string) {
+    const result = await this.dialog.open(
       ConfirmDialogComponent,
       {
         data: {
           title: this.translation.confirm[this.lang]
         }
       }
-    ).afterClosed().pipe(
-      filter(result => result)
-    ).subscribe(
-      (result) => {
-        this.contact.deleteContact(this.auth.user!.uid, id)
-      }
-    );
+    ).afterClosed().toPromise()
+
+    if (!result) {
+      return
+    }
+    
+    this.contact.deleteContact(this.auth.user!.uid, id)
   }
 
   public translation = {
