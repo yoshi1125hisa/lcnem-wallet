@@ -31,24 +31,7 @@ export class WalletsComponent implements OnInit {
     map(([auth, user, wallet]) => !auth || user.loading || wallet.loading)
   )
 
-  public plan$ = this.user.state$.pipe(
-    filter(state => !!state.user),
-    map(state => state.user!),
-    map(user => user.plan)
-  )
-  public state$ = this.wallet.state$;
-
-  public clouds$ = this.state$.pipe(
-    mergeMap(
-      (state) => {
-        return from(state.ids).pipe(
-          map(id => state.entities[id].local),
-          toArray(),
-          map(array => array.filter(local => !local).length)
-        )
-      }
-    )
-  )
+  public state$ = this.wallet.state$
 
   constructor(
     private dialog: MatDialog,
@@ -80,7 +63,7 @@ export class WalletsComponent implements OnInit {
       filter(result => result),
     ).subscribe(
       (result) => {
-        const uid = this.auth.user!.uid 
+        const uid = this.auth.user!.uid
 
         const simpleWallet = result.import
           ? SimpleWallet.createWithPrivateKey(uid, new Password(uid), result.privateKey)

@@ -23,15 +23,15 @@ export class SettingsComponent implements OnInit {
   ) { }
   public get lang() { return this.language.state.twoLetter }
 
-  public forms = {
-    plan: 0
-  }
+  public forms: {
+    plan?: number
+  } = {}
 
   ngOnInit() {
     this.load()
   }
 
-  public openCheckout() {
+  public changePlan() {
     this.stripeService.charge();
   }
 
@@ -46,18 +46,24 @@ export class SettingsComponent implements OnInit {
     ).toPromise()
 
     this.user.loadUser(user!.uid, refresh)
-    
-    switch(await this.user.state$.pipe(
+
+    const plan = await this.user.state$.pipe(
       filter(state => !state.loading),
       first(),
       map(state => state.user!.plan)
-    ).toPromise()) {
-      case undefined : {
+    ).toPromise()
+
+    console.log(plan)
+
+    switch (plan) {
+      case undefined: {
         this.forms.plan = 0
+        break
       }
       case "Standard": {
         this.forms.plan = 1
-      } 
+        break
+      }
     }
   }
 
@@ -76,7 +82,7 @@ export class SettingsComponent implements OnInit {
     } as any,
     freeContent: {
       en: "",
-      ja: "内容；クラウドウォレットを一つのみ作成可能です。<br> 料金：無料"
+      ja: "内容；クラウドウォレットを一つのみ作成可能です。料金：無料"
     } as any,
     standardTitle: {
       en: "",
@@ -84,7 +90,11 @@ export class SettingsComponent implements OnInit {
     } as any,
     standardContent: {
       en: "",
-      ja: "内容；クラウドウォレットを複数個作成可能です。<br>料金:月額200JPY（登録翌月の月初めより請求が発生致します。）"
+      ja: "内容；クラウドウォレットを複数個作成可能です。料金:月額200JPY（登録翌月の月初めより請求が発生します。）"
+    } as any,
+    changePlan: {
+      en: "",
+      ja: "プラン変更"
     } as any,
   }
 

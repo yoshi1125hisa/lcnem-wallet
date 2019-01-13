@@ -15,7 +15,7 @@
         <ng-container *ngIf="state$ | async as state">
           <ng-container *ngFor="let id of state.ids">
             <mat-card>
-              <app-wallet [wallet]="state.entities[id]" [availablnInPlan]="(clouds$ | async) <= 1 || (plan$ | async)" (backup)="backupWallet(id)" (delete)="deleteWallet(id)" (enter)="enterWallet(id)"
+              <app-wallet [wallet]="state.entities[id]" (backup)="backupWallet(id)" (delete)="deleteWallet(id)" (enter)="enterWallet(id)"
                 (import)="importPrivateKey(id)" (rename)="renameWallet(id)"></app-wallet>
             </mat-card>
             <br />

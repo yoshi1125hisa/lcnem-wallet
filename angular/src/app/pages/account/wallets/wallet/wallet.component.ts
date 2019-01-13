@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { Wallet } from '../../../../../../../firebase/functions/src/models/wallet';
 import { LanguageService } from '../../../../services/language/language.service';
+import { WalletService } from '../../../../services/wallet/wallet.service';
 
 @Component({
   selector: 'app-wallet',
@@ -12,7 +13,6 @@ export class WalletComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter }
 
   @Input() wallet?: Wallet
-  @Input() availablnInPlan?: boolean
 
   @Output() enter = new EventEmitter()
   @Output() backup = new EventEmitter()
@@ -20,13 +20,17 @@ export class WalletComponent implements OnInit {
   @Output() delete = new EventEmitter()
   @Output() import = new EventEmitter()
 
+  public multiCloudAvailable$ = this._wallet.multiCloudAvailable$
+
   constructor(
     private snackBar: MatSnackBar,
-    private language: LanguageService
+    private language: LanguageService,
+    private _wallet: WalletService
   ) { }
 
   ngOnInit() {
   }
+
 
   public openSnackBar(type: string) {
     if (type == "import") {
