@@ -67,8 +67,8 @@ export class WithdrawComponent implements OnInit {
         lang: this.lang
       }
     ).subscribe(
-      () => {
-        this.dialog.open(
+      async () => {
+        await this.dialog.open(
           AlertDialogComponent,
           {
             data: {
@@ -76,11 +76,9 @@ export class WithdrawComponent implements OnInit {
               content: this.translation.following[this.lang]
             }
           }
-        ).afterClosed().subscribe(
-          (_) => {
-            this.back()
-          }
-        );
+        ).afterClosed().toPromise()
+
+        this.back()
       },
       (error) => {
         this.dialog.open(
@@ -91,7 +89,7 @@ export class WithdrawComponent implements OnInit {
               content: ""
             }
           }
-        );
+        )
       }
     )
   }
