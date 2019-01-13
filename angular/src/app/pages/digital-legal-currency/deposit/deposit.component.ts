@@ -71,8 +71,8 @@ export class DepositComponent implements OnInit {
         lang: this.lang
       }
     ).subscribe(
-      () => {
-        this.dialog.open(
+      async () => {
+        await this.dialog.open(
           AlertDialogComponent,
           {
             data: {
@@ -80,11 +80,9 @@ export class DepositComponent implements OnInit {
               content: this.translation.following[this.lang]
             }
           }
-        ).afterClosed().subscribe(
-          (_) => {
-            this.back()
-          }
-        );
+        ).afterClosed().toPromise()
+        
+        this.back()
       },
       (error) => {
         this.dialog.open(
@@ -95,7 +93,7 @@ export class DepositComponent implements OnInit {
               content: ""
             }
           }
-        );
+        )
       }
     )
   }

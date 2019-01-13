@@ -69,14 +69,14 @@ export class TransferComponent implements OnInit, OnDestroy {
   ).pipe(
     map(([user, wallet]) => Tuple(new Password(user!.uid), wallet.entities[wallet.currentWalletId!].wallet!)),
     map(([password, wallet]) => SimpleWallet.readFromWLT(wallet).open(password)),
-    catchError(e => of(null))
+    catchError(error => of(null))
   )
 
   public recipient$ = this.forms.recipient$.asObservable().pipe(
     filter(event => !!event),
     map(event => (event!.target as HTMLInputElement).value),
     map(value => new Address(value)),
-    catchError(e => of(null))
+    catchError(error => of(null))
   )
 
   public message$ = combineLatest(
@@ -84,7 +84,7 @@ export class TransferComponent implements OnInit, OnDestroy {
       map(recipient => Tuple(recipient, new AccountHttp(nodes))),
       mergeMap(([recipient, accountHttp]) => accountHttp.getFromAddress(recipient!)),
       map(meta => meta.publicAccount),
-      catchError(e => of(null))
+      catchError(error => of(null))
     ),
     this.forms.message$.asObservable().pipe(
       map(event => event && (event!.target as HTMLInputElement).value || "")
@@ -99,7 +99,7 @@ export class TransferComponent implements OnInit, OnDestroy {
         ? account!.encryptMessage(message, recipient!)
         : PlainMessage.create(message)
     ),
-    catchError(e => of(null))
+    catchError(error => of(null))
   )
 
   constructor(
@@ -127,31 +127,27 @@ export class TransferComponent implements OnInit, OnDestroy {
     this.forms.encryption$.complete()
   }
 
-  public load() {
-    this.wallet.state$.pipe(
+  public async load() {
+    const state = await this.wallet.state$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
-    ).subscribe(
-      (state) => {
-        this.balance.loadBalance(
-          new Address(state.entities[state.currentWalletId!].nem)
-        )
+    ).toPromise()
 
-        let invoice = this.route.snapshot.queryParamMap.get('invoice') || ""
-        let invoiceData = Invoice.parse(decodeURI(invoice))
+    this.balance.loadBalance(new Address(state.entities[state.currentWalletId!].nem))
 
-        if (invoiceData) {
-          this.forms.recipient = invoiceData.data.addr
-          this.forms.message = invoiceData.data.msg
+    let invoice = this.route.snapshot.queryParamMap.get('invoice') || ""
+    let invoiceData = Invoice.parse(decodeURI(invoice))
 
-          if (invoiceData.data.assets) {
-            for (let asset of invoiceData.data.assets) {
-              this.addTransferAsset(asset.id, asset.amount)
-            }
-          }
+    if (invoiceData) {
+      this.forms.recipient = invoiceData.data.addr
+      this.forms.message = invoiceData.data.msg
+
+      if (invoiceData.data.assets) {
+        for (let asset of invoiceData.data.assets) {
+          this.addTransferAsset(asset.id, asset.amount)
         }
       }
-    )
+    }
   }
 
   public back() {
@@ -193,22 +189,19 @@ export class TransferComponent implements OnInit, OnDestroy {
 
     const url = location.href + "?invoice=" + encodeURI(invoice.stringify())
 
-    if(!(navigator as any).share) {
+    if (!(navigator as any).share) {
       this.share.copy(url)
       this.snackBar.open(this.translation.copyCompleted[this.lang], undefined, { duration: 3000 });
       return
     }
-    this.share.share(
-      url,
-      "LCNEM Wallet"
-    )
+    this.share.share(url, "LCNEM Wallet")
   }
 
   public getMosaicTransferable() {
     return this.forms.transferAssets.map(
       (asset) => {
         if (asset.id == "nem:xem") {
-          return new XEM(asset.amount || 0);
+          return new XEM(asset.amount || 0)
         }
         const definition = this.assetDefinition.state.definitions.find(definition => definition.id.toString() === asset.id)!
         const amount = (asset.amount || 0) * Math.pow(10, definition.properties.divisibility)
@@ -218,7 +211,7 @@ export class TransferComponent implements OnInit, OnDestroy {
     )
   }
 
-  public transfer() {
+  public async transfer() {
     combineLatest(
       this.account$,
       this.recipient$,
@@ -226,7 +219,7 @@ export class TransferComponent implements OnInit, OnDestroy {
     ).pipe(
       first()
     ).subscribe(
-      ([account, recipient, message]) => {
+      async ([account, recipient, message]) => {
         if (!account) {
           this.openDialog("import")
           return
@@ -240,9 +233,9 @@ export class TransferComponent implements OnInit, OnDestroy {
           recipient!,
           this.getMosaicTransferable(),
           message
-        );
+        )
 
-        this.dialog.open(
+        const result = await this.dialog.open(
           TransferDialogComponent,
           {
             data: {
@@ -250,14 +243,14 @@ export class TransferComponent implements OnInit, OnDestroy {
               message: this.forms.message
             }
           }
-        ).afterClosed().pipe(
-          filter(result => result)
-        ).subscribe(
-          () => {
-            const signed = account!.signTransaction(transaction)
-            this.announceTransaction(signed)
-          }
-        )
+        ).afterClosed().toPromise()
+
+        if (!result) {
+          return
+        }
+
+        const signed = account!.signTransaction(transaction)
+        this.announceTransaction(signed)
       }
     )
   }
@@ -267,8 +260,8 @@ export class TransferComponent implements OnInit, OnDestroy {
 
     const transactionHttp = new TransactionHttp(nodes)
     transactionHttp.announceTransaction(signed).subscribe(
-      () => {
-        this.dialog.open(
+      async () => {
+        await this.dialog.open(
           AlertDialogComponent,
           {
             data: {
@@ -276,11 +269,9 @@ export class TransferComponent implements OnInit, OnDestroy {
               content: this.translation.completedBody[this.lang]
             }
           }
-        ).afterClosed().subscribe(
-          () => {
-            this.router.navigate([""])
-          }
-        )
+        ).afterClosed().toPromise()
+
+        this.router.navigate([""])
       },
       (error) => {
         this.dialog.open(
