@@ -26,7 +26,7 @@
       </ng-container>
     </mat-dialog-content>
 
-    <p *ngIf="(cloudCapacity$ | async) <= 0 && forms.local === 0">
+    <p class="warning" *ngIf="(cloudCapacity$ | async) <= 0 && forms.local === 0">
       <mat-icon>warning</mat-icon>
       {{translation.error[lang]}}
       {{translation.errorBody[lang]}}
