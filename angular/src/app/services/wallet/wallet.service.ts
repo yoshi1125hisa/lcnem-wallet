@@ -5,8 +5,9 @@ import { Observable, from, combineLatest } from 'rxjs';
 import { map, filter, first, mergeMap, toArray } from 'rxjs/operators';
 import { RxEntityStateStore, RxEntityState } from 'rx-state-store-js';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
-import { UserService } from '../../services/user/user.service';
-import { LanguageService } from '../../services/language/language.service';
+import { UserService } from '../user/user.service';
+import { LanguageService } from '../language/language.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
   constructor(
     private firestore: AngularFirestore,
     private language: LanguageService,
+    private auth: AuthService,
     private user: UserService,
   ) {
     super(
@@ -24,6 +26,14 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
         loading: true,
         ids: [],
         entities: {}
+      }
+    )
+
+    this.auth.user$.pipe(
+      filter(user => !!user)
+    ).subscribe(
+      (user) => {
+        this.loadWallets(user!.uid)
       }
     )
   }
@@ -37,7 +47,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
     try {
       return JSON.parse(json) as { [id: string]: string };
     } catch {
-      return {};
+      return {}
     }
   }
 
@@ -46,15 +56,8 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
       filter(state => !state.loading),
     ),
     this.state$.pipe(
-      mergeMap(
-        (state) => {
-          return from(state.ids).pipe(
-            map(id => state.entities[id].local),
-            toArray(),
-            map(array => array.filter(local => !local).length)
-          )
-        }
-      )
+      map(state => state.ids.map(id => state.entities[id])),
+      map(wallets => wallets.filter(wallet => !wallet.local).length)
     )
   ).pipe(
     map(([user, clouds]) => user.user!.plan !== undefined || clouds < 1)
