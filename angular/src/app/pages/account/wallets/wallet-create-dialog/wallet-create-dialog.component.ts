@@ -18,17 +18,13 @@ export class WalletCreateDialogComponent implements OnInit {
     privateKey: "",
   }
   
+  public cloudCapacity$ = this.wallet.cloudCapacity$
+  
   constructor(
     private language: LanguageService,
-    private appWallet: WalletService
-
+    private wallet: WalletService
   ) {
   }
-
-  public checkWallet() {
-    this.appWallet.checkWallet()
-  }
-
 
   ngOnInit() {
   }
@@ -77,6 +73,14 @@ export class WalletCreateDialogComponent implements OnInit {
     localDescription: {
       en: "",
       ja: "秘密鍵はお客様自己管理となります。リスクが低いです。"
+    } as any,
+    error: {
+      en: "Error",
+      ja: "エラー"
+    } as any,
+    errorBody: {
+      en: "Because it is Free Plan now, only one cloud wallet can be created. If you wish to create multiple more cloud wallets, please change to the Standard plan from the setting screen.",
+      ja: "現在Freeプランのため、クラウドウォレットを一つのみ作成可能です。クラウドウォレットを複数個作成希望の場合は、設定画面よりStandardプランにご変更ください。"
     } as any
   }
 }

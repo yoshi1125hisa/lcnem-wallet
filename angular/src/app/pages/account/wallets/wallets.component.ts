@@ -31,24 +31,7 @@ export class WalletsComponent implements OnInit {
     map(([auth, user, wallet]) => !auth || user.loading || wallet.loading)
   )
 
-  public plan$ = this.user.state$.pipe(
-    filter(state => !!state.user),
-    map(state => state.user!),
-    map(user => user.plan)
-  )
-  public state$ = this.wallet.state$;
-
-  public clouds$ = this.state$.pipe(
-    mergeMap(
-      (state) => {
-        return from(state.ids).pipe(
-          map(id => state.entities[id].local),
-          toArray(),
-          map(array => array.filter(local => !local).length)
-        )
-      }
-    )
-  )
+  public state$ = this.wallet.state$
 
   constructor(
     private dialog: MatDialog,
@@ -75,43 +58,41 @@ export class WalletsComponent implements OnInit {
     this.wallet.loadWallets(user!.uid, refresh)
   }
 
-  public addWallet() {
-    this.dialog.open(WalletCreateDialogComponent).afterClosed().pipe(
-      filter(result => result),
-    ).subscribe(
-      (result) => {
-        const uid = this.auth.user!.uid 
+  public async addWallet() {
+    const result = await this.dialog.open(WalletCreateDialogComponent).afterClosed().toPromise()
 
-        const simpleWallet = result.import
-          ? SimpleWallet.createWithPrivateKey(uid, new Password(uid), result.privateKey)
-          : SimpleWallet.create(uid, new Password(uid))
+    if (!result) {
+      return
+    }
+    const uid = this.auth.user!.uid
 
-        const wallet: Wallet = {
-          name: result.name,
-          local: result.local == 1 ? true : false,
-          nem: simpleWallet.address.plain(),
-          wallet: simpleWallet.writeWLTFile()
-        }
+    const simpleWallet = result.import
+      ? SimpleWallet.createWithPrivateKey(uid, new Password(uid), result.privateKey)
+      : SimpleWallet.create(uid, new Password(uid))
 
-        this.wallet.addWallet(uid, wallet)
-      }
-    );
+    const wallet: Wallet = {
+      name: result.name,
+      local: result.local == 1 ? true : false,
+      nem: simpleWallet.address.plain(),
+      wallet: simpleWallet.writeWLTFile()
+    }
+
+    this.wallet.addWallet(uid, wallet)
   }
 
-  public enterWallet(id: string) {
-    this.wallet.state$.pipe(
+  public async enterWallet(id: string) {
+    this.wallet.setCurrentWallet(id);
+
+    await this.wallet.state$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
-    ).subscribe(
-      (state) => {
-        this.router.navigate([""])
-      }
-    )
-    this.wallet.setCurrentWallet(id);
+    ).toPromise()
+
+    this.router.navigate([""])
   }
 
-  public importPrivateKey(id: string) {
-    this.dialog.open(
+  public async importPrivateKey(id: string) {
+    const pk = await this.dialog.open(
       PromptDialogComponent,
       {
         data: {
@@ -122,63 +103,68 @@ export class WalletsComponent implements OnInit {
           }
         }
       }
-    ).afterClosed().pipe(
-      filter(pk => pk)
-    ).subscribe(
-      (pk) => {
-        const uid = this.auth.user!.uid
-        const wallet = SimpleWallet.createWithPrivateKey(uid, new Password(uid), pk)
+    ).afterClosed().toPromise()
 
-        this.wallet.addLocalWallet(id, wallet.writeWLTFile())
-      }
-    );
+    if (!pk) {
+      return
+    }
+
+    const uid = this.auth.user!.uid
+    const wallet = SimpleWallet.createWithPrivateKey(uid, new Password(uid), pk)
+
+    this.wallet.addLocalWallet(id, wallet.writeWLTFile())
   }
 
-  public renameWallet(id: string) {
+  public async renameWallet(id: string) {
     const wallet = this.wallet.state.entities[id];
 
-    this.dialog.open(PromptDialogComponent, {
-      data: {
-        title: this.translation.rename[this.lang],
-        input: {
-          placeholder: this.translation.walletName[this.lang],
-          value: wallet.name
+    const name = await this.dialog.open(
+      PromptDialogComponent, {
+        data: {
+          title: this.translation.rename[this.lang],
+          input: {
+            placeholder: this.translation.walletName[this.lang],
+            value: wallet.name
+          }
         }
       }
-    }).afterClosed().pipe(
-      filter(name => name)
-    ).subscribe(
-      (name) => {
-        this.wallet.updateWallet(this.auth.user!.uid, id, { ...wallet, name })
-      }
-    )
+    ).afterClosed().toPromise()
+
+    if (!name) {
+      return
+    }
+
+    this.wallet.updateWallet(this.auth.user!.uid, id, { ...wallet, name })
   }
 
   public backupWallet(id: string) {
     const wallet = SimpleWallet.readFromWLT(this.wallet.state.entities[id].wallet!);
     const account = wallet.open(new Password(this.auth.user!.uid));
 
-    this.dialog.open(AlertDialogComponent, {
-      data: {
-        title: this.translation.backup[this.lang],
-        content: account.privateKey
+    this.dialog.open(
+      AlertDialogComponent, {
+        data: {
+          title: this.translation.backup[this.lang],
+          content: account.privateKey
+        }
       }
-    });
+    )
   }
 
-  public deleteWallet(id: string) {
-    this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: this.translation.deleteConfirm[this.lang],
-        content: ""
+  public async deleteWallet(id: string) {
+    const result = await this.dialog.open(
+      ConfirmDialogComponent, {
+        data: {
+          title: this.translation.deleteConfirm[this.lang],
+          content: ""
+        }
       }
-    }).afterClosed().pipe(
-      filter(result => result)
-    ).subscribe(
-      (result) => {
-        this.wallet.deleteWallet(this.auth.user!.uid, id)
-      }
-    );
+    ).afterClosed().toPromise()
+
+    if (!result) {
+      return
+    }
+    this.wallet.deleteWallet(this.auth.user!.uid, id)
   }
 
   public translation = {

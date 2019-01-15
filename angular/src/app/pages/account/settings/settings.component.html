@@ -12,34 +12,23 @@
       <h1>{{translation.plan[lang]}}</h1>
       <span class="fill-remaining-space"></span>
 
-      <ng-container>
-        <mat-radio-group class="radio-group" [(ngModel)]="forms.plan">
-          <label>
-            <h1>Plan:</h1>
-          </label>
-          <div>
-            <mat-radio-button name="plan" [value]="0">Free</mat-radio-button>
-          </div>
-          <div>
-            <mat-radio-button name="plan" [value]="1" (change)="openCheckout()">Standard</mat-radio-button>
-          </div>
-        </mat-radio-group>
-      </ng-container>
 
-      <ng-container>
-        <div>
-          <h2>{{translation.freeTitle[lang]}}</h2>
-          <span class="fill-remaining-space"></span>
-        </div>
-        <div>{{translation.freeContent[lang]}}</div>
+      <mat-radio-group class="radio-group" [(ngModel)]="forms.plan" fxFill>
+          <mat-radio-button name="plan" [value]="0">Free</mat-radio-button>
+          <mat-radio-button name="plan" [value]="1">Standard</mat-radio-button>
+      </mat-radio-group>
+      <button mat-raised-button color="accent" (click)="changePlan()">{{translation.changePlan[lang]}}</button>
+
+      <div>
+        <h2>{{translation.freeTitle[lang]}}</h2>
         <span class="fill-remaining-space"></span>
-      </ng-container>
-      <ng-container>
-        <div>
-          <h2>{{translation.standardTitle[lang]}}</h2>
-        </div>
-        <div>{{translation.standardContent[lang]}}</div>
-      </ng-container>
+      </div>
+      <div>{{translation.freeContent[lang]}}</div>
+      <span class="fill-remaining-space"></span>
+      <div>
+        <h2>{{translation.standardTitle[lang]}}</h2>
+      </div>
+      <div>{{translation.standardContent[lang]}}</div>
     </div>
   </mat-drawer-content>
 </mat-drawer-container>
