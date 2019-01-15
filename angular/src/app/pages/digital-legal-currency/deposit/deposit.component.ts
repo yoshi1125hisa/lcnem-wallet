@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import { RouterService } from '../../../services/router/router.service';
 import { LanguageService } from '../../../services/language/language.service';
 import { ApiService } from '../../../services/api/api.service';
-import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
 import { AuthService } from '../../../services/auth/auth.service';
 import { WalletService } from '../../../services/wallet/wallet.service';
 import { first } from 'rxjs/operators';
+import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
 
 @Component({
   selector: 'app-deposit',
@@ -31,13 +30,14 @@ export class DepositComponent implements OnInit {
     amount?: number
     method?: string
   } = {
-    currency: "JPY"
-  }
+      currency: "JPY"
+    }
 
   public safeSite: SafeResourceUrl
 
   constructor(
     private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private _router: RouterService,
     private auth: AuthService,
     private wallet: WalletService,
@@ -61,6 +61,8 @@ export class DepositComponent implements OnInit {
   }
 
   public deposit() {
+    const dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true })
+
     this.api.deposit(
       {
         email: this.auth.user!.email!,
@@ -72,30 +74,14 @@ export class DepositComponent implements OnInit {
       }
     ).subscribe(
       () => {
-        this.dialog.open(
-          AlertDialogComponent,
-          {
-            data: {
-              title: this.translation.completed[this.lang],
-              content: this.translation.following[this.lang]
-            }
-          }
-        ).afterClosed().subscribe(
-          (_) => {
-            this.back()
-          }
-        );
+        this.snackBar.open(this.translation.completed[this.lang], undefined, { duration: 6000 })
+        this.back()
       },
       (error) => {
-        this.dialog.open(
-          AlertDialogComponent,
-          {
-            data: {
-              title: this.translation.error[this.lang],
-              content: ""
-            }
-          }
-        );
+        this.snackBar.open(this.translation.error[this.lang], undefined, { duration: 6000 })
+      },
+      () => {
+        dialog.close()
       }
     )
   }
@@ -118,12 +104,8 @@ export class DepositComponent implements OnInit {
       ja: "エラー"
     } as any,
     completed: {
-      en: "Completed",
-      ja: "完了"
-    } as any,
-    following: {
-      en: "Please wait for an email.",
-      ja: "メールをお送りしますので少々お待ちください。"
+      en: "Completed. Please wait for an email.",
+      ja: "送信しました。メールをお送りしますので少々お待ちください。"
     } as any,
     deposit: {
       en: "Deposit",

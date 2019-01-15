@@ -1,22 +1,75 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { from } from 'rxjs';
+import { Observable, from, combineLatest } from 'rxjs';
+import { map, filter, first, mergeMap, toArray } from 'rxjs/operators';
+import { SimpleWallet, Password } from 'nem-library';
 import { RxEntityStateStore, RxEntityState } from 'rx-state-store-js';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
+import { UserService } from '../user/user.service';
+import { LanguageService } from '../language/language.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WalletService extends RxEntityStateStore<State, Wallet> {
+  get lang() { return this.language.state.twoLetter }
+
+  public cloudCapacity$ = combineLatest(
+    this.user.state$.pipe(
+      filter(state => !state.loading),
+    ),
+    this.state$.pipe(
+      map(state => state.ids.map(id => state.entities[id])),
+      map(wallets => wallets.filter(wallet => !wallet.local).length)
+    )
+  ).pipe(
+    map(([user, clouds]) => user.user!.plan !== undefined ? 1 : 1 - clouds)
+  )
 
   constructor(
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private language: LanguageService,
+    private auth: AuthService,
+    private user: UserService,
   ) {
     super(
       {
         loading: true,
         ids: [],
         entities: {}
+      }
+    )
+
+    this.auth.user$.pipe(
+      filter(user => !!user)
+    ).subscribe(
+      async (user) => {
+        //レガシー
+        this.user.loadUser(user!.uid)
+
+        const state = await this.user.state$.pipe(
+          filter(state => !state.loading),
+          first()
+        ).toPromise()
+
+        if (state.user && (state.user as any).wallet) {
+          const account = SimpleWallet.readFromWLT((state.user as any).wallet).open(new Password(user!.uid))
+
+          await this.firestore.collection("users").doc(user!.uid).collection("wallets").add(
+            {
+              name: "1",
+              local: false,
+              nem: account.address.plain(),
+              wallet: (state.user as any).wallet
+            } as Wallet
+          )
+          delete (state.user as any).wallet
+
+          await this.firestore.collection("users").doc(user!.uid).set(state.user!)
+        }
+        //レガシー
+        this.loadWallets(user!.uid)
       }
     )
   }
@@ -30,12 +83,12 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
     try {
       return JSON.parse(json) as { [id: string]: string };
     } catch {
-      return {};
+      return {}
     }
   }
 
   public loadWallets(userId: string, refresh?: boolean) {
-    if (userId === this._state.lastUserId && !refresh) {
+    if (userId === this.state.lastUserId && !refresh) {
       return
     }
     this.streamLoadingState()
@@ -72,7 +125,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
   }
 
   public addWallet(userId: string, wallet: Wallet) {
-    if (userId !== this._state.lastUserId) {
+    if (userId !== this.state.lastUserId) {
       throw Error()
     }
     this.streamLoadingState()
@@ -84,7 +137,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
 
     from(this.firestore.collection("users").doc(userId).collection("wallets").add(_wallet)).subscribe(
       (document) => {
-        if(wallet.local) {
+        if (wallet.local) {
           this.addLocalWallet(document.id, wallet.wallet || "")
         }
         const state: State = {
@@ -101,11 +154,11 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
   }
 
   public updateWallet(userId: string, walletId: string, wallet: Wallet) {
-    if (userId !== this._state.lastUserId) {
+    if (userId !== this.state.lastUserId) {
       throw Error()
     }
     this.streamLoadingState()
-    
+
     const _wallet = { ...wallet }
     if (_wallet.local && _wallet.wallet) {
       this.addLocalWallet(walletId, _wallet.wallet)
@@ -128,7 +181,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
   }
 
   public deleteWallet(userId: string, walletId: string) {
-    if (userId !== this._state.lastUserId) {
+    if (userId !== this.state.lastUserId) {
       throw Error()
     }
     this.streamLoadingState()
@@ -155,7 +208,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
       localStorage.setItem("currentWallet", id)
     }
     const state: State = {
-      ...this._state,
+      ...this.state,
       currentWalletId: id
     }
 

@@ -5,6 +5,7 @@ import { Asset, Address } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
 import { BalanceService } from '../../../../services/nem/balance/balance.service';
 import { WalletService } from '../../../../services/wallet/wallet.service';
+import { RateService } from '../../../../services/rate/rate.service';
 
 @Component({
   selector: 'app-balance',
@@ -12,19 +13,23 @@ import { WalletService } from '../../../../services/wallet/wallet.service';
   styleUrls: ['./balance.component.css']
 })
 export class BalanceComponent implements OnInit {
+  public get lang() { return this.language.state.twoLetter }
+
   public loading$ = combineLatest(
     this.wallet.state$,
     this.balance.state$
   ).pipe(
-    map(fork => fork[0].loading || fork[1].loading)
+    map(([wallet, balance]) => wallet.loading || balance.loading)
   )
 
   public state$ = this.balance.state$
+  public quoteCurrency$ = this.rate.state$.pipe(map(state => state.currency))
 
   constructor(
     private language: LanguageService,
     private wallet: WalletService,
-    private balance: BalanceService
+    private balance: BalanceService,
+    private rate: RateService
   ) {
   }
 
@@ -42,5 +47,16 @@ export class BalanceComponent implements OnInit {
         this.balance.loadBalance(address, refresh)
       }
     )
+  }
+
+  public changeCurrency(currency: string) {
+    this.rate.changeCurrency(currency)
+  }
+
+  public translation = {
+    balance: {
+      en: "Balance",
+      ja: "残高"
+    } as any
   }
 }

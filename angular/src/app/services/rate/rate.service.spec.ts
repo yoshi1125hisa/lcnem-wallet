@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { StripeService } from './stripe.service';
+import { RateService } from './rate.service';
 
-describe('StripeService', () => {
+describe('RateService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: StripeService = TestBed.get(StripeService);
+    const service: RateService = TestBed.get(RateService);
     expect(service).toBeTruthy();
   });
 });

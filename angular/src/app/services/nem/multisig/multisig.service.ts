@@ -19,7 +19,7 @@ export class MultisigService extends RxEffectiveStateStore<State> {
   }
 
   public loadMultisig(address: Address, refresh?: boolean) {
-    if(this._state.lastAddress && address.equals(this._state.lastAddress) && !refresh) {
+    if(this.state.lastAddress && address.equals(this.state.lastAddress) && !refresh) {
       return;
     }
     this.streamLoadingState()
@@ -34,7 +34,7 @@ export class MultisigService extends RxEffectiveStateStore<State> {
     ).subscribe(
       (addresses) => {
         const state: State = {
-          ...this._state,
+          ...this.state,
           loading: false,
           addresses: addresses,
           lastAddress: address

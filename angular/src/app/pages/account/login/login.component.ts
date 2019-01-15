@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import { from } from 'rxjs';
 
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { RouterService } from '../../../services/router/router.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { LanguageService } from '../../../services/language/language.service';
-import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
 
 
 @Component({
@@ -23,7 +22,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private _router: RouterService,
     private auth: AuthService,
     private language: LanguageService,
@@ -44,20 +43,12 @@ export class LoginComponent implements OnInit {
   }
 
   public login() {
-    from(this.auth.login()).subscribe(
+    this.auth.login().then(
       (user) => {
         this.router.navigate([""])
       },
       (error) => {
-        this.dialog.open(
-          AlertDialogComponent,
-          {
-            data: {
-              title: this.translation.error[this.lang],
-              content: this.translation.errorBody[this.lang]
-            }
-          }
-        )
+        this.snackBar.open(this.translation.error[this.lang], undefined, { duration: 6000 })
       }
     )
   }
@@ -72,12 +63,8 @@ export class LoginComponent implements OnInit {
       ja: "ログイン"
     } as any,
     error: {
-      en: "Error",
-      ja: "エラー"
-    } as any,
-    errorBody: {
-      en: "Please retry. It is recommended to delete caches.",
-      ja: "再試行してください。キャッシュを削除することが推奨されます。"
+      en: "Failed to login. It is recommended to delete caches.",
+      ja: "ログインに失敗しました。キャッシュを削除することが推奨されます。"
     } as any
   };
 }

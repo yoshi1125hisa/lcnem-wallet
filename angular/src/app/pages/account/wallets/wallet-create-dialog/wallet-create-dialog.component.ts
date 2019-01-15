@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LanguageService } from '../../../../services/language/language.service';
+import { WalletService } from '../../../../services/wallet/wallet.service';
 
 @Component({
   selector: 'app-wallet-create-dialog',
@@ -11,13 +12,17 @@ export class WalletCreateDialogComponent implements OnInit {
 
   forms = {
     name: "",
+    advanced: false,
     local: 0,
     import: 0,
     privateKey: "",
   }
   
+  public cloudCapacity$ = this.wallet.cloudCapacity$
+  
   constructor(
-    private language: LanguageService
+    private language: LanguageService,
+    private wallet: WalletService
   ) {
   }
 
@@ -32,6 +37,10 @@ export class WalletCreateDialogComponent implements OnInit {
     name: {
       en: "Name",
       ja: "名前"
+    } as any,
+    advanced: {
+      en: "Advanced",
+      ja: "上級者向け"
     } as any,
     localOrCloud: {
       en: "",
@@ -59,11 +68,19 @@ export class WalletCreateDialogComponent implements OnInit {
     } as any,
     cloudDescription: {
       en: "",
-      ja: "秘密鍵はこちらで保管します(初心者向け)。"
+      ja: "秘密鍵はウォレットクラウドで保管します。高度なセキュリティをお求めの方はローカル保存をご利用ください。"
     } as any,
     localDescription: {
       en: "",
-      ja: "秘密鍵はお客様管理となります(上級者向け)。リスクが低いです。"
+      ja: "秘密鍵はお客様自己管理となります。リスクが低いです。"
+    } as any,
+    error: {
+      en: "Error",
+      ja: "エラー"
+    } as any,
+    errorBody: {
+      en: "Because it is Free Plan now, only one cloud wallet can be created. If you wish to create multiple more cloud wallets, please change to the Standard plan from the setting screen.",
+      ja: "現在Freeプランのため、クラウドウォレットを一つのみ作成可能です。クラウドウォレットを複数個作成希望の場合は、設定画面よりStandardプランにご変更ください。"
     } as any
   }
 }

@@ -8,8 +8,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
 import { FormsModule } from '@angular/forms';
-import { FlexLayoutModule } from "@angular/flex-layout";
 import { HttpClientModule } from '@angular/common/http';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import {
   MatButtonModule,
@@ -31,17 +31,14 @@ import {
   MatProgressBarModule,
   MatRadioModule,
   MatSnackBarModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatTabsModule
 } from '@angular/material';
 
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
-import { AlertDialogComponent } from './components/alert-dialog/alert-dialog.component';
-import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
-import { PromptDialogComponent } from './components/prompt-dialog/prompt-dialog.component';
 import { SettingsComponent } from './pages/account/settings/settings.component';
 import { ContactsComponent } from './pages/contacts/contacts.component';
 import { LoginComponent } from './pages/account/login/login.component';
@@ -68,6 +65,8 @@ import { TransferDialogComponent } from './pages/nem/transfer/transfer-dialog/tr
 import { AssetsListComponent } from './components/assets-list/assets-list.component';
 import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
 import { RouterService } from './services/router/router.service';
+import { PlanComponent } from './pages/account/settings/plan/plan.component';
+import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
 
 @NgModule({
   declarations: [
@@ -97,10 +96,8 @@ import { RouterService } from './services/router/router.service';
     TransferDialogComponent,
     AssetsListComponent,
     PageNotFoundComponent,
-    LoadingDialogComponent,
-    AlertDialogComponent,
-    ConfirmDialogComponent,
-    PromptDialogComponent,
+    PlanComponent,
+    LoadingDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -133,13 +130,11 @@ import { RouterService } from './services/router/router.service';
     MatMenuModule,
     MatRadioModule,
     MatSnackBarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatTabsModule
   ],
   entryComponents: [
     LoadingDialogComponent,
-    AlertDialogComponent,
-    ConfirmDialogComponent,
-    PromptDialogComponent,
     TransferDialogComponent,
     ContactEditDialogComponent,
     WalletCreateDialogComponent

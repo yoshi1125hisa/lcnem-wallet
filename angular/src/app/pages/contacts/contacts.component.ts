@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { ContactEditDialogComponent } from './contact-edit-dialog/contact-edit-dialog.component';
 import { filter, first, map } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
@@ -22,10 +21,10 @@ export class ContactsComponent implements OnInit {
     this.auth.user$,
     this.contact.state$
   ).pipe(
-    map(fork => fork[0] === null || fork[1].loading)
+    map(([auth, contact]) => auth === null || contact.loading)
   )
 
-  public state$ = this.contact.state$;
+  public state$ = this.contact.state$
 
   constructor(
     private dialog: MatDialog,
@@ -40,70 +39,61 @@ export class ContactsComponent implements OnInit {
     this.load()
   }
 
-  public load(refresh?: boolean) {
-    this.auth.user$.pipe(
+  public async load(refresh?: boolean) {
+    const user = await this.auth.user$.pipe(
       filter(user => user !== null),
       first()
-    ).subscribe(
-      (user) => {
-        this.contact.loadContacts(user!.uid, refresh)
-      }
-    )
+    ).toPromise()
+
+    this.contact.loadContacts(user!.uid, refresh)
   }
 
   public back() {
     this._router.back([""])
   }
 
-  public createContact() {
-    this.dialog.open(
+  public async createContact() {
+    const result = await this.dialog.open(
       ContactEditDialogComponent,
       {
         data: {
           contact: {}
         }
       }
-    ).afterClosed().pipe(
-      filter(result => result)
-    ).subscribe(
-      (result) => {
-        this.contact.addContact(this.auth.user!.uid, result)
-      }
-    )
+    ).afterClosed().toPromise()
+
+    if (!result) {
+      return
+    }
+
+    this.contact.addContact(this.auth.user!.uid, result)
   }
 
-  public editContact(id: string) {
-    this.dialog.open(
+  public async editContact(id: string) {
+    const name = await this.dialog.open(
       ContactEditDialogComponent,
       {
         data: {
           contact: this.contact.state.entities[id]
         }
       }
-    ).afterClosed().pipe(
-      filter(name => name)
-    ).subscribe(
-      (name) => {
-        this.contact.updateContact(this.auth.user!.uid, id, name)
-      }
-    )
+    ).afterClosed().toPromise()
+
+    if (!name) {
+      return
+    }
+
+    this.contact.updateContact(this.auth.user!.uid, id, name)
   }
 
   public deleteContact(id: string) {
-    this.dialog.open(
-      ConfirmDialogComponent,
-      {
-        data: {
-          title: this.translation.confirm[this.lang]
-        }
-      }
-    ).afterClosed().pipe(
-      filter(result => result)
-    ).subscribe(
-      (result) => {
-        this.contact.deleteContact(this.auth.user!.uid, id)
-      }
-    );
+    const result = window.confirm(this.translation.confirm[this.lang])
+
+    if (!result) {
+      return
+    }
+    
+    this.contact.deleteContact(this.auth.user!.uid, id)
   }
 
   public translation = {

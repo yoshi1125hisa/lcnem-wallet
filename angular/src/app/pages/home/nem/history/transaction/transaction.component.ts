@@ -139,7 +139,7 @@ export class TransactionComponent implements OnInit, OnChanges {
   }
 
   public openSnackBar(type: string) {
-    this.snackBar.open(this.translation.snackBar[type][this.lang], undefined, { duration: 3000 });
+    this.snackBar.open(this.translation.snackBar[type][this.lang], undefined, { duration: 6000 });
   }
 
   public translation = {

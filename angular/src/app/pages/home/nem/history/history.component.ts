@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Address } from 'nem-library';
-import { Observable, forkJoin, combineLatest } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { first, map, filter } from 'rxjs/operators';
 import { LanguageService } from '../../../../services/language/language.service';
 import { WalletService } from '../../../../services/wallet/wallet.service';
@@ -12,13 +12,13 @@ import { HistoryService } from '../../../../services/nem/history/history.service
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter; }
+  public get lang() { return this.language.state.twoLetter }
 
   public loading$ = combineLatest(
     this.wallet.state$,
-    this.wallet.state$
+    this.history.state$
   ).pipe(
-    map(fork => fork[0].loading || fork[1].loading)
+    map(([wallet, history]) => wallet.loading || history.loading)
   )
 
   public state$ = this.history.state$
