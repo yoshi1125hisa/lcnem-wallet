@@ -1,10 +1,8 @@
-<h3>{{translation.balance[lang]}}</h3>
 <app-balance></app-balance>
-<br />
 <h3>{{translation.yourAddress[lang]}}</h3>
-<mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
-<ng-template #loaded>
-  <mat-card>
+<mat-card>
+  <mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
+  <ng-template #loaded>
     <p class="address" *ngIf="address$ | async as address">
       {{address}}
       <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyAddress()">
@@ -12,11 +10,18 @@
       </button>
     </p>
     <img class="qr" *ngIf="qrUrl$ | async as qrUrl" [src]="qrUrl" />
-  </mat-card>
-</ng-template>
-<br />
-<h3>{{translation.cosignatoryOf[lang]}}</h3>
+    <div fxLayout="row">
+      <span class="fill-remaining-space"></span>
+      <button mat-raised-button color="primary" routerLink="/nem/qr-scan">
+        <mat-icon mat-list-icon>center_focus_strong</mat-icon>
+        {{translation.scan[lang]}}
+      </button>
+      <button mat-raised-button color="accent" routerLink="/nem/transfer">
+        <mat-icon mat-list-icon>send</mat-icon>
+        {{translation.transfer[lang]}}
+      </button>
+    </div>
+  </ng-template>
+</mat-card>
 <app-multisig></app-multisig>
-<br />
-<h3>{{translation.history[lang]}}</h3>
 <app-history></app-history>

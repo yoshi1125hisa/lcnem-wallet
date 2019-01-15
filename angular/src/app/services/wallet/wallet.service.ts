@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-
 import { Observable, from, combineLatest } from 'rxjs';
 import { map, filter, first, mergeMap, toArray } from 'rxjs/operators';
+import { SimpleWallet, Password } from 'nem-library';
 import { RxEntityStateStore, RxEntityState } from 'rx-state-store-js';
 import { Wallet } from '../../../../../firebase/functions/src/models/wallet';
 import { UserService } from '../user/user.service';
@@ -44,7 +44,31 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
     this.auth.user$.pipe(
       filter(user => !!user)
     ).subscribe(
-      (user) => {
+      async (user) => {
+        //レガシー
+        this.user.loadUser(user!.uid)
+
+        const state = await this.user.state$.pipe(
+          filter(state => !state.loading),
+          first()
+        ).toPromise()
+
+        if (state.user && (state.user as any).wallet) {
+          const account = SimpleWallet.readFromWLT((state.user as any).wallet).open(new Password(user!.uid))
+
+          await this.firestore.collection("users").doc(user!.uid).collection("wallets").add(
+            {
+              name: "1",
+              local: false,
+              nem: account.address.plain(),
+              wallet: (state.user as any).wallet
+            } as Wallet
+          )
+          delete (state.user as any).wallet
+
+          await this.firestore.collection("users").doc(user!.uid).set(state.user!)
+        }
+        //レガシー
         this.loadWallets(user!.uid)
       }
     )

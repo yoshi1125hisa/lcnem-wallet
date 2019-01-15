@@ -1,0 +1,29 @@
+<mat-drawer-container>
+  <mat-drawer></mat-drawer>
+  <mat-drawer-content>
+    <mat-toolbar class="mat-elevation-z4 top-toolbar">
+      <button mat-icon-button (click)="back()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span>{{translation.plan[lang]}}</span>
+      <span class="fill-remaining-space"></span>
+    </mat-toolbar>
+    <div class="mat-typography body-container">
+      <mat-radio-group class="radio-group" [(ngModel)]="forms.plan" fxFill>
+          <mat-radio-button name="plan" [value]="0">Free</mat-radio-button>
+          <mat-radio-button name="plan" [value]="1">Standard</mat-radio-button>
+      </mat-radio-group>
+      <button mat-raised-button color="accent">{{translation.changePlan[lang]}}</button>
+      <div>
+        <h2>{{translation.freeTitle[lang]}}</h2>
+        <span class="fill-remaining-space"></span>
+      </div>
+      <div>{{translation.freeContent[lang]}}</div>
+      <span class="fill-remaining-space"></span>
+      <div>
+        <h2>{{translation.standardTitle[lang]}}</h2>
+      </div>
+      <div>{{translation.standardContent[lang]}}</div>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>

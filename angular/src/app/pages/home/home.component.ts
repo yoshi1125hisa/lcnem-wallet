@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { LanguageService } from '../../services/language/language.service';
 import { AuthService } from '../../services/auth/auth.service';
+import { WalletService } from '../../services/wallet/wallet.service';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
@@ -19,19 +19,19 @@ export class HomeComponent implements OnInit {
     map(user => user && user.photoURL ? user.photoURL : "")
   )
 
+  public currentWalletName$ = this.wallet.state$.pipe(
+    filter(state => state.currentWalletId !== undefined),
+    map(state => state.entities[state.currentWalletId!].name)
+  )
+
   constructor(
-    private router: Router,
     private language: LanguageService,
-    private auth: AuthService
+    private auth: AuthService,
+    private wallet: WalletService
   ) {
   }
 
   ngOnInit() {
-  }
-
-  public logout() {
-    this.auth.logout()
-    this.router.navigate(["account", "login"])
   }
 
   public translation = {
@@ -43,17 +43,9 @@ export class HomeComponent implements OnInit {
       en: "Change the wallet",
       ja: "ウォレットの切り替え"
     } as any,
-    logout: {
-      en: "Log out",
-      ja: "ログアウト"
-    } as any,
-    transfer: {
-      en: "Transfer",
-      ja: "送信"
-    } as any,
-    scan: {
-      en: "Scan QR",
-      ja: "QRスキャン"
+    blockchainEMoney: {
+      en: "Blockchain e-money",
+      ja: "ブロックチェーン電子マネー"
     } as any,
     deposit: {
       en: "Deposit",
@@ -63,17 +55,9 @@ export class HomeComponent implements OnInit {
       en: "Withdraw",
       ja: "出金"
     } as any,
-    terms: {
-      en: "Terms of Service",
-      ja: "利用規約"
-    } as any,
-    privacyPolicy: {
-      en: "Privacy Policy",
-      ja: "プライバシーポリシー"
-    } as any,
-    completed: {
-      en: "Successfully logged out",
-      ja: "正常にログアウトしました。"
+    functions: {
+      en: "Functions",
+      ja: "機能"
     } as any,
     contacts: {
       en: "Contact list",

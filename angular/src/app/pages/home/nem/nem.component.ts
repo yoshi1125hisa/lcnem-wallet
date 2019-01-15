@@ -45,13 +45,13 @@ export class NemComponent implements OnInit {
   }
   
   public translation = {
-    balance: {
-      en: "Balance",
-      ja: "残高"
+    transfer: {
+      en: "Transfer",
+      ja: "送信"
     } as any,
-    history: {
-      en: "History",
-      ja: "履歴"
+    scan: {
+      en: "Scan QR",
+      ja: "QRスキャン"
     } as any,
     yourAddress: {
       en: "Your address",
@@ -61,13 +61,5 @@ export class NemComponent implements OnInit {
       en: "Copy this Address",
       ja: "アドレスをコピーする"
     } as any,
-    contacts: {
-      en: "Contact list",
-      ja: "コンタクトリスト"
-    } as any,
-    cosignatoryOf: {
-      en: "Multisig addresses you can cosign",
-      ja: "連署名できるマルチシグアドレス"
-    } as any
-  };
+  }
 }

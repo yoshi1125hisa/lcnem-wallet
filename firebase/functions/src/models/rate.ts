@@ -1,3 +1,3 @@
 export interface Rate {
-    [currency: string]: number
+  [currency: string]: number
 }

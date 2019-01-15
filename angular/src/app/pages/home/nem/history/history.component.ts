@@ -12,7 +12,7 @@ import { HistoryService } from '../../../../services/nem/history/history.service
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter; }
+  public get lang() { return this.language.state.twoLetter }
 
   public loading$ = combineLatest(
     this.wallet.state$,

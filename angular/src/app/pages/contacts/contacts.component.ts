@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { ContactEditDialogComponent } from './contact-edit-dialog/contact-edit-dialog.component';
 import { filter, first, map } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
@@ -87,15 +86,8 @@ export class ContactsComponent implements OnInit {
     this.contact.updateContact(this.auth.user!.uid, id, name)
   }
 
-  public async deleteContact(id: string) {
-    const result = await this.dialog.open(
-      ConfirmDialogComponent,
-      {
-        data: {
-          title: this.translation.confirm[this.lang]
-        }
-      }
-    ).afterClosed().toPromise()
+  public deleteContact(id: string) {
+    const result = window.confirm(this.translation.confirm[this.lang])
 
     if (!result) {
       return

@@ -9,26 +9,48 @@
       <span class="fill-remaining-space"></span>
     </mat-toolbar>
     <div class="mat-typography body-container">
-      <h1>{{translation.plan[lang]}}</h1>
-      <span class="fill-remaining-space"></span>
-
-
-      <mat-radio-group class="radio-group" [(ngModel)]="forms.plan" fxFill>
-          <mat-radio-button name="plan" [value]="0">Free</mat-radio-button>
-          <mat-radio-button name="plan" [value]="1">Standard</mat-radio-button>
-      </mat-radio-group>
-      <button mat-raised-button color="accent" (click)="changePlan()">{{translation.changePlan[lang]}}</button>
-
-      <div>
-        <h2>{{translation.freeTitle[lang]}}</h2>
-        <span class="fill-remaining-space"></span>
-      </div>
-      <div>{{translation.freeContent[lang]}}</div>
-      <span class="fill-remaining-space"></span>
-      <div>
-        <h2>{{translation.standardTitle[lang]}}</h2>
-      </div>
-      <div>{{translation.standardContent[lang]}}</div>
+      <mat-nav-list>
+        <h3 matSubheader>{{translation.account[lang]}}</h3>
+        <mat-card>
+          <mat-divider></mat-divider>
+          <mat-list-item routerLink="/account/settings/plan">
+            <span>{{translation.plan[lang]}}</span>
+            <span class="fill-remaining-space"></span>
+            <span>{{plan$ | async}}</span>
+            <mat-icon>arrow_forward</mat-icon>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item (click)="logout()">
+            <span class="logout">{{translation.logout[lang]}}</span>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        </mat-card>
+      </mat-nav-list>
+      <mat-nav-list>
+        <h3 matSubheader>{{translation.terms[lang]}}</h3>
+        <mat-card>
+          <mat-divider></mat-divider>
+          <mat-list-item routerLink="/terms">
+            <span>{{translation.terms[lang]}}</span>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item routerLink="/terms/privacy-policy">
+            <span>{{translation.privacyPolicy[lang]}}</span>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        </mat-card>
+      </mat-nav-list>
+      <mat-nav-list>
+        <h3 matSubheader>{{translation.company[lang]}}</h3>
+        <mat-card>
+          <mat-divider></mat-divider>
+          <a mat-list-item href="https://lcnem.cc" target="_blank">
+            <img mat-list-icon src="assets/images/lcnem.svg" />
+            <span>LCNEM</span>
+          </a>
+          <mat-divider></mat-divider>
+        </mat-card>
+      </mat-nav-list>
     </div>
   </mat-drawer-content>
 </mat-drawer-container>

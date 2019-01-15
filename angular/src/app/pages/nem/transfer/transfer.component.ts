@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatDialog, MatDialogRef, MatSnackBar, MatSlideToggleChange } from '@angular/material';
+import { MatDialog, MatSnackBar, MatSlideToggleChange } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   Address,
@@ -17,17 +17,15 @@ import {
   SignedTransaction
 } from 'nem-library';
 import { Observable, of, from, combineLatest, BehaviorSubject } from 'rxjs';
-import { mergeMap, first, map, filter, catchError, merge, publish } from 'rxjs/operators';
+import { mergeMap, first, map, filter, catchError } from 'rxjs/operators';
 import { WalletService } from '../../../services/wallet/wallet.service';
 import { BalanceService } from '../../../services/nem/balance/balance.service';
 import { LanguageService } from '../../../services/language/language.service';
 import { Invoice } from '../../../classes/invoice';
 import { RouterService } from '../../../services/router/router.service';
 import { ShareService } from '../../../services/api/share/share.service';
-import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
 import { AuthService } from '../../../services/auth/auth.service';
 import { nodes } from '../../../classes/nodes';
-import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
 import { AssetDefinitionService } from '../../../services/nem/asset-definition/asset-definition.service';
 import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.component';
 import { Tuple } from '../../../classes/tuple';
@@ -51,7 +49,8 @@ export class TransferComponent implements OnInit, OnDestroy {
       id: string,
       amount?: number,
       balance$: Observable<Asset>
-    }[]
+    }[],
+    processing: false
   }
 
   public loading$ = combineLatest(
@@ -256,62 +255,30 @@ export class TransferComponent implements OnInit, OnDestroy {
   }
 
   public announceTransaction(signed: SignedTransaction) {
-    const loadingDialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
+    this.forms.processing = true
 
     const transactionHttp = new TransactionHttp(nodes)
     transactionHttp.announceTransaction(signed).subscribe(
-      async () => {
-        await this.dialog.open(
-          AlertDialogComponent,
-          {
-            data: {
-              title: this.translation.completed[this.lang],
-              content: this.translation.completedBody[this.lang]
-            }
-          }
-        ).afterClosed().toPromise()
-
+      () => {
+        this.snackBar.open(this.translation.completed[this.lang])
         this.router.navigate([""])
       },
       (error) => {
-        this.dialog.open(
-          AlertDialogComponent,
-          {
-            data: {
-              title: this.translation.error[this.lang],
-              content: ""
-            }
-          }
-        );
+        this.snackBar.open(this.translation.error[this.lang])
       },
       () => {
-        loadingDialog.close()
+        this.forms.processing = false
       }
     )
   }
 
   public openDialog(type: string) {
     if (type == "import") {
-      this.dialog.open(
-        AlertDialogComponent,
-        {
-          data: {
-            title: this.translation.error[this.lang],
-            content: this.translation.importRequired[this.lang]
-          }
-        }
-      )
+      this.snackBar.open(this.translation.importRequired[this.lang])
+      return
     }
     if (type == "message") {
-      this.dialog.open(
-        AlertDialogComponent,
-        {
-          data: {
-            title: this.translation.error[this.lang],
-            content: this.translation.noPublicKey[this.lang]
-          }
-        }
-      )
+      this.snackBar.open(this.translation.noPublicKey[this.lang])
     }
   }
 
@@ -373,12 +340,8 @@ export class TransferComponent implements OnInit, OnDestroy {
       ja: "エラー"
     } as any,
     completed: {
-      en: "Completed",
-      ja: "送信しました"
-    } as any,
-    completedBody: {
-      en: "Please confirm later that the transaction be confirmed.",
-      ja: "ブロックチェーンに正しく送信されましたが、正しく承認を受ける必要もあります。後ほど、承認されたことを確認してください。"
+      en: "Completed. Please confirm later that the transaction be confirmed by blockchain.",
+      ja: "送信しました。ブロックチェーンに承認されたことを確認してください。"
     } as any,
     noPublicKey: {
       en: "Failed to get the recipient public key for encryption.",

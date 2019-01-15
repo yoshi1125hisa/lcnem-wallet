@@ -1,13 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatSelectChange } from '@angular/material';
+import { MatDialog, MatSelectChange, MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 import { ZXingScannerComponent } from '@zxing/ngx-scanner';
-import { Observable, Subscription, BehaviorSubject, Subject, of, combineLatest } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { filter, map, first, takeUntil } from 'rxjs/operators';
 import { RouterService } from '../../../services/router/router.service';
-import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
 import { Invoice } from '../../../classes/invoice';
-import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
 import { LanguageService } from '../../../services/language/language.service';
 
 @Component({
@@ -30,7 +28,7 @@ export class QrScanComponent implements OnInit {
   private unsubscribe$ = new Subject()
 
   constructor(
-    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private router: Router,
     private _router: RouterService,
     private language: LanguageService
@@ -76,19 +74,8 @@ export class QrScanComponent implements OnInit {
           return
         }
 
-        this.dialog.open(
-          AlertDialogComponent,
-          {
-            data: {
-              title: this.translation.unexpected[this.lang],
-              content: result
-            }
-          }
-        ).afterClosed().subscribe(
-          () => {
-            this.processing = false
-          }
-        )
+        window.alert(`${this.translation.unexpected[this.lang]}: "${result}"`)
+        this.processing = false
       }
     )
   }

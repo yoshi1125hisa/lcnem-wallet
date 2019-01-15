@@ -1,7 +1,9 @@
-import { PlanType } from "./plan";
-
 export interface User {
-  name: string
-  plan?: PlanType
-  subscriptionId: string
+  plan?: {
+    type: "Standard" | "Premium"
+    expireYear: number
+    expireMonth: number
+    expireDay: number
+  }
+  admin?: boolean
 }

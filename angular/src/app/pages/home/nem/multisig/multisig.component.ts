@@ -50,9 +50,13 @@ export class MultisigComponent implements OnInit {
   }
 
   public translation = {
+    cosignatoryOf: {
+      en: "Multisig addresses you can cosign",
+      ja: "連署名できるマルチシグアドレス"
+    } as any,
     empty: {
       en: "There is no multisig address.",
       ja: "マルチシグアドレスはありません。"
-    }
+    } as any
   }
 }

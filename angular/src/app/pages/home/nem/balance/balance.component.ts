@@ -13,6 +13,8 @@ import { RateService } from '../../../../services/rate/rate.service';
   styleUrls: ['./balance.component.css']
 })
 export class BalanceComponent implements OnInit {
+  public get lang() { return this.language.state.twoLetter }
+
   public loading$ = combineLatest(
     this.wallet.state$,
     this.balance.state$
@@ -49,5 +51,12 @@ export class BalanceComponent implements OnInit {
 
   public changeCurrency(currency: string) {
     this.rate.changeCurrency(currency)
+  }
+
+  public translation = {
+    balance: {
+      en: "Balance",
+      ja: "残高"
+    } as any
   }
 }

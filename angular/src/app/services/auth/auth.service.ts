@@ -20,6 +20,6 @@ export class AuthService {
   }
 
   public logout() {
-    this.auth.auth.signOut()
+    return this.auth.auth.signOut()
   }
 }

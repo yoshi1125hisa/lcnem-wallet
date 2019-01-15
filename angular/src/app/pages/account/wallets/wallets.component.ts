@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { SimpleWallet, Password } from 'nem-library';
 import { Router } from '@angular/router';
 import { from, combineLatest } from 'rxjs';
@@ -10,10 +10,8 @@ import { RouterService } from '../../../services/router/router.service';
 import { WalletService } from '../../../services/wallet/wallet.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { UserService } from '../../../services/user/user.service';
-import { PromptDialogComponent } from '../../../components/prompt-dialog/prompt-dialog.component';
-import { AlertDialogComponent } from '../../../components/alert-dialog/alert-dialog.component';
-import { ConfirmDialogComponent } from '../../../components/confirm-dialog/confirm-dialog.component';
 import { WalletCreateDialogComponent } from './wallet-create-dialog/wallet-create-dialog.component';
+import { ShareService } from '../../../services/api/share/share.service';
 
 @Component({
   selector: 'app-wallets',
@@ -34,13 +32,14 @@ export class WalletsComponent implements OnInit {
   public state$ = this.wallet.state$
 
   constructor(
-    private dialog: MatDialog,
     private router: Router,
-    private _router: RouterService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private language: LanguageService,
     private auth: AuthService,
     private user: UserService,
     private wallet: WalletService,
+    private share: ShareService
   ) {
   }
 
@@ -91,21 +90,9 @@ export class WalletsComponent implements OnInit {
     this.router.navigate([""])
   }
 
-  public async importPrivateKey(id: string) {
-    const pk = await this.dialog.open(
-      PromptDialogComponent,
-      {
-        data: {
-          title: this.translation.importPrivateKey[this.lang],
-          input: {
-            placeholder: this.translation.privateKey[this.lang],
-            pattern: "[0-9a-f]{64}"
-          }
-        }
-      }
-    ).afterClosed().toPromise()
-
-    if (!pk) {
+  public importPrivateKey(id: string) {
+    const pk = window.prompt(this.translation.importPrivateKey[this.lang])
+    if (!pk || !pk.match("[0-9a-f]{64}")) {
       return
     }
 
@@ -115,20 +102,10 @@ export class WalletsComponent implements OnInit {
     this.wallet.addLocalWallet(id, wallet.writeWLTFile())
   }
 
-  public async renameWallet(id: string) {
+  public renameWallet(id: string) {
     const wallet = this.wallet.state.entities[id];
 
-    const name = await this.dialog.open(
-      PromptDialogComponent, {
-        data: {
-          title: this.translation.rename[this.lang],
-          input: {
-            placeholder: this.translation.walletName[this.lang],
-            value: wallet.name
-          }
-        }
-      }
-    ).afterClosed().toPromise()
+    const name = window.prompt(this.translation.rename[this.lang], wallet.name)
 
     if (!name) {
       return
@@ -138,32 +115,20 @@ export class WalletsComponent implements OnInit {
   }
 
   public backupWallet(id: string) {
-    const wallet = SimpleWallet.readFromWLT(this.wallet.state.entities[id].wallet!);
-    const account = wallet.open(new Password(this.auth.user!.uid));
+    const wallet = SimpleWallet.readFromWLT(this.wallet.state.entities[id].wallet!)
+    const account = wallet.open(new Password(this.auth.user!.uid))
 
-    this.dialog.open(
-      AlertDialogComponent, {
-        data: {
-          title: this.translation.backup[this.lang],
-          content: account.privateKey
-        }
-      }
-    )
+    this.share.copy(account.privateKey)
+
+    this.snackBar.open(this.translation.backup[this.lang])
   }
 
-  public async deleteWallet(id: string) {
-    const result = await this.dialog.open(
-      ConfirmDialogComponent, {
-        data: {
-          title: this.translation.deleteConfirm[this.lang],
-          content: ""
-        }
-      }
-    ).afterClosed().toPromise()
-
+  public deleteWallet(id: string) {
+    const result = window.confirm(this.translation.deleteConfirm[this.lang])
     if (!result) {
       return
     }
+
     this.wallet.deleteWallet(this.auth.user!.uid, id)
   }
 
@@ -207,7 +172,6 @@ export class WalletsComponent implements OnInit {
     localNotFound: {
       en: "The private key is not imported so some functions which require the private key are not available.",
       ja: "秘密鍵がインポートされていないため、秘密鍵が必要な一部の機能が制限されます。"
-
     } as any,
     unavailablePlan: {
       en: "More than one private key in Free plan is not supported.",
