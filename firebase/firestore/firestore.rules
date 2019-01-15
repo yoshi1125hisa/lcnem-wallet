@@ -13,9 +13,9 @@ service cloud.firestore {
       }
     }
 
-    match /users/{document=**} {
-      allow read, write: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == true
-    }
+    //match /users/{document=**} {
+    //  allow read, write: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == true
+    //}
 
     match /rates/rate {
       allow read;

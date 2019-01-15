@@ -7,6 +7,7 @@ import { RouterService } from '../../../services/router/router.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { WalletService } from '../../../services/wallet/wallet.service';
 import { first } from 'rxjs/operators';
+import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
 
 @Component({
   selector: 'app-withdraw',
@@ -32,6 +33,7 @@ export class WithdrawComponent implements OnInit {
   public safeSite: SafeResourceUrl
 
   constructor(
+    private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private _router: RouterService,
     private auth: AuthService,
@@ -56,6 +58,8 @@ export class WithdrawComponent implements OnInit {
   }
 
   public withdraw() {
+    const dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true })
+
     this.api.withdraw(
       {
         email: this.auth.user!.email!,
@@ -67,11 +71,14 @@ export class WithdrawComponent implements OnInit {
       }
     ).subscribe(
       () => {
-        this.snackBar.open(this.translation.completed[this.lang])
+        this.snackBar.open(this.translation.completed[this.lang], undefined, { duration: 6000 })
         this.back()
       },
       (error) => {
-        this.snackBar.open(this.translation.error[this.lang])
+        this.snackBar.open(this.translation.error[this.lang], undefined, { duration: 6000 })
+      },
+      () => {
+        dialog.close()
       }
     )
   }

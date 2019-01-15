@@ -46,6 +46,7 @@ export class RouterService {
   public back(commands: any[], extras?: NavigationExtras) {
     if (history.length > 1) {
       history.back()
+      return
     }
     this.router.navigate(commands, extras)
   }

@@ -1,7 +1,7 @@
 <app-balance></app-balance>
 <h3>{{translation.yourAddress[lang]}}</h3>
 <mat-card>
-  <mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
+  <mat-spinner [diameter]="60" *ngIf="loading$ | async; else loaded"></mat-spinner>
   <ng-template #loaded>
     <p class="address" *ngIf="address$ | async as address">
       {{address}}

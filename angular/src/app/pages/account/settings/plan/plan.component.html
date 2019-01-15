@@ -9,21 +9,33 @@
       <span class="fill-remaining-space"></span>
     </mat-toolbar>
     <div class="mat-typography body-container">
-      <mat-radio-group class="radio-group" [(ngModel)]="forms.plan" fxFill>
-          <mat-radio-button name="plan" [value]="0">Free</mat-radio-button>
-          <mat-radio-button name="plan" [value]="1">Standard</mat-radio-button>
-      </mat-radio-group>
-      <button mat-raised-button color="accent">{{translation.changePlan[lang]}}</button>
-      <div>
-        <h2>{{translation.freeTitle[lang]}}</h2>
-        <span class="fill-remaining-space"></span>
-      </div>
-      <div>{{translation.freeContent[lang]}}</div>
-      <span class="fill-remaining-space"></span>
-      <div>
-        <h2>{{translation.standardTitle[lang]}}</h2>
-      </div>
-      <div>{{translation.standardContent[lang]}}</div>
+      <mat-list>
+        <h3 matSubheader>{{translation.changePlan[lang]}}</h3>
+        <mat-card>
+          <mat-spinner [diameter]="60" *ngIf="loading$ | async; else loaded"></mat-spinner>
+          <ng-template #loaded>
+            <mat-radio-group class="radio-group" [(ngModel)]="forms.plan">
+              <mat-divider></mat-divider>
+              <ng-container *ngFor="let plan of plans">
+                <mat-list-item>
+                  <mat-radio-button name="plan" [value]="plan.value">{{plan.name}} ({{plan.price[lang]}})</mat-radio-button>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+              </ng-container>
+            </mat-radio-group>
+            <div fxLayout="row">
+              <span class="fill-remaining-space"></span>
+              <button mat-raised-button color="accent" [disabled]="forms.plan === current.plan">{{translation.changePlan[lang]}}</button>
+            </div>
+            <p>{{translation.availableFunctions[lang]}}</p>
+            <ul>
+              <li *ngFor="let function of plans[forms.plan].functions">
+                {{function[lang]}}
+              </li>
+            </ul>
+          </ng-template>
+        </mat-card>
+      </mat-list>
     </div>
   </mat-drawer-content>
 </mat-drawer-container>

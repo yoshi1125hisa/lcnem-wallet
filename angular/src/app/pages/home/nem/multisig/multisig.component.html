@@ -1,4 +1,4 @@
-<div fxLayout="row" fxLayoutAlign="center">
+<div fxLayout="row" fxLayoutAlign="center center">
   <h3>{{translation.cosignatoryOf[lang]}}</h3>
   <span class="fill-remaining-space"></span>
   <button mat-icon-button color="accent" (click)="load(true)" [disabled]="loading$ | async">
@@ -6,7 +6,7 @@
   </button>
 </div>
 <mat-card *ngIf="state$ | async as state">
-  <mat-spinner [diameter]="12" *ngIf="loading$ | async; else loaded"></mat-spinner>
+  <mat-spinner [diameter]="60" *ngIf="loading$ | async; else loaded"></mat-spinner>
   <ng-template #loaded>
     <mat-list *ngIf="state.addresses.length; else empty">
       <mat-divider></mat-divider>

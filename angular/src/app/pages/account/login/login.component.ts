@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
         this.router.navigate([""])
       },
       (error) => {
-        this.snackBar.open(this.translation.error[this.lang])
+        this.snackBar.open(this.translation.error[this.lang], undefined, { duration: 6000 })
       }
     )
   }

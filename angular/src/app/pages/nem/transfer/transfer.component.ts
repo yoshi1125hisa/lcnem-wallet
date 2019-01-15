@@ -29,6 +29,7 @@ import { nodes } from '../../../classes/nodes';
 import { AssetDefinitionService } from '../../../services/nem/asset-definition/asset-definition.service';
 import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.component';
 import { Tuple } from '../../../classes/tuple';
+import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
 
 @Component({
   selector: 'app-transfer',
@@ -49,8 +50,7 @@ export class TransferComponent implements OnInit, OnDestroy {
       id: string,
       amount?: number,
       balance$: Observable<Asset>
-    }[],
-    processing: false
+    }[]
   }
 
   public loading$ = combineLatest(
@@ -190,7 +190,7 @@ export class TransferComponent implements OnInit, OnDestroy {
 
     if (!(navigator as any).share) {
       this.share.copy(url)
-      this.snackBar.open(this.translation.copyCompleted[this.lang], undefined, { duration: 3000 });
+      this.snackBar.open(this.translation.copyCompleted[this.lang], undefined, { duration: 6000 });
       return
     }
     this.share.share(url, "LCNEM Wallet")
@@ -255,30 +255,30 @@ export class TransferComponent implements OnInit, OnDestroy {
   }
 
   public announceTransaction(signed: SignedTransaction) {
-    this.forms.processing = true
+    const dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true })
 
     const transactionHttp = new TransactionHttp(nodes)
     transactionHttp.announceTransaction(signed).subscribe(
       () => {
-        this.snackBar.open(this.translation.completed[this.lang])
+        this.snackBar.open(this.translation.completed[this.lang], undefined, { duration: 6000 })
         this.router.navigate([""])
       },
       (error) => {
-        this.snackBar.open(this.translation.error[this.lang])
+        this.snackBar.open(this.translation.error[this.lang], undefined, { duration: 6000 })
       },
       () => {
-        this.forms.processing = false
+        dialog.close()
       }
     )
   }
 
   public openDialog(type: string) {
     if (type == "import") {
-      this.snackBar.open(this.translation.importRequired[this.lang])
+      this.snackBar.open(this.translation.importRequired[this.lang], undefined, { duration: 6000 })
       return
     }
     if (type == "message") {
-      this.snackBar.open(this.translation.noPublicKey[this.lang])
+      this.snackBar.open(this.translation.noPublicKey[this.lang], undefined, { duration: 6000 })
     }
   }
 

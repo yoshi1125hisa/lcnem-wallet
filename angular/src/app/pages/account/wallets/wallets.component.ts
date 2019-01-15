@@ -120,7 +120,7 @@ export class WalletsComponent implements OnInit {
 
     this.share.copy(account.privateKey)
 
-    this.snackBar.open(this.translation.backup[this.lang])
+    this.snackBar.open(this.translation.backup[this.lang], undefined, { duration: 6000 })
   }
 
   public deleteWallet(id: string) {

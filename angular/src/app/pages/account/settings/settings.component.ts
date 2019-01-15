@@ -25,12 +25,6 @@ export class SettingsComponent implements OnInit {
   ) { }
   public get lang() { return this.language.state.twoLetter }
 
-  public plan$ = this.user.state$.pipe(
-    filter(state => !state.loading),
-    map(state => state.user!.plan),
-    map(plan => plan ? plan.type : "Free")
-  )
-
   ngOnInit() {
     this.load()
   }
@@ -40,18 +34,12 @@ export class SettingsComponent implements OnInit {
   }
 
   public async load(refresh?: boolean) {
-    const user = await this.auth.user$.pipe(
-      filter(user => user != null),
-      first()
-    ).toPromise()
-
-    this.user.loadUser(user!.uid, refresh)
   }
   
   public async logout() {
     await this.auth.logout()
 
-    this.snackBar.open(this.translation.logoutCompleted[this.lang])
+    this.snackBar.open(this.translation.logoutCompleted[this.lang], undefined, { duration: 6000 })
 
     await this.router.navigate(["account", "login"])
   }

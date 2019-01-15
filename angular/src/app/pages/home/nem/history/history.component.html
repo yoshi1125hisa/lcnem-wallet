@@ -1,11 +1,11 @@
-<div fxLayout="row" fxLayoutAlign="center">
+<div fxLayout="row" fxLayoutAlign="center center">
   <h3>{{translation.history[lang]}}</h3>
   <span class="fill-remaining-space"></span>
   <button mat-icon-button color="accent" (click)="load(true)" [disabled]="loading$ | async">
     <mat-icon>refresh</mat-icon>
   </button>
 </div>
-<mat-spinner [diameter]="12" *ngIf="loading$ | async; else loaded"></mat-spinner>
+<mat-spinner [diameter]="60" *ngIf="loading$ | async; else loaded"></mat-spinner>
 <ng-template #loaded>
   <ng-container *ngIf="state$ | async as state">
     <ng-container *ngFor="let transaction of state.transactions">

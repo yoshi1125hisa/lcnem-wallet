@@ -1,4 +1,4 @@
-<div fxLayout="row" fxLayoutAlign="center">
+<div fxLayout="row" fxLayoutAlign="center center">
   <h3>{{translation.balance[lang]}}</h3>
   <span class="fill-remaining-space"></span>
   <mat-menu #currencyMenu="matMenu" [overlapTrigger]="false">
@@ -22,7 +22,7 @@
   </button>
 </div>
 <mat-card *ngIf="state$ | async as state">
-  <mat-spinner [diameter]="12" *ngIf="loading$ | async; else loaded"></mat-spinner>
+  <mat-spinner [diameter]="60" *ngIf="loading$ | async; else loaded"></mat-spinner>
   <ng-template #loaded>
     <app-assets-list [assets]="state.assets"></app-assets-list>
   </ng-template>

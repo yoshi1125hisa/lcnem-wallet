@@ -66,6 +66,7 @@ import { AssetsListComponent } from './components/assets-list/assets-list.compon
 import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
 import { RouterService } from './services/router/router.service';
 import { PlanComponent } from './pages/account/settings/plan/plan.component';
+import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
 
 @NgModule({
   declarations: [
@@ -96,6 +97,7 @@ import { PlanComponent } from './pages/account/settings/plan/plan.component';
     AssetsListComponent,
     PageNotFoundComponent,
     PlanComponent,
+    LoadingDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -132,6 +134,7 @@ import { PlanComponent } from './pages/account/settings/plan/plan.component';
     MatTabsModule
   ],
   entryComponents: [
+    LoadingDialogComponent,
     TransferDialogComponent,
     ContactEditDialogComponent,
     WalletCreateDialogComponent
