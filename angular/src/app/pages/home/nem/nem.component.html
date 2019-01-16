@@ -23,5 +23,16 @@
     </div>
   </ng-template>
 </mat-card>
+<h3></h3>
+<mat-card>
+  <mat-list-item routerLink="/digital-legal-currency/deposit">
+    <mat-icon mat-list-icon>call_received</mat-icon>
+    {{translation.deposit[lang]}}
+  </mat-list-item>
+  <mat-list-item routerLink="/digital-legal-currency/withdraw">
+    <mat-icon mat-list-icon>call_made</mat-icon>
+    {{translation.withdraw[lang]}}
+  </mat-list-item>
+</mat-card>
 <app-multisig></app-multisig>
 <app-history></app-history>
