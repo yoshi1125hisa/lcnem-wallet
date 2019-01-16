@@ -6,8 +6,8 @@ import { WalletsComponent } from './pages/account/wallets/wallets.component';
 import { SettingsComponent } from './pages/account/settings/settings.component';
 import { PlanComponent } from './pages/account/settings/plan/plan.component';
 import { ContactsComponent } from './pages/contacts/contacts.component';
-import { DepositComponent } from './pages/digital-legal-currency/deposit/deposit.component';
-import { WithdrawComponent } from './pages/digital-legal-currency/withdraw/withdraw.component';
+import { DepositComponent } from './pages/cheque/deposit/deposit.component';
+import { WithdrawComponent } from './pages/cheque/withdraw/withdraw.component';
 import { QrScanComponent } from './pages/nem/qr-scan/qr-scan.component';
 import { TransferComponent } from './pages/nem/transfer/transfer.component';
 import { TermsComponent } from './pages/terms/terms.component';
@@ -21,8 +21,8 @@ const routes: Routes = [
   { path: "account/settings", component: SettingsComponent },
   { path: "account/settings/plan", component: PlanComponent },
   { path: "contacts", component: ContactsComponent },
-  { path: "digital-legal-currency/deposit", component: DepositComponent },
-  { path: "digital-legal-currency/withdraw", component: WithdrawComponent },
+  { path: "cheque/deposit", component: DepositComponent },
+  { path: "cheque/withdraw", component: WithdrawComponent },
   { path: "nem/qr-scan", component: QrScanComponent },
   { path: "nem/transfer", component: TransferComponent },
   { path: "terms", component: TermsComponent },
