@@ -4,7 +4,7 @@
   <mat-spinner [diameter]="60" *ngIf="loading$ | async; else loaded"></mat-spinner>
   <ng-template #loaded>
     <p class="address" *ngIf="address$ | async as address">
-      {{address}}
+      {{prettifyAddress(address)}}
       <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyAddress()">
         <mat-icon>input</mat-icon>
       </button>
