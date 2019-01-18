@@ -11,3 +11,23 @@
 h3 {
   margin: 0
 }
+.ripple-card {
+  padding: 24px 0;
+}
+.card-icon {
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.card-text {
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1.25em;
+}
+
+.card-padding-right {
+  padding-right: 8px;
+}
+.card-padding-left {
+  padding-left: 8px;
+}

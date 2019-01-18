@@ -32,7 +32,8 @@ import {
   MatRadioModule,
   MatSnackBarModule,
   MatTooltipModule,
-  MatTabsModule
+  MatTabsModule,
+  MatRippleModule,
 } from '@angular/material';
 
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
@@ -45,8 +46,8 @@ import { LoginComponent } from './pages/account/login/login.component';
 import { TermsComponent } from './pages/terms/terms.component';
 import { QrScanComponent } from './pages/nem/qr-scan/qr-scan.component';
 import { PrivacyPolicyComponent } from './pages/terms/privacy-policy/privacy-policy.component';
-import { DepositComponent } from './pages/digital-legal-currency/deposit/deposit.component';
-import { WithdrawComponent } from './pages/digital-legal-currency/withdraw/withdraw.component';
+import { DepositComponent } from './pages/cheque/deposit/deposit.component';
+import { WithdrawComponent } from './pages/cheque/withdraw/withdraw.component';
 import { HomeComponent } from './pages/home/home.component';
 import { NemComponent } from './pages/home/nem/nem.component';
 import { HistoryComponent } from './pages/home/nem/history/history.component';
@@ -131,7 +132,8 @@ import { LoadingDialogComponent } from './components/loading-dialog/loading-dial
     MatRadioModule,
     MatSnackBarModule,
     MatTooltipModule,
-    MatTabsModule
+    MatTabsModule,
+    MatRippleModule
   ],
   entryComponents: [
     LoadingDialogComponent,
