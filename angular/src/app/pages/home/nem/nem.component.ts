@@ -43,6 +43,10 @@ export class NemComponent implements OnInit {
   public copyAddress() {
     this.share.copy(this.wallet.state.entities[this.wallet.state.currentWalletId!].nem)
   }
+
+  public prettifyAddress(address: string) {
+    return address.match(/.{1,6}/g)!.join("-")
+  }
   
   public translation = {
     transfer: {
@@ -61,5 +65,13 @@ export class NemComponent implements OnInit {
       en: "Copy this Address",
       ja: "アドレスをコピーする"
     } as any,
+    deposit: {
+      en: "Deposit",
+      ja: "入金"
+    } as any,
+    withdraw: {
+      en: "Withdraw",
+      ja: "出金"
+    } as any
   }
 }

@@ -43,10 +43,6 @@ export class HomeComponent implements OnInit {
       en: "Change the wallet",
       ja: "ウォレットの切り替え"
     } as any,
-    blockchainEMoney: {
-      en: "Blockchain e-money",
-      ja: "ブロックチェーン電子マネー"
-    } as any,
     deposit: {
       en: "Deposit",
       ja: "入金"
@@ -54,10 +50,6 @@ export class HomeComponent implements OnInit {
     withdraw: {
       en: "Withdraw",
       ja: "出金"
-    } as any,
-    functions: {
-      en: "Functions",
-      ja: "機能"
     } as any,
     contacts: {
       en: "Contact list",
