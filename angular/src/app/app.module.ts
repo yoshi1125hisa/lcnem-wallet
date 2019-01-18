@@ -32,7 +32,8 @@ import {
   MatRadioModule,
   MatSnackBarModule,
   MatTooltipModule,
-  MatTabsModule
+  MatTabsModule,
+  MatRippleModule,
 } from '@angular/material';
 
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
@@ -131,7 +132,8 @@ import { LoadingDialogComponent } from './components/loading-dialog/loading-dial
     MatRadioModule,
     MatSnackBarModule,
     MatTooltipModule,
-    MatTabsModule
+    MatTabsModule,
+    MatRippleModule
   ],
   entryComponents: [
     LoadingDialogComponent,

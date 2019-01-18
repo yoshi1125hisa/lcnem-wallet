@@ -23,16 +23,24 @@
     </div>
   </ng-template>
 </mat-card>
-<h3></h3>
-<mat-card>
-  <mat-list-item routerLink="/cheque/deposit">
-    <mat-icon mat-list-icon>call_received</mat-icon>
-    {{translation.deposit[lang]}}
-  </mat-list-item>
-  <mat-list-item routerLink="/cheque/withdraw">
-    <mat-icon mat-list-icon>call_made</mat-icon>
-    {{translation.withdraw[lang]}}
-  </mat-list-item>
-</mat-card>
+<h3>LCNEM Cheque</h3>
+<div fxLayout="raw" class="card-padding-right">
+  <div fxFlex="50">
+    <mat-card matRipple class="ripple-card" routerLink="/cheque/deposit">
+      <div class="card-text">
+        <mat-icon class="card-icon" color="accent">call_made</mat-icon>
+        <span>{{translation.deposit[lang]}}</span>
+      </div>
+    </mat-card>
+  </div>
+  <div fxFlex="50" class="card-padding-left">
+    <mat-card matRipple class="ripple-card" routerLink="/cheque/withdraw">
+      <div class="card-text">
+        <mat-icon class="card-icon" color="primary">call_received</mat-icon>
+        <span>{{translation.withdraw[lang]}}</span>
+      </div>
+    </mat-card>
+  </div>
+</div>
 <app-multisig></app-multisig>
 <app-history></app-history>
