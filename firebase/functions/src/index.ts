@@ -4,6 +4,7 @@ import * as admin from 'firebase-admin';
 import { _deposit } from './deposit';
 import { _withdraw } from './withdraw';
 import { _rate } from './rate';
+import { _chargePlan } from './charge-plan';
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -16,21 +17,26 @@ admin.initializeApp({
   databaseURL: "https://lcnem-wallet.firebaseio.com"
 })
 
-export const deposit: functions.HttpsFunction
+export const deposit: functions.HttpsFunction | null
   = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "deposit")
     ? _deposit
     : null
 
-export const withdraw: functions.HttpsFunction
+export const withdraw: functions.HttpsFunction | null
   = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "withdraw")
     ? _withdraw
     : null
 
-export const rate: functions.HttpsFunction
+export const rate: functions.HttpsFunction | null
   = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "rate")
     ? _rate
     : null
 
+export const chargePlan: functions.HttpsFunction | null
+  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "chargePlan")
+    ? _chargePlan
+    : null
+      
 /*
 const account = Account.createWithPrivateKey(functions.config().nem.private_key);
     const signed = account.signTransaction(TransferTransaction.create(
