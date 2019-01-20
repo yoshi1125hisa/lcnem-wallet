@@ -68,6 +68,8 @@ import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-fou
 import { RouterService } from './services/router/router.service';
 import { PlanComponent } from './pages/account/settings/plan/plan.component';
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
+import { ContributionsComponent } from './pages/home/contributions/contributions.component';
+import { ContributionComponent } from './pages/home/contributions/contribution/contribution.component';
 
 @NgModule({
   declarations: [
@@ -98,7 +100,9 @@ import { LoadingDialogComponent } from './components/loading-dialog/loading-dial
     AssetsListComponent,
     PageNotFoundComponent,
     PlanComponent,
-    LoadingDialogComponent
+    LoadingDialogComponent,
+    ContributionsComponent,
+    ContributionComponent
   ],
   imports: [
     BrowserModule,

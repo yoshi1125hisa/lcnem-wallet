@@ -38,6 +38,9 @@
         </mat-tab>
         <mat-tab label="Cosmos Hub" [disabled]="true">
         </mat-tab>
+        <mat-tab label="{{translation.contribution[lang]}}">
+          <app-contributions></app-contributions>
+        </mat-tab>
       </mat-tab-group>
     </div>
     <button mat-fab color="accent" class="floating-action-button" (click)="drawer.toggle()">
