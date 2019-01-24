@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit, OnChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges } from '@angular/core';
 
 import {
   Address,
@@ -8,7 +8,6 @@ import {
   MultisigTransaction,
   PlainMessage,
   Asset,
-  XEM,
   AssetId,
   Password,
   SimpleWallet,
@@ -16,7 +15,6 @@ import {
   PublicAccount,
   Message
 } from 'nem-library';
-import { Observable, of, forkJoin } from 'rxjs';
 import { map, mergeMap, merge } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import { LanguageService } from '../../../../../services/language/language.service';

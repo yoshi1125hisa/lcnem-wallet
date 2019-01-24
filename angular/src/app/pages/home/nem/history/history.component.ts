@@ -4,7 +4,7 @@ import { combineLatest } from 'rxjs';
 import { first, map, filter } from 'rxjs/operators';
 import { LanguageService } from '../../../../services/language/language.service';
 import { WalletService } from '../../../../services/wallet/wallet.service';
-import { HistoryService } from '../../../../services/nem/history/history.service';
+import { HistoryService } from '../../../../services/dlt/nem/history/history.service';
 
 @Component({
   selector: 'app-history',

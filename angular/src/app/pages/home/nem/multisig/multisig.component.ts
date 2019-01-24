@@ -3,7 +3,7 @@ import { Observable, forkJoin, combineLatest } from 'rxjs';
 import { map, first, filter } from 'rxjs/operators';
 import { Address, Wallet } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
-import { MultisigService } from '../../../../services/nem/multisig/multisig.service';
+import { MultisigService } from '../../../../services/dlt/nem/multisig/multisig.service';
 import { WalletService } from '../../../../services/wallet/wallet.service';
 
 @Component({

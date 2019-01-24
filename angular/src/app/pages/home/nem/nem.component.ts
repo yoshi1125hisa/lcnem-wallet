@@ -23,11 +23,13 @@ export class NemComponent implements OnInit {
   public qrUrl$ = this.wallet.state$.pipe(
     filter(state => state.currentWalletId !== undefined),
     map(state => state.entities[state.currentWalletId!]),
-    map(currentWallet => {
-      const invoice = new Invoice();
-      invoice.data.addr = currentWallet.nem;
-      return "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
-    })
+    map(
+      (currentWallet) => {
+        const invoice = new Invoice();
+        invoice.data.addr = currentWallet.nem;
+        return "https://chart.apis.google.com/chart?chs=300x300&cht=qr&chl=" + encodeURI(invoice.stringify());
+      }
+    )
   )
 
   constructor(
@@ -47,7 +49,7 @@ export class NemComponent implements OnInit {
   public prettifyAddress(address: string) {
     return address.match(/.{1,6}/g)!.join("-")
   }
-  
+
   public translation = {
     transfer: {
       en: "Transfer",

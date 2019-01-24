@@ -3,7 +3,7 @@ import { merge, combineLatest } from 'rxjs';
 import { map, first, filter } from 'rxjs/operators';
 import { Asset, Address } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
-import { BalanceService } from '../../../../services/nem/balance/balance.service';
+import { BalanceService } from '../../../../services/dlt/nem/balance/balance.service';
 import { WalletService } from '../../../../services/wallet/wallet.service';
 import { RateService } from '../../../../services/rate/rate.service';
 
