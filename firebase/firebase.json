@@ -27,6 +27,14 @@
         "function": "rate"
       },
       {
+        "source": "/api/charge-plan",
+        "function": "chargePlan"
+      },
+      {
+        "source": "/api/faucet",
+        "function": "faucet"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

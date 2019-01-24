@@ -31,7 +31,7 @@ export const _deposit = functions.https.onRequest(
         () => {
           res.status(200).send()
         }
-      );
+      )
     } catch (e) {
       console.error(e)
       res.status(400).send(e.message)

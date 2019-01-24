@@ -51,10 +51,6 @@ export class HomeComponent implements OnInit {
       en: "Withdraw",
       ja: "出金"
     } as any,
-    contribution: {
-      en: "Mutual contribution",
-      ja: "相互貢献"
-    } as any,
     contacts: {
       en: "Contact list",
       ja: "コンタクトリスト"

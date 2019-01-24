@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NemAddressInputComponent } from './nem-address-input.component';
+import { AddressInputComponent } from './address-input.component';
 
-describe('NemAddressInputComponent', () => {
-  let component: NemAddressInputComponent;
-  let fixture: ComponentFixture<NemAddressInputComponent>;
+describe('AddressInputComponent', () => {
+  let component: AddressInputComponent;
+  let fixture: ComponentFixture<AddressInputComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NemAddressInputComponent ]
+      declarations: [ AddressInputComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NemAddressInputComponent);
+    fixture = TestBed.createComponent(AddressInputComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

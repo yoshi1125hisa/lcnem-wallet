@@ -17,16 +17,16 @@ import { Tuple } from '../../classes/tuple';
     {
       provide: NG_VALUE_ACCESSOR,
       multi: true,
-      useExisting: forwardRef(() => NemAddressInputComponent)
+      useExisting: forwardRef(() => AddressInputComponent)
     },
     {
       provide: NG_VALIDATORS,
       multi: true,
-      useExisting: forwardRef(() => NemAddressInputComponent),
+      useExisting: forwardRef(() => AddressInputComponent),
     }
   ],
 })
-export class NemAddressInputComponent implements OnInit, OnDestroy, ControlValueAccessor, Validator {
+export class AddressInputComponent implements OnInit, OnDestroy, ControlValueAccessor, Validator {
   public get lang() { return this.language.state.twoLetter; }
 
   @Input() placeholder?: string;

@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnChanges } from '@angular/core';
-import { Asset, AssetDefinition, XEM } from 'nem-library';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Asset} from 'nem-library';
 import { Observable, from, combineLatest, of } from 'rxjs';
-import { map, mergeMap, filter, toArray, take, first } from 'rxjs/operators';
+import { map, mergeMap, filter, toArray, first } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
-import { AssetDefinitionService } from '../../services/nem/asset-definition/asset-definition.service';
+import { AssetDefinitionService } from '../../services/dlt//asset-definition/asset-definition.service';
 import { RateService } from '../../services/rate/rate.service';
 import { Tuple } from '../../classes/tuple';
 

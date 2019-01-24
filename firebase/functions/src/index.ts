@@ -5,6 +5,7 @@ import { _deposit } from './deposit';
 import { _withdraw } from './withdraw';
 import { _rate } from './rate';
 import { _chargePlan } from './charge-plan';
+import { _faucet } from './faucet';
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -37,13 +38,8 @@ export const chargePlan: functions.HttpsFunction | null
     ? _chargePlan
     : null
       
-/*
-const account = Account.createWithPrivateKey(functions.config().nem.private_key);
-    const signed = account.signTransaction(TransferTransaction.create(
-      TimeWindow.createWithDeadline(),
-      new Address((doc.data() as Wallet).nem),
-      new XEM(1),
-      PlainMessage.create("Thanks! LCNEM")
-    ));
-    await new TransactionHttp().announceTransaction(signed).toPromise();
-*/
+export const faucet: functions.HttpsFunction | null
+  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "faucet")
+    ? _faucet
+    : null
+      
