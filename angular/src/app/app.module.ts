@@ -56,7 +56,7 @@ import { BalanceComponent } from './pages/home/nem/balance/balance.component';
 import { MultisigComponent } from './pages/home/nem/multisig/multisig.component';
 import { ContactEditDialogComponent } from './pages/contacts/contact-edit-dialog/contact-edit-dialog.component';
 import { LanguageMenuComponent } from './components/language-menu/language-menu.component';
-import { NemAddressInputComponent } from './components/nem-address-input/nem-address-input.component';
+import { AddressInputComponent } from './components/address-input/address-input.component';
 import { WalletsComponent } from './pages/account/wallets/wallets.component';
 import { ContactComponent } from './pages/contacts/contact/contact.component';
 import { WalletComponent } from './pages/account/wallets/wallet/wallet.component';
@@ -68,6 +68,9 @@ import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-fou
 import { RouterService } from './services/router/router.service';
 import { PlanComponent } from './pages/account/settings/plan/plan.component';
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
+import { BitcoinComponent } from './pages/home/bitcoin/bitcoin.component';
+import { NemCosmosComponent } from './pages/home/nem-cosmos/nem-cosmos.component';
+import { FaucetComponent } from './pages/home/nem/faucet/faucet.component';
 
 @NgModule({
   declarations: [
@@ -87,7 +90,7 @@ import { LoadingDialogComponent } from './components/loading-dialog/loading-dial
     BalanceComponent,
     MultisigComponent,
     LanguageMenuComponent,
-    NemAddressInputComponent,
+    AddressInputComponent,
     WalletsComponent,
     ContactComponent,
     ContactEditDialogComponent,
@@ -98,7 +101,10 @@ import { LoadingDialogComponent } from './components/loading-dialog/loading-dial
     AssetsListComponent,
     PageNotFoundComponent,
     PlanComponent,
-    LoadingDialogComponent
+    LoadingDialogComponent,
+    BitcoinComponent,
+    NemCosmosComponent,
+    FaucetComponent
   ],
   imports: [
     BrowserModule,

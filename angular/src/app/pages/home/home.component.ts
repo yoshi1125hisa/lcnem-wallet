@@ -59,5 +59,5 @@ export class HomeComponent implements OnInit {
       en: "Setting",
       ja: "設定"
     } as any
-  };
+  }
 }
