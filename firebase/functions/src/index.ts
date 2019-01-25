@@ -4,7 +4,7 @@ import * as admin from 'firebase-admin';
 import { _depositRequest } from './deposit-request';
 import { _depositByLightningBtc } from './deposit-by-lightning-btc';
 import { _withdrawRequest } from './withdraw-request';
-import { _chargePlan } from './charge-plan';
+import { _changePlan } from './change-plan';
 import { _faucet } from './faucet';
 import { _rate } from './rate';
 
@@ -36,9 +36,9 @@ export const withdrawRequest: functions.HttpsFunction | null
     ? _withdrawRequest
     : null
 
-export const chargePlan: functions.HttpsFunction | null
-  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "chargePlan")
-    ? _chargePlan
+export const changePlan: functions.HttpsFunction | null
+  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "changePlan")
+    ? _changePlan
     : null
       
 export const faucet: functions.HttpsFunction | null

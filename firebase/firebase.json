@@ -27,8 +27,8 @@
         "function": "withdraw"
       },
       {
-        "source": "/api/charge-plan",
-        "function": "chargePlan"
+        "source": "/api/change-plan",
+        "function": "changePlan"
       },
       {
         "source": "/api/faucet",

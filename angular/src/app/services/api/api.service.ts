@@ -20,7 +20,7 @@ export class ApiService {
       lang: string
     }
   ) {
-    return this.http.post("/api/deposit", data);
+    return this.http.post("/api/deposit/request", data);
   }
 
   public withdraw(
@@ -33,10 +33,24 @@ export class ApiService {
       lang: string
     }
   ) {
-    return this.http.post("/api/withdraw", data);
+    return this.http.post("/api/withdraw/request", data);
   }
 
-  public chargePlan(
+  public deletePlan(
+    data: {
+      userId: string
+    }
+  ) {
+    return this.http.post(
+      "/api/change-plan",
+      {
+        ...data,
+        plan: "Free"
+      }
+    )
+  }
+
+  public changePlan(
     data: {
       userId: string
       plan: string
@@ -45,7 +59,7 @@ export class ApiService {
       signature: string
     }
   ) {
-    return this.http.post("api/chargePlan", data)
+    return this.http.post("/api/change-plan", data)
   }
 
   public faucet(
