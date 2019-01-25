@@ -29,7 +29,8 @@ export class PlanComponent implements OnInit {
   )
 
   public forms = {
-    plan: 0
+    plan: 0,
+    months: 6
   }
 
   public current = {
@@ -73,6 +74,10 @@ export class PlanComponent implements OnInit {
     ).toPromise()
 
     this.current.plan = this.forms.plan
+  }
+
+  public async chargePlan() {
+
   }
 
   public plans = [
@@ -150,12 +155,16 @@ export class PlanComponent implements OnInit {
       ja: "プラン"
     } as any,
     changePlan: {
-      en: "",
+      en: "Change plan",
       ja: "プラン変更"
     } as any,
     availableFunctions: {
       en: "Available functions",
       ja: "利用可能な機能"
+    } as any,
+    months: {
+      en: "Months",
+      ja: "利用月間"
     } as any
   }
 }

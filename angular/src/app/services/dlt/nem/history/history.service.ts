@@ -3,7 +3,7 @@ import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Transaction, Address, AccountHttp } from 'nem-library';
 import { RxEffectiveStateStore } from 'rx-state-store-js';
-import { nodes } from '../../../classes/nodes';
+import { nodes } from '../../../../classes/nodes';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +30,7 @@ export class HistoryService extends RxEffectiveStateStore<State> {
       accountHttp.unconfirmedTransactions(address),
       accountHttp.allTransactions(address)
     ).pipe(
-      map(fork => fork[0].concat(fork[1])),
+      map(([unconfirmed, all]) => unconfirmed.concat(all)),
     ).subscribe(
       (transactions) => {
         const state: State = {
