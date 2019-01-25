@@ -15,16 +15,16 @@
     ],
     "rewrites": [
       {
-        "source": "/api/deposit",
+        "source": "/api/deposit/request",
         "function": "deposit"
       },
       {
-        "source": "/api/withdraw",
-        "function": "withdraw"
+        "source": "/api/deposit/by-lightning-btc",
+        "function": "depositByLightningBtc"
       },
       {
-        "source": "/api/rate",
-        "function": "rate"
+        "source": "/api/withdraw/request",
+        "function": "withdraw"
       },
       {
         "source": "/api/charge-plan",
@@ -33,6 +33,10 @@
       {
         "source": "/api/faucet",
         "function": "faucet"
+      },
+      {
+        "source": "/api/rate",
+        "function": "rate"
       },
       {
         "source": "**",

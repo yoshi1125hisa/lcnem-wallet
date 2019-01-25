@@ -62,7 +62,7 @@ import { ContactComponent } from './pages/contacts/contact/contact.component';
 import { WalletComponent } from './pages/account/wallets/wallet/wallet.component';
 import { WalletCreateDialogComponent } from './pages/account/wallets/wallet-create-dialog/wallet-create-dialog.component';
 import { TransferComponent } from './pages/nem/transfer/transfer.component';
-import { TransferDialogComponent } from './pages/nem/transfer/transfer-dialog/transfer-dialog.component';
+import { TransferDialogComponent } from './components/transfer-dialog/transfer-dialog.component';
 import { AssetsListComponent } from './components/assets-list/assets-list.component';
 import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
 import { RouterService } from './services/router/router.service';

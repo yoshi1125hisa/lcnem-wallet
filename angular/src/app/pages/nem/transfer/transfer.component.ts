@@ -19,15 +19,15 @@ import {
 import { Observable, of, from, combineLatest, BehaviorSubject } from 'rxjs';
 import { mergeMap, first, map, filter, catchError } from 'rxjs/operators';
 import { WalletService } from '../../../services/wallet/wallet.service';
-import { BalanceService } from '../../../services/nem/balance/balance.service';
+import { BalanceService } from '../../../services/dlt/nem/balance/balance.service';
 import { LanguageService } from '../../../services/language/language.service';
 import { Invoice } from '../../../classes/invoice';
 import { RouterService } from '../../../services/router/router.service';
 import { ShareService } from '../../../services/api/share/share.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { nodes } from '../../../classes/nodes';
-import { AssetDefinitionService } from '../../../services/nem/asset-definition/asset-definition.service';
-import { TransferDialogComponent } from './transfer-dialog/transfer-dialog.component';
+import { AssetDefinitionService } from '../../../services/dlt/asset-definition/asset-definition.service';
+import { TransferDialogComponent } from '../../../components/transfer-dialog/transfer-dialog.component';
 import { Tuple } from '../../../classes/tuple';
 import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
 

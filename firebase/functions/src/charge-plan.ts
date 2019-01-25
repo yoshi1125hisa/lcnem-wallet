@@ -5,7 +5,7 @@ import {
   SignedTransaction
 } from 'nem-library';
 
-import { payment } from './payment';
+import { receiveLcnemCheque } from './payment/lcnem-cheque';
 import { User } from './models/user';
 
 const price = {
@@ -27,34 +27,41 @@ export const _chargePlan = functions.https.onRequest(
       if (!userId || !Number.isInteger(months) || !signed.data || !signed.signature) {
         throw Error()
       }
-      switch(plan) {
+      switch (plan) {
         case "Standard":
         case "Premium": {
-          break;
+          break
         }
         default: {
           throw Error()
         }
       }
 
-      const amount = await payment(signed, "JPY")
+      const amount = await receiveLcnemCheque(signed, "JPY")
       if (amount < months * price[plan]) {
         throw Error()
       }
 
       const doc = await admin.firestore().collection("users").doc(userId).get()
-      if(!doc.exists) {
+      if (!doc.exists) {
         throw Error()
       }
       const user = doc.data() as User
 
-      const now  = new Date()
-      let expire = {
-        expireYear: now.getUTCFullYear(),
-        expireMonth: now.getUTCMonth(),
-        expireDay: now.getUTCDay()
-      }
-      //未完。時間保持の仕方をやっぱり考えたい
+      const now = new Date()
+      const expire = user.plan ? new Date(user.plan.expire) : now
+      const before = expire > now ? expire : now
+      before.setMonth(before.getMonth() + months)
+
+      await doc.ref.set(
+        {
+          ...user,
+          plan: {
+            type: plan,
+            expire: before.toISOString()
+          }
+        } as User
+      )
 
       res.status(200).send()
     } catch (e) {

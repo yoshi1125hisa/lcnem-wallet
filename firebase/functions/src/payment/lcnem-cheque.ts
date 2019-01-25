@@ -5,7 +5,7 @@ import {
   TransferTransaction
 } from "nem-library";
 
-export async function payment(signedTransaction: SignedTransaction, currency: "JPY") {
+export async function receiveLcnemCheque(signedTransaction: SignedTransaction, currency: "JPY") {
   const transactionHttp = new TransactionHttp()
   const result = await transactionHttp.announceTransaction(signedTransaction).toPromise()
 

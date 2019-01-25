@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 
 import * as request from 'request';
 
-export const _withdraw = functions.https.onRequest(
+export const _depositRequest = functions.https.onRequest(
   (req, res) => {
     try {
       const email = req.body.email as string
@@ -13,11 +13,11 @@ export const _withdraw = functions.https.onRequest(
       const lang = req.body.lang as string
 
       if (!email || !nem || !currency || !amount || !method || !lang) {
-        throw Error();
+        throw Error()
       }
 
       request.post(
-        functions.config().gas.withdraw,
+        functions.config().gas.deposit,
         {
           form: {
             email: email,
