@@ -11,10 +11,10 @@ service cloud.firestore {
       match /wallets/{wallet} {
         allow read, write: if request.auth.uid == user;
       }
-    }
 
-    match /custodies/lightning/transactions/{transaction} {
-      //not allow
+      match /custodies/lightning/transactions/{transaction} {
+        allow read: if request.auth.uid == user;
+      }
     }
 
     //match /users/{document=**} {
