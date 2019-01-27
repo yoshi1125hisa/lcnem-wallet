@@ -15,16 +15,16 @@
     ],
     "rewrites": [
       {
-        "source": "/api/cheque/order",
-        "function": "chequeOrder"
+        "source": "/api/cheque/order-cheque",
+        "function": "orderCheque"
       },
       {
-        "source": "/api/cheque/order/bitcoin-lightning",
-        "function": "chequeOrderLightning"
+        "source": "/api/cheque/order-lightning-invoice",
+        "function": "orderLightningInvoice"
       },
       {
-        "source": "/api/cheque/cash-order",
-        "function": "chequeCashOrder"
+        "source": "/api/cheque/order-cash",
+        "function": "orderCash"
       },
       {
         "source": "/api/change-plan",
@@ -37,6 +37,14 @@
       {
         "source": "/api/rate",
         "function": "rate"
+      },
+      {
+        "source": "/api/integration/refresh-access-token",
+        "function": "refreshAccessToken"
+      },
+      {
+        "source": "/api/integration/sign",
+        "function": "sign"
       },
       {
         "source": "**",

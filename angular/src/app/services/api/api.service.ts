@@ -20,7 +20,7 @@ export class ApiService {
       lang: string
     }
   ) {
-    return this.http.post("/api/cheque/order", data);
+    return this.http.post("/api/cheque/order-cheque", data);
   }
 
   public withdraw(
@@ -33,7 +33,7 @@ export class ApiService {
       lang: string
     }
   ) {
-    return this.http.post("/api/cheque/cash-order", data);
+    return this.http.post("/api/cheque/order-cash", data);
   }
 
   public deletePlan(

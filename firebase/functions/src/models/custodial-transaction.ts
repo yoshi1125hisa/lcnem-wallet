@@ -1,4 +1,5 @@
 export interface CustodialTransaction {
-  recipientId: string | "admin"
+  recipient: string
   amount: number
+  message: string
 }

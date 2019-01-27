@@ -1,13 +1,14 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
-import { _depositRequest } from './cheque/order';
-import { _depositByLightningBtc } from './cheque/order-lightning';
-import { _withdrawRequest } from './cheque/cash-order';
+import { _orderCheque } from './cheque/order-cheque';
+import { _orderLightningInvoice } from './cheque/order-lightning-invoice';
+import { _orderCash } from './cheque/order-cash';
 import { _changePlan } from './change-plan';
 import { _faucet } from './faucet';
 import { _rate } from './rate';
-import { _refreshAccessToken } from './refresh-access-token';
+import { _refreshAccessToken } from './integration/refresh-access-token';
+import { _sign } from './integration/sign';
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -20,14 +21,19 @@ admin.initializeApp({
   databaseURL: "https://lcnem-wallet.firebaseio.com"
 })
 
-export const depositRequest: functions.HttpsFunction | null
-  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "depositRequest")
-    ? _depositRequest
+export const orderCheque: functions.HttpsFunction | null
+  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "orderCheque")
+    ? _orderCheque
     : null
-      
-export const withdrawRequest: functions.HttpsFunction | null
-  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "withdrawRequest")
-    ? _withdrawRequest
+
+export const orderLightningInvoice: functions.HttpsFunction | null
+  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "orderLightningInvoice")
+    ? _orderLightningInvoice
+    : null
+    
+export const orderCash: functions.HttpsFunction | null
+  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "orderCash")
+    ? _orderCash
     : null
 
 export const changePlan: functions.HttpsFunction | null
@@ -48,4 +54,9 @@ export const rate: functions.HttpsFunction | null
 export const refreshAccessToken: functions.HttpsFunction | null
   = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "refreshAccessToken")
     ? _refreshAccessToken
+    : null
+
+export const sign: functions.HttpsFunction | null
+  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "sign")
+    ? _sign
     : null

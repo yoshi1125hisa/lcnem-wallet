@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 
-export const _depositByLightningBtc = functions.https.onRequest(
+export const _orderLightningInvoice = functions.https.onRequest(
   (req, res) => {
     try {
       const nem = req.body.nem as string
