@@ -17,8 +17,8 @@
         <form #form="ngForm" (ngSubmit)="transfer()">
           <h3>{{translation.recipient[lang]}}</h3>
           <mat-card>
-            <app-nem-address-input fxFill [(ngModel)]="forms.recipient" name="recipient" placeholder="{{translation.recipient[lang]}}"
-              required></app-nem-address-input>
+            <app-address-input fxFill [(ngModel)]="forms.recipient" name="recipient" placeholder="{{translation.recipient[lang]}}"
+              required></app-address-input>
           </mat-card>
           <br />
           <h3>{{translation.message[lang]}}</h3>

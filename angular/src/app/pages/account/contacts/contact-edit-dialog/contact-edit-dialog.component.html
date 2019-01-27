@@ -18,8 +18,8 @@
             <input matInput [(ngModel)]="nem.name" name="nem{{i}}-name" placeholder="{{translation.name[lang]}}"
               required />
           </mat-form-field>
-          <app-nem-address-input class="fill-remaining-space" [(ngModel)]="nem.address" name="nem{{i}}-address"
-            placeholder="{{translation.address[lang]}}" required></app-nem-address-input>
+          <app-address-input class="fill-remaining-space" [(ngModel)]="nem.address" name="nem{{i}}-address"
+            placeholder="{{translation.address[lang]}}" required></app-address-input>
           <button mat-icon-button color="warn" (click)="removeNem(i)">
             <mat-icon>close</mat-icon>
           </button>

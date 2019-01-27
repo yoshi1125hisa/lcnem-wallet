@@ -10,9 +10,9 @@ import { AuthService } from '../../services/auth/auth.service';
 import { Tuple } from '../../classes/tuple';
 
 @Component({
-  selector: 'app-nem-address-input',
-  templateUrl: './nem-address-input.component.html',
-  styleUrls: ['./nem-address-input.component.css'],
+  selector: 'app-address-input',
+  templateUrl: './address-input.component.html',
+  styleUrls: ['./address-input.component.css'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
