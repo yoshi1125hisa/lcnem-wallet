@@ -5,7 +5,7 @@ import { RouterService } from '../../../services/router/router.service';
 import { LanguageService } from '../../../services/language/language.service';
 import { ApiService } from '../../../services/api/api.service';
 import { AuthService } from '../../../services/auth/auth.service';
-import { WalletService } from '../../../services/wallet/wallet.service';
+import { WalletService } from '../../../services/user/wallet/wallet.service';
 import { first } from 'rxjs/operators';
 import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
 

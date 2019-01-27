@@ -7,7 +7,7 @@ import { map, mergeMap, toArray, filter, first } from 'rxjs/operators';
 import { Wallet } from '../../../../../../firebase/functions/src/models/wallet';
 import { LanguageService } from '../../../services/language/language.service';
 import { RouterService } from '../../../services/router/router.service';
-import { WalletService } from '../../../services/wallet/wallet.service';
+import { WalletService } from '../../../services/user/wallet/wallet.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { UserService } from '../../../services/user/user.service';
 import { WalletCreateDialogComponent } from './wallet-create-dialog/wallet-create-dialog.component';

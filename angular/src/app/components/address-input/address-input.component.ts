@@ -5,7 +5,7 @@ import { debounceTime, filter, mergeMap, map, catchError, toArray, first, merge,
 import { NamespaceHttp, AccountHttp, Address } from 'nem-library';
 import { LanguageService } from '../../services/language/language.service';
 import { nodes } from '../../classes/nodes';
-import { ContactService } from '../../services/contact/contact.service';
+import { ContactService } from '../../services/user/contact/contact.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { Tuple } from '../../classes/tuple';
 

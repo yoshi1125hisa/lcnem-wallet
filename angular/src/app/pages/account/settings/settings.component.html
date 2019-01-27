@@ -9,15 +9,11 @@
       <span class="fill-remaining-space"></span>
     </mat-toolbar>
     <div class="mat-typography body-container">
+      <app-plan></app-plan>
+      <app-settings-wallet></app-settings-wallet>
       <mat-nav-list>
         <h3 matSubheader>{{translation.account[lang]}}</h3>
         <mat-card>
-          <mat-divider></mat-divider>
-          <mat-list-item routerLink="/account/settings/plan">
-            <span>{{translation.plan[lang]}}</span>
-            <span class="fill-remaining-space"></span>
-            <mat-icon>arrow_forward</mat-icon>
-          </mat-list-item>
           <mat-divider></mat-divider>
           <mat-list-item (click)="logout()">
             <span class="logout">{{translation.logout[lang]}}</span>

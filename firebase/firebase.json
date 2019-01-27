@@ -15,16 +15,16 @@
     ],
     "rewrites": [
       {
-        "source": "/api/deposit/request",
-        "function": "deposit"
+        "source": "/api/cheque/order",
+        "function": "chequeOrder"
       },
       {
-        "source": "/api/deposit/by-lightning-btc",
-        "function": "depositByLightningBtc"
+        "source": "/api/cheque/order/bitcoin-lightning",
+        "function": "chequeOrderLightning"
       },
       {
-        "source": "/api/withdraw/request",
-        "function": "withdraw"
+        "source": "/api/cheque/cash-order",
+        "function": "chequeCashOrder"
       },
       {
         "source": "/api/change-plan",

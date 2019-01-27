@@ -40,37 +40,59 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { SettingsComponent } from './pages/account/settings/settings.component';
-import { ContactsComponent } from './pages/contacts/contacts.component';
-import { LoginComponent } from './pages/account/login/login.component';
-import { TermsComponent } from './pages/terms/terms.component';
-import { QrScanComponent } from './pages/nem/qr-scan/qr-scan.component';
-import { PrivacyPolicyComponent } from './pages/terms/privacy-policy/privacy-policy.component';
-import { DepositComponent } from './pages/cheque/deposit/deposit.component';
-import { WithdrawComponent } from './pages/cheque/withdraw/withdraw.component';
+//pages
+import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
+//  home
 import { HomeComponent } from './pages/home/home.component';
+//    nem
 import { NemComponent } from './pages/home/nem/nem.component';
-import { HistoryComponent } from './pages/home/nem/history/history.component';
-import { TransactionComponent } from './pages/home/nem/history/transaction/transaction.component';
-import { BalanceComponent } from './pages/home/nem/balance/balance.component';
-import { MultisigComponent } from './pages/home/nem/multisig/multisig.component';
-import { ContactEditDialogComponent } from './pages/contacts/contact-edit-dialog/contact-edit-dialog.component';
-import { LanguageMenuComponent } from './components/language-menu/language-menu.component';
-import { AddressInputComponent } from './components/address-input/address-input.component';
+import { HistoryComponent as NemHistoryComponent } from './pages/home/nem/history/history.component';
+import { TransactionComponent as NemTransactionComponent } from './pages/home/nem/history/transaction/transaction.component';
+import { BalanceComponent as NemBalanceComponent } from './pages/home/nem/balance/balance.component';
+import { MultisigComponent as NemMultisigComponent } from './pages/home/nem/multisig/multisig.component';
+import { FaucetComponent } from './pages/home/nem/faucet/faucet.component';
+//    bitcoin-lightning
+import { BitcoinLightningComponent } from './pages/home/bitcoin-lightning/bitcoin-lightning.component';
+import { BalanceComponent as BitcoinLightningBalanceComponent } from './pages/home/bitcoin-lightning/balance/balance.component';
+import { HistoryComponent as BitcoinLightningHistoryComponent } from './pages/home/bitcoin-lightning/history/history.component';
+//    nem-cosmos
+import { NemCosmosComponent } from './pages/home/nem-cosmos/nem-cosmos.component';
+//  account
+import { LoginComponent } from './pages/account/login/login.component';
+//    settings
+import { SettingsComponent } from './pages/account/settings/settings.component';
+import { PlanComponent } from './pages/account/settings/plan/plan.component';
+import { ChangeComponent as PlanChangeComponent } from './pages/account/settings/plan/change/change.component';
+//      wallet
+import { IntegrationsComponent } from './pages/account/settings/wallet/integrations/integrations.component';
+import { WalletComponent as SettingsWalletComponent } from './pages/account/settings/wallet/wallet.component';
+//    contacts
+import { ContactsComponent } from './pages/account/contacts/contacts.component';
+import { ContactComponent } from './pages/account/contacts/contact/contact.component';
+import { ContactEditDialogComponent } from './pages/account/contacts/contact-edit-dialog/contact-edit-dialog.component';
+//    wallets
 import { WalletsComponent } from './pages/account/wallets/wallets.component';
-import { ContactComponent } from './pages/contacts/contact/contact.component';
 import { WalletComponent } from './pages/account/wallets/wallet/wallet.component';
 import { WalletCreateDialogComponent } from './pages/account/wallets/wallet-create-dialog/wallet-create-dialog.component';
+//  nem
 import { TransferComponent } from './pages/nem/transfer/transfer.component';
+import { QrScanComponent } from './pages/nem/qr-scan/qr-scan.component';
+//  cheque
+import { DepositComponent } from './pages/cheque/deposit/deposit.component';
+import { WithdrawComponent } from './pages/cheque/withdraw/withdraw.component';
+//  terms
+import { TermsComponent } from './pages/terms/terms.component';
+import { PrivacyPolicyComponent } from './pages/terms/privacy-policy/privacy-policy.component';
+//components
 import { TransferDialogComponent } from './components/transfer-dialog/transfer-dialog.component';
 import { AssetsListComponent } from './components/assets-list/assets-list.component';
-import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
-import { RouterService } from './services/router/router.service';
-import { PlanComponent } from './pages/account/settings/plan/plan.component';
+import { LanguageMenuComponent } from './components/language-menu/language-menu.component';
+import { AddressInputComponent } from './components/address-input/address-input.component';
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
-import { BitcoinComponent } from './pages/home/bitcoin/bitcoin.component';
-import { NemCosmosComponent } from './pages/home/nem-cosmos/nem-cosmos.component';
-import { FaucetComponent } from './pages/home/nem/faucet/faucet.component';
+//services
+import { RouterService } from './services/router/router.service';
+import { ApplicationsComponent } from './pages/account/applications/applications.component';
+import { ApplicationDialogComponent } from './pages/account/applications/application-dialog/application-dialog.component';
 
 @NgModule({
   declarations: [
@@ -85,10 +107,10 @@ import { FaucetComponent } from './pages/home/nem/faucet/faucet.component';
     WithdrawComponent,
     HomeComponent,
     NemComponent,
-    HistoryComponent,
-    TransactionComponent,
-    BalanceComponent,
-    MultisigComponent,
+    NemHistoryComponent,
+    NemTransactionComponent,
+    NemBalanceComponent,
+    NemMultisigComponent,
     LanguageMenuComponent,
     AddressInputComponent,
     WalletsComponent,
@@ -102,9 +124,16 @@ import { FaucetComponent } from './pages/home/nem/faucet/faucet.component';
     PageNotFoundComponent,
     PlanComponent,
     LoadingDialogComponent,
-    BitcoinComponent,
+    BitcoinLightningBalanceComponent,
     NemCosmosComponent,
-    FaucetComponent
+    FaucetComponent,
+    IntegrationsComponent,
+    PlanChangeComponent,
+    SettingsWalletComponent,
+    BitcoinLightningComponent,
+    BitcoinLightningHistoryComponent,
+    ApplicationsComponent,
+    ApplicationDialogComponent
   ],
   imports: [
     BrowserModule,

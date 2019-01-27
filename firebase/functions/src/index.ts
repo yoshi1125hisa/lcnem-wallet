@@ -1,12 +1,13 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
-import { _depositRequest } from './deposit-request';
-import { _depositByLightningBtc } from './deposit-by-lightning-btc';
-import { _withdrawRequest } from './withdraw-request';
+import { _depositRequest } from './cheque/order';
+import { _depositByLightningBtc } from './cheque/order-lightning';
+import { _withdrawRequest } from './cheque/cash-order';
 import { _changePlan } from './change-plan';
 import { _faucet } from './faucet';
 import { _rate } from './rate';
+import { _refreshAccessToken } from './refresh-access-token';
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
@@ -23,13 +24,6 @@ export const depositRequest: functions.HttpsFunction | null
   = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "depositRequest")
     ? _depositRequest
     : null
-
-
-export const depositByLightningBtc: functions.HttpsFunction | null
-  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "depositRequest")
-    ? _depositByLightningBtc
-    : null
-
       
 export const withdrawRequest: functions.HttpsFunction | null
   = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "withdrawRequest")
@@ -49,4 +43,9 @@ export const faucet: functions.HttpsFunction | null
 export const rate: functions.HttpsFunction | null
   = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "rate")
     ? _rate
+    : null
+
+export const refreshAccessToken: functions.HttpsFunction | null
+  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "refreshAccessToken")
+    ? _refreshAccessToken
     : null

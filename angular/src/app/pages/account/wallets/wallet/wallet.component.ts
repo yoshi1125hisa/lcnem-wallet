@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { Wallet } from '../../../../../../../firebase/functions/src/models/wallet';
 import { LanguageService } from '../../../../services/language/language.service';
-import { WalletService } from '../../../../services/wallet/wallet.service';
+import { WalletService } from '../../../../services/user/wallet/wallet.service';
 
 @Component({
   selector: 'app-wallet',

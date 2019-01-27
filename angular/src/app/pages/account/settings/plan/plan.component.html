@@ -1,49 +1,12 @@
-<mat-drawer-container>
-  <mat-drawer></mat-drawer>
-  <mat-drawer-content>
-    <mat-toolbar class="mat-elevation-z4 top-toolbar">
-      <button mat-icon-button (click)="back()">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      <span>{{translation.plan[lang]}}</span>
+<mat-nav-list>
+  <h3 matSubheader>{{translation.plan[lang]}}</h3>
+  <mat-card>
+    <mat-divider></mat-divider>
+    <mat-list-item routerLink="/account/settings/plan">
+      <span>{{translation.change[lang]}}</span>
       <span class="fill-remaining-space"></span>
-    </mat-toolbar>
-    <div class="mat-typography body-container">
-      <form #form="ngForm" (ngSubmit)="chargePlan()">
-        <mat-list>
-          <h3 matSubheader>{{translation.changePlan[lang]}}</h3>
-          <mat-card>
-            <mat-spinner [diameter]="60" *ngIf="loading$ | async; else loaded"></mat-spinner>
-            <ng-template #loaded>
-              <mat-radio-group class="radio-group" [(ngModel)]="forms.plan" name="plan">
-                <mat-divider></mat-divider>
-                <ng-container *ngFor="let plan of plans">
-                  <mat-list-item>
-                    <mat-radio-button name="plan" [value]="plan.value">{{plan.name}} ({{plan.price[lang]}})</mat-radio-button>
-                  </mat-list-item>
-                  <mat-divider></mat-divider>
-                </ng-container>
-              </mat-radio-group>
-              <div fxLayout="row">
-                <span class="fill-remaining-space"></span>
-                <mat-form-field fxFill>
-                    <mat-select placeholder="{{translation.months[lang]}}" [(ngModel)]="forms.months" name="months"
-                      required>
-                      <mat-option *ngFor="let i of [1, 2, 3, 4, 6, 12]" [value]="i">{{i}}</mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                <button mat-raised-button color="accent" [disabled]="form.invalid || forms.plan > forms.currentPlan">{{translation.changePlan[lang]}}</button>
-              </div>
-              <p>{{translation.availableFunctions[lang]}}</p>
-              <ul>
-                <li *ngFor="let function of plans[forms.plan].functions">
-                  {{function[lang]}}
-                </li>
-              </ul>
-            </ng-template>
-          </mat-card>
-        </mat-list>
-      </form>
-    </div>
-  </mat-drawer-content>
-</mat-drawer-container>
+      <mat-icon>arrow_forward</mat-icon>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-card>
+</mat-nav-list>

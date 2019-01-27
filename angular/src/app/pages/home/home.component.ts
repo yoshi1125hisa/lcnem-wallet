@@ -3,7 +3,7 @@ import { map, filter } from 'rxjs/operators';
 import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { LanguageService } from '../../services/language/language.service';
 import { AuthService } from '../../services/auth/auth.service';
-import { WalletService } from '../../services/wallet/wallet.service';
+import { WalletService } from '../../services/user/wallet/wallet.service';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 

@@ -10,16 +10,20 @@ service cloud.firestore {
 
       match /wallets/{wallet} {
         allow read, write: if request.auth.uid == user;
+
+        match /integrations/{integration} {
+          allow read, write: if request.auth.uid == user;
+        }
+      }
+
+      match /applications/{application} {
+        allow read, write: if request.auth.uid == user;
       }
 
       match /custodies/lightning/transactions/{transaction} {
         allow read: if request.auth.uid == user;
       }
     }
-
-    //match /users/{document=**} {
-    //  allow read, write: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == true
-    //}
 
     match /rates/rate {
       allow read;

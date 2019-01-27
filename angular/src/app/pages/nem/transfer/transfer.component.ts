@@ -11,7 +11,7 @@ import {
 } from 'nem-library';
 import { Observable, of, from, combineLatest } from 'rxjs';
 import { mergeMap, first, map, filter } from 'rxjs/operators';
-import { WalletService } from '../../../services/wallet/wallet.service';
+import { WalletService } from '../../../services/user/wallet/wallet.service';
 import { BalanceService } from '../../../services/dlt/nem/balance/balance.service';
 import { LanguageService } from '../../../services/language/language.service';
 import { Invoice } from '../../../classes/invoice';

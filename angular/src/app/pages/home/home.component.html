@@ -10,7 +10,7 @@
     </mat-toolbar>
     <div fxLayout="column">
       <mat-nav-list>
-        <mat-list-item routerLink="/contacts">
+        <mat-list-item routerLink="/account/contacts">
           <mat-icon mat-list-icon>contacts</mat-icon>
           {{translation.contacts[lang]}}
         </mat-list-item>
@@ -38,7 +38,8 @@
         </mat-tab>
         <mat-tab label="NEM Cosmos" [disabled]="true">
         </mat-tab>
-        <mat-tab label="Bitcoin" [disabled]="true">
+        <mat-tab label="Bitcoin Lightning" [disabled]="true">
+          <app-bitcoin-lightning></app-bitcoin-lightning>
         </mat-tab>
       </mat-tab-group>
     </div>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router, NavigationExtras, NavigationStart } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
-import { WalletService } from '../wallet/wallet.service';
+import { WalletService } from '../user/wallet/wallet.service';
 import { filter, first, map } from 'rxjs/operators';
 
 @Injectable({

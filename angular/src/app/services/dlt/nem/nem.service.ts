@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { WalletService } from '../../wallet/wallet.service';
+import { WalletService } from '../../user/wallet/wallet.service';
 import { BalanceService } from './balance/balance.service';
 import { AssetDefinitionService } from '../asset-definition/asset-definition.service';
 import { XEM, AssetTransferable, AssetId, AccountHttp, Address, PlainMessage, SimpleWallet, Password, EncryptedMessage } from 'nem-library';

@@ -5,7 +5,7 @@ import {
   SignedTransaction
 } from 'nem-library';
 
-import { receiveLcnemCheque } from './payment/lcnem-cheque';
+import { receiveLcnemCheque } from './routines/lcnem-cheque';
 import { User } from './models/user';
 
 export const _changePlan = functions.https.onRequest(

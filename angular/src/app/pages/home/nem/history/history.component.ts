@@ -3,7 +3,7 @@ import { Address } from 'nem-library';
 import { combineLatest } from 'rxjs';
 import { first, map, filter } from 'rxjs/operators';
 import { LanguageService } from '../../../../services/language/language.service';
-import { WalletService } from '../../../../services/wallet/wallet.service';
+import { WalletService } from '../../../../services/user/wallet/wallet.service';
 import { HistoryService } from '../../../../services/dlt/nem/history/history.service';
 
 @Component({

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { map, mergeMap, first, filter } from 'rxjs/operators';
 import { LanguageService } from '../../../services/language/language.service';
-import { WalletService } from '../../../services/wallet/wallet.service';
+import { WalletService } from '../../../services/user/wallet/wallet.service';
 import { Invoice } from '../../../classes/invoice';
 import { ShareService } from '../../../services/api/share/share.service';
 
