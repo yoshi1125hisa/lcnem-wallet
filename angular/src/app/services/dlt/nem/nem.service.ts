@@ -29,8 +29,8 @@ export class NemService {
     this.assetDefinition.loadAssetDefinitions(
       assets.map(
         (asset) => {
-          const splitted = asset.id.split(":")
-          return new AssetId(splitted[0], splitted[1])
+          const [namespace, name] = asset.id.split(":")
+          return new AssetId(namespace, name)
         }
       )
     )

@@ -1,6 +1,4 @@
 export interface Integration {
+  clientToken: string
   name: string
-  appId: string
-  accessToken: string
-  refreshToken: string
 }

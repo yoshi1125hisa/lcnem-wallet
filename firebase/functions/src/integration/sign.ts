@@ -1,37 +1,41 @@
 import * as functions from 'firebase-functions';
-
-import * as request from 'request';
+import * as admin from 'firebase-admin';
+import {
+  Address,
+  SimpleWallet,
+  Password
+} from 'nem-library'
+import { Wallet } from '../models/wallet';
 
 export const _sign = functions.https.onRequest(
-  (req, res) => {
+  async (req, res) => {
     try {
-      const email = req.body.email as string
-      const nem = req.body.nem as string
-      const currency = req.body.currency as string
-      const amount = req.body.amount as number
-      const method = req.body.method as string
-      const lang = req.body.lang as string
+      const data = req.body.data as string
 
-      if (!email || !nem || !currency || !amount || !method || !lang) {
+      const authorization = req.headers.authorization || ""
+      const bearer = authorization.substring(authorization.length - ("Bearer: ").length)
+
+      if (!data || !bearer) {
         throw Error()
       }
 
-      request.post(
-        functions.config().gas.deposit,
-        {
-          form: {
-            email: email,
-            nem: nem,
-            currency: currency,
-            amount: amount,
-            method: method,
-            lang: lang
-          }
-        },
-        () => {
-          res.status(200).send()
-        }
-      )
+      const [userId, walletId, integrationId] = bearer.split(":")
+
+      const doc = await admin.firestore().collection("users").doc(userId).collection("wallets").doc(walletId).get()
+
+      if (!doc.exists) {
+        throw Error()
+      }
+
+      const wallet = doc.data() as Wallet
+      if (!wallet.wallet) {
+        throw Error()
+      }
+      const account = SimpleWallet.readFromWLT(wallet.wallet).open(new Password(userId))
+
+      const signature = account.signMessage(data)
+
+      res.status(200).send(signature)
     } catch (e) {
       console.error(e)
       res.status(400).send(e.message)

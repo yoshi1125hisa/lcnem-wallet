@@ -3,6 +3,7 @@ import { RxEntityStateStore, RxEntityState } from 'rx-state-store-js';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { from } from 'rxjs';
 import { Integration } from '../../../../../../../firebase/functions/src/models/integration'
+import { Application } from '../../../../../../../firebase/functions/src/models/application';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +47,29 @@ export class IntegrationService extends RxEntityStateStore<State, Integration> {
     )
   }
 
+  public async createIntegration(userId: string, walletId: string, clientToken: string) {
+    if (walletId !== this.state.lastWalletId) {
+      throw Error()
+    }
+
+    const [ownerId, applicationId] = clientToken.split(":")
+
+    const applicationDocument = await this.firestore.collection("users").doc(ownerId).collection("applications").doc(applicationId).get().toPromise()
+    if (!applicationDocument.exists) {
+      throw Error()
+    }
+    const application = applicationDocument.data() as Application
+
+    const integration: Integration = {
+      clientToken: clientToken,
+      name: application.name
+    }
+
+    const doc = await this.firestore.collection("users").doc(userId).collection("wallets").doc(walletId).collection("integrations").add(integration)
+
+    return `${userId}:${walletId}:${doc.id}`
+  }
+
   public deleteIntegration(userId: string, walletId: string, integrationId: string) {
     if (walletId !== this.state.lastWalletId) {
       throw Error()
@@ -65,10 +89,6 @@ export class IntegrationService extends RxEntityStateStore<State, Integration> {
         this.streamErrorState(error)
       }
     )
-  }
-
-  public translation = {
-    
   }
 }
 

@@ -12,16 +12,16 @@ service cloud.firestore {
         allow read, write: if request.auth.uid == user;
 
         match /integrations/{integration} {
-          allow read, write: if request.auth.uid == user;
+          allow read, create, delete: if request.auth.uid == user;
         }
       }
 
       match /applications/{application} {
         allow read;
-        allow create, delete: if request.auth.uid == user;
+        allow write: if request.auth.uid == user;
       }
 
-      match /custodies/bitcoin/transactions/{transaction} {
+      match /custodies/lightning/transactions/{transaction} {
         allow read: if request.auth.uid == user;
       }
     }
