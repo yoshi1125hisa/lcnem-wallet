@@ -47,22 +47,19 @@ export class IntegrationService extends RxEntityStateStore<State, Integration> {
     )
   }
 
-  public async createIntegration(userId: string, walletId: string, clientToken: string) {
-    if (walletId !== this.state.lastWalletId) {
-      throw Error()
-    }
-
+  public async getApplication(clientToken: string) {
     const [ownerId, applicationId] = clientToken.split(":")
 
     const applicationDocument = await this.firestore.collection("users").doc(ownerId).collection("applications").doc(applicationId).get().toPromise()
     if (!applicationDocument.exists) {
       throw Error()
     }
-    const application = applicationDocument.data() as Application
+    return applicationDocument.data() as Application
+  }
 
-    const integration: Integration = {
-      clientToken: clientToken,
-      name: application.name
+  public async createIntegration(userId: string, walletId: string, integration: Integration) {
+    if (walletId !== this.state.lastWalletId) {
+      throw Error()
     }
 
     const doc = await this.firestore.collection("users").doc(userId).collection("wallets").doc(walletId).collection("integrations").add(integration)

@@ -5,6 +5,7 @@ import { IntegrationService } from '../../../services/user/wallet/integration/in
 import { AuthService } from '../../../services/auth/auth.service';
 import { WalletService } from '../../../services/user/wallet/wallet.service';
 import { filter, first } from 'rxjs/operators';
+import { Integration } from '../../../../../../firebase/functions/src/models/integration';
 
 @Component({
   selector: 'app-integrate',
@@ -17,6 +18,8 @@ export class IntegrateComponent implements OnInit {
   public agree = false
   public redirect = ""
   public clientToken = ""
+  public name = ""
+  public owner = ""
 
   constructor(
     private route: ActivatedRoute,
@@ -33,10 +36,19 @@ export class IntegrateComponent implements OnInit {
   public async load(refresh?: boolean) {
     this.redirect = this.route.snapshot.queryParams.redirect || ""
     this.clientToken = this.route.snapshot.queryParams.clientToken || ""
+
+    const application = await this.integration.getApplication(this.clientToken)
+    this.name = application.name
+    this.owner = application.owner
   }
 
   public async integrate() {
-    const accessToken = this.integration.createIntegration(this.auth.user!.uid, this.wallet.state.currentWalletId!, this.clientToken)
+    const integration: Integration = {
+      clientToken: this.clientToken,
+      name: this.name,
+      owner: this.owner
+    }
+    const accessToken = this.integration.createIntegration(this.auth.user!.uid, this.wallet.state.currentWalletId!, integration)
     const nem = this.wallet.state.entities[this.wallet.state.currentWalletId!].nem
 
     location.href = `${this.redirect}?nem=${nem}&accessToken=${accessToken}`
