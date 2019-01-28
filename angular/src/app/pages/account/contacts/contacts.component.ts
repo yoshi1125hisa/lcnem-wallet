@@ -117,6 +117,5 @@ export class ContactsComponent implements OnInit {
       en: "Name",
       ja: "名前"
     } as any
-  };
-
+  }
 }

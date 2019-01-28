@@ -34,16 +34,14 @@ export class MultisigComponent implements OnInit {
     this.load();
   }
 
-  public load(refresh?: boolean) {
-    this.wallet.state$.pipe(
+  public async load(refresh?: boolean) {
+    const state = await this.wallet.state$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
-    ).subscribe(
-      (state) => {
-        const address = new Address(state.entities[state.currentWalletId!].nem)
-        this.multisig.loadMultisig(address, refresh)
-      }
-    )
+    ).toPromise()
+
+    const address = new Address(state.entities[state.currentWalletId!].nem)
+    this.multisig.loadMultisig(address, refresh)
   }
 
   public onClick(address: string) {

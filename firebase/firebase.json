@@ -39,10 +39,6 @@
         "function": "rate"
       },
       {
-        "source": "/api/integration/refresh-access-token",
-        "function": "refreshAccessToken"
-      },
-      {
         "source": "/api/integration/sign",
         "function": "sign"
       },

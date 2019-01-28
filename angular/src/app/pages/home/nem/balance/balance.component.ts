@@ -34,19 +34,17 @@ export class BalanceComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.load();
+    this.load()
   }
 
-  public load(refresh?: boolean) {
-    this.wallet.state$.pipe(
+  public async load(refresh?: boolean) {
+    const state = await this.wallet.state$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
-    ).subscribe(
-      (state) => {
-        const address = new Address(state.entities[state.currentWalletId!].nem)
-        this.balance.loadBalance(address, refresh)
-      }
-    )
+    ).toPromise()
+    
+    const address = new Address(state.entities[state.currentWalletId!].nem)
+    this.balance.loadBalance(address, refresh)
   }
 
   public changeCurrency(currency: string) {

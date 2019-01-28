@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { RxEffectiveStateStore, RxEffectiveState } from 'rx-state-store-js';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { HttpClient } from '@angular/common/http';
-import { forkJoin } from 'rxjs';
 import { CustodialTransaction } from '../../../../../../../firebase/functions/src/models/custodial-transaction';
 
 @Injectable({
@@ -28,7 +27,7 @@ export class BalanceService extends RxEffectiveStateStore<State> {
     }
     this.streamLoadingState()
 
-    this.firestore.collection("users").doc(userId).collection("custodies").doc("lightning").collection("transactions").get().subscribe(
+    this.firestore.collection("users").doc(userId).collection("custodies").doc("bitcoin").collection("transactions").get().subscribe(
       (transactions) => {
         const state: State = {
           amount: transactions.docs.map(doc => doc.data() as CustodialTransaction).map(t => t.amount).reduce((a, b) => a+ b),

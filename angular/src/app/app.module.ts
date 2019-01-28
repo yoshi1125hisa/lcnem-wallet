@@ -51,21 +51,28 @@ import { TransactionComponent as NemTransactionComponent } from './pages/home/ne
 import { BalanceComponent as NemBalanceComponent } from './pages/home/nem/balance/balance.component';
 import { MultisigComponent as NemMultisigComponent } from './pages/home/nem/multisig/multisig.component';
 import { FaucetComponent } from './pages/home/nem/faucet/faucet.component';
-//    bitcoin-lightning
-import { BitcoinLightningComponent } from './pages/home/bitcoin-lightning/bitcoin-lightning.component';
-import { BalanceComponent as BitcoinLightningBalanceComponent } from './pages/home/bitcoin-lightning/balance/balance.component';
-import { HistoryComponent as BitcoinLightningHistoryComponent } from './pages/home/bitcoin-lightning/history/history.component';
+//    bitcoin
+import { BitcoinComponent } from './pages/home/bitcoin/bitcoin.component';
+import { BalanceComponent as BitcoinBalanceComponent } from './pages/home/bitcoin/balance/balance.component';
+import { HistoryComponent as BitcoinHistoryComponent } from './pages/home/bitcoin/history/history.component';
 //    nem-cosmos
 import { NemCosmosComponent } from './pages/home/nem-cosmos/nem-cosmos.component';
 //  account
 import { LoginComponent } from './pages/account/login/login.component';
+//    applications
+import { ApplicationsComponent } from './pages/account/applications/applications.component';
+import { ApplicationDialogComponent } from './pages/account/applications/application-dialog/application-dialog.component';
+import { ApplicationComponent } from './pages/account/applications/application/application.component';
 //    settings
 import { SettingsComponent } from './pages/account/settings/settings.component';
+//      wallet
+import { WalletComponent as SettingsWalletComponent } from './pages/account/settings/wallet/wallet.component';
+//        integrations
+import { IntegrationsComponent } from './pages/account/settings/wallet/integrations/integrations.component';
+import { IntegrationComponent } from './pages/account/settings/wallet/integrations/integration/integration.component';
+//      plan
 import { PlanComponent } from './pages/account/settings/plan/plan.component';
 import { ChangeComponent as PlanChangeComponent } from './pages/account/settings/plan/change/change.component';
-//      wallet
-import { IntegrationsComponent } from './pages/account/settings/wallet/integrations/integrations.component';
-import { WalletComponent as SettingsWalletComponent } from './pages/account/settings/wallet/wallet.component';
 //    contacts
 import { ContactsComponent } from './pages/account/contacts/contacts.component';
 import { ContactComponent } from './pages/account/contacts/contact/contact.component';
@@ -91,49 +98,66 @@ import { AddressInputComponent } from './components/address-input/address-input.
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
 //services
 import { RouterService } from './services/router/router.service';
-import { ApplicationsComponent } from './pages/account/applications/applications.component';
-import { ApplicationDialogComponent } from './pages/account/applications/application-dialog/application-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SettingsComponent,
-    ContactsComponent,
-    LoginComponent,
-    TermsComponent,
-    PrivacyPolicyComponent,
-    QrScanComponent,
-    DepositComponent,
-    WithdrawComponent,
+    //pages
+    PageNotFoundComponent,
+    //  home
     HomeComponent,
+    //    nem
     NemComponent,
     NemHistoryComponent,
     NemTransactionComponent,
     NemBalanceComponent,
     NemMultisigComponent,
-    LanguageMenuComponent,
-    AddressInputComponent,
-    WalletsComponent,
+    FaucetComponent,
+    //    bitcoin
+    BitcoinComponent,
+    BitcoinBalanceComponent,
+    BitcoinHistoryComponent,
+    //    nem-cosmos
+    NemCosmosComponent,
+    //  account
+    LoginComponent,
+    //    applications
+    ApplicationsComponent,
+    ApplicationDialogComponent,
+    ApplicationComponent,
+    //    settings
+    SettingsComponent,
+    //      wallet
+    SettingsWalletComponent,
+    //        integrations
+    IntegrationsComponent,
+    IntegrationComponent,
+    //      plan
+    PlanComponent,
+    PlanChangeComponent,
+    //    contacts
+    ContactsComponent,
     ContactComponent,
     ContactEditDialogComponent,
+    //    wallets
+    WalletsComponent,
     WalletComponent,
     WalletCreateDialogComponent,
+    //  nem
     TransferComponent,
+    QrScanComponent,
+    //  cheque
+    DepositComponent,
+    WithdrawComponent,
+    //  terms
+    TermsComponent,
+    PrivacyPolicyComponent,
+    //components
     TransferDialogComponent,
     AssetsListComponent,
-    PageNotFoundComponent,
-    PlanComponent,
-    LoadingDialogComponent,
-    BitcoinLightningBalanceComponent,
-    NemCosmosComponent,
-    FaucetComponent,
-    IntegrationsComponent,
-    PlanChangeComponent,
-    SettingsWalletComponent,
-    BitcoinLightningComponent,
-    BitcoinLightningHistoryComponent,
-    ApplicationsComponent,
-    ApplicationDialogComponent
+    LanguageMenuComponent,
+    AddressInputComponent,
+    LoadingDialogComponent
   ],
   imports: [
     BrowserModule,

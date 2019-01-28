@@ -7,7 +7,6 @@ import { _orderCash } from './cheque/order-cash';
 import { _changePlan } from './change-plan';
 import { _faucet } from './faucet';
 import { _rate } from './rate';
-import { _refreshAccessToken } from './integration/refresh-access-token';
 import { _sign } from './integration/sign';
 
 // // Start writing Firebase Functions
@@ -49,11 +48,6 @@ export const faucet: functions.HttpsFunction | null
 export const rate: functions.HttpsFunction | null
   = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "rate")
     ? _rate
-    : null
-
-export const refreshAccessToken: functions.HttpsFunction | null
-  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "refreshAccessToken")
-    ? _refreshAccessToken
     : null
 
 export const sign: functions.HttpsFunction | null

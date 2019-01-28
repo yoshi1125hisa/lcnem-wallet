@@ -17,10 +17,11 @@ service cloud.firestore {
       }
 
       match /applications/{application} {
-        allow read, write: if request.auth.uid == user;
+        allow read;
+        allow create, delete: if request.auth.uid == user;
       }
 
-      match /custodies/lightning/transactions/{transaction} {
+      match /custodies/bitcoin/transactions/{transaction} {
         allow read: if request.auth.uid == user;
       }
     }
