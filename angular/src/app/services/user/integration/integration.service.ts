@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Application } from '../../../../../../../firebase/functions/src/models/application';
-import { Wallet } from '../../../../../../../firebase/functions/src/models/wallet';
+import { Application } from '../../../../../../firebase/functions/src/models/application';
+import { Wallet } from '../../../../../../firebase/functions/src/models/wallet';
 import { SimpleWallet, Password } from 'nem-library';
 
 @Injectable({
@@ -32,6 +32,6 @@ export class IntegrationService {
       userId,
       new Password(password),
       SimpleWallet.readFromWLT(wallet.wallet).open(new Password(userId)).privateKey
-    )
+    ).writeWLTFile()
   }
 }
