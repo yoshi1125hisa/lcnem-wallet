@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LanguageService } from '../../../services/language/language.service';
 import { ActivatedRoute } from '@angular/router';
-import { IntegrationService } from '../../../services/user/wallet/integration/integration.service';
+import { IntegrationService } from '../../../services/user/integration/integration.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { WalletService } from '../../../services/user/wallet/wallet.service';
 import { Application } from '../../../../../../firebase/functions/src/models/application';
@@ -53,7 +53,7 @@ export class IntegrateComponent implements OnInit {
   }
 
   public async integrate() {
-    const wallet = this.integration.createIntegration(
+    const wallet = await this.integration.createIntegration(
       this.auth.user!.uid,
       this.wallet.state.entities[this.wallet.state.currentWalletId!],
       this.forms.password
