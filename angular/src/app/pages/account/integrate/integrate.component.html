@@ -10,18 +10,43 @@
       <app-language-menu></app-language-menu>
     </mat-toolbar>
     <div class="mat-typography body-container">
-      <mat-checkbox [(ngModel)]="agree">
-        {{translation.agree[lang]}}
-      </mat-checkbox>
-      <button mat-raised-button fxFill color="accent" [disabled]="!agree" (click)="integrate()">
-        {{translation.integrate[lang]}}
-      </button>
-      <div fxFill>
-        <span class="fill-remaining-space"></span>
-        <button mat-button color="warn" (click)="reject()">
-          {{translation.reject[lang]}}
-        </button>
-      </div>
+      <mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
+      <ng-template #loaded>
+        <mat-list *ngIf="wallet$ | async as wallet">
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <span>{{translation.walletName[lang]}}</span>
+            <span class="fill-remaining-space"></span>
+            <span>{{wallet.name}}</span>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+          <mat-list-item>
+            <span>{{translation.walletNemAddress[lang]}}</span>
+            <span class="fill-remaining-space"></span>
+            <span>{{wallet.nem}}</span>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+        </mat-list>
+        <form #form="ngForm" (ngSubmit)="integrate()">
+          <mat-form-field fxFill>
+            <input matInput placeholder="{{translation.password[lang]}}" type="password" minlength="8" [(ngModel)]="forms.password"
+              name="password" required />
+          </mat-form-field>
+          <mat-form-field fxFill>
+            <input matInput placeholder="{{translation.passwordConfirm[lang]}}" type="password" pattern="^{{forms.password}}$"
+              [(ngModel)]="forms.passwordConfirm" name="passwordConfirm" required />
+          </mat-form-field>
+          <button mat-raised-button fxFill color="accent" [disabled]="form.invalid">
+            {{translation.integrate[lang]}}
+          </button>
+        </form>
+        <div fxFill>
+          <span class="fill-remaining-space"></span>
+          <button mat-button color="warn" (click)="reject()">
+            {{translation.reject[lang]}}
+          </button>
+        </div>
+      </ng-template>
     </div>
   </mat-drawer-content>
 </mat-drawer-container>

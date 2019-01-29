@@ -1,4 +1,4 @@
-<app-balance></app-balance>
+<app-nem-balance></app-nem-balance>
 <h3>{{translation.yourAddress[lang]}}</h3>
 <mat-card>
   <mat-spinner [diameter]="60" *ngIf="loading$ | async; else loaded"></mat-spinner>
@@ -43,4 +43,4 @@
   </div>
 </div>
 <app-multisig></app-multisig>
-<app-history></app-history>
+<app-nem-history></app-nem-history>

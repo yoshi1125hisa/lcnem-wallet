@@ -39,10 +39,6 @@
         "function": "rate"
       },
       {
-        "source": "/api/integration/sign",
-        "function": "sign"
-      },
-      {
         "source": "**",
         "destination": "/index.html"
       }

@@ -8,7 +8,7 @@ import { WalletService } from '../../../../services/user/wallet/wallet.service';
 import { RateService } from '../../../../services/rate/rate.service';
 
 @Component({
-  selector: 'app-balance',
+  selector: 'app-nem-balance',
   templateUrl: './balance.component.html',
   styleUrls: ['./balance.component.css']
 })

@@ -7,7 +7,7 @@ import { WalletService } from '../../../../services/user/wallet/wallet.service';
 import { HistoryService } from '../../../../services/dlt/nem/history/history.service';
 
 @Component({
-  selector: 'app-history',
+  selector: 'app-nem-history',
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.css']
 })

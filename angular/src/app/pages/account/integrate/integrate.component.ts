@@ -4,8 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { IntegrationService } from '../../../services/user/wallet/integration/integration.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { WalletService } from '../../../services/user/wallet/wallet.service';
-import { filter, first } from 'rxjs/operators';
-import { Integration } from '../../../../../../firebase/functions/src/models/integration';
+import { Application } from '../../../../../../firebase/functions/src/models/application';
+import { map, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-integrate',
@@ -15,11 +15,19 @@ import { Integration } from '../../../../../../firebase/functions/src/models/int
 export class IntegrateComponent implements OnInit {
   get lang() { return this.language.state.twoLetter }
 
-  public agree = false
+  public loading$ = this.wallet.state$.pipe(map(state => state.loading))
+  public wallet$ = this.wallet.state$.pipe(
+    filter(state => state.currentWalletId !== undefined),
+    map(state => state.entities[state.currentWalletId!])
+  )
+
+  public forms = {
+    password: "",
+    passwordConfirm: "",
+    agree: false
+  }
   public redirect = ""
-  public clientToken = ""
-  public name = ""
-  public owner = ""
+  public application?: Application
 
   constructor(
     private route: ActivatedRoute,
@@ -35,23 +43,23 @@ export class IntegrateComponent implements OnInit {
 
   public async load(refresh?: boolean) {
     this.redirect = this.route.snapshot.queryParams.redirect || ""
-    this.clientToken = this.route.snapshot.queryParams.clientToken || ""
+    const clientToken = this.route.snapshot.queryParams.clientToken || ""
 
-    const application = await this.integration.getApplication(this.clientToken)
-    this.name = application.name
-    this.owner = application.owner
+    const application = await this.integration.getApplication(clientToken)
+    this.application = {
+      name: application.name,
+      owner: application.owner
+    }
   }
 
   public async integrate() {
-    const integration: Integration = {
-      clientToken: this.clientToken,
-      name: this.name,
-      owner: this.owner
-    }
-    const accessToken = this.integration.createIntegration(this.auth.user!.uid, this.wallet.state.currentWalletId!, integration)
-    const nem = this.wallet.state.entities[this.wallet.state.currentWalletId!].nem
+    const wallet = this.integration.createIntegration(
+      this.auth.user!.uid,
+      this.wallet.state.entities[this.wallet.state.currentWalletId!],
+      this.forms.password
+    )
 
-    location.href = `${this.redirect}?nem=${nem}&accessToken=${accessToken}`
+    location.href = `${this.redirect}?wallet=${wallet}`
   }
 
   public reject() {
@@ -59,9 +67,21 @@ export class IntegrateComponent implements OnInit {
   }
 
   public translation = {
-    agree: {
-      en: "I agree.",
-      ja: "同意します"
+    walletName: {
+      en: "Wallet name",
+      ja: "ウォレット名"
+    } as any,
+    walletNemAddress: {
+      en: "NEM address",
+      ja: "NEMアドレス"
+    } as any,
+    password: {
+      en: "Password",
+      ja: "パスワード"
+    } as any,
+    passwordConfirm: {
+      en: "Password confirmation",
+      ja: "パスワード確認"
     } as any,
     integrate: {
       en: "Integrate",
