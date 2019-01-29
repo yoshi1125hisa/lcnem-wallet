@@ -13,7 +13,6 @@ import { TransferComponent } from './pages/nem/transfer/transfer.component';
 import { TermsComponent } from './pages/terms/terms.component';
 import { PrivacyPolicyComponent } from './pages/terms/privacy-policy/privacy-policy.component';
 import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
-import { IntegrationsComponent } from './pages/account/settings/wallet/integrations/integrations.component';
 import { IntegrateComponent } from './pages/account/integrate/integrate.component';
 
 const routes: Routes = [
@@ -23,7 +22,6 @@ const routes: Routes = [
   { path: "account/integrate", component: IntegrateComponent },
   { path: "account/settings", component: SettingsComponent },
   { path: "account/settings/plan/change", component: PlanChangeComponent },
-  { path: "account/settings/wallet/integrations", component: IntegrationsComponent },
   { path: "account/contacts", component: ContactsComponent },
   { path: "cheque/deposit", component: DepositComponent },
   { path: "cheque/withdraw", component: WithdrawComponent },

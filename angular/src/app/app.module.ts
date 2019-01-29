@@ -66,11 +66,6 @@ import { ApplicationDialogComponent } from './pages/account/applications/applica
 import { ApplicationComponent } from './pages/account/applications/application/application.component';
 //    settings
 import { SettingsComponent } from './pages/account/settings/settings.component';
-//      wallet
-import { WalletComponent as SettingsWalletComponent } from './pages/account/settings/wallet/wallet.component';
-//        integrations
-import { IntegrationsComponent } from './pages/account/settings/wallet/integrations/integrations.component';
-import { IntegrationComponent } from './pages/account/settings/wallet/integrations/integration/integration.component';
 //      plan
 import { PlanComponent } from './pages/account/settings/plan/plan.component';
 import { ChangeComponent as PlanChangeComponent } from './pages/account/settings/plan/change/change.component';
@@ -129,11 +124,6 @@ import { RouterService } from './services/router/router.service';
     ApplicationComponent,
     //    settings
     SettingsComponent,
-    //      wallet
-    SettingsWalletComponent,
-    //        integrations
-    IntegrationsComponent,
-    IntegrationComponent,
     //      plan
     PlanComponent,
     PlanChangeComponent,
