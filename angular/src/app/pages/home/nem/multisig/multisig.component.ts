@@ -3,8 +3,8 @@ import { Observable, forkJoin, combineLatest } from 'rxjs';
 import { map, first, filter } from 'rxjs/operators';
 import { Address, Wallet } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
-import { MultisigService } from '../../../../services/nem/multisig/multisig.service';
-import { WalletService } from '../../../../services/wallet/wallet.service';
+import { MultisigService } from '../../../../services/dlt/nem/multisig/multisig.service';
+import { WalletService } from '../../../../services/user/wallet/wallet.service';
 
 @Component({
   selector: 'app-multisig',
@@ -34,16 +34,14 @@ export class MultisigComponent implements OnInit {
     this.load();
   }
 
-  public load(refresh?: boolean) {
-    this.wallet.state$.pipe(
+  public async load(refresh?: boolean) {
+    const state = await this.wallet.state$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
-    ).subscribe(
-      (state) => {
-        const address = new Address(state.entities[state.currentWalletId!].nem)
-        this.multisig.loadMultisig(address, refresh)
-      }
-    )
+    ).toPromise()
+
+    const address = new Address(state.entities[state.currentWalletId!].nem)
+    this.multisig.loadMultisig(address, refresh)
   }
 
   public onClick(address: string) {

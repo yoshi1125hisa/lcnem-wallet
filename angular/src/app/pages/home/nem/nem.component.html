@@ -1,10 +1,10 @@
-<app-balance></app-balance>
+<app-nem-balance></app-nem-balance>
 <h3>{{translation.yourAddress[lang]}}</h3>
 <mat-card>
   <mat-spinner [diameter]="60" *ngIf="loading$ | async; else loaded"></mat-spinner>
   <ng-template #loaded>
     <p class="address" *ngIf="address$ | async as address">
-      {{address}}
+      {{prettifyAddress(address)}}
       <button mat-icon-button matTooltip="{{translation.copy[lang]}}" (click)="copyAddress()">
         <mat-icon>input</mat-icon>
       </button>
@@ -23,5 +23,24 @@
     </div>
   </ng-template>
 </mat-card>
+<h3>LCNEM Cheque</h3>
+<div fxLayout="raw" class="card-padding-right">
+  <div fxFlex="50">
+    <mat-card matRipple class="ripple-card" routerLink="/cheque/deposit">
+      <div class="card-text">
+        <mat-icon class="card-icon" color="accent">call_made</mat-icon>
+        <span>{{translation.deposit[lang]}}</span>
+      </div>
+    </mat-card>
+  </div>
+  <div fxFlex="50" class="card-padding-left">
+    <mat-card matRipple class="ripple-card" routerLink="/cheque/withdraw">
+      <div class="card-text">
+        <mat-icon class="card-icon" color="primary">call_received</mat-icon>
+        <span>{{translation.withdraw[lang]}}</span>
+      </div>
+    </mat-card>
+  </div>
+</div>
 <app-multisig></app-multisig>
-<app-history></app-history>
+<app-nem-history></app-nem-history>

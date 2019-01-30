@@ -3,7 +3,7 @@ import { map, filter } from 'rxjs/operators';
 import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { LanguageService } from '../../services/language/language.service';
 import { AuthService } from '../../services/auth/auth.service';
-import { WalletService } from '../../services/wallet/wallet.service';
+import { WalletService } from '../../services/user/wallet/wallet.service';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
@@ -43,10 +43,6 @@ export class HomeComponent implements OnInit {
       en: "Change the wallet",
       ja: "ウォレットの切り替え"
     } as any,
-    blockchainEMoney: {
-      en: "Blockchain e-money",
-      ja: "ブロックチェーン電子マネー"
-    } as any,
     deposit: {
       en: "Deposit",
       ja: "入金"
@@ -54,10 +50,6 @@ export class HomeComponent implements OnInit {
     withdraw: {
       en: "Withdraw",
       ja: "出金"
-    } as any,
-    functions: {
-      en: "Functions",
-      ja: "機能"
     } as any,
     contacts: {
       en: "Contact list",
@@ -67,5 +59,5 @@ export class HomeComponent implements OnInit {
       en: "Setting",
       ja: "設定"
     } as any
-  };
+  }
 }

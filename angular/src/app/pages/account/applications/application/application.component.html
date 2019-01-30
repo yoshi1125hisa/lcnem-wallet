@@ -1,0 +1,19 @@
+<div fxLayout="row" fxLayoutAlign="center center">
+  <span>{{application?.name}}</span>
+  <span class="fill-remaining-space"></span>
+  <button mat-icon-button color="warn" (click)="delete.emit()">
+    <mat-icon>delete</mat-icon>
+  </button>
+  <button mat-icon-button color="accent" (click)="edit.emit()">
+    <mat-icon>edit</mat-icon>
+  </button>
+</div>
+<mat-list>
+  <mat-divider></mat-divider>
+  <mat-list-item>
+    <span>ID</span>
+    <span class="fill-remaining-space"></span>
+    <span>{{id}}</span>
+  </mat-list-item>
+  <mat-divider></mat-divider>
+</mat-list>

@@ -3,11 +3,11 @@ import { Address } from 'nem-library';
 import { combineLatest } from 'rxjs';
 import { first, map, filter } from 'rxjs/operators';
 import { LanguageService } from '../../../../services/language/language.service';
-import { WalletService } from '../../../../services/wallet/wallet.service';
-import { HistoryService } from '../../../../services/nem/history/history.service';
+import { WalletService } from '../../../../services/user/wallet/wallet.service';
+import { HistoryService } from '../../../../services/dlt/nem/history/history.service';
 
 @Component({
-  selector: 'app-history',
+  selector: 'app-nem-history',
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.css']
 })
@@ -31,19 +31,17 @@ export class HistoryComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.load();
+    this.load()
   }
 
-  public load(refresh?: boolean) {
-    this.wallet.state$.pipe(
+  public async load(refresh?: boolean) {
+    const state = await this.wallet.state$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
-    ).subscribe(
-      (state) => {
-        const address = new Address(state.entities[state.currentWalletId!].nem)
-        this.history.loadHistories(address, refresh)
-      }
-    )
+    ).toPromise()
+
+    const address = new Address(state.entities[state.currentWalletId!].nem)
+    this.history.loadHistories(address, refresh)
   }
 
   public translation = {

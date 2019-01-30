@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LanguageService } from '../../../../services/language/language.service';
-import { WalletService } from '../../../../services/wallet/wallet.service';
+import { WalletService } from '../../../../services/user/wallet/wallet.service';
 
 @Component({
   selector: 'app-wallet-create-dialog',

@@ -5,7 +5,6 @@ import { LanguageService } from '../../../services/language/language.service';
 import { RouterService } from '../../../services/router/router.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { UserService } from '../../../services/user/user.service';
-import { filter, map, first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-settings',

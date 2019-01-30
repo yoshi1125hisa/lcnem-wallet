@@ -5,13 +5,13 @@ import * as admin from 'firebase-admin';
 export const _rate = functions.https.onRequest(
   async (req, res) => {
     try {
-      const rate = {}
+      const rate: { [currency: string]: number } = {}
 
       const currencyPromise = new Promise(
         (resolve, reject) => {
           request.get(
             functions.config().currency_layer.rate_api,
-            (error, response, body) => {
+            (error: any, response: any, body: any) => {
               if (error) {
                 reject(error)
                 return

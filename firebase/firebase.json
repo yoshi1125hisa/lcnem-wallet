@@ -15,12 +15,24 @@
     ],
     "rewrites": [
       {
-        "source": "/api/deposit",
-        "function": "deposit"
+        "source": "/api/cheque/order-cheque",
+        "function": "orderCheque"
       },
       {
-        "source": "/api/withdraw",
-        "function": "withdraw"
+        "source": "/api/cheque/order-lightning-invoice",
+        "function": "orderLightningInvoice"
+      },
+      {
+        "source": "/api/cheque/order-cash",
+        "function": "orderCash"
+      },
+      {
+        "source": "/api/change-plan",
+        "function": "changePlan"
+      },
+      {
+        "source": "/api/faucet",
+        "function": "faucet"
       },
       {
         "source": "/api/rate",

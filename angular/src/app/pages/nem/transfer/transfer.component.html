@@ -17,15 +17,16 @@
         <form #form="ngForm" (ngSubmit)="transfer()">
           <h3>{{translation.recipient[lang]}}</h3>
           <mat-card>
-            <app-nem-address-input fxFill [(ngModel)]="forms.recipient" name="recipient" placeholder="{{translation.recipient[lang]}}" (change)="forms.recipient$.next($event)"
-              required></app-nem-address-input>
+            <app-address-input fxFill [(ngModel)]="forms.recipient" name="recipient" placeholder="{{translation.recipient[lang]}}"
+              required></app-address-input>
           </mat-card>
           <br />
           <h3>{{translation.message[lang]}}</h3>
           <mat-card>
             <mat-form-field fxFill>
-              <input matInput placeholder="{{translation.message[lang]}}" [(ngModel)]="forms.message" name="message" [required]="forms.encryption$ | async" (change)="forms.message$.next($event)">
-              <mat-slide-toggle fxFill matSuffix [(ngModel)]="forms.encryption" name="encrypt" (change)="forms.encryption$.next($event)">{{translation.encryption[lang]}}</mat-slide-toggle>
+              <input matInput placeholder="{{translation.message[lang]}}" [(ngModel)]="forms.message" name="message"
+                [required]="forms.encryption">
+              <mat-slide-toggle fxFill matSuffix [(ngModel)]="forms.encryption" name="encrypt">{{translation.encryption[lang]}}</mat-slide-toggle>
             </mat-form-field>
           </mat-card>
           <br />
