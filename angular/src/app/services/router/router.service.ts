@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Router, NavigationExtras, NavigationStart } from '@angular/router';
+import { Router, NavigationExtras, NavigationStart, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { WalletService } from '../user/wallet/wallet.service';
 import { filter, first, map } from 'rxjs/operators';
@@ -11,6 +11,7 @@ export class RouterService {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private auth: AuthService,
     private wallet: WalletService
   ) {
@@ -24,7 +25,7 @@ export class RouterService {
         }
         const user = await this.auth.user$.pipe(first()).toPromise()
         if (!user) {
-          this.router.navigate(["account", "login"])
+          this.router.navigate(["account", "login"], { preserveQueryParams: true })
           return
         }
 
@@ -37,7 +38,12 @@ export class RouterService {
         ).toPromise()
 
         if (!state.currentWalletId) {
-          this.router.navigate(["account", "wallets"])
+          this.router.navigate(["account", "wallets"], { preserveQueryParams: true })
+        }
+
+        if (this.route.snapshot.queryParams.clientToken) {
+          this.router.navigate(["account", "integrate"], { preserveQueryParams: true })
+          return
         }
       }
     )
