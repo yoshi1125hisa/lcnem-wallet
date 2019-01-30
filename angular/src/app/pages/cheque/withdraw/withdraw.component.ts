@@ -27,8 +27,8 @@ export class WithdrawComponent implements OnInit {
     amount?: number
     method?: string
   } = {
-    currency: "JPY"
-  }
+      currency: "JPY"
+    }
 
   public safeSite: SafeResourceUrl
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { map, mergeMap, first, filter } from 'rxjs/operators';
 import { LanguageService } from '../../../services/language/language.service';
 import { WalletService } from '../../../services/user/wallet/wallet.service';
@@ -14,6 +14,8 @@ export class NemComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
   public loading$ = this.wallet.state$.pipe(map(state => state.loading))
+
+  @Output() isShowFaucet = new EventEmitter<boolean>()
 
   public address$ = this.wallet.state$.pipe(
     filter(state => state.currentWalletId !== undefined),
