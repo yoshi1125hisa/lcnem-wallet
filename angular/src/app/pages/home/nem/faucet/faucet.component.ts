@@ -4,13 +4,11 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 import { LanguageService } from 'src/app/services/language/language.service';
 import { ApiService } from 'src/app/services/api/api.service';
 import { WalletService } from 'src/app/services/user/wallet/wallet.service';
-import { first, filter, merge, map, mergeMap } from 'rxjs/operators';
+import { first, filter, map } from 'rxjs/operators';
 import { LoadingDialogComponent } from 'src/app/components/loading-dialog/loading-dialog.component';
 import { Address } from 'nem-library';
 import { BalanceService } from 'src/app/services/dlt/nem/balance/balance.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { forkJoin, from } from 'rxjs';
-import { AssetDefinitionService } from 'src/app/services/dlt/asset-definition/asset-definition.service';
 
 @Component({
   selector: 'app-faucet',
@@ -97,6 +95,10 @@ export class FaucetComponent implements OnInit {
     error: {
       en: "Error",
       ja: "エラー"
+    } as any,
+    recommend: {
+      en: "Let's receive 1 XEM!!",
+      ja: "1XEM を受け取ることができます"
     } as any
   }
 
