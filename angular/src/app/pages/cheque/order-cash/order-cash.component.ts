@@ -10,11 +10,11 @@ import { first } from 'rxjs/operators';
 import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
 
 @Component({
-  selector: 'app-withdraw',
-  templateUrl: './withdraw.component.html',
-  styleUrls: ['./withdraw.component.css']
+  selector: 'app-order-cash',
+  templateUrl: './order-cash.component.html',
+  styleUrls: ['./order-cash.component.css']
 })
-export class WithdrawComponent implements OnInit {
+export class OrderCashComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter }
 
   public readonly supportedCurrencies = [
@@ -51,16 +51,16 @@ export class WithdrawComponent implements OnInit {
         }
       }
     )
-    this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/stable-coin/${this.lang}.txt`);
+    this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/cheque/${this.lang}.txt`);
   }
 
   ngOnInit() {
   }
 
-  public withdraw() {
+  public orderCash() {
     const dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true })
 
-    this.api.withdraw(
+    this.api.orderCash(
       {
         email: this.auth.user!.email!,
         nem: this.forms.address!,

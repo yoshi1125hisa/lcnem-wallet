@@ -10,7 +10,7 @@ export class ApiService {
     private http: HttpClient
   ) { }
 
-  public deposit(
+  public orderCheque(
     data: {
       email: string
       nem: string
@@ -23,7 +23,7 @@ export class ApiService {
     return this.http.post("/api/cheque/order-cheque", data);
   }
 
-  public withdraw(
+  public orderCash(
     data: {
       email: string
       nem: string

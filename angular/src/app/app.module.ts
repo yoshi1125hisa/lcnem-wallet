@@ -81,8 +81,8 @@ import { WalletCreateDialogComponent } from './pages/account/wallets/wallet-crea
 import { TransferComponent } from './pages/nem/transfer/transfer.component';
 import { QrScanComponent } from './pages/nem/qr-scan/qr-scan.component';
 //  cheque
-import { DepositComponent } from './pages/cheque/deposit/deposit.component';
-import { WithdrawComponent } from './pages/cheque/withdraw/withdraw.component';
+import { OrderChequeComponent } from './pages/cheque/order-cheque/order-cheque.component';
+import { OrderCashComponent } from './pages/cheque/order-cash/order-cash.component';
 //  terms
 import { TermsComponent } from './pages/terms/terms.component';
 import { PrivacyPolicyComponent } from './pages/terms/privacy-policy/privacy-policy.component';
@@ -139,8 +139,8 @@ import { RouterService } from './services/router/router.service';
     TransferComponent,
     QrScanComponent,
     //  cheque
-    DepositComponent,
-    WithdrawComponent,
+    OrderCashComponent,
+    OrderChequeComponent,
     //  terms
     TermsComponent,
     PrivacyPolicyComponent,

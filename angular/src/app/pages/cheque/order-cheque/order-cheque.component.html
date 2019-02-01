@@ -6,31 +6,32 @@
         <mat-icon>arrow_back</mat-icon>
       </button>
 
-      <span>{{translation.withdraw[lang]}}</span>
+      <span>{{translation.deposit[lang]}}</span>
       <span class="fill-remaining-space"></span>
     </mat-toolbar>
     <div class="mat-typography body-container">
-      <form #form="ngForm" (ngSubmit)="withdraw()">
+      <form #form="ngForm" (ngSubmit)="orderCheque()">
         <app-address-input placeholder="{{translation.address[lang]}}" [(ngModel)]="forms.address" name="address" required></app-address-input>
         <mat-form-field fxFill>
-          <mat-select placeholder="{{translation.currency[lang]}}" [(ngModel)]="forms.currency" name="selectedCurrency"
+          <mat-select placeholder="{{translation.currency[lang]}}" [(ngModel)]="forms.currency" name="currency"
             required>
             <mat-option *ngFor="let c of supportedCurrencies" [value]="c">{{c}}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field fxFill>
           <input matInput placeholder="{{translation.amount[lang]}}" [(ngModel)]="forms.amount" name="amount" required
-            minlength="1" pattern="[1-9][0-9]*" />
+            minlength="{{minimum[forms.currency].toString().length}}" pattern="[1-9][0-9]*" />
+          <mat-error>min {{minimum[forms.currency]}}</mat-error>
         </mat-form-field>
         <mat-form-field fxFill>
-          <mat-select placeholder="{{translation.type[lang]}}" [(ngModel)]="forms.method" name="method" required>
-            <mat-option value="amazon">{{translation.amazonGift[lang]}}</mat-option>
+          <mat-select placeholder="{{translation.method[lang]}}" [(ngModel)]="forms.method" name="method" required>
+            <mat-option value="paypal">{{translation.paypal[lang]}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <button mat-raised-button color="accent" fxFill [disabled]="form.invalid">{{translation.withdraw[lang]}}</button>
+        <button mat-raised-button color="accent" fxFill [disabled]="form.invalid">{{translation.deposit[lang]}}</button>
       </form>
       <br />
-      <iframe [src]="safeSite"  class="mat-elevation-z1"></iframe>
+      <iframe [src]="safeSite" class="mat-elevation-z1"></iframe>
     </div>
   </mat-drawer-content>
 </mat-drawer-container>
