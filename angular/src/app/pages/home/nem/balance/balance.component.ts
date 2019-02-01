@@ -42,7 +42,6 @@ export class BalanceComponent implements OnInit {
       filter(state => state.currentWalletId !== undefined),
       first()
     ).toPromise()
-
     const address = new Address(state.entities[state.currentWalletId!].nem)
     this.balance.loadBalance(address, refresh)
   }
