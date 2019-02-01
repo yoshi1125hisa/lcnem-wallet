@@ -9,7 +9,6 @@ import { LoadingDialogComponent } from '../../../../components/loading-dialog/lo
 import { Address } from 'nem-library';
 import { BalanceService } from '../../../../services/dlt/nem/balance/balance.service';
 import { UserService } from '../../../../services/user/user.service';
-import { stat } from 'fs';
 
 @Component({
   selector: 'app-faucet',
