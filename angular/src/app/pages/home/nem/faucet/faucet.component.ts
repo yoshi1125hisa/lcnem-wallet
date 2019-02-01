@@ -9,6 +9,7 @@ import { LoadingDialogComponent } from '../../../../components/loading-dialog/lo
 import { Address } from 'nem-library';
 import { BalanceService } from '../../../../services/dlt/nem/balance/balance.service';
 import { UserService } from '../../../../services/user/user.service';
+import { stat } from 'fs';
 
 @Component({
   selector: 'app-faucet',
@@ -17,8 +18,6 @@ import { UserService } from '../../../../services/user/user.service';
 })
 export class FaucetComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter }
-  private walletId = ""
-
   public visible$ = this.balance.state$.pipe(
     map(state => state.assets.find(a => a.assetId.toString() == "nem:xem")),
     map(state => {
@@ -36,18 +35,7 @@ export class FaucetComponent implements OnInit {
     private wallet: WalletService,
     private balance: BalanceService,
     private user: UserService,
-
-  ) {
-    this.wallet.state$.pipe(
-      first()
-    ).subscribe(
-      (state) => {
-        if (state.currentWalletId) {
-          this.walletId = state.currentWalletId
-        }
-      }
-    )
-  }
+  ) {}
 
   ngOnInit() {
     this.load()
@@ -63,18 +51,23 @@ export class FaucetComponent implements OnInit {
       filter(user => user !== null),
       first()
     ).toPromise()
-
+    
     const address = new Address(state.entities[state.currentWalletId!].nem)
     this.user.loadUser(user!.uid)
     this.balance.loadBalance(address)
   }
 
-  public faucet() {
+  public async faucet() {
+    const state = await this.wallet.state$.pipe(
+      filter(state => state.currentWalletId !== undefined),
+      first()
+    ).toPromise()
+
     const dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true })
     this.api.faucet(
       {
         userId: this.auth.user!.uid,
-        walletId: this.walletId
+        walletId: state.entities[state.currentWalletId!].nem
       }
     ).subscribe(
       () => {
