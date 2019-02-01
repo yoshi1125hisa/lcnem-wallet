@@ -13,6 +13,7 @@
       <mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
       <ng-template #loaded>
         <mat-list *ngIf="wallet$ | async as wallet">
+          <p>{{translation.introduction[lang]}}</p>
           <mat-divider></mat-divider>
           <mat-list-item>
             <span>{{translation.walletName[lang]}}</span>

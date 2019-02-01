@@ -17,14 +17,17 @@ import { UserService } from '../../../../services/user/user.service';
 })
 export class FaucetComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter }
+
   public visible$ = this.balance.state$.pipe(
     map(state => state.assets.find(a => a.assetId.toString() == "nem:xem")),
-    map(state => {
-      console.log(state)
-      return state
-    }),
-    map(state => state!.quantity < 1 * (10 ** 6))
+    map(asset =>{
+      if (!asset) {
+        return true
+      }
+      return (asset.quantity < 10 ** 6)
+    }) 
   )
+
   constructor(
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
