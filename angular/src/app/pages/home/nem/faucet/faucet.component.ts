@@ -20,7 +20,7 @@ export class FaucetComponent implements OnInit {
   private walletId = ""
 
   public visible$ = this.balance.state$.pipe(
-    map(state => state.assets.find(a => a.assetId.toString() == "xem")),
+    map(state => state.assets.find(a => a.assetId.toString() == "nem:xem")),
     map(state => {
       console.log(state)
       return state
