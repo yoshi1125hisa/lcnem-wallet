@@ -20,12 +20,7 @@ export class FaucetComponent implements OnInit {
 
   public visible$ = this.balance.state$.pipe(
     map(state => state.assets.find(a => a.assetId.toString() == "nem:xem")),
-    map(asset =>{
-      if (!asset) {
-        return true
-      }
-      return (asset.quantity < 10 ** 6)
-    }) 
+    map(asset => !asset ? true : asset!.quantity < 10 ** 6)
   )
 
   constructor(
@@ -97,5 +92,4 @@ export class FaucetComponent implements OnInit {
       ja: "1XEM を受け取ることができます"
     } as any
   }
-
 }
