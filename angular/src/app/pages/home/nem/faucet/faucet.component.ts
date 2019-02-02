@@ -6,7 +6,7 @@ import { ApiService } from '../../../../services/api/api.service';
 import { WalletService } from '../../../../services/user/wallet/wallet.service';
 import { first, filter, map } from 'rxjs/operators';
 import { LoadingDialogComponent } from '../../../../components/loading-dialog/loading-dialog.component';
-import { Address } from 'nem-library';
+import { Address, Asset, AssetId } from 'nem-library';
 import { BalanceService } from '../../../../services/dlt/nem/balance/balance.service';
 import { UserService } from '../../../../services/user/user.service';
 
@@ -19,9 +19,9 @@ export class FaucetComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter }
 
   public visible$ = this.balance.state$.pipe(
+    filter(state => state.assets.length !== 0),
     map(state => state.assets.find(a => a.assetId.toString() == "nem:xem")),
-    map(asset => !asset ? true : asset!.quantity < 10 ** 6)
-  )
+    map(asset => asset ? asset!.quantity < 10 ** 6 : false))
 
   constructor(
     private dialog: MatDialog,
