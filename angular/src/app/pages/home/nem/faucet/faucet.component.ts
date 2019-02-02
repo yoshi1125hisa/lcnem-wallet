@@ -87,6 +87,10 @@ export class FaucetComponent implements OnInit {
       en: "Error",
       ja: "エラー"
     } as any,
+    receive: {
+      en: "Receive",
+      ja: "受け取る"
+    } as any,
     recommend: {
       en: "Let's receive 1 XEM!!",
       ja: "1XEM を受け取ることができます"

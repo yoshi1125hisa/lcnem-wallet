@@ -1,3 +1,5 @@
 <div *ngIf="visible$ | async">
-  <button mat-raised-button color="accent" matTooltip="{{translation.recommend[lang]}}" (click)="faucet()"></button>
+  <button mat-raised-button color="accent" matTooltip="{{translation.recommend[lang]}}" (click)="faucet()">
+    {{translation.receive[lang]}}
+  </button>
 </div>
