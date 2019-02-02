@@ -32,7 +32,8 @@ export class FaucetComponent implements OnInit {
     private wallet: WalletService,
     private balance: BalanceService,
     private user: UserService,
-  ) {}
+  ) {
+　}
 
   ngOnInit() {
     this.load()
@@ -78,6 +79,7 @@ export class FaucetComponent implements OnInit {
       }
     )
   }
+
   public translation = {
     completed: {
       en: "Competed",
