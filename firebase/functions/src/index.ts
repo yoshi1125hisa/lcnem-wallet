@@ -1,9 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
-import { _orderCheque } from './cheque/order-cheque';
-import { _orderLightningInvoice } from './cheque/order-lightning-invoice';
-import { _orderCash } from './cheque/order-cash';
 import { _changePlan } from './change-plan';
 import { _faucet } from './faucet';
 import { _rate } from './rate';
@@ -18,21 +15,6 @@ admin.initializeApp({
   credential: admin.credential.cert(JSON.parse(JSON.stringify(functions.config().service_account).replace(/\\\\n/g, "\\n"))),
   databaseURL: "https://lcnem-wallet.firebaseio.com"
 })
-
-export const orderCheque: functions.HttpsFunction | null
-  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "orderCheque")
-    ? _orderCheque
-    : null
-
-export const orderLightningInvoice: functions.HttpsFunction | null
-  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "orderLightningInvoice")
-    ? _orderLightningInvoice
-    : null
-    
-export const orderCash: functions.HttpsFunction | null
-  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "orderCash")
-    ? _orderCash
-    : null
 
 export const changePlan: functions.HttpsFunction | null
   = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "changePlan")

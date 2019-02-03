@@ -15,18 +15,6 @@
     ],
     "rewrites": [
       {
-        "source": "/api/cheque/order-cheque",
-        "function": "orderCheque"
-      },
-      {
-        "source": "/api/cheque/order-lightning-invoice",
-        "function": "orderLightningInvoice"
-      },
-      {
-        "source": "/api/cheque/order-cash",
-        "function": "orderCash"
-      },
-      {
         "source": "/api/change-plan",
         "function": "changePlan"
       },
