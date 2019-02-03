@@ -25,23 +25,19 @@
   </ng-template>
 </mat-card>
 <h3>LCNEM Cheque</h3>
-<div fxLayout="raw" class="card-padding-right">
-  <div fxFlex="50">
-    <mat-card matRipple class="ripple-card" routerLink="/cheque/order-cheque">
-      <div class="card-text">
-        <mat-icon class="card-icon" color="accent">call_made</mat-icon>
-        <span>{{translation.deposit[lang]}}</span>
-      </div>
-    </mat-card>
+<mat-card>
+  <div fxLayout="row">
+    <a mat-button fxFlex="50" href="https://cheque.lcnem.cc/order/cheque?email={{email$ | async}}&ledger=NEM&address={{address$ |  async}}"
+      target="_blank">
+      <mat-icon class="card-icon" color="accent">call_made</mat-icon>
+      <span>{{translation.deposit[lang]}}</span>
+    </a>
+    <a mat-button fxFlex="50" href="https://cheque.lcnem.cc/order/cash?email={{email$ | async}}&ledger=NEM&address={{address$ |  async}}"
+      target="_blank">
+      <mat-icon class="card-icon" color="primary">call_received</mat-icon>
+      <span>{{translation.withdraw[lang]}}</span>
+    </a>
   </div>
-  <div fxFlex="50" class="card-padding-left">
-    <mat-card matRipple class="ripple-card" routerLink="/cheque/order-cash">
-      <div class="card-text">
-        <mat-icon class="card-icon" color="primary">call_received</mat-icon>
-        <span>{{translation.withdraw[lang]}}</span>
-      </div>
-    </mat-card>
-  </div>
-</div>
+</mat-card>
 <app-multisig></app-multisig>
 <app-nem-history></app-nem-history>
