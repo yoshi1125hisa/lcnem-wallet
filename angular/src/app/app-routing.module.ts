@@ -12,8 +12,6 @@ import { TermsComponent } from './pages/terms/terms.component';
 import { PrivacyPolicyComponent } from './pages/terms/privacy-policy/privacy-policy.component';
 import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
 import { IntegrateComponent } from './pages/account/integrate/integrate.component';
-import { OrderChequeComponent } from './pages/cheque/order-cheque/order-cheque.component';
-import { OrderCashComponent } from './pages/cheque/order-cash/order-cash.component';
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
@@ -23,8 +21,6 @@ const routes: Routes = [
   { path: "account/settings", component: SettingsComponent },
   { path: "account/settings/plan/change", component: PlanChangeComponent },
   { path: "account/contacts", component: ContactsComponent },
-  { path: "cheque/order-cheque", component: OrderChequeComponent },
-  { path: "cheque/order-cash", component: OrderCashComponent },
   { path: "nem/qr-scan", component: QrScanComponent },
   { path: "nem/transfer", component: TransferComponent },
   { path: "terms", component: TermsComponent },
