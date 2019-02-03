@@ -4,6 +4,7 @@ import { LanguageService } from '../../../services/language/language.service';
 import { WalletService } from '../../../services/user/wallet/wallet.service';
 import { Invoice } from '../../../classes/invoice';
 import { ShareService } from '../../../services/api/share/share.service';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-nem',
@@ -14,6 +15,11 @@ export class NemComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter; }
 
   public loading$ = this.wallet.state$.pipe(map(state => state.loading))
+
+  public email$ = this.auth.user$.pipe(
+    filter(user => user !== null),
+    map(user => user!.email)
+  )
 
   public address$ = this.wallet.state$.pipe(
     filter(state => state.currentWalletId !== undefined),
@@ -34,6 +40,7 @@ export class NemComponent implements OnInit {
 
   constructor(
     private language: LanguageService,
+    private auth: AuthService,
     private wallet: WalletService,
     private share: ShareService
   ) {

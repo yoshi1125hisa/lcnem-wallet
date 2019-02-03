@@ -10,32 +10,6 @@ export class ApiService {
     private http: HttpClient
   ) { }
 
-  public orderCheque(
-    data: {
-      email: string
-      nem: string
-      currency: string
-      amount: number
-      method: string
-      lang: string
-    }
-  ) {
-    return this.http.post("/api/cheque/order-cheque", data);
-  }
-
-  public orderCash(
-    data: {
-      email: string
-      nem: string
-      currency: string
-      amount: number
-      method: string
-      lang: string
-    }
-  ) {
-    return this.http.post("/api/cheque/order-cash", data);
-  }
-
   public deletePlan(
     data: {
       userId: string
