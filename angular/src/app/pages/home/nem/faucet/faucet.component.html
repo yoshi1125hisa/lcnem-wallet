@@ -1,3 +1,6 @@
-<p>
-  faucet works!
-</p>
+<mat-card *ngIf="visible$ | async" class="button">
+  <h3>{{translation.present[lang]}}</h3>
+  <button mat-raised-button color="accent" matTooltip="{{translation.recommend[lang]}}" (click)="faucet()">
+    {{translation.receive[lang]}}
+  </button>
+</mat-card>
