@@ -90,10 +90,6 @@ export class IntegrateComponent implements OnInit {
     reject: {
       en: "Reject",
       ja: "拒否する"
-    } as any,
-    introduction: {
-      en: "",
-      ja: "WLTFileが書き出されて外部のサービスでwalletが使えるようになります。パスワードは、Walletでの署名に使われます。"
     } as any
   }
 }
