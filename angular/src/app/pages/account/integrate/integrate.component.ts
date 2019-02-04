@@ -90,6 +90,18 @@ export class IntegrateComponent implements OnInit {
     reject: {
       en: "Reject",
       ja: "拒否する"
+    } as any,
+    introductionImportAccount: {
+      en: "The above application is importing NEM account from LCNEM Wallet.",
+      ja: "上記アプリは、NEMアカウントをLCNEM Walletからインポートしようとしています。"
+    } as any,
+    introductionTellPrivateKey: {
+      en: "We are going to tell the private key encrypted with the password to the above application.",
+      ja: "上記アプリに、パスワードで暗号化された秘密鍵を伝達します。"
+    } as any,
+    introductionInputPassword: {
+      en: "Please input new password  for encrypting private key.",
+      ja: "秘密鍵を暗号化するために使うパスワードを、新たに考えて入力してください。"
     } as any
   }
 }
