@@ -18,7 +18,8 @@ import { LoadingDialogComponent } from '../../../../../components/loading-dialog
   styleUrls: ['./change.component.css']
 })
 export class ChangeComponent implements OnInit {
-
+  public get lang() { return this.language.state.twoLetter }
+  
   constructor(
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -29,7 +30,6 @@ export class ChangeComponent implements OnInit {
     private api: ApiService,
     private _router: RouterService,
   ) { }
-  public get lang() { return this.language.state.twoLetter }
 
   public loading$ = combineLatest(
     this.auth.user$,

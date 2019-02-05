@@ -93,13 +93,13 @@ export class FaucetComponent implements OnInit {
       en: "Receive",
       ja: "受け取る"
     } as any,
-    present: {
-      en: "1XEM Present for you",
-      ja: "1XEM プレゼント!"
+    faucet: {
+      en: "1XEM present",
+      ja: "1XEM プレゼント"
     } as any,
-    recommend: {
-      en: "Let's receive 1 XEM!!",
-      ja: "1XEM を受け取ることができます"
+    faucetBody: {
+      en: "Let's get XEM for transaction fees!",
+      ja: "手数料に使用するXEMをプレゼント！"
     } as any
   }
 }
