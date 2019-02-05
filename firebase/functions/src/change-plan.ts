@@ -50,7 +50,7 @@ export const _changePlan = functions.https.onRequest(
       if (!userId || !Number.isInteger(months) || !signed.data || !signed.signature) {
         throw Error()
       }
-      
+
       const price = {
         "Standard": 200,
         "Premium": 600
@@ -60,9 +60,14 @@ export const _changePlan = functions.https.onRequest(
         throw Error()
       }
 
-      const now = new Date()
-      const expire = user.plan && user.plan.type === plan ? new Date(user.plan.expire) : now
-      const before = expire > now ? expire : now
+      let before = new Date()
+
+      if (user.plan && user.plan.type) {
+        if (user.plan.type === plan) {
+          before = new Date(user.plan.expire)
+        }
+      }
+
       before.setMonth(before.getMonth() + months)
 
       await doc.ref.set(

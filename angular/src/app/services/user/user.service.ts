@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { RxEffectiveStateStore, RxEffectiveState } from 'rx-state-store-js';
 import { User } from '../../../../../firebase/functions/src/models/user'
+import { filter, first, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService extends RxEffectiveStateStore<State> {
-
+  
   constructor(
     private firestore: AngularFirestore
   ) {

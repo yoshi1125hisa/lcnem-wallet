@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar, MatDialog } from '@angular/material';
-import { map, first, filter } from 'rxjs/operators';
-import { Observable, combineLatest } from 'rxjs';
+import { map, first, filter, mergeMap } from 'rxjs/operators';
+import { Observable, combineLatest, of } from 'rxjs';
 import { LanguageService } from '../../../../../services/language/language.service';
 import { AuthService } from '../../../../../services/auth/auth.service';
 import { RouterService } from '../../../../../services/router/router.service';
@@ -20,6 +20,24 @@ import { LoadingDialogComponent } from '../../../../../components/loading-dialog
 export class ChangeComponent implements OnInit {
   public get lang() { return this.language.state.twoLetter }
   
+  public loading$ = combineLatest(
+    this.auth.user$,
+    this.user.state$
+  ).pipe(
+    map(([auth, user]) => auth === null || user.loading)
+  )
+
+  public expire$ = this.user.state$.pipe(
+    filter(user => user.user !== undefined && user.user.plan !== undefined),
+    map(user => new Date(user.user!.plan!.expire))
+  )
+
+  public forms = {
+    plan: 0,
+    currentPlan: 0,
+    months: 6
+  }
+
   constructor(
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -30,19 +48,6 @@ export class ChangeComponent implements OnInit {
     private api: ApiService,
     private _router: RouterService,
   ) { }
-
-  public loading$ = combineLatest(
-    this.auth.user$,
-    this.user.state$
-  ).pipe(
-    map(([auth, user]) => auth === null || user.loading)
-  )
-
-  public forms = {
-    plan: 0,
-    currentPlan: 0,
-    months: 6
-  }
 
   ngOnInit() {
     this.load()
@@ -66,12 +71,7 @@ export class ChangeComponent implements OnInit {
       map(state => state.user!.plan),
       map(
         (plan) => {
-          if (plan) {
-            if (new Date(plan.expire) <= new Date()) {
-              this.api.deletePlan({ userId: user!.uid })
-              return 0
-            }
-
+          if (plan && new Date(plan.expire) > new Date()) {
             if (plan.type == "Standard") {
               return 1
             }
@@ -79,9 +79,11 @@ export class ChangeComponent implements OnInit {
               return 2
             }
           }
+
           return 0
         }
-      )
+      ),
+      first()
     ).toPromise()
 
     this.forms.currentPlan = this.forms.plan
@@ -173,14 +175,6 @@ export class ChangeComponent implements OnInit {
           en: "Free acquisition of assets used as fee for blockchains",
           ja: "ブロックチェーンへの手数料に使われるアセットの無料取得"
         } as any,
-        {
-          en: "Multisig Transaction",
-          ja: "マルチシグトランザクション"
-        } as any,
-        {
-          en: "Issuing assets",
-          ja: "アセットの発行"
-        } as any
       ]
     },
     {
@@ -197,16 +191,8 @@ export class ChangeComponent implements OnInit {
           ja: "Standardプランの全ての機能"
         } as any,
         {
-          en: "Hide advertisements",
-          ja: "広告の非表示"
-        } as any,
-        {
-          en: "Notification of transactions",
-          ja: "トランザクションへの通知"
-        } as any,
-        {
-          en: "Register the icon of assets",
-          ja: "アセットのアイコンの登録"
+          en: "Notification of transactions(not implemented yer)",
+          ja: "トランザクションへの通知(未実装)"
         } as any
       ]
     }

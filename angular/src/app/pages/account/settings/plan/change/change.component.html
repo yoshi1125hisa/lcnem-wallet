@@ -24,15 +24,16 @@
                   <mat-divider></mat-divider>
                 </ng-container>
               </mat-radio-group>
+              <p *ngIf="expire$ | async as expire">{{expire}}</p>
               <div fxLayout="row">
                 <span class="fill-remaining-space"></span>
                 <mat-form-field fxFill>
-                    <mat-select placeholder="{{translation.months[lang]}}" [(ngModel)]="forms.months" name="months"
-                      required>
-                      <mat-option *ngFor="let i of [1, 2, 3, 4, 6, 12]" [value]="i">{{i}}</mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                <button mat-raised-button color="accent" [disabled]="form.invalid || forms.plan > forms.currentPlan">{{translation.changePlan[lang]}}</button>
+                  <mat-select placeholder="{{translation.months[lang]}}" [(ngModel)]="forms.months" name="months"
+                    required>
+                    <mat-option *ngFor="let i of [1, 2, 3, 4, 6, 12]" [value]="i">{{i}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <button mat-raised-button color="accent" [disabled]="form.invalid || forms.plan !== forms.currentPlan">{{translation.changePlan[lang]}}</button>
               </div>
               <p>{{translation.availableFunctions[lang]}}</p>
               <ul>

@@ -24,7 +24,7 @@ export class WalletService extends RxEntityStateStore<State, Wallet> {
       map(wallets => wallets.filter(wallet => !wallet.local).length)
     )
   ).pipe(
-    map(([user, clouds]) => user.user!.plan !== undefined ? 1 : 1 - clouds)
+    map(([user, clouds]) => user.user!.plan && new Date(user.user!.plan!.expire) > new Date() ? 1 : 1 - clouds)
   )
 
   constructor(
