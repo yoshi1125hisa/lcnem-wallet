@@ -33,8 +33,8 @@
                     <mat-option *ngFor="let i of [1, 2, 3, 4, 6, 12]" [value]="i">{{i}}</mat-option>
                   </mat-select>
                 </mat-form-field>
-                <button mat-raised-button color="accent" [disabled]="form.invalid || forms.plan !== forms.currentPlan">{{translation.changePlan[lang]}}</button>
               </div>
+              <button mat-raised-button color="accent" [disabled]="form.invalid || forms.plan !== forms.currentPlan">{{translation.changePlan[lang]}}</button>
               <p>{{translation.availableFunctions[lang]}}</p>
               <ul>
                 <li *ngFor="let function of plans[forms.plan].functions">

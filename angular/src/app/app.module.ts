@@ -91,6 +91,7 @@ import { AddressInputComponent } from './components/address-input/address-input.
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
 //services
 import { RouterService } from './services/router/router.service';
+import { BalanceComponent } from './pages/home/nem-cosmos/balance/balance.component';
 
 @NgModule({
   declarations: [
@@ -112,6 +113,7 @@ import { RouterService } from './services/router/router.service';
     BitcoinHistoryComponent,
     //    nem-cosmos
     NemCosmosComponent,
+    BalanceComponent,
     //  account
     LoginComponent,
     IntegrateComponent,
