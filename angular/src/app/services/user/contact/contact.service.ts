@@ -38,7 +38,7 @@ export class ContactService extends RxEntityStateStore<State, Contact> {
           state.entities[doc.id] = doc.data() as Contact
 
           //レガシー
-          if(!state.entities[doc.id].nem[0].address) {
+          if(!state.entities[doc.id].nem[0] || !state.entities[doc.id].nem[0].address) {
             state.entities[doc.id].nem = state.entities[doc.id].nem.map((nem: any) => {return {name: "", address: nem}})
           }
         }
