@@ -100,10 +100,6 @@ export class FaucetComponent implements OnInit {
     faucetBody: {
       en: "Let's get XEM for transaction fees!",
       ja: "手数料に使用するXEMをプレゼント！"
-    } as any,
-    prettifyXem: {
-      en: "1 XEM Present",
-      ja: "1 XEM プレゼント"
     } as any
   }
 }
