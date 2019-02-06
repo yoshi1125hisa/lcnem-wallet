@@ -57,6 +57,7 @@ import { BalanceComponent as BitcoinBalanceComponent } from './pages/home/bitcoi
 import { HistoryComponent as BitcoinHistoryComponent } from './pages/home/bitcoin/history/history.component';
 //    nem-cosmos
 import { NemCosmosComponent } from './pages/home/nem-cosmos/nem-cosmos.component';
+import { BalanceComponent as NemCosmosBalanceComponent } from './pages/home/nem-cosmos/balance/balance.component';
 //  account
 import { LoginComponent } from './pages/account/login/login.component';
 import { IntegrateComponent } from './pages/account/integrate/integrate.component';
@@ -112,6 +113,7 @@ import { RouterService } from './services/router/router.service';
     BitcoinHistoryComponent,
     //    nem-cosmos
     NemCosmosComponent,
+    NemCosmosBalanceComponent,
     //  account
     LoginComponent,
     IntegrateComponent,

@@ -24,7 +24,7 @@ export async function receiveLcnemCheque(signedTransaction: SignedTransaction, c
   }
 
   const assets = transferTransaction.assets()
-  const asset = assets.find(asset => asset.assetId.toString() === `lc:${currency.toLowerCase()}`)
+  const asset = assets.find(el => el.assetId.toString() === `lc:${currency.toLowerCase()}`)
   if (!asset) {
     throw Error()
   }
