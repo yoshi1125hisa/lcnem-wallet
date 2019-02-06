@@ -7,7 +7,6 @@ import {
 
 import { receiveLcnemCheque } from './routines/lcnem-cheque';
 import { User } from './models/user';
-import { Timestamp } from '@google-cloud/firestore';
 
 export const _changePlan = functions.https.onRequest(
   async (req, res) => {
@@ -60,8 +59,8 @@ export const _changePlan = functions.https.onRequest(
       if (amount < months * price[plan]) {
         throw Error()
       }
-      let timeStamp = doc.get('created_at')
-      let before = timeStamp.toDate()
+
+      let before = new Date()
 
       if (user.plan && user.plan.type) {
         if (user.plan.type === plan) {
@@ -70,7 +69,7 @@ export const _changePlan = functions.https.onRequest(
       }
 
       before.setMonth(before.getMonth() + months)
-      
+
       await doc.ref.set(
         {
           ...user,
