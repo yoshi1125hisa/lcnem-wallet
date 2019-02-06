@@ -15,6 +15,7 @@ admin.initializeApp({
   credential: admin.credential.cert(JSON.parse(JSON.stringify(functions.config().service_account).replace(/\\\\n/g, "\\n"))),
   databaseURL: "https://lcnem-wallet.firebaseio.com"
 })
+admin.firestore().settings( { timestampsInSnapshots: true })
 
 export const changePlan: functions.HttpsFunction | null
   = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "changePlan")
