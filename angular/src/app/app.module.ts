@@ -57,6 +57,7 @@ import { BalanceComponent as BitcoinBalanceComponent } from './pages/home/bitcoi
 import { HistoryComponent as BitcoinHistoryComponent } from './pages/home/bitcoin/history/history.component';
 //    nem-cosmos
 import { NemCosmosComponent } from './pages/home/nem-cosmos/nem-cosmos.component';
+import { BalanceComponent as NemCosmosBalanceComponent } from './pages/home/nem-cosmos/balance/balance.component';
 //  account
 import { LoginComponent } from './pages/account/login/login.component';
 import { IntegrateComponent } from './pages/account/integrate/integrate.component';
@@ -91,7 +92,6 @@ import { AddressInputComponent } from './components/address-input/address-input.
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
 //services
 import { RouterService } from './services/router/router.service';
-import { BalanceComponent } from './pages/home/nem-cosmos/balance/balance.component';
 
 @NgModule({
   declarations: [
@@ -113,7 +113,7 @@ import { BalanceComponent } from './pages/home/nem-cosmos/balance/balance.compon
     BitcoinHistoryComponent,
     //    nem-cosmos
     NemCosmosComponent,
-    BalanceComponent,
+    NemCosmosBalanceComponent,
     //  account
     LoginComponent,
     IntegrateComponent,
