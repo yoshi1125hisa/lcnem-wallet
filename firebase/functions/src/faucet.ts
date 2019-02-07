@@ -39,7 +39,7 @@ export const _faucet = functions.https.onRequest(
       await admin.firestore().collection("users").doc(userId).set(
         {
           ...user,
-          faucetDate: new Date().toUTCString()
+          faucetDate: (new Date()).toUTCString()
         } as User,
       )
 
