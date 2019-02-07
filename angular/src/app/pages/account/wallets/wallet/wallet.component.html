@@ -36,10 +36,7 @@
   <button mat-icon-button color="warn" (click)="openSnackBar('import')" *ngIf="!wallet?.wallet">
     <mat-icon>warning</mat-icon>
   </button>
-  <button mat-icon-button color="warn" (click)="openSnackBar('plan')" *ngIf="!wallet?.local && (cloudCapacity$ | async) < 0">
-    <mat-icon>warning</mat-icon>
-  </button>
-  <button mat-icon-button color="accent" (click)="enter.emit()" *ngIf="wallet?.local || (cloudCapacity$ | async) >= 0">
+  <button mat-icon-button color="accent" (click)="enter.emit()">
     <mat-icon>launch</mat-icon>
   </button>
 </div>

@@ -67,9 +67,6 @@ import { ApplicationDialogComponent } from './pages/account/applications/applica
 import { ApplicationComponent } from './pages/account/applications/application/application.component';
 //    settings
 import { SettingsComponent } from './pages/account/settings/settings.component';
-//      plan
-import { PlanComponent } from './pages/account/settings/plan/plan.component';
-import { ChangeComponent as PlanChangeComponent } from './pages/account/settings/plan/change/change.component';
 //    contacts
 import { ContactsComponent } from './pages/account/contacts/contacts.component';
 import { ContactComponent } from './pages/account/contacts/contact/contact.component';
@@ -123,9 +120,6 @@ import { RouterService } from './services/router/router.service';
     ApplicationComponent,
     //    settings
     SettingsComponent,
-    //      plan
-    PlanComponent,
-    PlanChangeComponent,
     //    contacts
     ContactsComponent,
     ContactComponent,

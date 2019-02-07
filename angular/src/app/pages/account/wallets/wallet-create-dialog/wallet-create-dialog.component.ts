@@ -18,8 +18,6 @@ export class WalletCreateDialogComponent implements OnInit {
     privateKey: "",
   }
   
-  public cloudCapacity$ = this.wallet.cloudCapacity$
-  
   constructor(
     private language: LanguageService,
     private wallet: WalletService

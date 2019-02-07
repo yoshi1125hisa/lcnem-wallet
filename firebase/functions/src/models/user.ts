@@ -1,7 +1,5 @@
 export interface User {
-  plan?: {
-    type: "Standard" | "Premium"
-    expire: string
-  }
+  cloudDate?: string
+  faucetDate?: string
   admin?: boolean
 }

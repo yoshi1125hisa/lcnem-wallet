@@ -11,6 +11,7 @@ import {
   AccountHttp
 } from 'nem-library';
 import { Wallet } from './models/wallet';
+import { User } from './models/user';
 
 export const _faucet = functions.https.onRequest(
   async (req, res) => {
@@ -27,6 +28,20 @@ export const _faucet = functions.https.onRequest(
       if (!doc.exists) {
         throw Error()
       }
+      const user = doc.data() as User
+      if (user.faucetDate) {
+        const faucetDate = new Date(user.faucetDate)
+        faucetDate.setDate(faucetDate.getDate() + 1)
+        if (faucetDate > new Date()) {
+          throw Error()
+        }
+      }
+      await admin.firestore().collection("users").doc(userId).set(
+        {
+          ...user,
+          faucetDate: new Date().toUTCString()
+        } as User,
+      )
 
       const address = new Address((doc.data() as Wallet).nem)
 

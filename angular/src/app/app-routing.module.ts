@@ -4,7 +4,6 @@ import { HomeComponent } from './pages/home/home.component';
 import { LoginComponent } from './pages/account/login/login.component';
 import { WalletsComponent } from './pages/account/wallets/wallets.component';
 import { SettingsComponent } from './pages/account/settings/settings.component';
-import { ChangeComponent as PlanChangeComponent } from './pages/account/settings/plan/change/change.component';
 import { ContactsComponent } from './pages/account/contacts/contacts.component';
 import { QrScanComponent } from './pages/nem/qr-scan/qr-scan.component';
 import { TransferComponent } from './pages/nem/transfer/transfer.component';
@@ -19,7 +18,6 @@ const routes: Routes = [
   { path: "account/wallets", component: WalletsComponent },
   { path: "account/integrate", component: IntegrateComponent },
   { path: "account/settings", component: SettingsComponent },
-  { path: "account/settings/plan/change", component: PlanChangeComponent },
   { path: "account/contacts", component: ContactsComponent },
   { path: "nem/qr-scan", component: QrScanComponent },
   { path: "nem/transfer", component: TransferComponent },
