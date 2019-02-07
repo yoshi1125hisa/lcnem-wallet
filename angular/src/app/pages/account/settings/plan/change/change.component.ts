@@ -172,8 +172,8 @@ export class ChangeComponent implements OnInit {
           ja: "Freeプランの全ての機能"
         } as any,
         {
-          en: "Free acquisition of assets used as fee for blockchains",
-          ja: "ブロックチェーンへの手数料に使われるアセットの無料取得"
+          en: "Multi cloud wallets",
+          ja: "複数のクラウドウォレットの利用"
         } as any,
       ]
     },

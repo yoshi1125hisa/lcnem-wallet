@@ -21,7 +21,8 @@ export class FaucetComponent implements OnInit {
   public visible$ = this.balance.state$.pipe(
     filter(state => state.assets.length !== 0),
     map(state => state.assets.find(a => a.assetId.toString() == "nem:xem")),
-    map(asset => asset ? asset!.quantity < 10 ** 6 : false))
+    map(asset => asset ? asset!.quantity < 10 ** 6 : false)
+  )
 
   constructor(
     private dialog: MatDialog,
@@ -82,8 +83,8 @@ export class FaucetComponent implements OnInit {
 
   public translation = {
     completed: {
-      en: "Competed",
-      ja: "送金しました。"
+      en: "You've got 1 XEM!",
+      ja: "1XEM獲得しました！"
     } as any,
     error: {
       en: "Error",

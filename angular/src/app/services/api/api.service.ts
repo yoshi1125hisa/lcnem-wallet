@@ -10,20 +10,6 @@ export class ApiService {
     private http: HttpClient
   ) { }
 
-  public deletePlan(
-    data: {
-      userId: string
-    }
-  ) {
-    return this.http.post(
-      "/api/change-plan",
-      {
-        ...data,
-        plan: "Free"
-      }
-    )
-  }
-
   public changePlan(
     data: {
       userId: string
