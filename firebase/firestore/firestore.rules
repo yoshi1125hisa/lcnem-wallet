@@ -16,10 +16,6 @@ service cloud.firestore {
         allow read;
         allow write: if request.auth.uid == user;
       }
-
-      match /custodies/lightning/transactions/{transaction} {
-        allow read: if request.auth.uid == user;
-      }
     }
 
     match /rates/rate {

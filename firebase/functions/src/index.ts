@@ -1,7 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
-import { _changePlan } from './change-plan';
 import { _faucet } from './faucet';
 import { _rate } from './rate';
 
@@ -16,11 +15,6 @@ admin.initializeApp({
   databaseURL: "https://lcnem-wallet.firebaseio.com"
 })
 
-export const changePlan: functions.HttpsFunction | null
-  = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "changePlan")
-    ? _changePlan
-    : null
-      
 export const faucet: functions.HttpsFunction | null
   = (!process.env.FUNCTION_NAME || process.env.FUNCTION_NAME === "faucet")
     ? _faucet
