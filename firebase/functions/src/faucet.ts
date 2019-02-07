@@ -23,12 +23,13 @@ export const _faucet = functions.https.onRequest(
         throw Error()
       }
 
-      const doc = await admin.firestore().collection("users").doc(userId).collection("wallets").doc(walletId).get()
+      const userDoc = await admin.firestore().collection("users").doc(userId).get()
+      const walletDoc = await admin.firestore().collection("users").doc(userId).collection("wallets").doc(walletId).get()
 
-      if (!doc.exists) {
+      if (!walletDoc.exists) {
         throw Error()
       }
-      const user = doc.data() as User
+      const user = userDoc.data() as User
       if (user.faucetDate) {
         const faucetDate = new Date(user.faucetDate)
         faucetDate.setDate(faucetDate.getDate() + 1)
@@ -43,7 +44,7 @@ export const _faucet = functions.https.onRequest(
         } as User,
       )
 
-      const address = new Address((doc.data() as Wallet).nem)
+      const address = new Address((walletDoc.data() as Wallet).nem)
 
       const assets = await new AccountHttp().getAssetsOwnedByAddress(address).toPromise()
       const xem = assets.find(asset => asset.assetId.toString() === "nem:xem")
