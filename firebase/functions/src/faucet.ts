@@ -8,13 +8,16 @@ import {
   XEM,
   TransactionHttp,
   EmptyMessage,
-  AccountHttp
+  AccountHttp,
+  NEMLibrary,
+  NetworkTypes
 } from 'nem-library';
 import { Wallet } from './models/wallet';
 import { User } from './models/user';
 
 export const _faucet = functions.https.onRequest(
   async (req, res) => {
+    NEMLibrary.bootstrap(NetworkTypes.MAIN_NET)
     try {
       const userId = req.body.userId as string
       const walletId = req.body.walletId as string

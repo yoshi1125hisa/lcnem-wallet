@@ -86,7 +86,7 @@ export class FaucetComponent implements OnInit {
     this.api.faucet(
       {
         userId: this.auth.user!.uid,
-        walletId: state.entities[state.currentWalletId!].nem
+        walletId: state.currentWalletId!
       }
     ).subscribe(
       () => {
