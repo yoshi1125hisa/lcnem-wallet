@@ -8,15 +8,10 @@
     <mat-icon>edit</mat-icon>
   </button>
 </div>
-<mat-list *ngIf="contact?.nem?.length">
-  <h3 mat-subheader>nem</h3>
-  <mat-divider></mat-divider>
-  <ng-container *ngFor="let nem of contact?.nem">
-    <mat-list-item>
-      <span matLine>{{nem.name}}</span>
-      <span matLine>{{nem.address}}</span>
-    </mat-list-item>
-    <mat-divider></mat-divider>
-  </ng-container>
-</mat-list>
+<h3>nem</h3>
+<ng-container *ngFor="let nem of contact?.nem">
+  <mat-form-field fxFill>
+    <input matInput placeholder="{{nem.name}}" value="{{nem.address}}" readonly />
+  </mat-form-field>
+</ng-container>
 <p *ngIf="contact?.memo">{{contact?.memo}}</p>
