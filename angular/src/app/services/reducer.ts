@@ -29,7 +29,7 @@ export interface State {
   multisig: fromNemMultisig.State;
 }
 
-export const reducers: ActionReducerMap<State> = {
+export const reducers: ActionReducerMap<State, any> = {
 
   user: fromUser.reducer,
   rate: fromRate.reducer,

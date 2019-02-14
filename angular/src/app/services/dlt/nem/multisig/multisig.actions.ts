@@ -10,7 +10,7 @@ export enum MultisigActionTypes {
 export class LoadMultisigs implements Action {
   readonly type = MultisigActionTypes.LoadMultisigs;
 
-  constructor(public payload: { address: Address }) {}
+  constructor(public payload: { address: Address, refresh?: boolean }) {}
 }
 
 export class LoadMultisigsSuccess implements Action {

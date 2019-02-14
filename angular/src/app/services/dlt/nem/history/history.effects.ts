@@ -5,6 +5,8 @@ import { HistoryActionTypes, HistoryActions, LoadHistoriesError, LoadHistoriesSu
 import { AccountHttp } from 'nem-library';
 import { nodes } from '../../../../classes/nodes';
 import { forkJoin, of } from 'rxjs';
+import { Store } from '@ngrx/store';
+import * as fromNemHistory from './history.reducer';
 
 @Injectable()
 export class HistoryEffects {
@@ -16,12 +18,21 @@ export class HistoryEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        const accountHttp = new AccountHttp(nodes)
-        return forkJoin(
-          accountHttp.unconfirmedTransactions(payload.address),
-          accountHttp.allTransactions(payload.address)
-        ).pipe(
-          map(([unconfirmed, all]) => unconfirmed.concat(all)),
+        return this.store.pipe(
+          mergeMap(
+            (state) => {
+              if (state.lastAddress && state.lastAddress.equals(payload.address) && !payload.refresh) {
+                return of(state.transactions)
+              }
+              const accountHttp = new AccountHttp(nodes)
+              return forkJoin(
+                accountHttp.unconfirmedTransactions(payload.address),
+                accountHttp.allTransactions(payload.address)
+              ).pipe(
+                map(([unconfirmed, all]) => unconfirmed.concat(all)),
+              )
+            }
+          )
         )
       }
     ),
@@ -30,6 +41,9 @@ export class HistoryEffects {
   );
 
 
-  constructor(private actions$: Actions<HistoryActions>) { }
+  constructor(
+    private actions$: Actions<HistoryActions>,
+    private store: Store<fromNemHistory.State>
+  ) { }
 
 }

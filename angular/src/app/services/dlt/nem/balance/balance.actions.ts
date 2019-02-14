@@ -10,7 +10,7 @@ export enum BalanceActionTypes {
 export class LoadBalances implements Action {
   readonly type = BalanceActionTypes.LoadBalances;
 
-  constructor(public payload: { address: Address }) {}
+  constructor(public payload: { address: Address, refresh?: boolean }) {}
 }
 
 export class LoadBalancesSuccess implements Action {

@@ -10,7 +10,7 @@ export enum HistoryActionTypes {
 export class LoadHistories implements Action {
   readonly type = HistoryActionTypes.LoadHistories;
 
-  constructor(public payload: { address: Address }) {}
+  constructor(public payload: { address: Address, refresh?: boolean }) {}
 }
 
 export class LoadHistoriesSuccess implements Action {
