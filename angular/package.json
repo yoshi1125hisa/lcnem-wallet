@@ -36,7 +36,6 @@
     "hammerjs": "^2.0.8",
     "nem-library": "^2.0.0-RC4",
     "nem2-sdk": "^0.10.1",
-    "rx-state-store-js": "^0.1.6",
     "rxjs": "^6.4.0",
     "zone.js": "^0.8.29"
   },

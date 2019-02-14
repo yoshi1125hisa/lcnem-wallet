@@ -12,9 +12,9 @@ import * as fromWallet from './user/wallet/wallet.reducer';
 import * as fromContact from './user/contact/contact.reducer';
 import * as fromApplication from './user/application/application.reducer';
 import * as fromAssetDefinition from './dlt/asset-definition/asset-definition.reducer';
-import * as fromBalance from './dlt/nem/balance/balance.reducer';
-import * as fromHistory from './dlt/nem/history/history.reducer';
-import * as fromMultisig from './dlt/nem/multisig/multisig.reducer';
+import * as fromNemBalance from './dlt/nem/balance/balance.reducer';
+import * as fromNemHistory from './dlt/nem/history/history.reducer';
+import * as fromNemMultisig from './dlt/nem/multisig/multisig.reducer';
 
 export interface State {
 
@@ -24,9 +24,9 @@ export interface State {
   contact: fromContact.State;
   application: fromApplication.State;
   assetDefinition: fromAssetDefinition.State;
-  balance: fromBalance.State;
-  history: fromHistory.State;
-  multisig: fromMultisig.State;
+  balance: fromNemBalance.State;
+  history: fromNemHistory.State;
+  multisig: fromNemMultisig.State;
 }
 
 export const reducers: ActionReducerMap<State> = {
@@ -37,9 +37,9 @@ export const reducers: ActionReducerMap<State> = {
   contact: fromContact.reducer,
   application: fromApplication.reducer,
   assetDefinition: fromAssetDefinition.reducer,
-  balance: fromBalance.reducer,
-  history: fromHistory.reducer,
-  multisig: fromMultisig.reducer,
+  balance: fromNemBalance.reducer,
+  history: fromNemHistory.reducer,
+  multisig: fromNemMultisig.reducer,
 };
 
 
