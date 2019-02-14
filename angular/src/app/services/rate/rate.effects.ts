@@ -6,7 +6,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { of } from 'rxjs';
 import { Rate } from '../../../../../firebase/functions/src/models/rate';
 import { Store } from '@ngrx/store';
-import * as fromRate from './/rate.reducer';
+import * as fromRate from './rate.reducer';
 
 @Injectable()
 export class RateEffects {
@@ -38,8 +38,8 @@ export class RateEffects {
 
   constructor(
     private actions$: Actions<RateActions>,
-    private firestore: AngularFirestore,
-    private store: Store<fromRate.State>
+    private store: Store<fromRate.State>,
+    private firestore: AngularFirestore
   ) { }
 
 }
