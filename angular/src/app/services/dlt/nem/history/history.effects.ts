@@ -10,7 +10,10 @@ export class HistoryEffects {
 
 
   @Effect()
-  loadHistorys$ = this.actions$.pipe(ofType(HistoryActionTypes.LoadHistorys));
+  loadHistorys$ = this.actions$.pipe(
+    ofType(HistoryActionTypes.LoadHistories),
+    
+  );
 
 
   constructor(private actions$: Actions) {}
