@@ -13,7 +13,7 @@ export class HistoryEffects {
 
 
   @Effect()
-  loadHistorys$ = this.actions$.pipe(
+  loadHistories$ = this.actions$.pipe(
     ofType(HistoryActionTypes.LoadHistories),
     map(action => action.payload),
     mergeMap(
