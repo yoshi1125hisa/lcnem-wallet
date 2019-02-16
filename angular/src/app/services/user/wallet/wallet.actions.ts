@@ -79,7 +79,7 @@ export class DeleteWallet implements Action {
 export class DeleteWalletSuccess implements Action {
   readonly type = WalletActionTypes.DeleteWalletSuccess;
 
-  constructor(public payload: { walletId: string, wallet: Wallet }) { }
+  constructor(public payload: { walletId: string }) { }
 }
 
 export class DeleteWalletError implements Action {

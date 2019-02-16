@@ -8,6 +8,7 @@ export interface State {
   error?: Error
   ids: string[]
   entities: { [id: string]: Application }
+  lastUserId?: string
 }
 
 export const initialState: State = {

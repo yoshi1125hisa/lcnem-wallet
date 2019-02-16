@@ -79,7 +79,7 @@ export class DeleteContact implements Action {
 export class DeleteContactSuccess implements Action {
   readonly type = ContactActionTypes.DeleteContactSuccess;
 
-  constructor(public payload: { ContactId: string, Contact: Contact }) { }
+  constructor(public payload: { ContactId: string }) { }
 }
 
 export class DeleteContactError implements Action {

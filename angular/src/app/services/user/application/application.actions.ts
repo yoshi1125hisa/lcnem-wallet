@@ -38,13 +38,13 @@ export class LoadApplicationsError implements Action {
 export class AddApplication implements Action {
   readonly type = ApplicationActionTypes.AddApplication;
 
-  constructor(public payload: { userId: string, Application: Application }) { }
+  constructor(public payload: { userId: string, application: Application }) { }
 }
 
 export class AddApplicationSuccess implements Action {
   readonly type = ApplicationActionTypes.AddApplicationSuccess;
 
-  constructor(public payload: { ApplicationId: string, Application: Application }) { }
+  constructor(public payload: { applicationId: string, application: Application }) { }
 }
 
 export class AddApplicationError implements Action {
@@ -56,13 +56,13 @@ export class AddApplicationError implements Action {
 export class UpdateApplication implements Action {
   readonly type = ApplicationActionTypes.UpdateApplication;
 
-  constructor(public payload: { userId: string, ApplicationId: string, Application: Application }) { }
+  constructor(public payload: { userId: string, applicationId: string, application: Application }) { }
 }
 
 export class UpdateApplicationSuccess implements Action {
   readonly type = ApplicationActionTypes.UpdateApplicationSuccess;
 
-  constructor(public payload: { ApplicationId: string, Application: Application }) { }
+  constructor(public payload: { applicationId: string, application: Application }) { }
 }
 
 export class UpdateApplicationError implements Action {
@@ -74,13 +74,13 @@ export class UpdateApplicationError implements Action {
 export class DeleteApplication implements Action {
   readonly type = ApplicationActionTypes.DeleteApplication;
 
-  constructor(public payload: { userId: string, ApplicationId: string }) { }
+  constructor(public payload: { userId: string, applicationId: string }) { }
 }
 
 export class DeleteApplicationSuccess implements Action {
   readonly type = ApplicationActionTypes.DeleteApplicationSuccess;
 
-  constructor(public payload: { ApplicationId: string, Application: Application }) { }
+  constructor(public payload: { applicationId: string }) { }
 }
 
 export class DeleteApplicationError implements Action {
