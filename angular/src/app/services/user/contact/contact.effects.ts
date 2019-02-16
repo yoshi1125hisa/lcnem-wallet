@@ -17,7 +17,7 @@ export class ContactEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        return this.store.pipe(
+        return this.contact$.pipe(
           mergeMap(
             (state) => {
               if (state.lastUserId && state.lastUserId === payload.userId && !payload.refresh) {
@@ -102,7 +102,7 @@ export class ContactEffects {
 
   constructor(
     private actions$: Actions<ContactActions>,
-    private store: Store<fromContact.State>,
+    private contact$: Store<fromContact.State>,
     private firestore: AngularFirestore
   ) { }
 

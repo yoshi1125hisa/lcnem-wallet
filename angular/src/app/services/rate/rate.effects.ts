@@ -16,7 +16,7 @@ export class RateEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        return this.store.pipe(
+        return this.rate$.pipe(
           mergeMap(
             (state) => {
               const beforeNow = new Date()
@@ -38,7 +38,7 @@ export class RateEffects {
 
   constructor(
     private actions$: Actions<RateActions>,
-    private store: Store<fromRate.State>,
+    private rate$: Store<fromRate.State>,
     private firestore: AngularFirestore
   ) { }
 

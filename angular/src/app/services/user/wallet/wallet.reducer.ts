@@ -114,6 +114,12 @@ export function reducer(state = initialState, action: WalletActions): State {
         error: action.payload.error
       }
     }
+    case WalletActionTypes.SetCurrentWallet: {
+      return {
+        ...state,
+        currentWalletId: action.payload.walletId
+      }
+    }
     default: {
       return state;
     }

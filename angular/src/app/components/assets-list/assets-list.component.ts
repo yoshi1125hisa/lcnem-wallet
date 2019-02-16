@@ -1,11 +1,14 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Asset} from 'nem-library';
+import { Asset } from 'nem-library';
 import { Observable, from, combineLatest, of } from 'rxjs';
 import { map, mergeMap, filter, toArray, first } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
-import { AssetDefinitionService } from '../../services/dlt//asset-definition/asset-definition.service';
-import { RateService } from '../../services/rate/rate.service';
 import { Tuple } from '../../classes/tuple';
+import * as fromAssetDefinition from '../../services/dlt/asset-definition/asset-definition.reducer'
+import * as fromRate from '../../services/rate/rate.reducer'
+import { Store } from '@ngrx/store';
+import { LoadAssetDefinitions } from 'src/app/services/dlt/asset-definition/asset-definition.actions';
+import { LoadRates } from 'src/app/services/rate/rate.actions';
 
 @Component({
   selector: 'app-assets-list',
@@ -13,7 +16,7 @@ import { Tuple } from '../../classes/tuple';
   styleUrls: ['./assets-list.component.css']
 })
 export class AssetsListComponent implements OnInit {
-  get lang() { return this.language.state.twoLetter }
+  get lang() { return this.language.code }
 
   @Input() public title?: string
   @Input() public assets?: Asset[]
@@ -21,7 +24,7 @@ export class AssetsListComponent implements OnInit {
 
   @Output() clickAsset = new EventEmitter()
 
-  public quoteCurrency$ = this.rate.state$.pipe(map(state => state.currency))
+  public quoteCurrency$ = this.rate$.pipe(map(state => state.currency))
   public assets$: Observable<{
     name: string
     amount: number
@@ -34,8 +37,8 @@ export class AssetsListComponent implements OnInit {
 
   constructor(
     private language: LanguageService,
-    private rate: RateService,
-    private assetDefinition: AssetDefinitionService
+    private rate$: Store<fromRate.State>,
+    private assetDefinition$: Store<fromAssetDefinition.State>
   ) {
 
   }
@@ -48,14 +51,14 @@ export class AssetsListComponent implements OnInit {
     if (!this.assets) {
       return
     }
-    this.assetDefinition.loadAssetDefinitions(this.assets.map(asset => asset.assetId))
-    this.rate.loadRate()
+    this.rate$.dispatch(new LoadRates({}))
+    this.assetDefinition$.dispatch(new LoadAssetDefinitions({ assets: this.assets }))
 
     this.assets$ = combineLatest(
       from(this.assets).pipe(
         mergeMap(
           (asset) => {
-            return this.assetDefinition.state$.pipe(
+            return this.assetDefinition$.pipe(
               map(state => state.definitions),
               mergeMap(definitions => from(definitions)),
               filter(definition => definition.id.equals(asset.assetId)),
@@ -66,7 +69,7 @@ export class AssetsListComponent implements OnInit {
         ),
         toArray()
       ),
-      this.rate.state$.pipe(
+      this.rate$.pipe(
         filter(state => state.loading == false)
       )
     ).pipe(

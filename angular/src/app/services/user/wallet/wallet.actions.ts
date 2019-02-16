@@ -1,5 +1,6 @@
 import { Action } from '@ngrx/store';
 import { Wallet } from '../../../../../../firebase/functions/src/models/wallet';
+import { SimpleWallet } from 'nem-library';
 
 export enum WalletActionTypes {
   LoadWallets = 'LoadWallets',
@@ -13,7 +14,9 @@ export enum WalletActionTypes {
   UpdateWalletError = 'UpdateWalletError',
   DeleteWallet = 'DeleteWallet',
   DeleteWalletSuccess = 'DeleteWalletSuccess',
-  DeleteWalletError = 'DeleteWalletError'
+  DeleteWalletError = 'DeleteWalletError',
+  SetCurrentWallet = 'SetCurrentWallet',
+  AddLocalWallet = 'AddLocalWallet'
 }
 
 export class LoadWallets implements Action {
@@ -88,5 +91,17 @@ export class DeleteWalletError implements Action {
   constructor(public payload: { error: Error }) { }
 }
 
+export class SetCurrentWallet implements Action {
+  readonly type = WalletActionTypes.SetCurrentWallet;
 
-export type WalletActions = LoadWallets | LoadWalletsSuccess | LoadWalletsError | AddWallet | AddWalletSuccess | AddWalletError | UpdateWallet | UpdateWalletSuccess | UpdateWalletError | DeleteWallet | DeleteWalletSuccess | DeleteWalletError;
+  constructor(public payload: { walletId: string }) { }
+}
+
+export class AddLocalWallet implements Action {
+  readonly type = WalletActionTypes.AddLocalWallet;
+
+  constructor(public payload: { walletId: string, wallet: SimpleWallet }) { }
+}
+
+
+export type WalletActions = LoadWallets | LoadWalletsSuccess | LoadWalletsError | AddWallet | AddWalletSuccess | AddWalletError | UpdateWallet | UpdateWalletSuccess | UpdateWalletError | DeleteWallet | DeleteWalletSuccess | DeleteWalletError | SetCurrentWallet | AddLocalWallet;

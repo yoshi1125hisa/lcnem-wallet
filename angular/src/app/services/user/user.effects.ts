@@ -18,7 +18,7 @@ export class UserEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        return this.store.pipe(
+        return this.user$.pipe(
           mergeMap(
             (state) => {
               if (state.lastUserId && state.lastUserId === payload.userId && !payload.refresh) {
@@ -40,7 +40,7 @@ export class UserEffects {
 
   constructor(
     private actions$: Actions<UserActions>,
-    private store: Store<fromUser.State>,
+    private user$: Store<fromUser.State>,
     private firestore: AngularFirestore
   ) { }
 

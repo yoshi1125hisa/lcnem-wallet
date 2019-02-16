@@ -18,7 +18,7 @@ export class ApplicationEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        return this.store.pipe(
+        return this.application$.pipe(
           mergeMap(
             (state) => {
               if (state.lastUserId && state.lastUserId === payload.userId && !payload.refresh) {
@@ -98,7 +98,7 @@ export class ApplicationEffects {
 
   constructor(
     private actions$: Actions<ApplicationActions>,
-    private store: Store<fromApplication.State>,
+    private application$: Store<fromApplication.State>,
     private firestore: AngularFirestore
   ) { }
 
