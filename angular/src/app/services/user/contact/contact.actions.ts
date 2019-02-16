@@ -37,13 +37,13 @@ export class LoadContactsError implements Action {
 export class AddContact implements Action {
   readonly type = ContactActionTypes.AddContact;
 
-  constructor(public payload: { userId: string, Contact: Contact }) { }
+  constructor(public payload: { userId: string, contact: Contact }) { }
 }
 
 export class AddContactSuccess implements Action {
   readonly type = ContactActionTypes.AddContactSuccess;
 
-  constructor(public payload: { ContactId: string, Contact: Contact }) { }
+  constructor(public payload: { contactId: string, contact: Contact }) { }
 }
 
 export class AddContactError implements Action {
@@ -55,13 +55,13 @@ export class AddContactError implements Action {
 export class UpdateContact implements Action {
   readonly type = ContactActionTypes.UpdateContact;
 
-  constructor(public payload: { userId: string, ContactId: string, Contact: Contact }) { }
+  constructor(public payload: { userId: string, contactId: string, contact: Contact }) { }
 }
 
 export class UpdateContactSuccess implements Action {
   readonly type = ContactActionTypes.UpdateContactSuccess;
 
-  constructor(public payload: { ContactId: string, Contact: Contact }) { }
+  constructor(public payload: { contactId: string, contact: Contact }) { }
 }
 
 export class UpdateContactError implements Action {
@@ -73,13 +73,13 @@ export class UpdateContactError implements Action {
 export class DeleteContact implements Action {
   readonly type = ContactActionTypes.DeleteContact;
 
-  constructor(public payload: { userId: string, ContactId: string }) { }
+  constructor(public payload: { userId: string, contactId: string }) { }
 }
 
 export class DeleteContactSuccess implements Action {
   readonly type = ContactActionTypes.DeleteContactSuccess;
 
-  constructor(public payload: { ContactId: string }) { }
+  constructor(public payload: { contactId: string }) { }
 }
 
 export class DeleteContactError implements Action {

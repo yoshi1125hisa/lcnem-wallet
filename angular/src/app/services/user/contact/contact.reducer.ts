@@ -8,6 +8,7 @@ export interface State {
   error?: Error
   ids: string[]
   entities: { [id: string]: Contact }
+  lastUserId?: string
 }
 
 export const initialState: State = {
@@ -46,9 +47,9 @@ export function reducer(state = initialState, action: ContactActions): State {
       }
     }
     case ContactActionTypes.AddContactSuccess: {
-      const ids = [...state.ids, action.payload.ContactId]
+      const ids = [...state.ids, action.payload.contactId]
       const entities = { ...state.entities }
-      entities[action.payload.ContactId] = action.payload.Contact
+      entities[action.payload.contactId] = action.payload.contact
 
       return {
         ...state,
@@ -72,7 +73,7 @@ export function reducer(state = initialState, action: ContactActions): State {
     }
     case ContactActionTypes.UpdateContactSuccess: {
       const entities = { ...state.entities }
-      entities[action.payload.ContactId] = action.payload.Contact
+      entities[action.payload.contactId] = action.payload.contact
 
       return {
         ...state,
@@ -93,9 +94,9 @@ export function reducer(state = initialState, action: ContactActions): State {
       }
     }
     case ContactActionTypes.DeleteContactSuccess: {
-      const ids = state.ids.filter(id => id !== action.payload.ContactId)
+      const ids = state.ids.filter(id => id !== action.payload.contactId)
       const entities = { ...state.entities }
-      delete entities[action.payload.ContactId]
+      delete entities[action.payload.contactId]
 
       return {
         ...state,
