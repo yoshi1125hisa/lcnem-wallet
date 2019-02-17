@@ -17,7 +17,6 @@ export class HistoryComponent implements OnInit {
 
   public wallet$ = this.store.select(state => state.wallet)
   public history$ = this.store.select(state => state.history)
-  public state$ = this.history$
 
   public loading$ = combineLatest(
     this.wallet$,
