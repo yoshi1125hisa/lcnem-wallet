@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { UserActionTypes, UserActions, LoadUserSuccess, LoadUserError } from './user.actions';
 import { map, mergeMap, catchError } from 'rxjs/operators';
-import * as fromUser from './user.reducer';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { User } from '../../../../../firebase/functions/src/models/user';
+import { State } from '../reducer';
 
 @Injectable()
 export class UserEffects {
@@ -37,10 +37,11 @@ export class UserEffects {
     catchError(error => of(new LoadUserError({ error: error })))
   );
 
+  public user$ = this.store.select(state => state.user)
 
   constructor(
     private actions$: Actions<UserActions>,
-    private user$: Store<fromUser.State>,
+    private store: Store<State>,
     private firestore: AngularFirestore
   ) { }
 

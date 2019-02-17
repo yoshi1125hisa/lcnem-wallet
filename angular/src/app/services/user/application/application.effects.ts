@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { ApplicationActionTypes, ApplicationActions, LoadApplicationsSuccess, LoadApplicationsError, AddApplicationSuccess, UpdateApplicationSuccess, AddApplicationError, UpdateApplicationError, DeleteApplicationSuccess, DeleteApplicationError } from './application.actions';
-import * as fromApplication from './application.reducer';
 import { Store } from '@ngrx/store';
 import { mergeMap, map, catchError } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Application } from '../../../../../../firebase/functions/src/models/application';
+import { State } from '../../reducer';
 
 @Injectable()
 export class ApplicationEffects {
@@ -96,9 +96,11 @@ export class ApplicationEffects {
     catchError(error => of(new DeleteApplicationError({ error: error })))
   )
 
+  public application$ = this.store.select(state => state.application)
+
   constructor(
     private actions$: Actions<ApplicationActions>,
-    private application$: Store<fromApplication.State>,
+    private store: Store<State>,
     private firestore: AngularFirestore
   ) { }
 

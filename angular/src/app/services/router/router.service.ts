@@ -3,18 +3,19 @@ import { Router, NavigationExtras, NavigationStart, ActivatedRoute } from '@angu
 import { AuthService } from '../auth/auth.service';
 import { filter, first, map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import * as fromWallet from '../../services/user/wallet/wallet.reducer';
+import { State } from '../reducer';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RouterService {
+  public wallet$ = this.store.select(state => state.wallet)
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private auth: AuthService,
-    private wallet$: Store<fromWallet.State>
+    private store: Store<State>
   ) {
     this.router.events.pipe(
       filter(event => event instanceof NavigationStart),

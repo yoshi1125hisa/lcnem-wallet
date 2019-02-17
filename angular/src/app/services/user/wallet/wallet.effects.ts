@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { WalletActionTypes, WalletActions, LoadWalletsSuccess, LoadWalletsError, AddWalletSuccess, AddWalletError, UpdateWalletSuccess, UpdateWalletError, DeleteWalletSuccess, DeleteWalletError, LoadWallets } from './wallet.actions';
-import * as fromWallet from './wallet.reducer';
-import * as fromUser from '../user.reducer'
 import { Store } from '@ngrx/store';
 import { mergeMap, map, catchError, filter, first } from 'rxjs/operators';
 import { of, from } from 'rxjs';
@@ -11,6 +9,7 @@ import { Wallet } from '../../../../../../firebase/functions/src/models/wallet';
 import { AuthService } from '../../auth/auth.service';
 import { LoadUser } from '../user.actions';
 import { SimpleWallet, Password } from 'nem-library';
+import { State } from '../../reducer';
 
 @Injectable()
 export class WalletEffects {
@@ -145,11 +144,12 @@ export class WalletEffects {
     )
   )
 
+  public wallet$ = this.store.select(state => state.wallet)
+  public user$ = this.store.select(state => state.user)
 
   constructor(
     private actions$: Actions<WalletActions>,
-    private wallet$: Store<fromWallet.State>,
-    private user$: Store<fromUser.State>,
+    private store: Store<State>,
     private firestore: AngularFirestore,
     private auth: AuthService
   ) {
@@ -159,7 +159,7 @@ export class WalletEffects {
     ).subscribe(
       async (user) => {
         //レガシー
-        this.user$.dispatch(new LoadUser({ userId: user!.uid }))
+        this.store.dispatch(new LoadUser({ userId: user!.uid }))
 
         const state = await this.user$.pipe(
           filter(state => !state.loading),
@@ -182,7 +182,7 @@ export class WalletEffects {
           await this.firestore.collection("users").doc(user!.uid).set(state.user!)
         }
         //レガシー
-        this.wallet$.dispatch(new LoadWallets({ userId: user!.uid }))
+        this.store.dispatch(new LoadWallets({ userId: user!.uid }))
       }
     )
   }

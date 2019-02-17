@@ -4,21 +4,22 @@ import { first, map, filter } from 'rxjs/operators';
 import { nodes } from '../../../classes/nodes';
 import { AuthService } from '../../auth/auth.service';
 import { Store } from '@ngrx/store';
-import * as fromWallet from '../../../services/user/wallet/wallet.reducer'
-import * as fromBalance from '../../../services/dlt/nem/balance/balance.reducer'
-import * as fromAssetDefinition from '../../../services/dlt/asset-definition/asset-definition.reducer'
 import { LoadAssetDefinitions } from '../asset-definition/asset-definition.actions';
+import { State } from '../../reducer';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NemService {
+  public wallet$ = this.store.select(state => state.wallet)
+
+  public balance$ = this.store.select(state => state.balance)
+
+  public assetDefinition$ = this.store.select(state => state.assetDefinition)
 
   constructor(
     private auth: AuthService,
-    private wallet$: Store<fromWallet.State>,
-    private balance$: Store<fromBalance.State>,
-    private assetDefinition$: Store<fromAssetDefinition.State>
+    private store: Store<State>
   ) { }
 
 
@@ -34,7 +35,7 @@ export class NemService {
         return new AssetId(namespace, name)
       }
     )
-    this.assetDefinition$.dispatch(new LoadAssetDefinitions({assets: assetIds}))
+    this.store.dispatch(new LoadAssetDefinitions({assets: assetIds}))
     
 
     const definitions = await this.assetDefinition$.pipe(
