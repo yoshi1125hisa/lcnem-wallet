@@ -17,7 +17,7 @@
     <div class="mat-typography body-container">
       <mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
       <ng-template #loaded>
-        <ng-container *ngIf="state$ | async as state">
+        <ng-container *ngIf="contact$ | async as state">
           <ng-container *ngFor="let id of state.ids">
             <mat-card>
               <app-contact [contact]="state.entities[id]" (delete)="deleteContact(id)" (edit)="editContact(id)"></app-contact>

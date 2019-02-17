@@ -23,6 +23,7 @@ import { Store } from '@ngrx/store';
 import { State as WalletState } from '../../../services/user/wallet/wallet.reducer';
 import { State as BalanceState } from '../../../services/dlt/nem/balance/balance.reducer';
 import { LoadBalances } from '../../../services/dlt/nem/balance/balance.actions';
+import { State } from '../../../services/reducer';
 
 @Component({
   selector: 'app-transfer',
@@ -43,6 +44,9 @@ export class TransferComponent implements OnInit {
     }[]
   }
 
+  public wallet$ = this.store.select(state => state.wallet)
+  public balance$ = this.store.select(state => state.balance)
+
   public loading$ = combineLatest(
     this.wallet$,
     this.balance$
@@ -59,8 +63,7 @@ export class TransferComponent implements OnInit {
     private route: ActivatedRoute,
     private _router: RouterService,
     private language: LanguageService,
-    private wallet$: Store<WalletState>,
-    private balance$: Store<BalanceState>,
+    private store: Store<State>,
     private nem: NemService,
     private share: ShareService
   ) {
@@ -76,7 +79,7 @@ export class TransferComponent implements OnInit {
       first()
     ).toPromise()
 
-    this.balance$.dispatch(new LoadBalances({ address: new Address(state.entities[state.currentWalletId!].nem) }))
+    this.store.dispatch(new LoadBalances({ address: new Address(state.entities[state.currentWalletId!].nem) }))
 
     let invoice = this.route.snapshot.queryParamMap.get('invoice') || ""
     let invoiceData = Invoice.parse(decodeURI(invoice))
