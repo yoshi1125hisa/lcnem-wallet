@@ -7,6 +7,7 @@ import { State as MultisigState } from '../../../../services/dlt/nem/multisig/mu
 import { State as WalletState } from '../../../../services/user/wallet/wallet.reducer';
 import { Store } from '@ngrx/store';
 import { LoadMultisigs } from '../../../../services/dlt/nem/multisig/multisig.actions';
+import { State } from '../../../../services/reducer';
 
 @Component({
   selector: 'app-multisig',
@@ -16,17 +17,19 @@ import { LoadMultisigs } from '../../../../services/dlt/nem/multisig/multisig.ac
 export class MultisigComponent implements OnInit {
   public get lang() { return this.language.code }
 
+  public wallet$ = this.store.select(state => state.wallet)
+  public multisig$ = this.store.select(state => state.multisig)
+
   public loading$ = combineLatest(
     this.wallet$,
-    this.wallet$
+    this.multisig$
   ).pipe(
     map(fork => fork[0].loading || fork[1].loading)
   )
 
   constructor(
     private language: LanguageService,
-    private wallet$: Store<WalletState>,
-    private multisig$: Store<MultisigState>
+    private store: Store<State>
   ) {
   }
 
@@ -41,7 +44,7 @@ export class MultisigComponent implements OnInit {
     ).toPromise()
 
     const address = new Address(state.entities[state.currentWalletId!].nem)
-    this.multisig$.dispatch(new LoadMultisigs({ address, refresh }))
+    this.store.dispatch(new LoadMultisigs({ address, refresh }))
   }
 
   public onClick(address: string) {

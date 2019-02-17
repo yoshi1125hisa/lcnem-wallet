@@ -3,10 +3,9 @@ import { Address } from 'nem-library';
 import { combineLatest } from 'rxjs';
 import { first, map, filter } from 'rxjs/operators';
 import { LanguageService } from '../../../../services/language/language.service';
-import { State as WalletState } from '../../../../services/user/wallet/wallet.reducer';
-import { State as HistoryState } from '../../../../services/dlt/nem/history/history.reducer';
 import { Store } from '@ngrx/store';
 import { LoadHistories } from '../../../../services/dlt/nem/history/history.actions';
+import { State } from '../../../../services/reducer';
 
 @Component({
   selector: 'app-nem-history',
@@ -16,6 +15,9 @@ import { LoadHistories } from '../../../../services/dlt/nem/history/history.acti
 export class HistoryComponent implements OnInit {
   public get lang() { return this.language.code }
 
+  public wallet$ = this.store.select(state => state.wallet)
+  public history$ = this.store.select(state => state.history)
+
   public loading$ = combineLatest(
     this.wallet$,
     this.history$
@@ -23,12 +25,9 @@ export class HistoryComponent implements OnInit {
     map(([wallet, history]) => wallet.loading || history.loading)
   )
 
-  public state$ = this.history$
-
   constructor(
     private language: LanguageService,
-    private wallet$: Store<WalletState>,
-    private history$: Store<HistoryState>
+    private store: Store<State>
   ) {
   }
 
@@ -43,7 +42,7 @@ export class HistoryComponent implements OnInit {
     ).toPromise()
 
     const address = new Address(state.entities[state.currentWalletId!].nem)
-    this.history$.dispatch(new LoadHistories({ address, refresh }))
+    this.store.dispatch(new LoadHistories({ address, refresh }))
   }
 
   public translation = {

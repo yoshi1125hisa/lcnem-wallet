@@ -5,7 +5,7 @@ import { Invoice } from '../../../classes/invoice';
 import { ShareService } from '../../../services/api/share/share.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Store } from '@ngrx/store';
-import { State } from 'src/app/services/reducer';
+import { State } from '../../../services/reducer';
 
 @Component({
   selector: 'app-nem',

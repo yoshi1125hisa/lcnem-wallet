@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
 
 import {
-  Address,
   Transaction,
   TransactionTypes,
   TransferTransaction,
@@ -15,13 +14,13 @@ import {
   PublicAccount,
   Message
 } from 'nem-library';
-import { map, mergeMap, merge } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import { LanguageService } from '../../../../../services/language/language.service';
 import { nodes } from '../../../../../classes/nodes';
-import { State as WalletState } from '../../../../../services/user/wallet/wallet.reducer';
 import { AuthService } from '../../../../../services/auth/auth.service';
 import { Store } from '@ngrx/store';
+import { State } from '../../../../../services/reducer';
 
 @Component({
   selector: 'app-transaction',
@@ -32,6 +31,8 @@ export class TransactionComponent implements OnInit, OnChanges {
   public get lang() { return this.language.code }
 
   @Input() transaction?: Transaction
+
+  public wallet$ = this.store.select(state => state.wallet)
 
   private _transaction?: Transaction
 
@@ -49,7 +50,7 @@ export class TransactionComponent implements OnInit, OnChanges {
     private snackBar: MatSnackBar,
     private language: LanguageService,
     private auth: AuthService,
-    private wallet$: Store<WalletState>
+    private store: Store<State>
   ) {
   }
 

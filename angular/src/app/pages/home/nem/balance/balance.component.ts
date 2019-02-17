@@ -3,12 +3,10 @@ import { combineLatest } from 'rxjs';
 import { map, first, filter } from 'rxjs/operators';
 import { Address } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
-import { State as BalanceState } from '../../../../services/dlt/nem/balance/balance.reducer';
-import { State as WalletState } from '../../../../services/user/wallet/wallet.reducer';
-import { State as RateState } from '../../../../services/rate/rate.reducer';
 import { Store } from '@ngrx/store';
 import { LoadBalances } from '../../../../services/dlt/nem/balance/balance.actions';
 import { ChangeCurrency } from '../../../../services/rate/rate.actions';
+import { State } from '../../../../services/reducer';
 
 @Component({
   selector: 'app-nem-balance',
@@ -17,6 +15,10 @@ import { ChangeCurrency } from '../../../../services/rate/rate.actions';
 })
 export class BalanceComponent implements OnInit {
   public get lang() { return this.language.code }
+
+  public wallet$ = this.store.select(state => state.wallet)
+  public balance$ = this.store.select(state => state.balance)
+  public rate$ = this.store.select(state => state.rate)
 
   public loading$ = combineLatest(
     this.wallet$,
@@ -30,9 +32,7 @@ export class BalanceComponent implements OnInit {
 
   constructor(
     private language: LanguageService,
-    private wallet$: Store<WalletState>,
-    private balance$: Store<BalanceState>,
-    private rate$: Store<RateState>
+    private store: Store<State>
   ) {
   }
 
@@ -47,11 +47,11 @@ export class BalanceComponent implements OnInit {
     ).toPromise()
     
     const address = new Address(state.entities[state.currentWalletId!].nem)
-    this.balance$.dispatch(new LoadBalances({ address, refresh }))
+    this.store.dispatch(new LoadBalances({ address, refresh }))
   }
 
   public changeCurrency(currency: string) {
-    this.rate$.dispatch(new ChangeCurrency({ currency }))
+    this.store.dispatch(new ChangeCurrency({ currency }))
   }
 
   public translation = {
