@@ -33,6 +33,7 @@ export class TransactionComponent implements OnInit, OnChanges {
   @Input() transaction?: Transaction
 
   public wallet$ = this.store.select(state => state.wallet)
+
   private _transaction?: Transaction
 
   public address = ""

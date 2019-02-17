@@ -3,16 +3,14 @@ import { MatDialog, MatSnackBar } from '@angular/material';
 import { AuthService } from '../../../../services/auth/auth.service';
 import { LanguageService } from '../../../../services/language/language.service';
 import { ApiService } from '../../../../services/api/api.service';
-import { State as WalletState } from '../../../../services/user/wallet/wallet.reducer';
 import { first, filter, map } from 'rxjs/operators';
 import { LoadingDialogComponent } from '../../../../components/loading-dialog/loading-dialog.component';
 import { Address } from 'nem-library';
-import { State as BalanceState } from '../../../../services/dlt/nem/balance/balance.reducer';
-import { State as UserState } from '../../../../services/user/user.reducer';
 import { combineLatest } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { LoadUser } from '../../../../services/user/user.actions';
 import { LoadBalances } from '../../../../services/dlt/nem/balance/balance.actions';
+import { State } from '../../../../services/reducer';
 
 @Component({
   selector: 'app-faucet',
@@ -21,6 +19,10 @@ import { LoadBalances } from '../../../../services/dlt/nem/balance/balance.actio
 })
 export class FaucetComponent implements OnInit {
   public get lang() { return this.language.code }
+
+  public wallet$ = this.store.select(state => state.wallet)
+  public user$ = this.store.select(state => state.user)
+  public balance$ = this.store.select(state => state.balance)
 
   public visible$ = combineLatest(
     this.user$,
@@ -53,9 +55,7 @@ export class FaucetComponent implements OnInit {
     private auth: AuthService,
     private language: LanguageService,
     private api: ApiService,
-    private wallet$: Store<WalletState>,
-    private balance$: Store<BalanceState>,
-    private user$: Store<UserState>,
+    private store: Store<State>
   ) {
 　}
 
@@ -75,8 +75,8 @@ export class FaucetComponent implements OnInit {
     ).toPromise()
     
     const address = new Address(state.entities[state.currentWalletId!].nem)
-    this.user$.dispatch(new LoadUser({ userId: user!.uid }))
-    this.balance$.dispatch(new LoadBalances({ address }))
+    this.store.dispatch(new LoadUser({ userId: user!.uid }))
+    this.store.dispatch(new LoadBalances({ address }))
   }
 
   public async faucet() {
