@@ -27,7 +27,7 @@ export class RouterService {
         }
         const user = await this.auth.user$.pipe(first()).toPromise()
         if (!user) {
-          this.router.navigate(["account", "login"], { preserveQueryParams: true })
+          this.router.navigate(["account", "login"], { queryParamsHandling: "preserve" })
           return
         }
 
@@ -40,11 +40,11 @@ export class RouterService {
         ).toPromise()
 
         if (!state.currentWalletId) {
-          this.router.navigate(["account", "wallets"], { preserveQueryParams: true })
+          this.router.navigate(["account", "wallets"], { queryParamsHandling: "preserve" })
         }
 
         if (this.route.snapshot.queryParams.clientToken) {
-          this.router.navigate(["account", "integrate"], { preserveQueryParams: true })
+          this.router.navigate(["account", "integrate"], { queryParamsHandling: "preserve" })
           return
         }
       }

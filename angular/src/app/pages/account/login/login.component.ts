@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
   public login() {
     this.auth.login().then(
       (user) => {
-        this.router.navigate(["account", "wallets"], { preserveQueryParams: true })
+        this.router.navigate(["account", "wallets"], { queryParamsHandling: "preserve" })
       },
       (error) => {
         this.snackBar.open(this.translation.error[this.lang], undefined, { duration: 6000 })

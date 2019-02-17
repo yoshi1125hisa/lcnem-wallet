@@ -88,7 +88,7 @@ export class WalletsComponent implements OnInit {
       first()
     ).toPromise()
 
-    this.router.navigate([""], { preserveQueryParams: true })
+    this.router.navigate([""], { queryParamsHandling: "preserve" })
   }
 
   public importPrivateKey(id: string) {
