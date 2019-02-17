@@ -28,7 +28,7 @@ import { NemService } from '../../../services/dlt/nem/nem.service';
   styleUrls: ['./transfer.component.css']
 })
 export class TransferComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter; }
+  public get lang() { return this.language.code }
 
   public forms = {
     recipient: "",

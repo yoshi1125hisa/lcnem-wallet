@@ -16,7 +16,7 @@ import { LanguageService } from '../../../services/language/language.service';
 export class QrScanComponent implements OnInit {
   @ViewChild("scanner") scanner!: ZXingScannerComponent;
 
-  public get lang() { return this.language.state.twoLetter }
+  public get lang() { return this.language.code }
 
   public processing = false
   public selectedDevice?: MediaDeviceInfo
