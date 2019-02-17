@@ -3,8 +3,10 @@ import { Observable, forkJoin, combineLatest } from 'rxjs';
 import { map, first, filter } from 'rxjs/operators';
 import { Address, Wallet } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
-import { MultisigService } from '../../../../services/dlt/nem/multisig/multisig.service';
-import { WalletService } from '../../../../services/user/wallet/wallet.service';
+import { State as MultisigState } from '../../../../services/dlt/nem/multisig/multisig.reducer';
+import { State as WalletState } from '../../../../services/user/wallet/wallet.reducer';
+import { Store } from '@ngrx/store';
+import { LoadMultisigs } from 'src/app/services/dlt/nem/multisig/multisig.actions';
 
 @Component({
   selector: 'app-multisig',
@@ -12,21 +14,19 @@ import { WalletService } from '../../../../services/user/wallet/wallet.service';
   styleUrls: ['./multisig.component.css']
 })
 export class MultisigComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter; }
+  public get lang() { return this.language.code }
 
   public loading$ = combineLatest(
-    this.wallet.state$,
-    this.wallet.state$
+    this.wallet$,
+    this.wallet$
   ).pipe(
     map(fork => fork[0].loading || fork[1].loading)
   )
 
-  public state$ = this.multisig.state$
-
   constructor(
     private language: LanguageService,
-    private wallet: WalletService,
-    private multisig: MultisigService
+    private wallet$: Store<WalletState>,
+    private multisig$: Store<MultisigState>
   ) {
   }
 
@@ -35,13 +35,13 @@ export class MultisigComponent implements OnInit {
   }
 
   public async load(refresh?: boolean) {
-    const state = await this.wallet.state$.pipe(
+    const state = await this.wallet$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
     ).toPromise()
 
     const address = new Address(state.entities[state.currentWalletId!].nem)
-    this.multisig.loadMultisig(address, refresh)
+    this.multisig$.dispatch(new LoadMultisigs({ address, refresh }))
   }
 
   public onClick(address: string) {
