@@ -3,7 +3,8 @@ import { map, filter } from 'rxjs/operators';
 import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { LanguageService } from '../../services/language/language.service';
 import { AuthService } from '../../services/auth/auth.service';
-import { WalletService } from '../../services/user/wallet/wallet.service';
+import { Store } from '@ngrx/store';
+import { State as WalletState } from '../../services/user/wallet/wallet.reducer';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
@@ -13,13 +14,13 @@ NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter; }
+  public get lang() { return this.language.code }
 
   public photoUrl$ = this.auth.user$.pipe(
     map(user => user && user.photoURL ? user.photoURL : "")
   )
 
-  public currentWalletName$ = this.wallet.state$.pipe(
+  public currentWalletName$ = this.wallet$.pipe(
     filter(state => state.currentWalletId !== undefined),
     map(state => state.entities[state.currentWalletId!].name)
   )
@@ -27,7 +28,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private language: LanguageService,
     private auth: AuthService,
-    private wallet: WalletService
+    private wallet$: Store<WalletState>
   ) {
   }
 

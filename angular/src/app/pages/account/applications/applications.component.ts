@@ -8,7 +8,7 @@ import { map, filter, first } from 'rxjs/operators';
 import { ApplicationDialogComponent } from './application-dialog/application-dialog.component';
 import * as fromApplication from '../../../services/user/application/application.reducer'
 import { Store } from '@ngrx/store';
-import { LoadApplications, AddApplication, UpdateApplication, DeleteApplication } from 'src/app/services/user/application/application.actions';
+import { LoadApplications, AddApplication, UpdateApplication, DeleteApplication } from '../../../services/user/application/application.actions';
 
 @Component({
   selector: 'app-applications',

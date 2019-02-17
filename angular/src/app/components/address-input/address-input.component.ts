@@ -9,7 +9,7 @@ import { AuthService } from '../../services/auth/auth.service';
 import { Tuple } from '../../classes/tuple';
 import { Store } from '@ngrx/store';
 import * as fromContact from '../../services/user/contact/contact.reducer'
-import { LoadContacts } from 'src/app/services/user/contact/contact.actions';
+import { LoadContacts } from '../../services/user/contact/contact.actions';
 
 @Component({
   selector: 'app-address-input',

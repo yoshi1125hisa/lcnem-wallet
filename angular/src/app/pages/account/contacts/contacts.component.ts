@@ -8,7 +8,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { combineLatest } from 'rxjs';
 import * as fromContact from '../../../services/user/contact/contact.reducer'
 import { Store } from '@ngrx/store';
-import { LoadContacts, AddContact, UpdateContact, DeleteContact } from 'src/app/services/user/contact/contact.actions';
+import { LoadContacts, AddContact, UpdateContact, DeleteContact } from '../../../services/user/contact/contact.actions';
 
 @Component({
   selector: 'app-contacts',

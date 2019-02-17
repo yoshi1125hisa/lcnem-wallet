@@ -12,8 +12,8 @@ import { ShareService } from '../../../services/api/share/share.service';
 import * as fromUser from '../../../services/user/user.reducer'
 import * as fromWallet from '../../../services/user/wallet/wallet.reducer'
 import { Store } from '@ngrx/store';
-import { LoadUser } from 'src/app/services/user/user.actions';
-import { LoadWallets, AddWallet, SetCurrentWallet, UpdateWallet, AddLocalWallet, DeleteWallet } from 'src/app/services/user/wallet/wallet.actions';
+import { LoadUser } from '../../../services/user/user.actions';
+import { LoadWallets, AddWallet, SetCurrentWallet, UpdateWallet, AddLocalWallet, DeleteWallet } from '../../../services/user/wallet/wallet.actions';
 
 @Component({
   selector: 'app-wallets',

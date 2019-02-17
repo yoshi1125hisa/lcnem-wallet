@@ -35,7 +35,7 @@
             <span class="fill-remaining-space"></span>
           </div>
           <mat-card>
-            <app-assets-list [title]="translation.balance[lang]" [assets]="balance$ | async" [nav]="true" (clickAsset)="addTransferAsset($event)"></app-assets-list>
+            <app-assets-list [title]="translation.balance[lang]" [assets]="assets$ | async" [nav]="true" (clickAsset)="addTransferAsset($event)"></app-assets-list>
           </mat-card>
           <br />
           <ng-container *ngFor="let asset of forms.transferAssets; let i = index">

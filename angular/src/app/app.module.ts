@@ -152,6 +152,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     FormsModule,
     HttpClientModule,
     FlexLayoutModule,
+    StoreModule.forRoot(reducers, { metaReducers }),
+    !environment.production ? StoreDevtoolsModule.instrument() : [],
     ZXingScannerModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
@@ -177,9 +179,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     MatSnackBarModule,
     MatTooltipModule,
     MatTabsModule,
-    MatRippleModule,
-    StoreModule.forRoot(reducers, { metaReducers }),
-    !environment.production ? StoreDevtoolsModule.instrument() : []
+    MatRippleModule
   ],
   entryComponents: [
     LoadingDialogComponent,

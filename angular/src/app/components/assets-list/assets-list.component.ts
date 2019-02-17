@@ -7,8 +7,8 @@ import { Tuple } from '../../classes/tuple';
 import * as fromAssetDefinition from '../../services/dlt/asset-definition/asset-definition.reducer'
 import * as fromRate from '../../services/rate/rate.reducer'
 import { Store } from '@ngrx/store';
-import { LoadAssetDefinitions } from 'src/app/services/dlt/asset-definition/asset-definition.actions';
-import { LoadRates } from 'src/app/services/rate/rate.actions';
+import { LoadAssetDefinitions } from '../../services/dlt/asset-definition/asset-definition.actions';
+import { LoadRates } from '../../services/rate/rate.actions';
 
 @Component({
   selector: 'app-assets-list',
