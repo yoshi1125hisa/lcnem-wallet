@@ -92,6 +92,7 @@ import { RouterService } from './services/router/router.service';
 import { StoreModule } from '@ngrx/store';
 import { reducers, metaReducers } from './services/reducer';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   declarations: [
@@ -154,6 +155,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     FlexLayoutModule,
     StoreModule.forRoot(reducers, { metaReducers }),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
+    EffectsModule,
     ZXingScannerModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
