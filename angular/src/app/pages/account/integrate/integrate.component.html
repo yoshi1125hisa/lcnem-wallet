@@ -12,7 +12,7 @@
     <div class="mat-typography body-container">
       <mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
       <ng-template #loaded>
-        <mat-list *ngIf="wallet$ | async as wallet">
+        <mat-list *ngIf="currentWallet$ | async as wallet">
           <p>{{translation.introductionImportAccount[lang]}}</p>
           <p>{{translation.introductionTellPrivateKey[lang]}}</p>
           <p>{{translation.introductionInputPassword[lang]}}</p>
