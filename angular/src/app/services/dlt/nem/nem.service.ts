@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
-import { WalletService } from '../../user/wallet/wallet.service';
-import { BalanceService } from './balance/balance.service';
-import { AssetDefinitionService } from '../asset-definition/asset-definition.service';
 import { XEM, AssetTransferable, AssetId, AccountHttp, Address, PlainMessage, SimpleWallet, Password, EncryptedMessage } from 'nem-library';
 import { first, map, filter } from 'rxjs/operators';
 import { nodes } from '../../../classes/nodes';
 import { AuthService } from '../../auth/auth.service';
+import { Store } from '@ngrx/store';
+import * as fromWallet from '../../../services/user/wallet/wallet.reducer'
+import * as fromBalance from '../../../services/dlt/nem/balance/balance.reducer'
+import * as fromAssetDefinition from '../../../services/dlt/asset-definition/asset-definition.reducer'
+import { LoadAssetDefinitions } from '../asset-definition/asset-definition.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +16,9 @@ export class NemService {
 
   constructor(
     private auth: AuthService,
-    private wallet: WalletService,
-    private balance: BalanceService,
-    private assetDefinition: AssetDefinitionService
+    private wallet$: Store<fromWallet.State>,
+    private balance$: Store<fromBalance.State>,
+    private assetDefinition$: Store<fromAssetDefinition.State>
   ) { }
 
 
@@ -26,16 +28,16 @@ export class NemService {
       amount: number
     }[]
   ) {
-    this.assetDefinition.loadAssetDefinitions(
-      assets.map(
-        (asset) => {
-          const [namespace, name] = asset.id.split(":")
-          return new AssetId(namespace, name)
-        }
-      )
+    const assetIds = assets.map(
+      (asset) => {
+        const [namespace, name] = asset.id.split(":")
+        return new AssetId(namespace, name)
+      }
     )
+    this.assetDefinition$.dispatch(new LoadAssetDefinitions({assets: assetIds}))
+    
 
-    const definitions = await this.assetDefinition.state$.pipe(
+    const definitions = await this.assetDefinition$.pipe(
       filter(state => !state.loading),
       first(),
       map(state => state.definitions)
@@ -60,7 +62,7 @@ export class NemService {
       first()
     ).toPromise()
 
-    return await this.wallet.state$.pipe(
+    return await this.wallet$.pipe(
       map(state => state.entities[state.currentWalletId!].wallet),
       map(wallet => SimpleWallet.readFromWLT(wallet!).open(new Password(user!.uid))),
       first()

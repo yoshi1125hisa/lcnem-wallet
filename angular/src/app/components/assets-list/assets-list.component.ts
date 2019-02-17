@@ -52,7 +52,7 @@ export class AssetsListComponent implements OnInit {
       return
     }
     this.rate$.dispatch(new LoadRates({}))
-    this.assetDefinition$.dispatch(new LoadAssetDefinitions({ assets: this.assets }))
+    this.assetDefinition$.dispatch(new LoadAssetDefinitions({ assets: this.assets.map(asset => asset.assetId) }))
 
     this.assets$ = combineLatest(
       from(this.assets).pipe(

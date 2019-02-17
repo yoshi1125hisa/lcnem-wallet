@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Router, NavigationExtras, NavigationStart, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
-import { WalletService } from '../user/wallet/wallet.service';
 import { filter, first, map } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import * as fromWallet from '../../services/user/wallet/wallet.reducer';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class RouterService {
     private router: Router,
     private route: ActivatedRoute,
     private auth: AuthService,
-    private wallet: WalletService
+    private wallet$: Store<fromWallet.State>
   ) {
     this.router.events.pipe(
       filter(event => event instanceof NavigationStart),
@@ -32,7 +33,7 @@ export class RouterService {
         if (event.url === "/account/wallets") {
           return
         }
-        const state = await this.wallet.state$.pipe(
+        const state = await this.wallet$.pipe(
           filter(state => !state.loading),
           first()
         ).toPromise()

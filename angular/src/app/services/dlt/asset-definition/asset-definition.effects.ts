@@ -18,8 +18,7 @@ export class AssetDefinitionEffects {
     mergeMap(
       (action) => {
         return this.store.select(state => state.definitions).pipe(
-          map(definitions => action.payload.assets.filter(asset => !definitions.find(definition => definition.id.equals(asset.assetId)))),
-          map(assets => assets.map(asset => asset.assetId))
+          map(definitions => action.payload.assets.filter(asset => !definitions.find(definition => definition.id.equals(asset))))
         )
       }
     ),
