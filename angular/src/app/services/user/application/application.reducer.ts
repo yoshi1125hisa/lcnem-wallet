@@ -47,9 +47,9 @@ export function reducer(state = initialState, action: ApplicationActions): State
       }
     }
     case ApplicationActionTypes.AddApplicationSuccess: {
-      const ids = [...state.ids, action.payload.ApplicationId]
+      const ids = [...state.ids, action.payload.applicationId]
       const entities = { ...state.entities }
-      entities[action.payload.ApplicationId] = action.payload.Application
+      entities[action.payload.applicationId] = action.payload.application
 
       return {
         ...state,
@@ -73,7 +73,7 @@ export function reducer(state = initialState, action: ApplicationActions): State
     }
     case ApplicationActionTypes.UpdateApplicationSuccess: {
       const entities = { ...state.entities }
-      entities[action.payload.ApplicationId] = action.payload.Application
+      entities[action.payload.applicationId] = action.payload.application
 
       return {
         ...state,
@@ -94,9 +94,9 @@ export function reducer(state = initialState, action: ApplicationActions): State
       }
     }
     case ApplicationActionTypes.DeleteApplicationSuccess: {
-      const ids = state.ids.filter(id => id !== action.payload.ApplicationId)
+      const ids = state.ids.filter(id => id !== action.payload.applicationId)
       const entities = { ...state.entities }
-      delete entities[action.payload.ApplicationId]
+      delete entities[action.payload.applicationId]
 
       return {
         ...state,

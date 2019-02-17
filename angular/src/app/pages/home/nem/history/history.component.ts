@@ -6,7 +6,7 @@ import { LanguageService } from '../../../../services/language/language.service'
 import { State as WalletState } from '../../../../services/user/wallet/wallet.reducer';
 import { State as HistoryState } from '../../../../services/dlt/nem/history/history.reducer';
 import { Store } from '@ngrx/store';
-import { LoadHistories } from 'src/app/services/dlt/nem/history/history.actions';
+import { LoadHistories } from '../../../../services/dlt/nem/history/history.actions';
 
 @Component({
   selector: 'app-nem-history',

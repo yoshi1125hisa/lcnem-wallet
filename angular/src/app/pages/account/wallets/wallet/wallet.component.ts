@@ -2,7 +2,6 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { Wallet } from '../../../../../../../firebase/functions/src/models/wallet';
 import { LanguageService } from '../../../../services/language/language.service';
-import { WalletService } from '../../../../services/user/wallet/wallet.service';
 
 @Component({
   selector: 'app-wallet',
@@ -10,7 +9,7 @@ import { WalletService } from '../../../../services/user/wallet/wallet.service';
   styleUrls: ['./wallet.component.css']
 })
 export class WalletComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter }
+  public get lang() { return this.language.code }
 
   @Input() wallet?: Wallet
 
@@ -22,8 +21,7 @@ export class WalletComponent implements OnInit {
 
   constructor(
     private snackBar: MatSnackBar,
-    private language: LanguageService,
-    private _wallet: WalletService
+    private language: LanguageService
   ) { }
 
   ngOnInit() {

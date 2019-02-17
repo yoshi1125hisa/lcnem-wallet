@@ -11,8 +11,8 @@ import { State as BalanceState } from '../../../../services/dlt/nem/balance/bala
 import { State as UserState } from '../../../../services/user/user.reducer';
 import { combineLatest } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { LoadUser } from 'src/app/services/user/user.actions';
-import { LoadBalances } from 'src/app/services/dlt/nem/balance/balance.actions';
+import { LoadUser } from '../../../../services/user/user.actions';
+import { LoadBalances } from '../../../../services/dlt/nem/balance/balance.actions';
 
 @Component({
   selector: 'app-faucet',

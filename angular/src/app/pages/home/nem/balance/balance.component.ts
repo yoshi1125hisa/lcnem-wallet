@@ -7,8 +7,8 @@ import { State as BalanceState } from '../../../../services/dlt/nem/balance/bala
 import { State as WalletState } from '../../../../services/user/wallet/wallet.reducer';
 import { State as RateState } from '../../../../services/rate/rate.reducer';
 import { Store } from '@ngrx/store';
-import { LoadBalances } from 'src/app/services/dlt/nem/balance/balance.actions';
-import { ChangeCurrency } from 'src/app/services/rate/rate.actions';
+import { LoadBalances } from '../../../../services/dlt/nem/balance/balance.actions';
+import { ChangeCurrency } from '../../../../services/rate/rate.actions';
 
 @Component({
   selector: 'app-nem-balance',
