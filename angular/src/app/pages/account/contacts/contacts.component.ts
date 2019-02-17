@@ -6,9 +6,9 @@ import { LanguageService } from '../../../services/language/language.service';
 import { RouterService } from '../../../services/router/router.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { combineLatest } from 'rxjs';
-import * as fromContact from '../../../services/user/contact/contact.reducer'
 import { Store } from '@ngrx/store';
 import { LoadContacts, AddContact, UpdateContact, DeleteContact } from '../../../services/user/contact/contact.actions';
+import { State } from '../../../services/reducer';
 
 @Component({
   selector: 'app-contacts',
@@ -19,6 +19,8 @@ import { LoadContacts, AddContact, UpdateContact, DeleteContact } from '../../..
 export class ContactsComponent implements OnInit {
   get lang() { return this.language.code }
 
+  public contact$ = this.store.select(state => state.contact)
+
   public loading$ = combineLatest(
     this.auth.user$,
     this.contact$
@@ -26,14 +28,12 @@ export class ContactsComponent implements OnInit {
     map(([auth, contact]) => auth === null || contact.loading)
   )
 
-  public state$ = this.contact$
-
   constructor(
     private dialog: MatDialog,
     private _router: RouterService,
     private language: LanguageService,
     private auth: AuthService,
-    private contact$: Store<fromContact.State>
+    private store: Store<State>
   ) {
   }
 
@@ -47,7 +47,7 @@ export class ContactsComponent implements OnInit {
       first()
     ).toPromise()
 
-    this.contact$.dispatch(new LoadContacts({ userId: user!.uid, refresh: refresh }))
+    this.store.dispatch(new LoadContacts({ userId: user!.uid, refresh: refresh }))
   }
 
   public back() {
@@ -68,7 +68,7 @@ export class ContactsComponent implements OnInit {
       return
     }
 
-    this.contact$.dispatch(new AddContact({ userId: this.auth.user!.uid, contact: result }))
+    this.store.dispatch(new AddContact({ userId: this.auth.user!.uid, contact: result }))
   }
 
   public async editContact(id: string) {
@@ -85,7 +85,7 @@ export class ContactsComponent implements OnInit {
       return
     }
 
-    this.contact$.dispatch(new UpdateContact({ userId: this.auth.user!.uid, contactId: id, contact: contact }))
+    this.store.dispatch(new UpdateContact({ userId: this.auth.user!.uid, contactId: id, contact: contact }))
   }
 
   public deleteContact(id: string) {
@@ -95,7 +95,7 @@ export class ContactsComponent implements OnInit {
       return
     }
 
-    this.contact$.dispatch(new DeleteContact({ userId: this.auth.user!.uid, contactId: id }))
+    this.store.dispatch(new DeleteContact({ userId: this.auth.user!.uid, contactId: id }))
   }
 
   public translation = {

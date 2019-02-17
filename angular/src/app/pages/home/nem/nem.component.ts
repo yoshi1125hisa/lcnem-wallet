@@ -5,7 +5,7 @@ import { Invoice } from '../../../classes/invoice';
 import { ShareService } from '../../../services/api/share/share.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Store } from '@ngrx/store';
-import { State as WalletState } from '../../../services/user/wallet/wallet.reducer';
+import { State } from 'src/app/services/reducer';
 
 @Component({
   selector: 'app-nem',
@@ -14,6 +14,8 @@ import { State as WalletState } from '../../../services/user/wallet/wallet.reduc
 })
 export class NemComponent implements OnInit {
   public get lang() { return this.language.code }
+
+  public wallet$ = this.store.select(state => state.wallet)
 
   public loading$ = this.wallet$.pipe(map(state => state.loading))
 
@@ -42,7 +44,7 @@ export class NemComponent implements OnInit {
   constructor(
     private language: LanguageService,
     private auth: AuthService,
-    private wallet$: Store<WalletState>,
+    private store: Store<State>,
     private share: ShareService
   ) {
   }

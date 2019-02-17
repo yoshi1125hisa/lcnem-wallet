@@ -6,7 +6,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { Application } from '../../../../../../firebase/functions/src/models/application';
 import { map, filter, first } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import * as fromWallet from '../../../services/user/wallet/wallet.reducer'
+import { State } from '../../../services/reducer';
 
 @Component({
   selector: 'app-integrate',
@@ -15,6 +15,8 @@ import * as fromWallet from '../../../services/user/wallet/wallet.reducer'
 })
 export class IntegrateComponent implements OnInit {
   get lang() { return this.language.code }
+
+  public wallet$ = this.store.select(state => state.wallet)
 
   public loading$ = this.wallet$.pipe(map(state => state.loading))
   public currentWallet$ = this.wallet$.pipe(
@@ -34,7 +36,7 @@ export class IntegrateComponent implements OnInit {
     private route: ActivatedRoute,
     private language: LanguageService,
     private auth: AuthService,
-    private wallet$: Store<fromWallet.State>,
+    private store: Store<State>,
     private integration: IntegrationService
   ) { }
 

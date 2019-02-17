@@ -4,7 +4,7 @@ import { Asset, NEMLibrary, NetworkTypes } from 'nem-library';
 import { LanguageService } from '../../services/language/language.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { Store } from '@ngrx/store';
-import { State as WalletState } from '../../services/user/wallet/wallet.reducer';
+import { State } from '../../services/reducer';
 
 NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 
@@ -15,6 +15,8 @@ NEMLibrary.bootstrap(NetworkTypes.MAIN_NET);
 })
 export class HomeComponent implements OnInit {
   public get lang() { return this.language.code }
+
+  private wallet$ = this.store.select(state => state.wallet)
 
   public photoUrl$ = this.auth.user$.pipe(
     map(user => user && user.photoURL ? user.photoURL : "")
@@ -28,8 +30,9 @@ export class HomeComponent implements OnInit {
   constructor(
     private language: LanguageService,
     private auth: AuthService,
-    private wallet$: Store<WalletState>
+    private store: Store<State>
   ) {
+    
   }
 
   ngOnInit() {

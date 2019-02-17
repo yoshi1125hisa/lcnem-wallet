@@ -6,9 +6,9 @@ import { LanguageService } from '../../../services/language/language.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { map, filter, first } from 'rxjs/operators';
 import { ApplicationDialogComponent } from './application-dialog/application-dialog.component';
-import * as fromApplication from '../../../services/user/application/application.reducer'
 import { Store } from '@ngrx/store';
 import { LoadApplications, AddApplication, UpdateApplication, DeleteApplication } from '../../../services/user/application/application.actions';
+import { State } from '../../../services/reducer';
 
 @Component({
   selector: 'app-applications',
@@ -18,6 +18,8 @@ import { LoadApplications, AddApplication, UpdateApplication, DeleteApplication 
 export class ApplicationsComponent implements OnInit {
   get lang() { return this.language.code }
 
+  public application$ = this.store.select(state => state.application)
+
   public loading$ = combineLatest(
     this.auth.user$,
     this.application$
@@ -25,14 +27,12 @@ export class ApplicationsComponent implements OnInit {
     map(([auth, application]) => auth === null || application.loading)
   )
 
-  public state$ = this.application$
-
   constructor(
     private dialog: MatDialog,
     private _router: RouterService,
     private language: LanguageService,
     private auth: AuthService,
-    private application$: Store<fromApplication.State>
+    private store: Store<State>
   ) {
   }
 
@@ -46,7 +46,7 @@ export class ApplicationsComponent implements OnInit {
       first()
     ).toPromise()
 
-    this.application$.dispatch(new LoadApplications({ userId: user!.uid, refresh: refresh }))
+    this.store.dispatch(new LoadApplications({ userId: user!.uid, refresh: refresh }))
   }
 
   public back() {
@@ -67,7 +67,7 @@ export class ApplicationsComponent implements OnInit {
       return
     }
 
-    this.application$.dispatch(new AddApplication({userId: this.auth.user!.uid, application: result}))
+    this.store.dispatch(new AddApplication({userId: this.auth.user!.uid, application: result}))
   }
 
   public async editApplication(id: string) {
@@ -84,7 +84,7 @@ export class ApplicationsComponent implements OnInit {
       return
     }
 
-    this.application$.dispatch(new UpdateApplication({userId: this.auth.user!.uid, applicationId: id, application: name}))
+    this.store.dispatch(new UpdateApplication({userId: this.auth.user!.uid, applicationId: id, application: name}))
   }
 
   public deleteApplication(id: string) {
@@ -94,7 +94,7 @@ export class ApplicationsComponent implements OnInit {
       return
     }
 
-    this.application$.dispatch(new DeleteApplication({userId: this.auth.user!.uid, applicationId: id}))
+    this.store.dispatch(new DeleteApplication({userId: this.auth.user!.uid, applicationId: id}))
   }
 
   public translation = {
