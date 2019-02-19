@@ -19,15 +19,15 @@ export function reducer(state = initialState, action: HistoryActions): State {
     case HistoryActionTypes.LoadHistories: {
       return {
         ...state,
-        loading: true,
-        lastAddress: action.payload.address
+        loading: true
       }
     }
     case HistoryActionTypes.LoadHistoriesSuccess: {
       return {
         ...state,
         loading: false,
-        transactions: action.payload.transactions
+        transactions: action.payload.transactions,
+        lastAddress: action.payload.address
       }
     }
     case HistoryActionTypes.LoadHistoriesError: {

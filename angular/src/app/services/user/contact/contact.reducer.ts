@@ -30,7 +30,8 @@ export function reducer(state = initialState, action: ContactActions): State {
         ...state,
         loading: false,
         ids: action.payload.ids,
-        entities: action.payload.entities
+        entities: action.payload.entities,
+        lastUserId: action.payload.userId
       }
     }
     case ContactActionTypes.LoadContactsError: {

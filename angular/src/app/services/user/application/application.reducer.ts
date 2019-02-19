@@ -22,7 +22,7 @@ export function reducer(state = initialState, action: ApplicationActions): State
     case ApplicationActionTypes.LoadApplications: {
       return {
         ...state,
-        loading: true,
+        loading: true
       }
     }
     case ApplicationActionTypes.LoadApplicationsSuccess: {
@@ -30,7 +30,8 @@ export function reducer(state = initialState, action: ApplicationActions): State
         ...state,
         loading: false,
         ids: action.payload.ids,
-        entities: action.payload.entities
+        entities: action.payload.entities,
+        lastUserId: action.payload.userId
       }
     }
     case ApplicationActionTypes.LoadApplicationsError: {

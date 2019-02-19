@@ -25,7 +25,7 @@ export class LoadContacts implements Action {
 export class LoadContactsSuccess implements Action {
   readonly type = ContactActionTypes.LoadContactsSuccess;
 
-  constructor(public payload: { ids: string[], entities: { [id: string]: Contact } }) { }
+  constructor(public payload: { userId: string, ids: string[], entities: { [id: string]: Contact } }) { }
 }
 
 export class LoadContactsError implements Action {

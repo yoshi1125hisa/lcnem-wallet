@@ -44,11 +44,11 @@ export class ContactEffects {
                 )
               )
             }
-          )
+          ),
+          map(({ ids, entities }) => new LoadContactsSuccess({ userId: payload.userId, ids: ids, entities: entities })),
         )
       }
     ),
-    map(({ ids, entities }) => new LoadContactsSuccess({ ids: ids, entities: entities })),
     catchError(error => of(new LoadContactsError({ error: error })))
   );
 

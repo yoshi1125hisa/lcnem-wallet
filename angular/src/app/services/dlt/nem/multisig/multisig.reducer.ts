@@ -20,15 +20,15 @@ export function reducer(state = initialState, action: MultisigActions): State {
     case MultisigActionTypes.LoadMultisigs: {
       return {
         ...state,
-        loading: true,
-        lastAddress: action.payload.address
+        loading: true
       }
     }
     case MultisigActionTypes.LoadMultisigsSuccess: {
       return {
         ...state,
         loading: false,
-        addresses: action.payload.addresses
+        addresses: action.payload.addresses,
+        lastAddress: action.payload.address
       }
     }
     case MultisigActionTypes.LoadMultisigsError: {

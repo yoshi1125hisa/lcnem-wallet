@@ -30,11 +30,11 @@ export class UserEffects {
                 map(doc => doc.data() as User)
               )
             }
-          )
+          ),
+          map(user => new LoadUserSuccess({ userId: payload.userId, user: user }))
         )
       }
     ),
-    map(user => new LoadUserSuccess({ user: user })),
     catchError(error => of(new LoadUserError({ error: error })))
   );
 

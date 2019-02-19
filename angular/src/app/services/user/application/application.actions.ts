@@ -26,7 +26,7 @@ export class LoadApplications implements Action {
 export class LoadApplicationsSuccess implements Action {
   readonly type = ApplicationActionTypes.LoadApplicationsSuccess;
 
-  constructor(public payload: { ids: string[], entities: { [id: string]: Application } }) { }
+  constructor(public payload: { userId: string, ids: string[], entities: { [id: string]: Application } }) { }
 }
 
 export class LoadApplicationsError implements Action {

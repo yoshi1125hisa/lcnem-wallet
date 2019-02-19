@@ -16,7 +16,7 @@ export class LoadUser implements Action {
 export class LoadUserSuccess implements Action {
   readonly type = UserActionTypes.LoadUserSuccess;
 
-  constructor(public payload: { user: User }) {}
+  constructor(public payload: { userId: string, user: User }) {}
 }
 
 export class LoadUserError implements Action {

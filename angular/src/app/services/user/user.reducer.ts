@@ -19,15 +19,15 @@ export function reducer(state = initialState, action: UserActions): State {
     case UserActionTypes.LoadUser: {
       return {
         ...state,
-        loading: true,
-        lastUserId: action.payload.userId
+        loading: true
       }
     }
     case UserActionTypes.LoadUserSuccess: {
       return {
         ...state,
         loading: false,
-        user: action.payload.user
+        user: action.payload.user,
+        lastUserId: action.payload.userId
       }
     }
     case UserActionTypes.LoadUserError: {

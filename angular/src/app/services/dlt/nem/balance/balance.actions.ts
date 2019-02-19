@@ -16,7 +16,7 @@ export class LoadBalances implements Action {
 export class LoadBalancesSuccess implements Action {
   readonly type = BalanceActionTypes.LoadBalancesSuccess;
 
-  constructor(public payload: { assets: Asset[] }) {}
+  constructor(public payload: { address: Address, assets: Asset[] }) {}
 }
 
 export class LoadBalancesError implements Action {

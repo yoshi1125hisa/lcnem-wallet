@@ -16,7 +16,7 @@ export class LoadMultisigs implements Action {
 export class LoadMultisigsSuccess implements Action {
   readonly type = MultisigActionTypes.LoadMultisigsSuccess;
 
-  constructor(public payload: { addresses: Address[] }) {}
+  constructor(public payload: { address: Address, addresses: Address[] }) {}
 }
 
 export class LoadMultisigsError implements Action {

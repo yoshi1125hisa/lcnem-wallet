@@ -32,7 +32,8 @@ export function reducer(state = initialState, action: WalletActions): State {
         loading: false,
         ids: action.payload.ids,
         entities: action.payload.entities,
-        currentWalletId: action.payload.currentWalletId
+        currentWalletId: action.payload.currentWalletId,
+        lastUserId: action.payload.userId
       }
     }
     case WalletActionTypes.LoadWalletsError: {

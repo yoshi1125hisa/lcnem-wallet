@@ -28,12 +28,12 @@ export class BalanceEffects {
               const accountHttp = new AccountHttp(nodes)
               return accountHttp.getAssetsOwnedByAddress(payload.address)
             }
-          )
+          ),
+          map(assets => new LoadBalancesSuccess({ address: payload.address, assets: assets })),
         )
 
       }
     ),
-    map(assets => new LoadBalancesSuccess({ assets: assets })),
     catchError(error => of(new LoadBalancesError({ error: error })))
   );
 

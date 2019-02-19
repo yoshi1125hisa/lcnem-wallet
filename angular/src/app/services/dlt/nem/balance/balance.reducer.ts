@@ -20,15 +20,15 @@ export function reducer(state = initialState, action: BalanceActions): State {
     case BalanceActionTypes.LoadBalances: {
       return {
         ...state,
-        loading: true,
-        lastAddress: action.payload.address
+        loading: true
       }
     }
     case BalanceActionTypes.LoadBalancesSuccess: {
       return {
         ...state,
         loading: false,
-        assets: action.payload.assets
+        assets: action.payload.assets,
+        lastAddress: action.payload.address
       }
     }
     case BalanceActionTypes.LoadBalancesError: {

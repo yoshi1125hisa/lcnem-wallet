@@ -48,11 +48,11 @@ export class WalletEffects {
                 )
               )
             }
-          )
+          ),
+          map(({ ids, entities, currentWalletId }) => new LoadWalletsSuccess({ userId: payload.userId, ids: ids, entities: entities, currentWalletId: currentWalletId }))
         )
       }
     ),
-    map(({ ids, entities, currentWalletId }) => new LoadWalletsSuccess({ ids: ids, entities: entities, currentWalletId: currentWalletId })),
     catchError(error => of(new LoadWalletsError({ error: error })))
   );
 
@@ -119,7 +119,7 @@ export class WalletEffects {
     catchError(error => of(new DeleteWalletError({ error: error })))
   )
 
-  @Effect()
+  @Effect({ dispatch: false })
   setCurrentWallet$ = this.actions$.pipe(
     ofType(WalletActionTypes.SetCurrentWallet),
     map(action => action.payload),

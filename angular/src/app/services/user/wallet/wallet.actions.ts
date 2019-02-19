@@ -28,7 +28,7 @@ export class LoadWallets implements Action {
 export class LoadWalletsSuccess implements Action {
   readonly type = WalletActionTypes.LoadWalletsSuccess;
 
-  constructor(public payload: { ids: string[], entities: { [id: string]: Wallet }, currentWalletId?: string }) { }
+  constructor(public payload: { userId: string, ids: string[], entities: { [id: string]: Wallet }, currentWalletId?: string }) { }
 }
 
 export class LoadWalletsError implements Action {

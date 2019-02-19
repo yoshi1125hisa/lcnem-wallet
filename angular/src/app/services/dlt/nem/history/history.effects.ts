@@ -21,7 +21,7 @@ export class HistoryEffects {
         return this.history$.pipe(
           first(),
           mergeMap(
-            (state) => {console.log(state)
+            (state) => {
               if (state.lastAddress && state.lastAddress.equals(payload.address) && !payload.refresh) {
                 return of(state.transactions)
               }
@@ -33,11 +33,11 @@ export class HistoryEffects {
                 map(([unconfirmed, all]) => unconfirmed.concat(all)),
               )
             }
-          )
+          ),
+          map(transactions => new LoadHistoriesSuccess({ address: payload.address, transactions: transactions }))
         )
       }
     ),
-    map(transactions => new LoadHistoriesSuccess({ transactions: transactions })),
     catchError(error => of(new LoadHistoriesError({ error: error })))
   );
 

@@ -51,11 +51,11 @@ export class ApplicationEffects {
                 )
               )
             }
-          )
+          ),
+          map(({ ids, entities }) => new LoadApplicationsSuccess({ userId: payload.userId, ids: ids, entities: entities })),
         )
       }
     ),
-    map(({ ids, entities }) => new LoadApplicationsSuccess({ ids: ids, entities: entities })),
     catchError(error => of(new LoadApplicationsError({ error: error })))
   );
 

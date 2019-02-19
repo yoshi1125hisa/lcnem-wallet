@@ -16,7 +16,7 @@ export class LoadHistories implements Action {
 export class LoadHistoriesSuccess implements Action {
   readonly type = HistoryActionTypes.LoadHistoriesSuccess;
 
-  constructor(public payload: { transactions: Transaction[] }) {}
+  constructor(public payload: { address: Address, transactions: Transaction[] }) {}
 }
 
 export class LoadHistoriesError implements Action {
