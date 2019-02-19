@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 
 import { BalanceActionTypes, BalanceActions, LoadBalancesSuccess, LoadBalancesError } from './balance.actions';
-import { map, mergeMap, catchError } from 'rxjs/operators';
+import { map, mergeMap, catchError, first } from 'rxjs/operators';
 import { nodes } from '../../../../classes/nodes';
 import { AccountHttp } from 'nem-library';
 import { of } from 'rxjs';
@@ -20,6 +20,7 @@ export class BalanceEffects {
     mergeMap(
       (payload) => {
         return this.store.pipe(
+          first(),
           mergeMap(
             (state) => {
               if (state.lastAddress && state.lastAddress.equals(payload.address) && !payload.refresh) {

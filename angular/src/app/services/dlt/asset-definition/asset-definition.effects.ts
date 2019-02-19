@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { nodes } from '../../../classes/nodes';
-import { map, mergeMap, catchError, toArray } from 'rxjs/operators';
+import { map, mergeMap, catchError, toArray, first } from 'rxjs/operators';
 import { forkJoin, of, from } from 'rxjs';
 import { AssetDefinitionActionTypes, AssetDefinitionActions, LoadAssetDefinitionsSuccess, LoadAssetDefinitionsError } from './asset-definition.actions';
 import { AssetHttp } from 'nem-library';
@@ -18,6 +18,7 @@ export class AssetDefinitionEffects {
     mergeMap(
       (action) => {
         return this.store.select(state => state.definitions).pipe(
+          first(),
           map(definitions => action.payload.assets.filter(asset => !definitions.find(definition => definition.id.equals(asset))))
         )
       }

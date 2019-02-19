@@ -22,6 +22,7 @@ export class WalletEffects {
     mergeMap(
       (payload) => {
         return this.wallet$.pipe(
+          first(),
           mergeMap(
             (state) => {
               if (state.lastUserId && state.lastUserId === payload.userId && !payload.refresh) {
@@ -153,7 +154,6 @@ export class WalletEffects {
     private firestore: AngularFirestore,
     private auth: AuthService
   ) {
-
     this.auth.user$.pipe(
       filter(user => user !== null)
     ).subscribe(

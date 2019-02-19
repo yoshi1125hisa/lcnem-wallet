@@ -59,6 +59,7 @@ export class AssetsListComponent implements OnInit {
         mergeMap(
           (asset) => {
             return this.assetDefinition$.pipe(
+              filter(state => state.loading === false),
               map(state => state.definitions),
               mergeMap(definitions => from(definitions)),
               filter(definition => definition.id.equals(asset.assetId)),

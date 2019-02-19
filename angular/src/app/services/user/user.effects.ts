@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { UserActionTypes, UserActions, LoadUserSuccess, LoadUserError } from './user.actions';
-import { map, mergeMap, catchError } from 'rxjs/operators';
+import { map, mergeMap, catchError, first } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
@@ -19,6 +19,7 @@ export class UserEffects {
     mergeMap(
       (payload) => {
         return this.user$.pipe(
+          first(),
           mergeMap(
             (state) => {
               if (state.lastUserId && state.lastUserId === payload.userId && !payload.refresh) {

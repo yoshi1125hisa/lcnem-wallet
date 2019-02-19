@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { map, mergeMap, catchError } from 'rxjs/operators';
+import { map, mergeMap, catchError, first } from 'rxjs/operators';
 import { HistoryActionTypes, HistoryActions, LoadHistoriesError, LoadHistoriesSuccess } from './history.actions';
 import { AccountHttp } from 'nem-library';
 import { nodes } from '../../../../classes/nodes';
@@ -19,6 +19,7 @@ export class HistoryEffects {
     mergeMap(
       (payload) => {
         return this.store.pipe(
+          first(),
           mergeMap(
             (state) => {
               if (state.lastAddress && state.lastAddress.equals(payload.address) && !payload.refresh) {

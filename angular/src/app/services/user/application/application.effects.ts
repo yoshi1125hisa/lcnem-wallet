@@ -1,8 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { ApplicationActionTypes, ApplicationActions, LoadApplicationsSuccess, LoadApplicationsError, AddApplicationSuccess, UpdateApplicationSuccess, AddApplicationError, UpdateApplicationError, DeleteApplicationSuccess, DeleteApplicationError } from './application.actions';
+import {
+  ApplicationActionTypes,
+  ApplicationActions,
+  LoadApplicationsSuccess,
+  LoadApplicationsError,
+  AddApplicationSuccess,
+  UpdateApplicationSuccess,
+  AddApplicationError,
+  UpdateApplicationError,
+  DeleteApplicationSuccess,
+  DeleteApplicationError
+} from './application.actions';
 import { Store } from '@ngrx/store';
-import { mergeMap, map, catchError } from 'rxjs/operators';
+import { mergeMap, map, catchError, first } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Application } from '../../../../../../firebase/functions/src/models/application';
@@ -19,6 +30,7 @@ export class ApplicationEffects {
     mergeMap(
       (payload) => {
         return this.application$.pipe(
+          first(),
           mergeMap(
             (state) => {
               if (state.lastUserId && state.lastUserId === payload.userId && !payload.refresh) {

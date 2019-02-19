@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { ContactActionTypes, UpdateContactSuccess, LoadContactsSuccess, LoadContactsError, ContactActions, AddContactSuccess, AddContactError, UpdateContactError, DeleteContactSuccess, DeleteContactError } from './contact.actions';
 import { Store } from '@ngrx/store';
-import { mergeMap, map, catchError } from 'rxjs/operators';
+import { mergeMap, map, catchError, first } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Contact } from '../../../../../../firebase/functions/src/models/contact';
@@ -18,6 +18,7 @@ export class ContactEffects {
     mergeMap(
       (payload) => {
         return this.contact$.pipe(
+          first(),
           mergeMap(
             (state) => {
               if (state.lastUserId && state.lastUserId === payload.userId && !payload.refresh) {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 
 import { MultisigActionTypes, LoadMultisigsSuccess, LoadMultisigsError, MultisigActions } from './multisig.actions';
-import { map, mergeMap, catchError } from 'rxjs/operators';
+import { map, mergeMap, catchError, first } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { AccountHttp } from 'nem-library';
 import { nodes } from '../../../../classes/nodes';
@@ -20,6 +20,7 @@ export class MultisigEffects {
     mergeMap(
       (payload) => {
         return this.store.pipe(
+          first(),
           mergeMap(
             (state) => {
               if(state.lastAddress && state.lastAddress.equals(payload.address) && !payload.refresh) {
