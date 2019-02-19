@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-
 import { BalanceActionTypes, BalanceActions, LoadBalancesSuccess, LoadBalancesError } from './balance.actions';
 import { map, mergeMap, catchError, first } from 'rxjs/operators';
 import { nodes } from '../../../../classes/nodes';
 import { AccountHttp } from 'nem-library';
 import { of } from 'rxjs';
-import * as fromNemBalance from './balance.reducer';
-import { Store } from '@ngrx/store';
+import { State } from '../../../../services/reducer';
 
 @Injectable()
 export class BalanceEffects {
@@ -19,7 +18,7 @@ export class BalanceEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        return this.store.pipe(
+        return this.balance$.pipe(
           first(),
           mergeMap(
             (state) => {
@@ -38,10 +37,11 @@ export class BalanceEffects {
     catchError(error => of(new LoadBalancesError({ error: error })))
   );
 
+  public balance$ = this.store.select(state => state.balance)
 
   constructor(
     private actions$: Actions<BalanceActions>,
-    private store: Store<fromNemBalance.State>
+    private store: Store<State>
   ) { }
 
 }

@@ -6,7 +6,7 @@ import { forkJoin, of, from } from 'rxjs';
 import { AssetDefinitionActionTypes, AssetDefinitionActions, LoadAssetDefinitionsSuccess, LoadAssetDefinitionsError } from './asset-definition.actions';
 import { AssetHttp } from 'nem-library';
 import { Store } from '@ngrx/store';
-import * as fromAssetDefinition from './asset-definition.reducer';
+import { State } from '../../reducer';
 
 @Injectable()
 export class AssetDefinitionEffects {
@@ -17,8 +17,9 @@ export class AssetDefinitionEffects {
     ofType(AssetDefinitionActionTypes.LoadAssetDefinitions),
     mergeMap(
       (action) => {
-        return this.store.select(state => state.definitions).pipe(
+        return this.store.select(state => state.assetDefinition).pipe(
           first(),
+          map(state => state.definitions),
           map(definitions => action.payload.assets.filter(asset => !definitions.find(definition => definition.id.equals(asset))))
         )
       }
@@ -39,7 +40,7 @@ export class AssetDefinitionEffects {
 
   constructor(
     private actions$: Actions<AssetDefinitionActions>,
-    private store: Store<fromAssetDefinition.State>
+    private store: Store<State>
   ) { }
 
 }

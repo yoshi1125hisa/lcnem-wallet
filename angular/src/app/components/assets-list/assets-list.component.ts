@@ -60,10 +60,10 @@ export class AssetsListComponent implements OnInit {
           (asset) => {
             return this.assetDefinition$.pipe(
               filter(state => state.loading === false),
+              first(),
               map(state => state.definitions),
               mergeMap(definitions => from(definitions)),
               filter(definition => definition.id.equals(asset.assetId)),
-              first(),
               map(definition => Tuple(asset, definition))
             )
           }

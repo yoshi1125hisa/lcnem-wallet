@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { map, mergeMap, catchError, first } from 'rxjs/operators';
 import { HistoryActionTypes, HistoryActions, LoadHistoriesError, LoadHistoriesSuccess } from './history.actions';
 import { AccountHttp } from 'nem-library';
 import { nodes } from '../../../../classes/nodes';
 import { forkJoin, of } from 'rxjs';
-import { Store } from '@ngrx/store';
-import * as fromNemHistory from './history.reducer';
+import { State } from '../../../../services/reducer';
 
 @Injectable()
 export class HistoryEffects {
@@ -18,10 +18,10 @@ export class HistoryEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        return this.store.pipe(
+        return this.history$.pipe(
           first(),
           mergeMap(
-            (state) => {
+            (state) => {console.log(state)
               if (state.lastAddress && state.lastAddress.equals(payload.address) && !payload.refresh) {
                 return of(state.transactions)
               }
@@ -41,10 +41,11 @@ export class HistoryEffects {
     catchError(error => of(new LoadHistoriesError({ error: error })))
   );
 
+  public history$ = this.store.select(state => state.history)
 
   constructor(
     private actions$: Actions<HistoryActions>,
-    private store: Store<fromNemHistory.State>
+    private store: Store<State>
   ) { }
 
 }

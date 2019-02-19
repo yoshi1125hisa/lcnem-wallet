@@ -27,7 +27,6 @@ export class BalanceComponent implements OnInit {
     map(([wallet, balance]) => wallet.loading || balance.loading)
   )
 
-  public state$ = this.balance$
   public quoteCurrency$ = this.rate$.pipe(map(state => state.currency))
 
   constructor(

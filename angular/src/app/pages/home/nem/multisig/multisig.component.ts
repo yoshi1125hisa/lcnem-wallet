@@ -3,8 +3,6 @@ import { Observable, forkJoin, combineLatest } from 'rxjs';
 import { map, first, filter } from 'rxjs/operators';
 import { Address, Wallet } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
-import { State as MultisigState } from '../../../../services/dlt/nem/multisig/multisig.reducer';
-import { State as WalletState } from '../../../../services/user/wallet/wallet.reducer';
 import { Store } from '@ngrx/store';
 import { LoadMultisigs } from '../../../../services/dlt/nem/multisig/multisig.actions';
 import { State } from '../../../../services/reducer';
