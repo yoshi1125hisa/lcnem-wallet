@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Asset } from 'nem-library';
 import { Observable, from, combineLatest, of } from 'rxjs';
-import { map, mergeMap, filter, concatMap } from 'rxjs/operators';
+import { map, mergeMap, filter, concatMap, first, toArray } from 'rxjs/operators';
 import { LanguageService } from '../../services/language/language.service';
 import { Store } from '@ngrx/store';
 import { LoadAssetDefinitions } from '../../services/dlt/asset-definition/asset-definition.actions';
@@ -14,7 +14,7 @@ import { Tuple } from '../../classes/tuple';
   templateUrl: './assets-list.component.html',
   styleUrls: ['./assets-list.component.css']
 })
-export class AssetsListComponent implements OnInit {
+export class AssetsListComponent implements OnInit, OnChanges {
   get lang() { return this.language.code }
 
   @Input() public title?: string
@@ -45,6 +45,9 @@ export class AssetsListComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngOnChanges() {
     this.load()
   }
 
@@ -55,18 +58,24 @@ export class AssetsListComponent implements OnInit {
     this.store.dispatch(new LoadRates({}))
     this.store.dispatch(new LoadAssetDefinitions({ assets: this.assets.map(asset => asset.assetId) }))
 
-    this.assets$ = of(this.assets).pipe(
-      concatMap(assets => combineLatest(
-        this.assetDefinition$,
-        this.rate$
-      ).pipe(
-        map(([assetDefinition, rate]) => Tuple(assets, assetDefinition, rate)),
+    this.assets$ = combineLatest(
+      of(this.assets).pipe(
+        mergeMap(assets => from(assets)),
+        concatMap(asset => this.assetDefinition$.pipe(
+          filter(state => !state.loading),
+          map(state => state.definitions.find(definition => definition.id.equals(asset.assetId))),
+          filter(definition => definition !== undefined),
+          first(),
+          map(definition => Tuple(asset, definition!))
+        )),
+        toArray()
+      ),
+      this.rate$.pipe(
+        filter(state => !state.loading)
       )
-    ),
-    filter(([assets, assetDefinition, rate]) => !assetDefinition.loading && !rate.loading),
-      map(([assets, assetDefinition, rate]) => assets.map(
-        (asset) => {
-          const definition = assetDefinition.definitions.find(definition => definition.id.equals(asset.assetId))!
+    ).pipe(
+      map(([assets, rate]) => assets.map(
+        ([asset, definition]) => {
           const name = asset.assetId.toString()
           const additionalDefinition = this.assetAdditionalDefinitions.find(a => a.name === name) || { name: "", issuer: "", unit: "" }
           const unitRate = rate.rate[rate.currency] && rate.rate[additionalDefinition.unit] / rate.rate[rate.currency]
