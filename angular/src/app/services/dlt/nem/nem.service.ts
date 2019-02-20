@@ -1,22 +1,25 @@
 import { Injectable } from '@angular/core';
-import { WalletService } from '../../user/wallet/wallet.service';
-import { BalanceService } from './balance/balance.service';
-import { AssetDefinitionService } from '../asset-definition/asset-definition.service';
 import { XEM, AssetTransferable, AssetId, AccountHttp, Address, PlainMessage, SimpleWallet, Password, EncryptedMessage } from 'nem-library';
 import { first, map, filter } from 'rxjs/operators';
 import { nodes } from '../../../classes/nodes';
 import { AuthService } from '../../auth/auth.service';
+import { Store } from '@ngrx/store';
+import { LoadAssetDefinitions } from '../asset-definition/asset-definition.actions';
+import { State } from '../../reducer';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NemService {
+  public wallet$ = this.store.select(state => state.wallet)
+
+  public balance$ = this.store.select(state => state.balance)
+
+  public assetDefinition$ = this.store.select(state => state.assetDefinition)
 
   constructor(
     private auth: AuthService,
-    private wallet: WalletService,
-    private balance: BalanceService,
-    private assetDefinition: AssetDefinitionService
+    private store: Store<State>
   ) { }
 
 
@@ -26,16 +29,16 @@ export class NemService {
       amount: number
     }[]
   ) {
-    this.assetDefinition.loadAssetDefinitions(
-      assets.map(
-        (asset) => {
-          const [namespace, name] = asset.id.split(":")
-          return new AssetId(namespace, name)
-        }
-      )
+    const assetIds = assets.map(
+      (asset) => {
+        const [namespace, name] = asset.id.split(":")
+        return new AssetId(namespace, name)
+      }
     )
+    this.store.dispatch(new LoadAssetDefinitions({assets: assetIds}))
+    
 
-    const definitions = await this.assetDefinition.state$.pipe(
+    const definitions = await this.assetDefinition$.pipe(
       filter(state => !state.loading),
       first(),
       map(state => state.definitions)
@@ -60,7 +63,7 @@ export class NemService {
       first()
     ).toPromise()
 
-    return await this.wallet.state$.pipe(
+    return await this.wallet$.pipe(
       map(state => state.entities[state.currentWalletId!].wallet),
       map(wallet => SimpleWallet.readFromWLT(wallet!).open(new Password(user!.uid))),
       first()

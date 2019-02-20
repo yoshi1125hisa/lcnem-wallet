@@ -3,8 +3,9 @@ import { Observable, forkJoin, combineLatest } from 'rxjs';
 import { map, first, filter } from 'rxjs/operators';
 import { Address, Wallet } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
-import { MultisigService } from '../../../../services/dlt/nem/multisig/multisig.service';
-import { WalletService } from '../../../../services/user/wallet/wallet.service';
+import { Store } from '@ngrx/store';
+import { LoadMultisigs } from '../../../../services/dlt/nem/multisig/multisig.actions';
+import { State } from '../../../../services/reducer';
 
 @Component({
   selector: 'app-multisig',
@@ -12,21 +13,21 @@ import { WalletService } from '../../../../services/user/wallet/wallet.service';
   styleUrls: ['./multisig.component.css']
 })
 export class MultisigComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter; }
+  public get lang() { return this.language.code }
+
+  public wallet$ = this.store.select(state => state.wallet)
+  public multisig$ = this.store.select(state => state.multisig)
 
   public loading$ = combineLatest(
-    this.wallet.state$,
-    this.wallet.state$
+    this.wallet$,
+    this.multisig$
   ).pipe(
     map(fork => fork[0].loading || fork[1].loading)
   )
 
-  public state$ = this.multisig.state$
-
   constructor(
     private language: LanguageService,
-    private wallet: WalletService,
-    private multisig: MultisigService
+    private store: Store<State>
   ) {
   }
 
@@ -35,13 +36,13 @@ export class MultisigComponent implements OnInit {
   }
 
   public async load(refresh?: boolean) {
-    const state = await this.wallet.state$.pipe(
+    const state = await this.wallet$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
     ).toPromise()
 
     const address = new Address(state.entities[state.currentWalletId!].nem)
-    this.multisig.loadMultisig(address, refresh)
+    this.store.dispatch(new LoadMultisigs({ address, refresh }))
   }
 
   public onClick(address: string) {

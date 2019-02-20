@@ -5,9 +5,11 @@ import { debounceTime, filter, mergeMap, map, catchError, toArray, first, merge,
 import { NamespaceHttp, AccountHttp, Address } from 'nem-library';
 import { LanguageService } from '../../services/language/language.service';
 import { nodes } from '../../classes/nodes';
-import { ContactService } from '../../services/user/contact/contact.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { Tuple } from '../../classes/tuple';
+import { Store } from '@ngrx/store';
+import * as fromContact from '../../services/user/contact/contact.reducer'
+import { LoadContacts } from '../../services/user/contact/contact.actions';
 
 @Component({
   selector: 'app-address-input',
@@ -27,7 +29,7 @@ import { Tuple } from '../../classes/tuple';
   ],
 })
 export class AddressInputComponent implements OnInit, OnDestroy, ControlValueAccessor, Validator {
-  public get lang() { return this.language.state.twoLetter; }
+  public get lang() { return this.language.code; }
 
   @Input() placeholder?: string;
   @Input() required?: boolean;
@@ -41,7 +43,7 @@ export class AddressInputComponent implements OnInit, OnDestroy, ControlValueAcc
 
   public contacts$ = combineLatest(
     this.filtered$,
-    this.contact.state$
+    this.contact$
   ).pipe(
     map(([event, contact]) => Tuple(event, contact.ids.map(id => contact.entities[id].nem).reduce((_, __) => _.concat(__)))),
     map(([event, nem]) => nem.filter(n => n.name.startsWith((<HTMLInputElement>event!.target).value)))
@@ -67,7 +69,7 @@ export class AddressInputComponent implements OnInit, OnDestroy, ControlValueAcc
   constructor(
     private language: LanguageService,
     private auth: AuthService,
-    private contact: ContactService
+    private contact$: Store<fromContact.State>
   ) { }
 
   ngOnInit() {
@@ -84,7 +86,7 @@ export class AddressInputComponent implements OnInit, OnDestroy, ControlValueAcc
       first()
     ).subscribe(
       (user) => {
-        this.contact.loadContacts(user!.uid, refresh)
+        this.contact$.dispatch(new LoadContacts({ userId: user!.uid, refresh }))
       }
     )
   }

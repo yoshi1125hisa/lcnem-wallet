@@ -11,8 +11,6 @@ import {
 } from 'nem-library';
 import { Observable, of, from, combineLatest } from 'rxjs';
 import { mergeMap, first, map, filter } from 'rxjs/operators';
-import { WalletService } from '../../../services/user/wallet/wallet.service';
-import { BalanceService } from '../../../services/dlt/nem/balance/balance.service';
 import { LanguageService } from '../../../services/language/language.service';
 import { Invoice } from '../../../classes/invoice';
 import { RouterService } from '../../../services/router/router.service';
@@ -21,6 +19,11 @@ import { nodes } from '../../../classes/nodes';
 import { TransferDialogComponent } from '../../../components/transfer-dialog/transfer-dialog.component';
 import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
 import { NemService } from '../../../services/dlt/nem/nem.service';
+import { Store } from '@ngrx/store';
+import { State as WalletState } from '../../../services/user/wallet/wallet.reducer';
+import { State as BalanceState } from '../../../services/dlt/nem/balance/balance.reducer';
+import { LoadBalances } from '../../../services/dlt/nem/balance/balance.actions';
+import { State } from '../../../services/reducer';
 
 @Component({
   selector: 'app-transfer',
@@ -28,7 +31,7 @@ import { NemService } from '../../../services/dlt/nem/nem.service';
   styleUrls: ['./transfer.component.css']
 })
 export class TransferComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter; }
+  public get lang() { return this.language.code }
 
   public forms = {
     recipient: "",
@@ -41,14 +44,17 @@ export class TransferComponent implements OnInit {
     }[]
   }
 
+  public wallet$ = this.store.select(state => state.wallet)
+  public balance$ = this.store.select(state => state.balance)
+
   public loading$ = combineLatest(
-    this.wallet.state$,
-    this.balance.state$
+    this.wallet$,
+    this.balance$
   ).pipe(
     map(([wallet, balance]) => wallet.loading || balance.loading)
   )
 
-  public balance$ = this.balance.state$.pipe(map(state => state.assets))
+  public assets$ = this.balance$.pipe(map(state => state.assets))
 
   constructor(
     private dialog: MatDialog,
@@ -57,8 +63,7 @@ export class TransferComponent implements OnInit {
     private route: ActivatedRoute,
     private _router: RouterService,
     private language: LanguageService,
-    private wallet: WalletService,
-    private balance: BalanceService,
+    private store: Store<State>,
     private nem: NemService,
     private share: ShareService
   ) {
@@ -69,12 +74,12 @@ export class TransferComponent implements OnInit {
   }
 
   public async load() {
-    const state = await this.wallet.state$.pipe(
+    const state = await this.wallet$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
     ).toPromise()
 
-    this.balance.loadBalance(new Address(state.entities[state.currentWalletId!].nem))
+    this.store.dispatch(new LoadBalances({ address: new Address(state.entities[state.currentWalletId!].nem) }))
 
     let invoice = this.route.snapshot.queryParamMap.get('invoice') || ""
     let invoiceData = Invoice.parse(decodeURI(invoice))
@@ -106,7 +111,7 @@ export class TransferComponent implements OnInit {
       {
         id: id,
         amount: amount,
-        balance$: this.balance.state$.pipe(
+        balance$: this.balance$.pipe(
           mergeMap(state => from(state.assets)),
           filter(asset => asset.assetId.toString() === id)
         )

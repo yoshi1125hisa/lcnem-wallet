@@ -10,7 +10,7 @@ import { LanguageService } from '../../../../services/language/language.service'
   styleUrls: ['./contact-edit-dialog.component.css']
 })
 export class ContactEditDialogComponent implements OnInit {
-  get lang() { return this.language.state.twoLetter; }
+  get lang() { return this.language.code }
 
   public contact: Contact;
 

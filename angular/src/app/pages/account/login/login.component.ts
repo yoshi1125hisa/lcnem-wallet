@@ -12,7 +12,7 @@ import { LanguageService } from '../../../services/language/language.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  get lang() { return this.language.state.twoLetter }
+  get lang() { return this.language.code }
 
   public agree = false
   public safeSite: SafeResourceUrl
@@ -30,14 +30,10 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
 
-  public setLanguage(twoLetter: string) {
-    this.language.setLanguage(twoLetter)
-  }
-
   public login() {
     this.auth.login().then(
       (user) => {
-        this.router.navigate(["account", "wallets"], { preserveQueryParams: true })
+        this.router.navigate(["account", "wallets"], { queryParamsHandling: "preserve" })
       },
       (error) => {
         this.snackBar.open(this.translation.error[this.lang], undefined, { duration: 6000 })

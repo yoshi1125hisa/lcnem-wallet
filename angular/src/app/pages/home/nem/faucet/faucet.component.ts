@@ -3,13 +3,14 @@ import { MatDialog, MatSnackBar } from '@angular/material';
 import { AuthService } from '../../../../services/auth/auth.service';
 import { LanguageService } from '../../../../services/language/language.service';
 import { ApiService } from '../../../../services/api/api.service';
-import { WalletService } from '../../../../services/user/wallet/wallet.service';
 import { first, filter, map } from 'rxjs/operators';
 import { LoadingDialogComponent } from '../../../../components/loading-dialog/loading-dialog.component';
-import { Address, Asset, AssetId } from 'nem-library';
-import { BalanceService } from '../../../../services/dlt/nem/balance/balance.service';
-import { UserService } from '../../../../services/user/user.service';
+import { Address } from 'nem-library';
 import { combineLatest } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { LoadUser } from '../../../../services/user/user.actions';
+import { LoadBalances } from '../../../../services/dlt/nem/balance/balance.actions';
+import { State } from '../../../../services/reducer';
 
 @Component({
   selector: 'app-faucet',
@@ -17,11 +18,15 @@ import { combineLatest } from 'rxjs';
   styleUrls: ['./faucet.component.css']
 })
 export class FaucetComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter }
+  public get lang() { return this.language.code }
+
+  public wallet$ = this.store.select(state => state.wallet)
+  public user$ = this.store.select(state => state.user)
+  public balance$ = this.store.select(state => state.balance)
 
   public visible$ = combineLatest(
-    this.user.state$,
-    this.balance.state$
+    this.user$,
+    this.balance$
   ).pipe(
     filter(([user, balance]) => !user.loading && !balance.loading),
     filter(([user, balance]) => user.user !== undefined && balance.assets.find(asset => asset.assetId.toString() === "nem:xem") !== undefined),
@@ -50,9 +55,7 @@ export class FaucetComponent implements OnInit {
     private auth: AuthService,
     private language: LanguageService,
     private api: ApiService,
-    private wallet: WalletService,
-    private balance: BalanceService,
-    private user: UserService,
+    private store: Store<State>
   ) {
 　}
 
@@ -61,7 +64,7 @@ export class FaucetComponent implements OnInit {
   }
 
   public async load() {
-    const state = await this.wallet.state$.pipe(
+    const state = await this.wallet$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
     ).toPromise()
@@ -72,12 +75,12 @@ export class FaucetComponent implements OnInit {
     ).toPromise()
     
     const address = new Address(state.entities[state.currentWalletId!].nem)
-    this.user.loadUser(user!.uid)
-    this.balance.loadBalance(address)
+    this.store.dispatch(new LoadUser({ userId: user!.uid }))
+    this.store.dispatch(new LoadBalances({ address }))
   }
 
   public async faucet() {
-    const state = await this.wallet.state$.pipe(
+    const state = await this.wallet$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
     ).toPromise()

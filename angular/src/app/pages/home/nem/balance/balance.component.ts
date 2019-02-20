@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { merge, combineLatest } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { map, first, filter } from 'rxjs/operators';
-import { Asset, Address } from 'nem-library';
+import { Address } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
-import { BalanceService } from '../../../../services/dlt/nem/balance/balance.service';
-import { WalletService } from '../../../../services/user/wallet/wallet.service';
-import { RateService } from '../../../../services/rate/rate.service';
+import { Store } from '@ngrx/store';
+import { LoadBalances } from '../../../../services/dlt/nem/balance/balance.actions';
+import { ChangeCurrency } from '../../../../services/rate/rate.actions';
+import { State } from '../../../../services/reducer';
 
 @Component({
   selector: 'app-nem-balance',
@@ -13,23 +14,24 @@ import { RateService } from '../../../../services/rate/rate.service';
   styleUrls: ['./balance.component.css']
 })
 export class BalanceComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter }
+  public get lang() { return this.language.code }
+
+  public wallet$ = this.store.select(state => state.wallet)
+  public balance$ = this.store.select(state => state.balance)
+  public rate$ = this.store.select(state => state.rate)
 
   public loading$ = combineLatest(
-    this.wallet.state$,
-    this.balance.state$
+    this.wallet$,
+    this.balance$
   ).pipe(
     map(([wallet, balance]) => wallet.loading || balance.loading)
   )
 
-  public state$ = this.balance.state$
-  public quoteCurrency$ = this.rate.state$.pipe(map(state => state.currency))
+  public quoteCurrency$ = this.rate$.pipe(map(state => state.currency))
 
   constructor(
     private language: LanguageService,
-    private wallet: WalletService,
-    private balance: BalanceService,
-    private rate: RateService
+    private store: Store<State>
   ) {
   }
 
@@ -38,17 +40,17 @@ export class BalanceComponent implements OnInit {
   }
 
   public async load(refresh?: boolean) {
-    const state = await this.wallet.state$.pipe(
+    const state = await this.wallet$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
     ).toPromise()
     
     const address = new Address(state.entities[state.currentWalletId!].nem)
-    this.balance.loadBalance(address, refresh)
+    this.store.dispatch(new LoadBalances({ address, refresh }))
   }
 
   public changeCurrency(currency: string) {
-    this.rate.changeCurrency(currency)
+    this.store.dispatch(new ChangeCurrency({ currency }))
   }
 
   public translation = {

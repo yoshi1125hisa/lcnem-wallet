@@ -3,14 +3,16 @@ import { MatDialog, MatSnackBar } from '@angular/material';
 import { SimpleWallet, Password } from 'nem-library';
 import { Router } from '@angular/router';
 import { from, combineLatest } from 'rxjs';
-import { map, mergeMap, toArray, filter, first } from 'rxjs/operators';
+import { map, filter, first } from 'rxjs/operators';
 import { Wallet } from '../../../../../../firebase/functions/src/models/wallet';
 import { LanguageService } from '../../../services/language/language.service';
-import { WalletService } from '../../../services/user/wallet/wallet.service';
 import { AuthService } from '../../../services/auth/auth.service';
-import { UserService } from '../../../services/user/user.service';
 import { WalletCreateDialogComponent } from './wallet-create-dialog/wallet-create-dialog.component';
 import { ShareService } from '../../../services/api/share/share.service';
+import { Store } from '@ngrx/store';
+import { LoadUser } from '../../../services/user/user.actions';
+import { LoadWallets, AddWallet, SetCurrentWallet, UpdateWallet, AddLocalWallet, DeleteWallet } from '../../../services/user/wallet/wallet.actions';
+import { State } from '../../../services/reducer';
 
 @Component({
   selector: 'app-wallets',
@@ -18,16 +20,18 @@ import { ShareService } from '../../../services/api/share/share.service';
   styleUrls: ['./wallets.component.css']
 })
 export class WalletsComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter; }
+  public get lang() { return this.language.code }
+
+  public user$ = this.store.select(state => state.user)
+
+  public wallet$ = this.store.select(state => state.wallet)
 
   public loading$ = combineLatest(
     this.auth.user$,
-    this.wallet.state$
+    this.wallet$
   ).pipe(
     map(([auth, wallet]) => !auth || wallet.loading)
   )
-
-  public state$ = this.wallet.state$
 
   constructor(
     private router: Router,
@@ -35,8 +39,7 @@ export class WalletsComponent implements OnInit {
     private snackBar: MatSnackBar,
     private language: LanguageService,
     private auth: AuthService,
-    private user: UserService,
-    private wallet: WalletService,
+    private store: Store<State>,
     private share: ShareService
   ) {
   }
@@ -51,8 +54,8 @@ export class WalletsComponent implements OnInit {
       first()
     ).toPromise()
 
-    this.user.loadUser(user!.uid, refresh)
-    this.wallet.loadWallets(user!.uid, refresh)
+    this.store.dispatch(new LoadUser({ userId: user!.uid, refresh: refresh }))
+    this.store.dispatch(new LoadWallets({ userId: user!.uid, refresh: refresh }))
   }
 
   public async addWallet() {
@@ -74,18 +77,18 @@ export class WalletsComponent implements OnInit {
       wallet: simpleWallet.writeWLTFile()
     }
 
-    this.wallet.addWallet(uid, wallet)
+    this.store.dispatch(new AddWallet({userId: uid, wallet: wallet}))
   }
 
   public async enterWallet(id: string) {
-    this.wallet.setCurrentWallet(id);
+    this.store.dispatch(new SetCurrentWallet({walletId: id}))
 
-    await this.wallet.state$.pipe(
+    await this.wallet$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
     ).toPromise()
 
-    this.router.navigate([""], { preserveQueryParams: true })
+    this.router.navigate([""], { queryParamsHandling: "preserve" })
   }
 
   public importPrivateKey(id: string) {
@@ -97,24 +100,25 @@ export class WalletsComponent implements OnInit {
     const uid = this.auth.user!.uid
     const wallet = SimpleWallet.createWithPrivateKey(uid, new Password(uid), pk)
 
-    this.wallet.addLocalWallet(id, wallet.writeWLTFile())
+    this.store.dispatch(new AddLocalWallet({walletId: id, wallet: wallet}))
   }
 
-  public renameWallet(id: string) {
-    const wallet = this.wallet.state.entities[id];
+  public async renameWallet(id: string) {
+    const wallet = await this.wallet$.pipe(first()).toPromise()
 
-    const name = window.prompt(this.translation.rename[this.lang], wallet.name)
+    const name = window.prompt(this.translation.rename[this.lang], wallet.entities[id].name)
 
     if (!name) {
       return
     }
 
-    this.wallet.updateWallet(this.auth.user!.uid, id, { ...wallet, name })
+    this.store.dispatch(new UpdateWallet({userId: this.auth.user!.uid, walletId: id, wallet: { ...wallet.entities[id], name }}))
   }
 
-  public backupWallet(id: string) {
-    const wallet = SimpleWallet.readFromWLT(this.wallet.state.entities[id].wallet!)
-    const account = wallet.open(new Password(this.auth.user!.uid))
+  public async backupWallet(id: string) {
+    const wallet = await this.wallet$.pipe(first()).toPromise()
+    const simpleWallet = SimpleWallet.readFromWLT(wallet.entities[id].wallet!)
+    const account = simpleWallet.open(new Password(this.auth.user!.uid))
 
     this.share.copy(account.privateKey)
 
@@ -127,7 +131,7 @@ export class WalletsComponent implements OnInit {
       return
     }
 
-    this.wallet.deleteWallet(this.auth.user!.uid, id)
+    this.store.dispatch(new DeleteWallet({userId: this.auth.user!.uid, walletId: id}))
   }
 
   public translation = {

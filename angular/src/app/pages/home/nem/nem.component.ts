@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { map, mergeMap, first, filter } from 'rxjs/operators';
 import { LanguageService } from '../../../services/language/language.service';
-import { WalletService } from '../../../services/user/wallet/wallet.service';
 import { Invoice } from '../../../classes/invoice';
 import { ShareService } from '../../../services/api/share/share.service';
 import { AuthService } from '../../../services/auth/auth.service';
+import { Store } from '@ngrx/store';
+import { State } from '../../../services/reducer';
 
 @Component({
   selector: 'app-nem',
@@ -12,21 +13,23 @@ import { AuthService } from '../../../services/auth/auth.service';
   styleUrls: ['./nem.component.css']
 })
 export class NemComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter; }
+  public get lang() { return this.language.code }
 
-  public loading$ = this.wallet.state$.pipe(map(state => state.loading))
+  public wallet$ = this.store.select(state => state.wallet)
+
+  public loading$ = this.wallet$.pipe(map(state => state.loading))
 
   public email$ = this.auth.user$.pipe(
     filter(user => user !== null),
     map(user => user!.email)
   )
 
-  public address$ = this.wallet.state$.pipe(
+  public address$ = this.wallet$.pipe(
     filter(state => state.currentWalletId !== undefined),
     map(state => state.entities[state.currentWalletId!].nem)
   )
 
-  public qrUrl$ = this.wallet.state$.pipe(
+  public qrUrl$ = this.wallet$.pipe(
     filter(state => state.currentWalletId !== undefined),
     map(state => state.entities[state.currentWalletId!]),
     map(
@@ -41,7 +44,7 @@ export class NemComponent implements OnInit {
   constructor(
     private language: LanguageService,
     private auth: AuthService,
-    private wallet: WalletService,
+    private store: Store<State>,
     private share: ShareService
   ) {
   }
@@ -49,8 +52,9 @@ export class NemComponent implements OnInit {
   ngOnInit() {
   }
 
-  public copyAddress() {
-    this.share.copy(this.wallet.state.entities[this.wallet.state.currentWalletId!].nem)
+  public async copyAddress() {
+    const wallet = await this.wallet$.pipe(first()).toPromise()
+    this.share.copy(wallet.entities[wallet.currentWalletId!].nem)
   }
 
   public prettifyAddress(address: string) {

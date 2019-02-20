@@ -10,7 +10,7 @@ import { RouterService } from '../../services/router/router.service';
   styleUrls: ['./terms.component.css']
 })
 export class TermsComponent implements OnInit {
-  get lang() { return this.language.state.twoLetter; }
+  get lang() { return this.language.code }
 
   public safeSite: SafeResourceUrl;
   constructor(

@@ -9,7 +9,7 @@ import { LanguageService } from '../../services/language/language.service';
   styleUrls: ['./transfer-dialog.component.css']
 })
 export class TransferDialogComponent {
-  get lang() { return this.language.state.twoLetter; }
+  get lang() { return this.language.code }
   
   public transaction: TransferTransaction;
   public assets: Asset[];

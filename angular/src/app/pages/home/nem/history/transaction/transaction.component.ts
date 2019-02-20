@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
 
 import {
-  Address,
   Transaction,
   TransactionTypes,
   TransferTransaction,
@@ -15,12 +14,13 @@ import {
   PublicAccount,
   Message
 } from 'nem-library';
-import { map, mergeMap, merge } from 'rxjs/operators';
+import { map, first } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import { LanguageService } from '../../../../../services/language/language.service';
 import { nodes } from '../../../../../classes/nodes';
-import { WalletService } from '../../../../../services/user/wallet/wallet.service';
 import { AuthService } from '../../../../../services/auth/auth.service';
+import { Store } from '@ngrx/store';
+import { State } from '../../../../../services/reducer';
 
 @Component({
   selector: 'app-transaction',
@@ -28,9 +28,11 @@ import { AuthService } from '../../../../../services/auth/auth.service';
   styleUrls: ['./transaction.component.css']
 })
 export class TransactionComponent implements OnInit, OnChanges {
-  public get lang() { return this.language.state.twoLetter }
+  public get lang() { return this.language.code }
 
   @Input() transaction?: Transaction
+
+  public wallet$ = this.store.select(state => state.wallet)
 
   private _transaction?: Transaction
 
@@ -48,7 +50,7 @@ export class TransactionComponent implements OnInit, OnChanges {
     private snackBar: MatSnackBar,
     private language: LanguageService,
     private auth: AuthService,
-    private wallet: WalletService
+    private store: Store<State>
   ) {
   }
 
@@ -59,7 +61,7 @@ export class TransactionComponent implements OnInit, OnChanges {
     this.load()
   }
 
-  private load() {
+  private async load() {
     if (!this.transaction) {
       return;
     }
@@ -87,8 +89,12 @@ export class TransactionComponent implements OnInit, OnChanges {
     switch (this._transaction.type) {
       case TransactionTypes.TRANSFER: {
         const transferTransaction = this._transaction as TransferTransaction
+        const wallet = await this.wallet$.pipe(
+          first(),
+          map(state => state.entities[state.currentWalletId!])
+        ).toPromise()
 
-        if (transferTransaction.recipient.plain() === this.wallet.state.entities[this.wallet.state.currentWalletId!].nem) {
+        if (transferTransaction.recipient.plain() === wallet.nem) {
           this.icon = "call_received"
         } else {
           this.icon = "call_made"
@@ -102,8 +108,8 @@ export class TransactionComponent implements OnInit, OnChanges {
           accountHttp.getFromAddress(transferTransaction.recipient).pipe(
             map(meta => meta.publicAccount)
           ).subscribe(
-            (recipient) => {
-              this.message = this.decryptMessage(transferTransaction.message, transferTransaction.signer!, recipient!)
+            async (recipient) => {
+              this.message = await this.decryptMessage(transferTransaction.message, transferTransaction.signer!, recipient!)
             }
           )
         }
@@ -119,8 +125,11 @@ export class TransactionComponent implements OnInit, OnChanges {
     }
   }
 
-  private decryptMessage(message: Message, signer: PublicAccount, recipient: PublicAccount) {
-    const wallet = this.wallet.state.entities[this.wallet.state.currentWalletId!]
+  private async decryptMessage(message: Message, signer: PublicAccount, recipient: PublicAccount) {
+    const wallet = await this.wallet$.pipe(
+      first(),
+      map(state => state.entities[state.currentWalletId!])
+    ).toPromise()
 
     if (!wallet.wallet) {
       return this.translation.importRequired[this.lang]

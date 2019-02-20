@@ -4,9 +4,11 @@ import { MatDialog } from '@angular/material';
 import { RouterService } from '../../../services/router/router.service';
 import { LanguageService } from '../../../services/language/language.service';
 import { AuthService } from '../../../services/auth/auth.service';
-import { ApplicationService } from '../../../services/user/application/application.service';
 import { map, filter, first } from 'rxjs/operators';
 import { ApplicationDialogComponent } from './application-dialog/application-dialog.component';
+import { Store } from '@ngrx/store';
+import { LoadApplications, AddApplication, UpdateApplication, DeleteApplication } from '../../../services/user/application/application.actions';
+import { State } from '../../../services/reducer';
 
 @Component({
   selector: 'app-applications',
@@ -14,23 +16,23 @@ import { ApplicationDialogComponent } from './application-dialog/application-dia
   styleUrls: ['./applications.component.css']
 })
 export class ApplicationsComponent implements OnInit {
-  get lang() { return this.language.state.twoLetter }
+  get lang() { return this.language.code }
+
+  public application$ = this.store.select(state => state.application)
 
   public loading$ = combineLatest(
     this.auth.user$,
-    this.application.state$
+    this.application$
   ).pipe(
     map(([auth, application]) => auth === null || application.loading)
   )
-
-  public state$ = this.application.state$
 
   constructor(
     private dialog: MatDialog,
     private _router: RouterService,
     private language: LanguageService,
     private auth: AuthService,
-    private application: ApplicationService
+    private store: Store<State>
   ) {
   }
 
@@ -44,7 +46,7 @@ export class ApplicationsComponent implements OnInit {
       first()
     ).toPromise()
 
-    this.application.loadApplications(user!.uid, refresh)
+    this.store.dispatch(new LoadApplications({ userId: user!.uid, refresh: refresh }))
   }
 
   public back() {
@@ -65,7 +67,7 @@ export class ApplicationsComponent implements OnInit {
       return
     }
 
-    this.application.addApplication(this.auth.user!.uid, result)
+    this.store.dispatch(new AddApplication({userId: this.auth.user!.uid, application: result}))
   }
 
   public async editApplication(id: string) {
@@ -73,7 +75,7 @@ export class ApplicationsComponent implements OnInit {
       ApplicationDialogComponent,
       {
         data: {
-          application: this.application.state.entities[id]
+          application: (await this.application$.pipe(first()).toPromise()).entities[id]
         }
       }
     ).afterClosed().toPromise()
@@ -82,7 +84,7 @@ export class ApplicationsComponent implements OnInit {
       return
     }
 
-    this.application.updateApplication(this.auth.user!.uid, id, name)
+    this.store.dispatch(new UpdateApplication({userId: this.auth.user!.uid, applicationId: id, application: name}))
   }
 
   public deleteApplication(id: string) {
@@ -91,8 +93,8 @@ export class ApplicationsComponent implements OnInit {
     if (!result) {
       return
     }
-    
-    this.application.deleteApplication(this.auth.user!.uid, id)
+
+    this.store.dispatch(new DeleteApplication({userId: this.auth.user!.uid, applicationId: id}))
   }
 
   public translation = {

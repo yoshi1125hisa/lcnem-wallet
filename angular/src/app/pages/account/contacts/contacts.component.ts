@@ -4,9 +4,11 @@ import { ContactEditDialogComponent } from './contact-edit-dialog/contact-edit-d
 import { filter, first, map } from 'rxjs/operators';
 import { LanguageService } from '../../../services/language/language.service';
 import { RouterService } from '../../../services/router/router.service';
-import { ContactService } from '../../../services/user/contact/contact.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { combineLatest } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { LoadContacts, AddContact, UpdateContact, DeleteContact } from '../../../services/user/contact/contact.actions';
+import { State } from '../../../services/reducer';
 
 @Component({
   selector: 'app-contacts',
@@ -15,23 +17,23 @@ import { combineLatest } from 'rxjs';
 })
 
 export class ContactsComponent implements OnInit {
-  get lang() { return this.language.state.twoLetter }
+  get lang() { return this.language.code }
+
+  public contact$ = this.store.select(state => state.contact)
 
   public loading$ = combineLatest(
     this.auth.user$,
-    this.contact.state$
+    this.contact$
   ).pipe(
     map(([auth, contact]) => auth === null || contact.loading)
   )
-
-  public state$ = this.contact.state$
 
   constructor(
     private dialog: MatDialog,
     private _router: RouterService,
     private language: LanguageService,
     private auth: AuthService,
-    private contact: ContactService
+    private store: Store<State>
   ) {
   }
 
@@ -45,7 +47,7 @@ export class ContactsComponent implements OnInit {
       first()
     ).toPromise()
 
-    this.contact.loadContacts(user!.uid, refresh)
+    this.store.dispatch(new LoadContacts({ userId: user!.uid, refresh: refresh }))
   }
 
   public back() {
@@ -66,24 +68,24 @@ export class ContactsComponent implements OnInit {
       return
     }
 
-    this.contact.addContact(this.auth.user!.uid, result)
+    this.store.dispatch(new AddContact({ userId: this.auth.user!.uid, contact: result }))
   }
 
   public async editContact(id: string) {
-    const name = await this.dialog.open(
+    const contact = await this.dialog.open(
       ContactEditDialogComponent,
       {
         data: {
-          contact: this.contact.state.entities[id]
+          contact: (await this.contact$.pipe(first()).toPromise()).entities[id]
         }
       }
     ).afterClosed().toPromise()
 
-    if (!name) {
+    if (!contact) {
       return
     }
 
-    this.contact.updateContact(this.auth.user!.uid, id, name)
+    this.store.dispatch(new UpdateContact({ userId: this.auth.user!.uid, contactId: id, contact: contact }))
   }
 
   public deleteContact(id: string) {
@@ -92,8 +94,8 @@ export class ContactsComponent implements OnInit {
     if (!result) {
       return
     }
-    
-    this.contact.deleteContact(this.auth.user!.uid, id)
+
+    this.store.dispatch(new DeleteContact({ userId: this.auth.user!.uid, contactId: id }))
   }
 
   public translation = {

@@ -4,7 +4,6 @@ import { MatDialog, MatSnackBar } from '@angular/material';
 import { LanguageService } from '../../../services/language/language.service';
 import { RouterService } from '../../../services/router/router.service';
 import { AuthService } from '../../../services/auth/auth.service';
-import { UserService } from '../../../services/user/user.service';
 
 @Component({
   selector: 'app-settings',
@@ -19,10 +18,9 @@ export class SettingsComponent implements OnInit {
     private snackBar: MatSnackBar,
     private language: LanguageService,
     private auth: AuthService,
-    private user: UserService,
     private _router: RouterService,
   ) { }
-  public get lang() { return this.language.state.twoLetter }
+  public get lang() { return this.language.code }
 
   ngOnInit() {
     this.load()

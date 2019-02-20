@@ -89,6 +89,11 @@ import { AddressInputComponent } from './components/address-input/address-input.
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
 //services
 import { RouterService } from './services/router/router.service';
+import { StoreModule } from '@ngrx/store';
+import { reducers, metaReducers } from './services/reducer';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
+import { effects } from './services/effect';
 
 @NgModule({
   declarations: [
@@ -149,6 +154,9 @@ import { RouterService } from './services/router/router.service';
     FormsModule,
     HttpClientModule,
     FlexLayoutModule,
+    StoreModule.forRoot(reducers, { metaReducers }),
+    !environment.production ? StoreDevtoolsModule.instrument() : [],
+    EffectsModule.forRoot(effects),
     ZXingScannerModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,

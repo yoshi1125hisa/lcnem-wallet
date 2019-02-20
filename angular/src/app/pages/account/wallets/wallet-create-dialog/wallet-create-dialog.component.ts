@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LanguageService } from '../../../../services/language/language.service';
-import { WalletService } from '../../../../services/user/wallet/wallet.service';
+import { Store } from '@ngrx/store';
+import { State as WalletState } from '../../../../services/user/wallet/wallet.reducer';
 
 @Component({
   selector: 'app-wallet-create-dialog',
@@ -8,7 +9,7 @@ import { WalletService } from '../../../../services/user/wallet/wallet.service';
   styleUrls: ['./wallet-create-dialog.component.css']
 })
 export class WalletCreateDialogComponent implements OnInit {
-  get lang() { return this.language.state.twoLetter; }
+  get lang() { return this.language.code }
 
   forms = {
     name: "",
@@ -20,7 +21,7 @@ export class WalletCreateDialogComponent implements OnInit {
   
   constructor(
     private language: LanguageService,
-    private wallet: WalletService
+    private wallet$: Store<WalletState>
   ) {
   }
 

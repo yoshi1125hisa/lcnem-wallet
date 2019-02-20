@@ -128,5 +128,8 @@
       }
     }
   },
-  "defaultProject": "lcnem-wallet"
+  "defaultProject": "lcnem-wallet",
+  "cli": {
+    "defaultCollection": "@ngrx/schematics"
+  }
 }

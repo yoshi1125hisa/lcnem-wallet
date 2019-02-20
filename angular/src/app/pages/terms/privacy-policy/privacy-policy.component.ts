@@ -9,7 +9,7 @@ import { LanguageService } from '../../../services/language/language.service';
   styleUrls: ['./privacy-policy.component.css']
 })
 export class PrivacyPolicyComponent implements OnInit {
-  get lang() { return this.language.state.twoLetter; }
+  get lang() { return this.language.code }
   public safeSite: SafeResourceUrl;
 
   constructor(

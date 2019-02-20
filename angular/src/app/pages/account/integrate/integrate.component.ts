@@ -3,9 +3,10 @@ import { LanguageService } from '../../../services/language/language.service';
 import { ActivatedRoute } from '@angular/router';
 import { IntegrationService } from '../../../services/user/integration/integration.service';
 import { AuthService } from '../../../services/auth/auth.service';
-import { WalletService } from '../../../services/user/wallet/wallet.service';
 import { Application } from '../../../../../../firebase/functions/src/models/application';
-import { map, filter } from 'rxjs/operators';
+import { map, filter, first } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { State } from '../../../services/reducer';
 
 @Component({
   selector: 'app-integrate',
@@ -13,10 +14,12 @@ import { map, filter } from 'rxjs/operators';
   styleUrls: ['./integrate.component.css']
 })
 export class IntegrateComponent implements OnInit {
-  get lang() { return this.language.state.twoLetter }
+  get lang() { return this.language.code }
 
-  public loading$ = this.wallet.state$.pipe(map(state => state.loading))
-  public wallet$ = this.wallet.state$.pipe(
+  public wallet$ = this.store.select(state => state.wallet)
+
+  public loading$ = this.wallet$.pipe(map(state => state.loading))
+  public currentWallet$ = this.wallet$.pipe(
     filter(state => state.currentWalletId !== undefined),
     map(state => state.entities[state.currentWalletId!])
   )
@@ -33,7 +36,7 @@ export class IntegrateComponent implements OnInit {
     private route: ActivatedRoute,
     private language: LanguageService,
     private auth: AuthService,
-    private wallet: WalletService,
+    private store: Store<State>,
     private integration: IntegrationService
   ) { }
 
@@ -53,9 +56,10 @@ export class IntegrateComponent implements OnInit {
   }
 
   public async integrate() {
+    const state = await this.wallet$.pipe(first()).toPromise()
     const wallet = await this.integration.createIntegration(
       this.auth.user!.uid,
-      this.wallet.state.entities[this.wallet.state.currentWalletId!],
+      state.entities[state.currentWalletId!],
       this.forms.password
     )
 

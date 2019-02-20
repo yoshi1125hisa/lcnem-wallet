@@ -7,10 +7,10 @@
 </div>
 <mat-spinner [diameter]="60" *ngIf="loading$ | async; else loaded"></mat-spinner>
 <ng-template #loaded>
-  <ng-container *ngIf="state$ | async as state">
-    <ng-container *ngFor="let transaction of state.transactions">
+  <ng-container *ngIf="history$ | async as history">
+    <ng-container *ngFor="let transaction of history.transactions">
       <app-transaction [transaction]="transaction"></app-transaction>
     </ng-container>
-    <p *ngIf="!state.transactions.length" class="empty">{{translation.noTransaction[lang]}}</p>
+    <p *ngIf="!history.transactions.length" class="empty">{{translation.noTransaction[lang]}}</p>
   </ng-container>
 </ng-template>
