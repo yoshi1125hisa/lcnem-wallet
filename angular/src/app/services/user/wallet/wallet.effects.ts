@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { WalletActionTypes, WalletActions, LoadWalletsSuccess, LoadWalletsError, AddWalletSuccess, AddWalletError, UpdateWalletSuccess, UpdateWalletError, DeleteWalletSuccess, DeleteWalletError, LoadWallets } from './wallet.actions';
 import { Store } from '@ngrx/store';
-import { mergeMap, map, catchError, filter, first } from 'rxjs/operators';
+import { mergeMap, map, catchError, filter, first, concatMap } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Wallet } from '../../../../../../firebase/functions/src/models/wallet';
@@ -10,6 +10,7 @@ import { AuthService } from '../../auth/auth.service';
 import { LoadUser } from '../user.actions';
 import { SimpleWallet, Password } from 'nem-library';
 import { State } from '../../reducer';
+import { Tuple } from '../../../classes/tuple';
 
 @Injectable()
 export class WalletEffects {
@@ -19,40 +20,30 @@ export class WalletEffects {
   loadWallets$ = this.actions$.pipe(
     ofType(WalletActionTypes.LoadWallets),
     map(action => action.payload),
-    mergeMap(
-      (payload) => {
-        return this.wallet$.pipe(
-          first(),
-          mergeMap(
-            (state) => {
-              if (state.lastUserId && state.lastUserId === payload.userId && !payload.refresh) {
-                return of({ ids: state.ids, entities: state.entities, currentWalletId: state.currentWalletId })
-              }
-
-              return this.firestore.collection("users").doc(payload.userId).collection("wallets").get().pipe(
-                map(
-                  (collection) => {
-                    const localWallets = this.getLocalWallets()
-                    const ids = collection.docs.map(doc => doc.id)
-                    const entities: { [id: string]: Wallet } = {}
-                    for (const doc of collection.docs) {
-                      entities[doc.id] = doc.data() as Wallet
-                      if (localWallets[doc.id]) {
-                        state.entities[doc.id].wallet = localWallets[doc.id]
-                      }
-                    }
-                    const currentWalletId = localStorage.getItem("currentWallet") || undefined
-
-                    return { ids: ids, entities: entities, currentWalletId: currentWalletId }
-                  }
-                )
-              )
+    concatMap(payload => this.wallet$.pipe(
+      first(),
+      map(state => Tuple(payload, state))
+    )),
+    filter(([payload, state]) => (!state.lastUserId || state.lastUserId !== payload.userId) || payload.refresh === true),
+    concatMap(([payload, state]) => this.firestore.collection("users").doc(payload.userId).collection("wallets").get().pipe(
+      map(
+        (collection) => {
+          const localWallets = this.getLocalWallets()
+          const ids = collection.docs.map(doc => doc.id)
+          const entities: { [id: string]: Wallet } = {}
+          for (const doc of collection.docs) {
+            entities[doc.id] = doc.data() as Wallet
+            if (localWallets[doc.id]) {
+              state.entities[doc.id].wallet = localWallets[doc.id]
             }
-          ),
-          map(({ ids, entities, currentWalletId }) => new LoadWalletsSuccess({ userId: payload.userId, ids: ids, entities: entities, currentWalletId: currentWalletId }))
-        )
-      }
-    ),
+          }
+          const currentWalletId = localStorage.getItem("currentWallet") || undefined
+
+          return { ids: ids, entities: entities, currentWalletId: currentWalletId }
+        }
+      ),
+      map(({ ids, entities, currentWalletId }) => new LoadWalletsSuccess({ userId: payload.userId, ids: ids, entities: entities, currentWalletId: currentWalletId }))
+    )),
     catchError(error => of(new LoadWalletsError({ error: error })))
   );
 

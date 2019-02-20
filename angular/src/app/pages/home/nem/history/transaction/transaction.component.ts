@@ -14,7 +14,7 @@ import {
   PublicAccount,
   Message
 } from 'nem-library';
-import { map } from 'rxjs/operators';
+import { map, first } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material';
 import { LanguageService } from '../../../../../services/language/language.service';
 import { nodes } from '../../../../../classes/nodes';
@@ -90,6 +90,7 @@ export class TransactionComponent implements OnInit, OnChanges {
       case TransactionTypes.TRANSFER: {
         const transferTransaction = this._transaction as TransferTransaction
         const wallet = await this.wallet$.pipe(
+          first(),
           map(state => state.entities[state.currentWalletId!])
         ).toPromise()
 
@@ -126,6 +127,7 @@ export class TransactionComponent implements OnInit, OnChanges {
 
   private async decryptMessage(message: Message, signer: PublicAccount, recipient: PublicAccount) {
     const wallet = await this.wallet$.pipe(
+      first(),
       map(state => state.entities[state.currentWalletId!])
     ).toPromise()
 

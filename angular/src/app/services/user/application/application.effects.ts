@@ -13,11 +13,12 @@ import {
   DeleteApplicationError
 } from './application.actions';
 import { Store } from '@ngrx/store';
-import { mergeMap, map, catchError, first } from 'rxjs/operators';
+import { mergeMap, map, catchError, first, concatMap, filter } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Application } from '../../../../../../firebase/functions/src/models/application';
 import { State } from '../../reducer';
+import { Tuple } from '../../../classes/tuple';
 
 @Injectable()
 export class ApplicationEffects {
@@ -27,35 +28,25 @@ export class ApplicationEffects {
   loadApplications$ = this.actions$.pipe(
     ofType(ApplicationActionTypes.LoadApplications),
     map(action => action.payload),
-    mergeMap(
-      (payload) => {
-        return this.application$.pipe(
-          first(),
-          mergeMap(
-            (state) => {
-              if (state.lastUserId && state.lastUserId === payload.userId && !payload.refresh) {
-                return of({ ids: state.ids, entities: state.entities })
-              }
+    concatMap(payload => this.application$.pipe(
+      first(),
+      map(state => Tuple(payload, state))
+    )),
+    filter(([payload, state]) => (!state.lastUserId || state.lastUserId !== payload.userId) || payload.refresh === true),
+    concatMap(([payload]) => this.firestore.collection("users").doc(payload.userId).collection("applications").get().pipe(
+      map(
+        (collection) => {
+          const ids = collection.docs.map(doc => doc.id)
+          const entities: { [id: string]: Application } = {}
+          for (const doc of collection.docs) {
+            entities[doc.id] = doc.data() as Application
+          }
 
-              return this.firestore.collection("users").doc(payload.userId).collection("applications").get().pipe(
-                map(
-                  (collection) => {
-                    const ids = collection.docs.map(doc => doc.id)
-                    const entities: { [id: string]: Application } = {}
-                    for (const doc of collection.docs) {
-                      entities[doc.id] = doc.data() as Application
-                    }
-
-                    return { ids: ids, entities: entities }
-                  }
-                )
-              )
-            }
-          ),
-          map(({ ids, entities }) => new LoadApplicationsSuccess({ userId: payload.userId, ids: ids, entities: entities })),
-        )
-      }
-    ),
+          return { ids: ids, entities: entities }
+        }
+      ),
+      map(({ ids, entities }) => new LoadApplicationsSuccess({ userId: payload.userId, ids: ids, entities: entities }))
+    )),
     catchError(error => of(new LoadApplicationsError({ error: error })))
   );
 

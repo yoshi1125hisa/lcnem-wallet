@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { ContactActionTypes, UpdateContactSuccess, LoadContactsSuccess, LoadContactsError, ContactActions, AddContactSuccess, AddContactError, UpdateContactError, DeleteContactSuccess, DeleteContactError } from './contact.actions';
 import { Store } from '@ngrx/store';
-import { mergeMap, map, catchError, first } from 'rxjs/operators';
+import { mergeMap, map, catchError, first, concatMap, filter } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Contact } from '../../../../../../firebase/functions/src/models/contact';
 import { State } from '../../reducer';
+import { Tuple } from '../../../classes/tuple';
 
 @Injectable()
 export class ContactEffects {
@@ -15,40 +16,30 @@ export class ContactEffects {
   loadContacts$ = this.actions$.pipe(
     ofType(ContactActionTypes.LoadContacts),
     map(action => action.payload),
-    mergeMap(
-      (payload) => {
-        return this.contact$.pipe(
-          first(),
-          mergeMap(
-            (state) => {
-              if (state.lastUserId && state.lastUserId === payload.userId && !payload.refresh) {
-                return of({ ids: state.ids, entities: state.entities })
-              }
+    concatMap(payload => this.contact$.pipe(
+      first(),
+      map(state => Tuple(payload, state))
+    )),
+    filter(([payload, state]) => (!state.lastUserId || state.lastUserId !== payload.userId) || payload.refresh === true),
+    concatMap(([payload]) => this.firestore.collection("users").doc(payload.userId).collection("contacts").get().pipe(
+      map(
+        (collection) => {
+          const ids = collection.docs.map(doc => doc.id)
+          const entities: { [id: string]: Contact } = {}
+          for (const doc of collection.docs) {
+            entities[doc.id] = doc.data() as Contact
 
-              return this.firestore.collection("users").doc(payload.userId).collection("contacts").get().pipe(
-                map(
-                  (collection) => {
-                    const ids = collection.docs.map(doc => doc.id)
-                    const entities: { [id: string]: Contact } = {}
-                    for (const doc of collection.docs) {
-                      entities[doc.id] = doc.data() as Contact
-
-                      //レガシー
-                      if (!entities[doc.id].nem[0] || !entities[doc.id].nem[0].address) {
-                        entities[doc.id].nem = entities[doc.id].nem.map((nem: any) => { return { name: "", address: nem } })
-                      }
-                    }
-
-                    return { ids: ids, entities: entities }
-                  }
-                )
-              )
+            //レガシー
+            if (!entities[doc.id].nem[0] || !entities[doc.id].nem[0].address) {
+              entities[doc.id].nem = entities[doc.id].nem.map((nem: any) => { return { name: "", address: nem } })
             }
-          ),
-          map(({ ids, entities }) => new LoadContactsSuccess({ userId: payload.userId, ids: ids, entities: entities })),
-        )
-      }
-    ),
+          }
+
+          return { ids: ids, entities: entities }
+        }
+      ),
+      map(({ ids, entities }) => new LoadContactsSuccess({ userId: payload.userId, ids: ids, entities: entities })),
+    )),
     catchError(error => of(new LoadContactsError({ error: error })))
   );
 
