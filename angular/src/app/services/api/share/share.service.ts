@@ -16,11 +16,11 @@ export class ShareService {
       url: url,
       title: title,
       text: text
-    })
+    });
   }
 
   public copy(text: string) {
-    let selBox = document.createElement('textarea');
+    const selBox = document.createElement('textarea');
     selBox.style.position = 'fixed';
     selBox.style.left = '0';
     selBox.style.top = '0';

@@ -7,10 +7,10 @@ import { Contact } from '../../../../../../../firebase/functions/src/models/cont
   styleUrls: ['./contact.component.css']
 })
 export class ContactComponent implements OnInit {
-  @Input() contact?: Contact
+  @Input() contact?: Contact;
 
-  @Output() delete = new EventEmitter()
-  @Output() edit = new EventEmitter()
+  @Output() delete = new EventEmitter();
+  @Output() edit = new EventEmitter();
 
   constructor() { }
 

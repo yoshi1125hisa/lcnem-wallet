@@ -4,10 +4,10 @@ import { BalanceActionTypes, BalanceActions } from './balance.actions';
 
 
 export interface State {
-  loading: boolean
-  error?: Error
-  assets: Asset[]
-  lastAddress?: Address
+  loading: boolean;
+  error?: Error;
+  assets: Asset[];
+  lastAddress?: Address;
 }
 
 export const initialState: State = {
@@ -21,7 +21,7 @@ export function reducer(state = initialState, action: BalanceActions): State {
       return {
         ...state,
         loading: true
-      }
+      };
     }
     case BalanceActionTypes.LoadBalancesSuccess: {
       return {
@@ -29,14 +29,14 @@ export function reducer(state = initialState, action: BalanceActions): State {
         loading: false,
         assets: action.payload.assets,
         lastAddress: action.payload.address
-      }
+      };
     }
     case BalanceActionTypes.LoadBalancesError: {
       return {
         ...state,
         loading: false,
         error: action.payload.error
-      }
+      };
     }
     default:
       return state;

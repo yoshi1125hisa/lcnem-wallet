@@ -18,36 +18,7 @@ import { State } from '../../../../services/reducer';
   styleUrls: ['./faucet.component.css']
 })
 export class FaucetComponent implements OnInit {
-  public get lang() { return this.language.code }
-
-  public wallet$ = this.store.select(state => state.wallet)
-  public user$ = this.store.select(state => state.user)
-  public balance$ = this.store.select(state => state.balance)
-
-  public visible$ = combineLatest(
-    this.user$,
-    this.balance$
-  ).pipe(
-    filter(([user, balance]) => !user.loading && !balance.loading),
-    filter(([user, balance]) => user.user !== undefined && balance.assets.find(asset => asset.assetId.toString() === "nem:xem") !== undefined),
-    map(
-      ([user, balance]) => {
-        if(user.user!.faucetDate) {
-          const faucetDate = new Date(user.user!.faucetDate!)
-          faucetDate.setDate(faucetDate.getDate() + 1)
-          if(faucetDate > new Date()) {
-            return false
-          }
-        }
-
-        if(balance.assets.find(asset => asset.assetId.toString() === "nem:xem")!.quantity >= 10 ** 6) {
-          return false
-        }
-
-        return true
-      }
-    )
-  )
+  public get lang() { return this.language.code; }
 
   constructor(
     private dialog: MatDialog,
@@ -59,33 +30,85 @@ export class FaucetComponent implements OnInit {
   ) {
 　}
 
+  public wallet$ = this.store.select(state => state.wallet);
+  public user$ = this.store.select(state => state.user);
+  public balance$ = this.store.select(state => state.balance);
+
+  public visible$ = combineLatest(
+    this.user$,
+    this.balance$
+  ).pipe(
+    filter(([user, balance]) => !user.loading && !balance.loading),
+    filter(([user, balance]) => user.user !== undefined && balance.assets.find(asset => asset.assetId.toString() === 'nem:xem') !== undefined),
+    map(
+      ([user, balance]) => {
+        if (user.user!.faucetDate) {
+          const faucetDate = new Date(user.user!.faucetDate!);
+          faucetDate.setDate(faucetDate.getDate() + 1);
+          if (faucetDate > new Date()) {
+            return false;
+          }
+        }
+
+        if (balance.assets.find(asset => asset.assetId.toString() === 'nem:xem')!.quantity >= 10 ** 6) {
+          return false;
+        }
+
+        return true;
+      }
+    )
+  );
+
+  public translation = {
+    completed: {
+      en: 'You\'ve got 1 XEM!',
+      ja: '1XEM獲得しました！'
+    } as any,
+    error: {
+      en: 'Error',
+      ja: 'エラー'
+    } as any,
+    receive: {
+      en: 'Receive',
+      ja: '受け取る'
+    } as any,
+    faucet: {
+      en: '1XEM present',
+      ja: '1XEM プレゼント'
+    } as any,
+    faucetBody: {
+      en: 'Let\'s get XEM for transaction fees!',
+      ja: '手数料に使用するXEMをプレゼント！'
+    } as any
+  };
+
   ngOnInit() {
-    this.load()
+    this.load();
   }
 
   public async load() {
     const state = await this.wallet$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
-    ).toPromise()
+    ).toPromise();
 
     const user = await this.auth.user$.pipe(
       filter(user => user !== null),
       first()
-    ).toPromise()
-    
-    const address = new Address(state.entities[state.currentWalletId!].nem)
-    this.store.dispatch(new LoadUser({ userId: user!.uid }))
-    this.store.dispatch(new LoadBalances({ address }))
+    ).toPromise();
+
+    const address = new Address(state.entities[state.currentWalletId!].nem);
+    this.store.dispatch(new LoadUser({ userId: user!.uid }));
+    this.store.dispatch(new LoadBalances({ address }));
   }
 
   public async faucet() {
     const state = await this.wallet$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
-    ).toPromise()
+    ).toPromise();
 
-    const dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true })
+    const dialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
     this.api.faucet(
       {
         userId: this.auth.user!.uid,
@@ -93,37 +116,14 @@ export class FaucetComponent implements OnInit {
       }
     ).subscribe(
       () => {
-        this.snackBar.open(this.translation.completed[this.lang], undefined, { duration: 6000 })
+        this.snackBar.open(this.translation.completed[this.lang], undefined, { duration: 6000 });
       },
       (error) => {
-        this.snackBar.open(this.translation.error[this.lang], undefined, { duration: 6000 })
+        this.snackBar.open(this.translation.error[this.lang], undefined, { duration: 6000 });
       },
       () => {
-        dialog.close()
+        dialog.close();
       }
-    )
-  }
-
-  public translation = {
-    completed: {
-      en: "You've got 1 XEM!",
-      ja: "1XEM獲得しました！"
-    } as any,
-    error: {
-      en: "Error",
-      ja: "エラー"
-    } as any,
-    receive: {
-      en: "Receive",
-      ja: "受け取る"
-    } as any,
-    faucet: {
-      en: "1XEM present",
-      ja: "1XEM プレゼント"
-    } as any,
-    faucetBody: {
-      en: "Let's get XEM for transaction fees!",
-      ja: "手数料に使用するXEMをプレゼント！"
-    } as any
+    );
   }
 }

@@ -3,8 +3,8 @@ import { Address, Transaction } from 'nem-library';
 
 export enum HistoryActionTypes {
   LoadHistories = 'LoadHistories',
-  LoadHistoriesSuccess = "LoadHidtoriesSuccess",
-  LoadHistoriesError = "LoadHistoriesError"
+  LoadHistoriesSuccess = 'LoadHidtoriesSuccess',
+  LoadHistoriesError = 'LoadHistoriesError'
 }
 
 export class LoadHistories implements Action {

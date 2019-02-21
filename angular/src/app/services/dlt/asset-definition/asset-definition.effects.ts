@@ -29,7 +29,7 @@ export class AssetDefinitionEffects {
     catchError(error => of(new LoadAssetDefinitionsError({ error: error })))
   );
 
-  public assetDefinition$ = this.store.select(state => state.assetDefinition)
+  public assetDefinition$ = this.store.select(state => state.assetDefinition);
 
   constructor(
     private actions$: Actions<AssetDefinitionActions>,

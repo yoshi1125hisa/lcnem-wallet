@@ -4,9 +4,9 @@ import { AssetDefinitionActions, AssetDefinitionActionTypes } from './asset-defi
 
 
 export interface State {
-  loading: boolean
-  error?: Error
-  definitions: AssetDefinition[]
+  loading: boolean;
+  error?: Error;
+  definitions: AssetDefinition[];
 }
 
 export const initialState: State = {
@@ -15,7 +15,7 @@ export const initialState: State = {
     new AssetDefinition(
       new PublicAccount(),
       XEM.MOSAICID,
-      "",
+      '',
       {
         initialSupply: XEM.INITIALSUPPLY,
         supplyMutable: XEM.SUPPLYMUTABLE,
@@ -32,21 +32,21 @@ export function reducer(state = initialState, action: AssetDefinitionActions): S
       return {
         ...state,
         loading: true
-      }
+      };
     }
     case AssetDefinitionActionTypes.LoadAssetDefinitionsSuccess: {
       return {
         ...state,
         loading: false,
         definitions: state.definitions.concat(action.payload.definitions)
-      }
+      };
     }
     case AssetDefinitionActionTypes.LoadAssetDefinitionsError: {
       return {
         ...state,
         loading: false,
         error: action.payload.error
-      }
+      };
     }
     default: {
       return state;

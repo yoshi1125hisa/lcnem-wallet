@@ -33,16 +33,16 @@ export class ApplicationEffects {
       map(state => Tuple(payload, state))
     )),
     filter(([payload, state]) => (!state.lastUserId || state.lastUserId !== payload.userId) || payload.refresh === true),
-    concatMap(([payload]) => this.firestore.collection("users").doc(payload.userId).collection("applications").get().pipe(
+    concatMap(([payload]) => this.firestore.collection('users').doc(payload.userId).collection('applications').get().pipe(
       map(
         (collection) => {
-          const ids = collection.docs.map(doc => doc.id)
-          const entities: { [id: string]: Application } = {}
+          const ids = collection.docs.map(doc => doc.id);
+          const entities: { [id: string]: Application } = {};
           for (const doc of collection.docs) {
-            entities[doc.id] = doc.data() as Application
+            entities[doc.id] = doc.data() as Application;
           }
 
-          return { ids: ids, entities: entities }
+          return { ids: ids, entities: entities };
         }
       ),
       map(({ ids, entities }) => new LoadApplicationsSuccess({ userId: payload.userId, ids: ids, entities: entities }))
@@ -56,18 +56,18 @@ export class ApplicationEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        return from(this.firestore.collection("users").doc(payload.userId).collection("applications").add(payload.application)).pipe(
+        return from(this.firestore.collection('users').doc(payload.userId).collection('applications').add(payload.application)).pipe(
           map(
             (doc) => {
-              return { id: doc.id, application: payload.application }
+              return { id: doc.id, application: payload.application };
             }
           )
-        )
+        );
       }
     ),
     map(({ id, application }) => new AddApplicationSuccess({ applicationId: id, application: application })),
     catchError(error => of(new AddApplicationError({ error: error })))
-  )
+  );
 
   @Effect()
   updateApplication$ = this.actions$.pipe(
@@ -75,14 +75,14 @@ export class ApplicationEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        return from(this.firestore.collection("users").doc(payload.userId).collection("applications").doc(payload.applicationId).set(payload.application)).pipe(
+        return from(this.firestore.collection('users').doc(payload.userId).collection('applications').doc(payload.applicationId).set(payload.application)).pipe(
           map(_ => payload)
-        )
+        );
       }
     ),
     map(payload => new UpdateApplicationSuccess({ applicationId: payload.applicationId, application: payload.application })),
     catchError(error => of(new UpdateApplicationError({ error: error })))
-  )
+  );
 
   @Effect()
   deleteApplication$ = this.actions$.pipe(
@@ -90,16 +90,16 @@ export class ApplicationEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        return from(this.firestore.collection("users").doc(payload.userId).collection("applications").doc(payload.applicationId).delete()).pipe(
+        return from(this.firestore.collection('users').doc(payload.userId).collection('applications').doc(payload.applicationId).delete()).pipe(
           map(_ => payload)
-        )
+        );
       }
     ),
     map(payload => new DeleteApplicationSuccess({ applicationId: payload.applicationId })),
     catchError(error => of(new DeleteApplicationError({ error: error })))
-  )
+  );
 
-  public application$ = this.store.select(state => state.application)
+  public application$ = this.store.select(state => state.application);
 
   constructor(
     private actions$: Actions<ApplicationActions>,

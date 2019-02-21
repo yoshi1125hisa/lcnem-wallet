@@ -30,7 +30,7 @@ export class MultisigEffects {
     catchError(error => of(new LoadMultisigsError({ error: error })))
   );
 
-  public multisig$ = this.store.select(state => state.multisig)
+  public multisig$ = this.store.select(state => state.multisig);
 
   constructor(
     private actions$: Actions<MultisigActions>,

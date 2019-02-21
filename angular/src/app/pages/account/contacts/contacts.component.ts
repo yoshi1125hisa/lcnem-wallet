@@ -17,16 +17,7 @@ import { State } from '../../../services/reducer';
 })
 
 export class ContactsComponent implements OnInit {
-  get lang() { return this.language.code }
-
-  public contact$ = this.store.select(state => state.contact)
-
-  public loading$ = combineLatest(
-    this.auth.user$,
-    this.contact$
-  ).pipe(
-    map(([auth, contact]) => auth === null || contact.loading)
-  )
+  get lang() { return this.language.code; }
 
   constructor(
     private dialog: MatDialog,
@@ -37,21 +28,53 @@ export class ContactsComponent implements OnInit {
   ) {
   }
 
+  public contact$ = this.store.select(state => state.contact);
+
+  public loading$ = combineLatest(
+    this.auth.user$,
+    this.contact$
+  ).pipe(
+    map(([auth, contact]) => auth === null || contact.loading)
+  );
+
+  public translation = {
+    contacts: {
+      en: 'Contact list',
+      ja: 'コンタクトリスト'
+    } as any,
+    empty: {
+      en: 'There is no contacts.',
+      ja: 'コンタクトはありません。'
+    } as any,
+    confirm: {
+      en: 'Are you sure?',
+      ja: '削除しますか？'
+    } as any,
+    createContact: {
+      en: 'Create new contact',
+      ja: '新しいコンタクトを作成'
+    } as any,
+    name: {
+      en: 'Name',
+      ja: '名前'
+    } as any
+  };
+
   ngOnInit() {
-    this.load()
+    this.load();
   }
 
   public async load(refresh?: boolean) {
     const user = await this.auth.user$.pipe(
       filter(user => user !== null),
       first()
-    ).toPromise()
+    ).toPromise();
 
-    this.store.dispatch(new LoadContacts({ userId: user!.uid, refresh: refresh }))
+    this.store.dispatch(new LoadContacts({ userId: user!.uid, refresh: refresh }));
   }
 
   public back() {
-    this._router.back([""])
+    this._router.back(['']);
   }
 
   public async createContact() {
@@ -62,13 +85,13 @@ export class ContactsComponent implements OnInit {
           contact: {}
         }
       }
-    ).afterClosed().toPromise()
+    ).afterClosed().toPromise();
 
     if (!result) {
-      return
+      return;
     }
 
-    this.store.dispatch(new AddContact({ userId: this.auth.user!.uid, contact: result }))
+    this.store.dispatch(new AddContact({ userId: this.auth.user!.uid, contact: result }));
   }
 
   public async editContact(id: string) {
@@ -79,45 +102,22 @@ export class ContactsComponent implements OnInit {
           contact: (await this.contact$.pipe(first()).toPromise()).entities[id]
         }
       }
-    ).afterClosed().toPromise()
+    ).afterClosed().toPromise();
 
     if (!contact) {
-      return
+      return;
     }
 
-    this.store.dispatch(new UpdateContact({ userId: this.auth.user!.uid, contactId: id, contact: contact }))
+    this.store.dispatch(new UpdateContact({ userId: this.auth.user!.uid, contactId: id, contact: contact }));
   }
 
   public deleteContact(id: string) {
-    const result = window.confirm(this.translation.confirm[this.lang])
+    const result = window.confirm(this.translation.confirm[this.lang]);
 
     if (!result) {
-      return
+      return;
     }
 
-    this.store.dispatch(new DeleteContact({ userId: this.auth.user!.uid, contactId: id }))
-  }
-
-  public translation = {
-    contacts: {
-      en: "Contact list",
-      ja: "コンタクトリスト"
-    } as any,
-    empty: {
-      en: "There is no contacts.",
-      ja: "コンタクトはありません。"
-    } as any,
-    confirm: {
-      en: "Are you sure?",
-      ja: "削除しますか？"
-    } as any,
-    createContact: {
-      en: "Create new contact",
-      ja: "新しいコンタクトを作成"
-    } as any,
-    name: {
-      en: "Name",
-      ja: "名前"
-    } as any
+    this.store.dispatch(new DeleteContact({ userId: this.auth.user!.uid, contactId: id }));
   }
 }

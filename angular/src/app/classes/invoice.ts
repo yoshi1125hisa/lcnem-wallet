@@ -2,19 +2,15 @@ export class Invoice {
   public v = 2;
   public type = 2;
   public data = {
-    addr: "",
-    msg: "",
-    name: "LCNEM Wallet",
+    addr: '',
+    msg: '',
+    name: 'LCNEM Wallet',
     amount: 0,
     assets: [] as {
       id: string,
       amount: number
     }[]
-  }
-
-  public stringify() {
-    return JSON.stringify(this);
-  }
+  };
 
   public static parse(json: string) {
     let invoice: Invoice;
@@ -35,4 +31,8 @@ export class Invoice {
 
     return invoice;
   }
-};
+
+  public stringify() {
+    return JSON.stringify(this);
+  }
+}

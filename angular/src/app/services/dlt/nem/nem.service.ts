@@ -11,11 +11,11 @@ import { State } from '../../reducer';
   providedIn: 'root'
 })
 export class NemService {
-  public wallet$ = this.store.select(state => state.wallet)
+  public wallet$ = this.store.select(state => state.wallet);
 
-  public balance$ = this.store.select(state => state.balance)
+  public balance$ = this.store.select(state => state.balance);
 
-  public assetDefinition$ = this.store.select(state => state.assetDefinition)
+  public assetDefinition$ = this.store.select(state => state.assetDefinition);
 
   constructor(
     private auth: AuthService,
@@ -31,66 +31,66 @@ export class NemService {
   ) {
     const assetIds = assets.map(
       (asset) => {
-        const [namespace, name] = asset.id.split(":")
-        return new AssetId(namespace, name)
+        const [namespace, name] = asset.id.split(':');
+        return new AssetId(namespace, name);
       }
-    )
-    this.store.dispatch(new LoadAssetDefinitions({assets: assetIds}))
-    
+    );
+    this.store.dispatch(new LoadAssetDefinitions({assets: assetIds}));
+
 
     const definitions = await this.assetDefinition$.pipe(
       filter(state => !state.loading),
       first(),
       map(state => state.definitions)
-    ).toPromise()
+    ).toPromise();
 
     return assets.map(
       (asset) => {
-        if (asset.id === "nem:xem") {
-          return new XEM(asset.amount)
+        if (asset.id === 'nem:xem') {
+          return new XEM(asset.amount);
         }
-        const definition = definitions.find(definition => definition.id.toString() === asset.id)!
-        const amount = asset.amount * Math.pow(10, definition.properties.divisibility)
+        const definition = definitions.find(definition => definition.id.toString() === asset.id)!;
+        const amount = asset.amount * Math.pow(10, definition.properties.divisibility);
 
-        return AssetTransferable.createWithAssetDefinition(definition, amount)
+        return AssetTransferable.createWithAssetDefinition(definition, amount);
       }
-    )
+    );
   }
 
   public async getAccount() {
     const user = await this.auth.user$.pipe(
       filter(user => user !== null),
       first()
-    ).toPromise()
+    ).toPromise();
 
     return await this.wallet$.pipe(
       map(state => state.entities[state.currentWalletId!].wallet),
       map(wallet => SimpleWallet.readFromWLT(wallet!).open(new Password(user!.uid))),
       first()
-    ).toPromise()
+    ).toPromise();
   }
 
   public async createMessage(message: string, encryption: boolean, recipient?: string) {
     if (!encryption) {
-      return PlainMessage.create(message)
+      return PlainMessage.create(message);
     }
 
     if (!recipient) {
-      throw Error()
+      throw Error();
     }
 
-    const accountHttp = new AccountHttp(nodes)
+    const accountHttp = new AccountHttp(nodes);
 
     const publicAccount = await accountHttp.getFromAddress(new Address(recipient)).pipe(
       map(account => account.publicAccount)
-    ).toPromise()
+    ).toPromise();
 
     if (!publicAccount || !publicAccount.hasPublicKey()) {
-      throw Error()
+      throw Error();
     }
 
-    const account = await this.getAccount()
+    const account = await this.getAccount();
 
-    return account.encryptMessage(message, publicAccount)
+    return account.encryptMessage(message, publicAccount);
   }
 }

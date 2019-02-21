@@ -9,10 +9,10 @@ export const environment = {
     messagingSenderId: '522057576747'
   },
   stripe: {
-    pk: "pk_live_U7J2IacDFZyCvYILl45onao9",
+    pk: 'pk_live_U7J2IacDFZyCvYILl45onao9',
     test: false
   },
   plan: {
-    planId: "plan_EFWnnrtQXB3tR6"
+    planId: 'plan_EFWnnrtQXB3tR6'
   }
 };

@@ -4,10 +4,10 @@ import { UserActions, UserActionTypes } from './user.actions';
 
 
 export interface State {
-  loading: boolean
-  error?: Error
-  user?: User
-  lastUserId?: string
+  loading: boolean;
+  error?: Error;
+  user?: User;
+  lastUserId?: string;
 }
 
 export const initialState: State = {
@@ -20,7 +20,7 @@ export function reducer(state = initialState, action: UserActions): State {
       return {
         ...state,
         loading: true
-      }
+      };
     }
     case UserActionTypes.LoadUserSuccess: {
       return {
@@ -28,14 +28,14 @@ export function reducer(state = initialState, action: UserActions): State {
         loading: false,
         user: action.payload.user,
         lastUserId: action.payload.userId
-      }
+      };
     }
     case UserActionTypes.LoadUserError: {
       return {
         ...state,
         loading: false,
         error: action.payload.error
-      }
+      };
     }
     default: {
       return state;

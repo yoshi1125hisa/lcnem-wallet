@@ -3,10 +3,10 @@ import { Address, Transaction } from 'nem-library';
 import { HistoryActions, HistoryActionTypes } from './history.actions';
 
 export interface State {
-  loading: boolean
-  error?: Error
-  transactions: Transaction[],
-  lastAddress?: Address
+  loading: boolean;
+  error?: Error;
+  transactions: Transaction[];
+  lastAddress?: Address;
 }
 
 export const initialState: State = {
@@ -20,7 +20,7 @@ export function reducer(state = initialState, action: HistoryActions): State {
       return {
         ...state,
         loading: true
-      }
+      };
     }
     case HistoryActionTypes.LoadHistoriesSuccess: {
       return {
@@ -28,14 +28,14 @@ export function reducer(state = initialState, action: HistoryActions): State {
         loading: false,
         transactions: action.payload.transactions,
         lastAddress: action.payload.address
-      }
+      };
     }
     case HistoryActionTypes.LoadHistoriesError: {
       return {
         ...state,
         loading: false,
         error: action.payload.error
-      }
+      };
     }
     default: {
       return state;

@@ -16,16 +16,7 @@ import { State } from '../../../services/reducer';
   styleUrls: ['./applications.component.css']
 })
 export class ApplicationsComponent implements OnInit {
-  get lang() { return this.language.code }
-
-  public application$ = this.store.select(state => state.application)
-
-  public loading$ = combineLatest(
-    this.auth.user$,
-    this.application$
-  ).pipe(
-    map(([auth, application]) => auth === null || application.loading)
-  )
+  get lang() { return this.language.code; }
 
   constructor(
     private dialog: MatDialog,
@@ -36,21 +27,53 @@ export class ApplicationsComponent implements OnInit {
   ) {
   }
 
+  public application$ = this.store.select(state => state.application);
+
+  public loading$ = combineLatest(
+    this.auth.user$,
+    this.application$
+  ).pipe(
+    map(([auth, application]) => auth === null || application.loading)
+  );
+
+  public translation = {
+    applications: {
+      en: 'Third party applications',
+      ja: 'サードパーティアプリ'
+    } as any,
+    empty: {
+      en: 'There is no applications you created.',
+      ja: '作成したサードパーティアプリはありません。'
+    } as any,
+    confirm: {
+      en: 'Are you sure?',
+      ja: '削除しますか？'
+    } as any,
+    createContact: {
+      en: 'Create new application',
+      ja: '新しいアプリを作成'
+    } as any,
+    name: {
+      en: 'Name',
+      ja: '名前'
+    } as any
+  };
+
   ngOnInit() {
-    this.load()
+    this.load();
   }
 
   public async load(refresh?: boolean) {
     const user = await this.auth.user$.pipe(
       filter(user => user !== null),
       first()
-    ).toPromise()
+    ).toPromise();
 
-    this.store.dispatch(new LoadApplications({ userId: user!.uid, refresh: refresh }))
+    this.store.dispatch(new LoadApplications({ userId: user!.uid, refresh: refresh }));
   }
 
   public back() {
-    this._router.back([""])
+    this._router.back(['']);
   }
 
   public async createApplication() {
@@ -61,13 +84,13 @@ export class ApplicationsComponent implements OnInit {
           application: {}
         }
       }
-    ).afterClosed().toPromise()
+    ).afterClosed().toPromise();
 
     if (!result) {
-      return
+      return;
     }
 
-    this.store.dispatch(new AddApplication({userId: this.auth.user!.uid, application: result}))
+    this.store.dispatch(new AddApplication({userId: this.auth.user!.uid, application: result}));
   }
 
   public async editApplication(id: string) {
@@ -78,45 +101,22 @@ export class ApplicationsComponent implements OnInit {
           application: (await this.application$.pipe(first()).toPromise()).entities[id]
         }
       }
-    ).afterClosed().toPromise()
+    ).afterClosed().toPromise();
 
     if (!name) {
-      return
+      return;
     }
 
-    this.store.dispatch(new UpdateApplication({userId: this.auth.user!.uid, applicationId: id, application: name}))
+    this.store.dispatch(new UpdateApplication({userId: this.auth.user!.uid, applicationId: id, application: name}));
   }
 
   public deleteApplication(id: string) {
-    const result = window.confirm(this.translation.confirm[this.lang])
+    const result = window.confirm(this.translation.confirm[this.lang]);
 
     if (!result) {
-      return
+      return;
     }
 
-    this.store.dispatch(new DeleteApplication({userId: this.auth.user!.uid, applicationId: id}))
-  }
-
-  public translation = {
-    applications: {
-      en: "Third party applications",
-      ja: "サードパーティアプリ"
-    } as any,
-    empty: {
-      en: "There is no applications you created.",
-      ja: "作成したサードパーティアプリはありません。"
-    } as any,
-    confirm: {
-      en: "Are you sure?",
-      ja: "削除しますか？"
-    } as any,
-    createContact: {
-      en: "Create new application",
-      ja: "新しいアプリを作成"
-    } as any,
-    name: {
-      en: "Name",
-      ja: "名前"
-    } as any
+    this.store.dispatch(new DeleteApplication({userId: this.auth.user!.uid, applicationId: id}));
   }
 }
