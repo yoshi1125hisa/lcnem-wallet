@@ -29,7 +29,7 @@ export class BalanceEffects {
     catchError(error => of(new LoadBalancesError({ error: error })))
   );
 
-  public balance$ = this.store.select(state => state.balance)
+  public balance$ = this.store.select(state => state.balance);
 
   constructor(
     private actions$: Actions<BalanceActions>,

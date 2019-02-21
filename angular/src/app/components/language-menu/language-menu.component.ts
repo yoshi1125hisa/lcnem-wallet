@@ -7,7 +7,7 @@ import { LanguageService } from '../../services/language/language.service';
   styleUrls: ['./language-menu.component.css']
 })
 export class LanguageMenuComponent implements OnInit {
-  public get lang() { return this.language.code }
+  public get lang() { return this.language.code; }
 
   constructor(
     private language: LanguageService
@@ -17,7 +17,7 @@ export class LanguageMenuComponent implements OnInit {
   }
 
   public setLanguage(twoLetter: string) {
-    this.language.code = twoLetter
+    this.language.code = twoLetter;
   }
 
 }

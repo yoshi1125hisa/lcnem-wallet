@@ -14,24 +14,24 @@ export class IntegrationService {
   }
 
   public async getApplication(clientToken: string) {
-    const [ownerId, applicationId] = clientToken.split(":")
+    const [ownerId, applicationId] = clientToken.split(':');
 
-    const applicationDocument = await this.firestore.collection("users").doc(ownerId).collection("applications").doc(applicationId).get().toPromise()
+    const applicationDocument = await this.firestore.collection('users').doc(ownerId).collection('applications').doc(applicationId).get().toPromise();
     if (!applicationDocument.exists) {
-      throw Error()
+      throw Error();
     }
-    return applicationDocument.data() as Application
+    return applicationDocument.data() as Application;
   }
 
   public async createIntegration(userId: string, wallet: Wallet, password: string) {
     if (!wallet.wallet) {
-      throw Error()
+      throw Error();
     }
 
     return SimpleWallet.createWithPrivateKey(
       userId,
       new Password(password),
       SimpleWallet.readFromWLT(wallet.wallet).open(new Password(userId)).privateKey
-    ).writeWLTFile()
+    ).writeWLTFile();
   }
 }

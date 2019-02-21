@@ -40,7 +40,7 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-//pages
+// pages
 import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
 //  home
 import { HomeComponent } from './pages/home/home.component';
@@ -81,13 +81,13 @@ import { QrScanComponent } from './pages/nem/qr-scan/qr-scan.component';
 //  terms
 import { TermsComponent } from './pages/terms/terms.component';
 import { PrivacyPolicyComponent } from './pages/terms/privacy-policy/privacy-policy.component';
-//components
+// components
 import { TransferDialogComponent } from './components/transfer-dialog/transfer-dialog.component';
 import { AssetsListComponent } from './components/assets-list/assets-list.component';
 import { LanguageMenuComponent } from './components/language-menu/language-menu.component';
 import { AddressInputComponent } from './components/address-input/address-input.component';
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
-//services
+// services
 import { RouterService } from './services/router/router.service';
 import { StoreModule } from '@ngrx/store';
 import { reducers, metaReducers } from './services/reducer';
@@ -98,7 +98,7 @@ import { effects } from './services/effect';
 @NgModule({
   declarations: [
     AppComponent,
-    //pages
+    // pages
     PageNotFoundComponent,
     //  home
     HomeComponent,
@@ -139,7 +139,7 @@ import { effects } from './services/effect';
     //  terms
     TermsComponent,
     PrivacyPolicyComponent,
-    //components
+    // components
     TransferDialogComponent,
     AssetsListComponent,
     LanguageMenuComponent,

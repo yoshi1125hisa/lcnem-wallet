@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed } from '@angular/core/testing';
 
 // The file contents for the current environment will overwrite these during build.
 // The build system defaults to the dev environment which uses `environment.ts`, but if you do
@@ -16,10 +16,10 @@ export const environment = {
     messagingSenderId: '522057576747'
   },
   stripe: {
-    pk: "pk_test_sVIc8W1jrazk2t1LxqAdnls3",
+    pk: 'pk_test_sVIc8W1jrazk2t1LxqAdnls3',
     test: true
   },
   plan: {
-    planId: "plan_EFWnnrtQXB3tR6"
+    planId: 'plan_EFWnnrtQXB3tR6'
   }
 };

@@ -12,10 +12,7 @@ import { LanguageService } from '../../../services/language/language.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  get lang() { return this.language.code }
-
-  public agree = false
-  public safeSite: SafeResourceUrl
+  get lang() { return this.language.code; }
 
   constructor(
     private router: Router,
@@ -24,8 +21,26 @@ export class LoginComponent implements OnInit {
     private language: LanguageService,
     sanitizer: DomSanitizer
   ) {
-    this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/terms/${this.lang}.txt`)
+    this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/terms/${this.lang}.txt`);
   }
+
+  public agree = false;
+  public safeSite: SafeResourceUrl;
+
+  public translation = {
+    agree: {
+      en: 'I agree.',
+      ja: '同意します'
+    } as any,
+    login: {
+      en: 'Log in',
+      ja: 'ログイン'
+    } as any,
+    error: {
+      en: 'Failed to login. It is recommended to delete caches.',
+      ja: 'ログインに失敗しました。キャッシュを削除することが推奨されます。'
+    } as any
+  };
 
   ngOnInit() {
   }
@@ -33,26 +48,11 @@ export class LoginComponent implements OnInit {
   public login() {
     this.auth.login().then(
       (user) => {
-        this.router.navigate(["account", "wallets"], { queryParamsHandling: "preserve" })
+        this.router.navigate(['account', 'wallets'], { queryParamsHandling: 'preserve' });
       },
       (error) => {
-        this.snackBar.open(this.translation.error[this.lang], undefined, { duration: 6000 })
+        this.snackBar.open(this.translation.error[this.lang], undefined, { duration: 6000 });
       }
-    )
-  }
-
-  public translation = {
-    agree: {
-      en: "I agree.",
-      ja: "同意します"
-    } as any,
-    login: {
-      en: "Log in",
-      ja: "ログイン"
-    } as any,
-    error: {
-      en: "Failed to login. It is recommended to delete caches.",
-      ja: "ログインに失敗しました。キャッシュを削除することが推奨されます。"
-    } as any
+    );
   }
 }

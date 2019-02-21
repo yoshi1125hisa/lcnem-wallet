@@ -19,7 +19,7 @@ export class ApiService {
       signature: string
     }
   ) {
-    return this.http.post("/api/change-plan", data)
+    return this.http.post('/api/change-plan', data);
   }
 
   public faucet(
@@ -28,6 +28,6 @@ export class ApiService {
       walletId: string
     }
   ) {
-    return this.http.post("/api/faucet", data)
+    return this.http.post('/api/faucet', data);
   }
 }

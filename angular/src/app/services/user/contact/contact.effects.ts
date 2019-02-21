@@ -21,21 +21,21 @@ export class ContactEffects {
       map(state => Tuple(payload, state))
     )),
     filter(([payload, state]) => (!state.lastUserId || state.lastUserId !== payload.userId) || payload.refresh === true),
-    concatMap(([payload]) => this.firestore.collection("users").doc(payload.userId).collection("contacts").get().pipe(
+    concatMap(([payload]) => this.firestore.collection('users').doc(payload.userId).collection('contacts').get().pipe(
       map(
         (collection) => {
-          const ids = collection.docs.map(doc => doc.id)
-          const entities: { [id: string]: Contact } = {}
+          const ids = collection.docs.map(doc => doc.id);
+          const entities: { [id: string]: Contact } = {};
           for (const doc of collection.docs) {
-            entities[doc.id] = doc.data() as Contact
+            entities[doc.id] = doc.data() as Contact;
 
-            //レガシー
+            // レガシー
             if (!entities[doc.id].nem[0] || !entities[doc.id].nem[0].address) {
-              entities[doc.id].nem = entities[doc.id].nem.map((nem: any) => { return { name: "", address: nem } })
+              entities[doc.id].nem = entities[doc.id].nem.map((nem: any) => ({ name: '', address: nem }));
             }
           }
 
-          return { ids: ids, entities: entities }
+          return { ids: ids, entities: entities };
         }
       ),
       map(({ ids, entities }) => new LoadContactsSuccess({ userId: payload.userId, ids: ids, entities: entities })),
@@ -49,18 +49,18 @@ export class ContactEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        return from(this.firestore.collection("users").doc(payload.userId).collection("contacts").add(payload.contact)).pipe(
+        return from(this.firestore.collection('users').doc(payload.userId).collection('contacts').add(payload.contact)).pipe(
           map(
             (doc) => {
-              return { id: doc.id, contact: payload.contact }
+              return { id: doc.id, contact: payload.contact };
             }
           )
-        )
+        );
       }
     ),
     map(({ id, contact }) => new AddContactSuccess({ contactId: id, contact: contact })),
     catchError(error => of(new AddContactError({ error: error })))
-  )
+  );
 
   @Effect()
   updateContact$ = this.actions$.pipe(
@@ -68,14 +68,14 @@ export class ContactEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        return from(this.firestore.collection("users").doc(payload.userId).collection("contacts").doc(payload.contactId).set(payload.contact)).pipe(
+        return from(this.firestore.collection('users').doc(payload.userId).collection('contacts').doc(payload.contactId).set(payload.contact)).pipe(
           map(_ => payload)
-        )
+        );
       }
     ),
     map(payload => new UpdateContactSuccess({ contactId: payload.contactId, contact: payload.contact })),
     catchError(error => of(new UpdateContactError({ error: error })))
-  )
+  );
 
   @Effect()
   deleteContact$ = this.actions$.pipe(
@@ -83,16 +83,16 @@ export class ContactEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        return from(this.firestore.collection("users").doc(payload.userId).collection("contacts").doc(payload.contactId).delete()).pipe(
+        return from(this.firestore.collection('users').doc(payload.userId).collection('contacts').doc(payload.contactId).delete()).pipe(
           map(_ => payload)
-        )
+        );
       }
     ),
     map(payload => new DeleteContactSuccess({ contactId: payload.contactId })),
     catchError(error => of(new DeleteContactError({ error: error })))
-  )
+  );
 
-  public contact$ = this.store.select(state => state.contact)
+  public contact$ = this.store.select(state => state.contact);
 
   constructor(
     private actions$: Actions<ContactActions>,

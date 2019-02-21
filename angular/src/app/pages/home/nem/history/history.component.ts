@@ -13,17 +13,7 @@ import { State } from '../../../../services/reducer';
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
-  public get lang() { return this.language.code }
-
-  public wallet$ = this.store.select(state => state.wallet)
-  public history$ = this.store.select(state => state.history)
-
-  public loading$ = combineLatest(
-    this.wallet$,
-    this.history$
-  ).pipe(
-    map(([wallet, history]) => wallet.loading || history.loading)
-  )
+  public get lang() { return this.language.code; }
 
   constructor(
     private language: LanguageService,
@@ -31,28 +21,38 @@ export class HistoryComponent implements OnInit {
   ) {
   }
 
+  public wallet$ = this.store.select(state => state.wallet);
+  public history$ = this.store.select(state => state.history);
+
+  public loading$ = combineLatest(
+    this.wallet$,
+    this.history$
+  ).pipe(
+    map(([wallet, history]) => wallet.loading || history.loading)
+  );
+
+  public translation = {
+    history: {
+      en: 'History',
+      ja: '履歴'
+    } as any,
+    noTransaction: {
+      en: 'There is no transaction.',
+      ja: '取引はありません。'
+    } as any
+  };
+
   ngOnInit() {
-    this.load()
+    this.load();
   }
 
   public async load(refresh?: boolean) {
     const state = await this.wallet$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
-    ).toPromise()
+    ).toPromise();
 
-    const address = new Address(state.entities[state.currentWalletId!].nem)
-    this.store.dispatch(new LoadHistories({ address, refresh }))
+    const address = new Address(state.entities[state.currentWalletId!].nem);
+    this.store.dispatch(new LoadHistories({ address, refresh }));
   }
-
-  public translation = {
-    history: {
-      en: "History",
-      ja: "履歴"
-    } as any,
-    noTransaction: {
-      en: "There is no transaction.",
-      ja: "取引はありません。"
-    } as any
-  };
 }

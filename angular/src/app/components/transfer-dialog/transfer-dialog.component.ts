@@ -9,8 +9,8 @@ import { LanguageService } from '../../services/language/language.service';
   styleUrls: ['./transfer-dialog.component.css']
 })
 export class TransferDialogComponent {
-  get lang() { return this.language.code }
-  
+  get lang() { return this.language.code; }
+
   public transaction: TransferTransaction;
   public assets: Asset[];
   public fee: Asset[];
@@ -48,28 +48,28 @@ export class TransferDialogComponent {
 
   public translation = {
     confirmation: {
-      en: "Are you sure?",
-      ja: "送信しますか？"
+      en: 'Are you sure?',
+      ja: '送信しますか？'
     } as any,
     encryption: {
-      en: "Encryption",
-      ja: "暗号化"
+      en: 'Encryption',
+      ja: '暗号化'
     } as any,
     amount: {
-      en: "Amount",
-      ja: "送信量"
+      en: 'Amount',
+      ja: '送信量'
     } as any,
     fee: {
-      en: "Blockchain fee",
-      ja: "ブロックチェーン手数料"
+      en: 'Blockchain fee',
+      ja: 'ブロックチェーン手数料'
     } as any,
     message: {
-      en: "Message",
-      ja: "メッセージ"
+      en: 'Message',
+      ja: 'メッセージ'
     } as any,
     levy: {
-      en: "Levy",
-      ja: "徴収"
+      en: 'Levy',
+      ja: '徴収'
     } as any
   };
 }

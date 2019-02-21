@@ -25,21 +25,21 @@ export class WalletEffects {
       map(state => Tuple(payload, state))
     )),
     filter(([payload, state]) => (!state.lastUserId || state.lastUserId !== payload.userId) || payload.refresh === true),
-    concatMap(([payload, state]) => this.firestore.collection("users").doc(payload.userId).collection("wallets").get().pipe(
+    concatMap(([payload, state]) => this.firestore.collection('users').doc(payload.userId).collection('wallets').get().pipe(
       map(
         (collection) => {
-          const localWallets = this.getLocalWallets()
-          const ids = collection.docs.map(doc => doc.id)
-          const entities: { [id: string]: Wallet } = {}
+          const localWallets = this.getLocalWallets();
+          const ids = collection.docs.map(doc => doc.id);
+          const entities: { [id: string]: Wallet } = {};
           for (const doc of collection.docs) {
-            entities[doc.id] = doc.data() as Wallet
+            entities[doc.id] = doc.data() as Wallet;
             if (localWallets[doc.id]) {
-              state.entities[doc.id].wallet = localWallets[doc.id]
+              state.entities[doc.id].wallet = localWallets[doc.id];
             }
           }
-          const currentWalletId = localStorage.getItem("currentWallet") || undefined
+          const currentWalletId = localStorage.getItem('currentWallet') || undefined;
 
-          return { ids: ids, entities: entities, currentWalletId: currentWalletId }
+          return { ids: ids, entities: entities, currentWalletId: currentWalletId };
         }
       ),
       map(({ ids, entities, currentWalletId }) => new LoadWalletsSuccess({ userId: payload.userId, ids: ids, entities: entities, currentWalletId: currentWalletId }))
@@ -53,26 +53,26 @@ export class WalletEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        const _wallet = { ...payload.wallet }
+        const _wallet = { ...payload.wallet };
         if (_wallet.local) {
-          delete _wallet.wallet
+          delete _wallet.wallet;
         }
 
-        return from(this.firestore.collection("users").doc(payload.userId).collection("wallets").add(_wallet)).pipe(
+        return from(this.firestore.collection('users').doc(payload.userId).collection('wallets').add(_wallet)).pipe(
           map(
             (doc) => {
               if (payload.wallet.local) {
-                this.addLocalWallet(doc.id, payload.wallet.wallet || "")
+                this.addLocalWallet(doc.id, payload.wallet.wallet || '');
               }
-              return { id: doc.id, wallet: payload.wallet }
+              return { id: doc.id, wallet: payload.wallet };
             }
           )
-        )
+        );
       }
     ),
     map(({ id, wallet }) => new AddWalletSuccess({ walletId: id, wallet: wallet })),
     catchError(error => of(new AddWalletError({ error: error })))
-  )
+  );
 
   @Effect()
   updateWallet$ = this.actions$.pipe(
@@ -80,20 +80,20 @@ export class WalletEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        const _wallet = { ...payload.wallet }
+        const _wallet = { ...payload.wallet };
         if (_wallet.local && _wallet.wallet) {
-          this.addLocalWallet(payload.walletId, _wallet.wallet)
-          delete payload.wallet.wallet
+          this.addLocalWallet(payload.walletId, _wallet.wallet);
+          delete payload.wallet.wallet;
         }
 
-        return from(this.firestore.collection("users").doc(payload.userId).collection("wallets").doc(payload.walletId).set(_wallet)).pipe(
+        return from(this.firestore.collection('users').doc(payload.userId).collection('wallets').doc(payload.walletId).set(_wallet)).pipe(
           map(_ => payload)
-        )
+        );
       }
     ),
     map(payload => new UpdateWalletSuccess({ walletId: payload.walletId, wallet: payload.wallet })),
     catchError(error => of(new UpdateWalletError({ error: error })))
-  )
+  );
 
   @Effect()
   deleteWallet$ = this.actions$.pipe(
@@ -101,14 +101,14 @@ export class WalletEffects {
     map(action => action.payload),
     mergeMap(
       (payload) => {
-        return from(this.firestore.collection("users").doc(payload.userId).collection("wallets").doc(payload.walletId).delete()).pipe(
+        return from(this.firestore.collection('users').doc(payload.userId).collection('wallets').doc(payload.walletId).delete()).pipe(
           map(_ => payload)
-        )
+        );
       }
     ),
     map(payload => new DeleteWalletSuccess({ walletId: payload.walletId })),
     catchError(error => of(new DeleteWalletError({ error: error })))
-  )
+  );
 
   @Effect({ dispatch: false })
   setCurrentWallet$ = this.actions$.pipe(
@@ -117,13 +117,13 @@ export class WalletEffects {
     map(
       (payload) => {
         if (!payload.walletId) {
-          localStorage.removeItem("currentWallet")
+          localStorage.removeItem('currentWallet');
         } else {
-          localStorage.setItem("currentWallet", payload.walletId)
+          localStorage.setItem('currentWallet', payload.walletId);
         }
       }
     )
-  )
+  );
 
   @Effect()
   addLocalWallet$ = this.actions$.pipe(
@@ -131,13 +131,13 @@ export class WalletEffects {
     map(action => action.payload),
     map(
       (payload) => {
-        this.addLocalWallet(payload.walletId, payload.wallet.writeWLTFile())
+        this.addLocalWallet(payload.walletId, payload.wallet.writeWLTFile());
       }
     )
-  )
+  );
 
-  public wallet$ = this.store.select(state => state.wallet)
-  public user$ = this.store.select(state => state.user)
+  public wallet$ = this.store.select(state => state.wallet);
+  public user$ = this.store.select(state => state.user);
 
   constructor(
     private actions$: Actions<WalletActions>,
@@ -149,52 +149,52 @@ export class WalletEffects {
       filter(user => user !== null)
     ).subscribe(
       async (user) => {
-        //レガシー
-        this.store.dispatch(new LoadUser({ userId: user!.uid }))
+        // レガシー
+        this.store.dispatch(new LoadUser({ userId: user!.uid }));
 
         const state = await this.user$.pipe(
           filter(state => !state.loading),
           first()
-        ).toPromise()
+        ).toPromise();
 
         if (state.user && (state.user as any).wallet) {
-          const account = SimpleWallet.readFromWLT((state.user as any).wallet).open(new Password(user!.uid))
+          const account = SimpleWallet.readFromWLT((state.user as any).wallet).open(new Password(user!.uid));
 
-          await this.firestore.collection("users").doc(user!.uid).collection("wallets").add(
+          await this.firestore.collection('users').doc(user!.uid).collection('wallets').add(
             {
-              name: "1",
+              name: '1',
               local: false,
               nem: account.address.plain(),
               wallet: (state.user as any).wallet
             } as Wallet
-          )
-          delete (state.user as any).wallet
+          );
+          delete (state.user as any).wallet;
 
-          await this.firestore.collection("users").doc(user!.uid).set(state.user!)
+          await this.firestore.collection('users').doc(user!.uid).set(state.user!);
         }
-        //レガシー
-        this.store.dispatch(new LoadWallets({ userId: user!.uid }))
+        // レガシー
+        this.store.dispatch(new LoadWallets({ userId: user!.uid }));
       }
-    )
+    );
   }
 
 
   private addLocalWallet(id: string, wallet: string) {
-    const localWallets = this.getLocalWallets()
-    localWallets[id] = wallet
-    this.setLocalWallet(localWallets)
+    const localWallets = this.getLocalWallets();
+    localWallets[id] = wallet;
+    this.setLocalWallet(localWallets);
   }
 
   private setLocalWallet(localWallets: { [id: string]: string }) {
-    localStorage.setItem("wallets", JSON.stringify(localWallets))
+    localStorage.setItem('wallets', JSON.stringify(localWallets));
   }
 
   private getLocalWallets(): { [id: string]: string } {
-    const json = localStorage.getItem("wallets") || "";
+    const json = localStorage.getItem('wallets') || '';
     try {
-      return JSON.parse(json)
+      return JSON.parse(json);
     } catch {
-      return {}
+      return {};
     }
   }
 

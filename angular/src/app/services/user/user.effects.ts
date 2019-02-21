@@ -22,14 +22,14 @@ export class UserEffects {
       map(state => Tuple(payload, state))
     )),
     filter(([payload, state]) => (!state.lastUserId || state.lastUserId !== payload.userId) || payload.refresh === true),
-    concatMap(([payload]) => this.firestore.collection("users").doc(payload.userId).get().pipe(
+    concatMap(([payload]) => this.firestore.collection('users').doc(payload.userId).get().pipe(
       map(doc => doc.data() as User),
       map(user => new LoadUserSuccess({ userId: payload.userId, user: user }))
     )),
     catchError(error => of(new LoadUserError({ error: error })))
   );
 
-  public user$ = this.store.select(state => state.user)
+  public user$ = this.store.select(state => state.user);
 
   constructor(
     private actions$: Actions<UserActions>,

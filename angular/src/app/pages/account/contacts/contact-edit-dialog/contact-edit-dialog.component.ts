@@ -10,9 +10,7 @@ import { LanguageService } from '../../../../services/language/language.service'
   styleUrls: ['./contact-edit-dialog.component.css']
 })
 export class ContactEditDialogComponent implements OnInit {
-  get lang() { return this.language.code }
-
-  public contact: Contact;
+  get lang() { return this.language.code; }
 
   constructor(
     private language: LanguageService,
@@ -26,33 +24,35 @@ export class ContactEditDialogComponent implements OnInit {
     }
   }
 
+  public contact: Contact;
+
+  public translation = {
+    editContact: {
+      en: 'Edit contact',
+      ja: 'コンタクトを編集'
+    } as any,
+    name: {
+      en: 'Name',
+      ja: '名前'
+    } as any,
+    address: {
+      en: 'Address',
+      ja: 'アドレス'
+    } as any,
+    memo: {
+      en: 'Memo',
+      ja: 'メモ'
+    } as any
+  };
+
   ngOnInit() {
   }
 
   public pushNem() {
-    this.contact.nem.push({} as any)
+    this.contact.nem.push({} as any);
   }
 
   public removeNem(index: number) {
-    this.contact.nem.splice(index, 1)
-  }
-
-  public translation = {
-    editContact: {
-      en: "Edit contact",
-      ja: "コンタクトを編集"
-    } as any,
-    name: {
-      en: "Name",
-      ja: "名前"
-    } as any,
-    address: {
-      en: "Address",
-      ja: "アドレス"
-    } as any,
-    memo: {
-      en: "Memo",
-      ja: "メモ"
-    } as any
+    this.contact.nem.splice(index, 1);
   }
 }

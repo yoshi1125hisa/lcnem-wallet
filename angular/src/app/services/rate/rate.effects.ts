@@ -20,19 +20,19 @@ export class RateEffects {
       map(state => Tuple(payload, state))
     )),
     map(([payload, state]) => {
-      const beforeNow = new Date()
-      beforeNow.setHours(beforeNow.getHours() - 12)
-      return Tuple(payload, state, beforeNow)
+      const beforeNow = new Date();
+      beforeNow.setHours(beforeNow.getHours() - 12);
+      return Tuple(payload, state, beforeNow);
     }),
     filter(([payload, state, beforeNow]) => (!state.lastLoading || state.lastLoading > beforeNow) || payload.refresh === true),
-    concatMap(() => this.firestore.collection("rates").doc("rate").get().pipe(
+    concatMap(() => this.firestore.collection('rates').doc('rate').get().pipe(
       map(doc => doc.data() as Rate)
     )),
     map(rate => new LoadRatesSuccess({ rate: rate })),
     catchError(error => of(new LoadRatesError({ error: error })))
   );
 
-  public rate$ = this.store.select(state => state.rate)
+  public rate$ = this.store.select(state => state.rate);
 
   constructor(
     private actions$: Actions<RateActions>,

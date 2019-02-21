@@ -13,17 +13,17 @@ import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-fou
 import { IntegrateComponent } from './pages/account/integrate/integrate.component';
 
 const routes: Routes = [
-  { path: "", component: HomeComponent },
-  { path: "account/login", component: LoginComponent },
-  { path: "account/wallets", component: WalletsComponent },
-  { path: "account/integrate", component: IntegrateComponent },
-  { path: "account/settings", component: SettingsComponent },
-  { path: "account/contacts", component: ContactsComponent },
-  { path: "nem/qr-scan", component: QrScanComponent },
-  { path: "nem/transfer", component: TransferComponent },
-  { path: "terms", component: TermsComponent },
-  { path: "terms/privacy-policy", component: PrivacyPolicyComponent },
-  { path: "**", component: PageNotFoundComponent }
+  { path: '', component: HomeComponent },
+  { path: 'account/login', component: LoginComponent },
+  { path: 'account/wallets', component: WalletsComponent },
+  { path: 'account/integrate', component: IntegrateComponent },
+  { path: 'account/settings', component: SettingsComponent },
+  { path: 'account/contacts', component: ContactsComponent },
+  { path: 'nem/qr-scan', component: QrScanComponent },
+  { path: 'nem/transfer', component: TransferComponent },
+  { path: 'terms', component: TermsComponent },
+  { path: 'terms/privacy-policy', component: PrivacyPolicyComponent },
+  { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({

@@ -32,7 +32,7 @@ export class HistoryEffects {
     catchError(error => of(new LoadHistoriesError({ error: error })))
   );
 
-  public history$ = this.store.select(state => state.history)
+  public history$ = this.store.select(state => state.history);
 
   constructor(
     private actions$: Actions<HistoryActions>,

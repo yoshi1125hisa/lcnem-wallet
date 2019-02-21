@@ -13,23 +13,34 @@ import { State } from '../../../../services/reducer';
   styleUrls: ['./multisig.component.css']
 })
 export class MultisigComponent implements OnInit {
-  public get lang() { return this.language.code }
-
-  public wallet$ = this.store.select(state => state.wallet)
-  public multisig$ = this.store.select(state => state.multisig)
-
-  public loading$ = combineLatest(
-    this.wallet$,
-    this.multisig$
-  ).pipe(
-    map(fork => fork[0].loading || fork[1].loading)
-  )
+  public get lang() { return this.language.code; }
 
   constructor(
     private language: LanguageService,
     private store: Store<State>
   ) {
   }
+
+  public wallet$ = this.store.select(state => state.wallet);
+  public multisig$ = this.store.select(state => state.multisig);
+
+  public loading$ = combineLatest(
+    this.wallet$,
+    this.multisig$
+  ).pipe(
+    map(fork => fork[0].loading || fork[1].loading)
+  );
+
+  public translation = {
+    cosignatoryOf: {
+      en: 'Multisig addresses you can cosign',
+      ja: '連署名できるマルチシグアドレス'
+    } as any,
+    empty: {
+      en: 'There is no multisig address.',
+      ja: 'マルチシグアドレスはありません。'
+    } as any
+  };
 
   ngOnInit() {
     this.load();
@@ -39,23 +50,12 @@ export class MultisigComponent implements OnInit {
     const state = await this.wallet$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
-    ).toPromise()
+    ).toPromise();
 
-    const address = new Address(state.entities[state.currentWalletId!].nem)
-    this.store.dispatch(new LoadMultisigs({ address, refresh }))
+    const address = new Address(state.entities[state.currentWalletId!].nem);
+    this.store.dispatch(new LoadMultisigs({ address, refresh }));
   }
 
   public onClick(address: string) {
-  }
-
-  public translation = {
-    cosignatoryOf: {
-      en: "Multisig addresses you can cosign",
-      ja: "連署名できるマルチシグアドレス"
-    } as any,
-    empty: {
-      en: "There is no multisig address.",
-      ja: "マルチシグアドレスはありません。"
-    } as any
   }
 }

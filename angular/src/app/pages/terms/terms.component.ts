@@ -10,9 +10,7 @@ import { RouterService } from '../../services/router/router.service';
   styleUrls: ['./terms.component.css']
 })
 export class TermsComponent implements OnInit {
-  get lang() { return this.language.code }
-
-  public safeSite: SafeResourceUrl;
+  get lang() { return this.language.code; }
   constructor(
     private _router: RouterService,
     private language: LanguageService,
@@ -21,17 +19,19 @@ export class TermsComponent implements OnInit {
     this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/terms/${this.lang}.txt`);
   }
 
+  public safeSite: SafeResourceUrl;
+
+  public translation = {
+    terms: {
+      en: 'Terms of Service',
+      ja: '利用規約'
+    } as any
+  };
+
   ngOnInit() {
   }
 
   public back() {
-    this._router.back([""])
+    this._router.back(['']);
   }
-
-  public translation = {
-    terms: {
-      en: "Terms of Service",
-      ja: "利用規約"
-    } as any
-  };
 }

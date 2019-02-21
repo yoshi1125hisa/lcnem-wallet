@@ -7,11 +7,11 @@ import { Application } from '../../../../../../../firebase/functions/src/models/
   styleUrls: ['./application.component.css']
 })
 export class ApplicationComponent implements OnInit {
-  @Input() id?: string
-  @Input() application?: Application
+  @Input() id?: string;
+  @Input() application?: Application;
 
-  @Output() delete = new EventEmitter()
-  @Output() edit = new EventEmitter()
+  @Output() delete = new EventEmitter();
+  @Output() edit = new EventEmitter();
 
   constructor() { }
 
