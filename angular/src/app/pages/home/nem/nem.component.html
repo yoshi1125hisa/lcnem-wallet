@@ -30,12 +30,12 @@
     <a mat-button fxFlex="50" href="https://cheque.lcnem.cc/order/cheque?email={{email$ | async}}&ledger=NEM&address={{address$ |  async}}"
       target="_blank">
       <mat-icon class="card-icon" color="accent">call_made</mat-icon>
-      <span>{{translation.deposit[lang]}}</span>
+      <span>{{translation.orderCheque[lang]}}</span>
     </a>
-    <a mat-button fxFlex="50" href="https://cheque.lcnem.cc/order/cash?email={{email$ | async}}&ledger=NEM&address={{address$ |  async}}"
+    <a mat-button fxFlex="50" href="https://cheque.lcnem.cc/order/clearance?email={{email$ | async}}&ledger=NEM&address={{address$ |  async}}"
       target="_blank">
       <mat-icon class="card-icon" color="primary">call_received</mat-icon>
-      <span>{{translation.withdraw[lang]}}</span>
+      <span>{{translation.orderClearance[lang]}}</span>
     </a>
   </div>
 </mat-card>

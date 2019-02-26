@@ -66,11 +66,11 @@ export class NemComponent implements OnInit {
       en: 'Copy this Address',
       ja: 'アドレスをコピーする'
     } as any,
-    deposit: {
+    orderCheque: {
       en: 'Deposit',
       ja: '入金'
     } as any,
-    withdraw: {
+    orderClearance: {
       en: 'Withdraw',
       ja: '出金'
     } as any
