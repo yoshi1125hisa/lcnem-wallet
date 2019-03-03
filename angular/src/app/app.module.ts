@@ -51,13 +51,12 @@ import { TransactionComponent as NemTransactionComponent } from './pages/home/ne
 import { BalanceComponent as NemBalanceComponent } from './pages/home/nem/balance/balance.component';
 import { MultisigComponent as NemMultisigComponent } from './pages/home/nem/multisig/multisig.component';
 import { FaucetComponent } from './pages/home/nem/faucet/faucet.component';
+//    lcnemint
+import { LcnemintComponent } from './pages/home/lcnemint/lcnemint.component';
 //    bitcoin
 import { BitcoinComponent } from './pages/home/bitcoin/bitcoin.component';
 import { BalanceComponent as BitcoinBalanceComponent } from './pages/home/bitcoin/balance/balance.component';
 import { HistoryComponent as BitcoinHistoryComponent } from './pages/home/bitcoin/history/history.component';
-//    nem-cosmos
-import { NemCosmosComponent } from './pages/home/nem-cosmos/nem-cosmos.component';
-import { BalanceComponent as NemCosmosBalanceComponent } from './pages/home/nem-cosmos/balance/balance.component';
 //  account
 import { LoginComponent } from './pages/account/login/login.component';
 import { IntegrateComponent } from './pages/account/integrate/integrate.component';
@@ -109,13 +108,12 @@ import { effects } from './services/effect';
     NemBalanceComponent,
     NemMultisigComponent,
     FaucetComponent,
+    //    lcnemint
+    LcnemintComponent,
     //    bitcoin
     BitcoinComponent,
     BitcoinBalanceComponent,
     BitcoinHistoryComponent,
-    //    nem-cosmos
-    NemCosmosComponent,
-    NemCosmosBalanceComponent,
     //  account
     LoginComponent,
     IntegrateComponent,
