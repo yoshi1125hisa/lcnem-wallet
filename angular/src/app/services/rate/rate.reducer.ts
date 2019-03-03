@@ -20,6 +20,11 @@ export const initialState: State = {
 export function reducer(state = initialState, action: RateActions): State {
   switch (action.type) {
     case RateActionTypes.LoadRates: {
+      const beforeNow = new Date();
+      beforeNow.setHours(beforeNow.getHours() - 12);
+      if (state.lastLoading && state.lastLoading <= beforeNow && !action.payload.refresh) {
+        return state;
+      }
       return {
         ...state,
         loading: true,

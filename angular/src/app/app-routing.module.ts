@@ -10,13 +10,11 @@ import { TransferComponent } from './pages/nem/transfer/transfer.component';
 import { TermsComponent } from './pages/terms/terms.component';
 import { PrivacyPolicyComponent } from './pages/terms/privacy-policy/privacy-policy.component';
 import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
-import { IntegrateComponent } from './pages/account/integrate/integrate.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'account/login', component: LoginComponent },
   { path: 'account/wallets', component: WalletsComponent },
-  { path: 'account/integrate', component: IntegrateComponent },
   { path: 'account/settings', component: SettingsComponent },
   { path: 'account/contacts', component: ContactsComponent },
   { path: 'nem/qr-scan', component: QrScanComponent },

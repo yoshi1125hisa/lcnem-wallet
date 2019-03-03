@@ -24,7 +24,7 @@ export class WalletEffects {
       first(),
       map(state => Tuple(payload, state))
     )),
-    filter(([payload, state]) => (!state.lastUserId || state.lastUserId !== payload.userId) || payload.refresh === true),
+    filter(([payload, state]) => (!state.lastUserId || state.lastUserId !== payload.userId) || payload.refresh!),
     concatMap(([payload, state]) => this.firestore.collection('users').doc(payload.userId).collection('wallets').get().pipe(
       map(
         (collection) => {

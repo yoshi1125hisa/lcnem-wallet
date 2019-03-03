@@ -21,7 +21,7 @@ export class MultisigEffects {
       first(),
       map(state => Tuple(payload, state))
     )),
-    filter(([payload, state]) => (!state.lastAddress || !state.lastAddress.equals(payload.address)) || payload.refresh === true),
+    filter(([payload, state]) => (!state.lastAddress || !state.lastAddress.equals(payload.address)) || payload.refresh!),
     map(([payload]) => Tuple(payload, new AccountHttp(nodes))),
     concatMap(([payload, accountHttp]) => accountHttp.getFromAddress(payload.address).pipe(
       map(data => data.cosignatoryOf.map(cosignatoryOf => cosignatoryOf.publicAccount!.address)),

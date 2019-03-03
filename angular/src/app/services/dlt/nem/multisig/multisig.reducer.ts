@@ -18,6 +18,9 @@ export const initialState: State = {
 export function reducer(state = initialState, action: MultisigActions): State {
   switch (action.type) {
     case MultisigActionTypes.LoadMultisigs: {
+      if (state.lastAddress && state.lastAddress.equals(action.payload.address) && !action.payload.refresh) {
+        return state;
+      }
       return {
         ...state,
         loading: true

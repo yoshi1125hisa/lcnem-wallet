@@ -17,6 +17,9 @@ export const initialState: State = {
 export function reducer(state = initialState, action: UserActions): State {
   switch (action.type) {
     case UserActionTypes.LoadUser: {
+      if (state.lastUserId && state.lastUserId === action.payload.userId && !action.payload.refresh) {
+        return state;
+      }
       return {
         ...state,
         loading: true

@@ -59,11 +59,6 @@ import { BalanceComponent as BitcoinBalanceComponent } from './pages/home/bitcoi
 import { HistoryComponent as BitcoinHistoryComponent } from './pages/home/bitcoin/history/history.component';
 //  account
 import { LoginComponent } from './pages/account/login/login.component';
-import { IntegrateComponent } from './pages/account/integrate/integrate.component';
-//    applications
-import { ApplicationsComponent } from './pages/account/applications/applications.component';
-import { ApplicationDialogComponent } from './pages/account/applications/application-dialog/application-dialog.component';
-import { ApplicationComponent } from './pages/account/applications/application/application.component';
 //    settings
 import { SettingsComponent } from './pages/account/settings/settings.component';
 //    contacts
@@ -116,11 +111,6 @@ import { effects } from './services/effect';
     BitcoinHistoryComponent,
     //  account
     LoginComponent,
-    IntegrateComponent,
-    //    applications
-    ApplicationsComponent,
-    ApplicationDialogComponent,
-    ApplicationComponent,
     //    settings
     SettingsComponent,
     //    contacts

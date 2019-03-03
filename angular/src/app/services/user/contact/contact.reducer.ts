@@ -20,6 +20,9 @@ export const initialState: State = {
 export function reducer(state = initialState, action: ContactActions): State {
   switch (action.type) {
     case ContactActionTypes.LoadContacts: {
+      if (state.lastUserId && state.lastUserId === action.payload.userId && !action.payload.refresh) {
+        return state;
+      }
       return {
         ...state,
         loading: true,

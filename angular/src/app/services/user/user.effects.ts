@@ -21,7 +21,7 @@ export class UserEffects {
       first(),
       map(state => Tuple(payload, state))
     )),
-    filter(([payload, state]) => (!state.lastUserId || state.lastUserId !== payload.userId) || payload.refresh === true),
+    filter(([payload, state]) => (!state.lastUserId || state.lastUserId !== payload.userId) || payload.refresh!),
     concatMap(([payload]) => this.firestore.collection('users').doc(payload.userId).get().pipe(
       map(doc => doc.data() as User),
       map(user => new LoadUserSuccess({ userId: payload.userId, user: user }))

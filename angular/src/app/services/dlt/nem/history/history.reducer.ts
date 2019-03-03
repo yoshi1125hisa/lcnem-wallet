@@ -17,6 +17,9 @@ export const initialState: State = {
 export function reducer(state = initialState, action: HistoryActions): State {
   switch (action.type) {
     case HistoryActionTypes.LoadHistories: {
+      if (state.lastAddress && state.lastAddress.equals(action.payload.address) && !action.payload.refresh) {
+        return state;
+      }
       return {
         ...state,
         loading: true

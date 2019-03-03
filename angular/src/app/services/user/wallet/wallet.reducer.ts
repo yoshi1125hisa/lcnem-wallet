@@ -21,6 +21,9 @@ export const initialState: State = {
 export function reducer(state = initialState, action: WalletActions): State {
   switch (action.type) {
     case WalletActionTypes.LoadWallets: {
+      if (state.lastUserId && state.lastUserId === action.payload.userId && !action.payload.refresh) {
+        return state;
+      }
       return {
         ...state,
         loading: true,

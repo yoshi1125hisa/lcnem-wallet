@@ -21,7 +21,7 @@ export class BalanceEffects {
       first(),
       map(state => Tuple(payload, state))
     )),
-    filter(([payload, state]) => (!state.lastAddress || !state.lastAddress.equals(payload.address)) || payload.refresh === true),
+    filter(([payload, state]) => (!state.lastAddress || !state.lastAddress.equals(payload.address)) || payload.refresh!),
     map(([payload]) => Tuple(payload, new AccountHttp(nodes))),
     concatMap(([payload, accountHttp]) => accountHttp.getAssetsOwnedByAddress(payload.address).pipe(
       map(assets => new LoadBalancesSuccess({ address: payload.address, assets: assets }))

@@ -24,7 +24,7 @@ export class RateEffects {
       beforeNow.setHours(beforeNow.getHours() - 12);
       return Tuple(payload, state, beforeNow);
     }),
-    filter(([payload, state, beforeNow]) => (!state.lastLoading || state.lastLoading > beforeNow) || payload.refresh === true),
+    filter(([payload, state, beforeNow]) => (!state.lastLoading || state.lastLoading > beforeNow) || payload.refresh!),
     concatMap(() => this.firestore.collection('rates').doc('rate').get().pipe(
       map(doc => doc.data() as Rate)
     )),
