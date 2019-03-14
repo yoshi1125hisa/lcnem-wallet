@@ -17,20 +17,20 @@ export const initialState: State = {
 export function reducer(state = initialState, action: HistoryActions): State {
   switch (action.type) {
     case HistoryActionTypes.LoadHistories: {
-      if (state.lastAddress && state.lastAddress.equals(action.payload.address) && !action.payload.refresh) {
-        return state;
-      }
+      return state;
+    }
+    case HistoryActionTypes.LoadHistoriesFetch: {
       return {
         ...state,
-        loading: true
+        loading: true,
+        lastAddress: action.payload.address
       };
     }
     case HistoryActionTypes.LoadHistoriesSuccess: {
       return {
         ...state,
         loading: false,
-        transactions: action.payload.transactions,
-        lastAddress: action.payload.address
+        transactions: action.payload.transactions
       };
     }
     case HistoryActionTypes.LoadHistoriesError: {
