@@ -29,6 +29,9 @@ export const initialState: State = {
 export function reducer(state = initialState, action: AssetDefinitionActions): State {
   switch (action.type) {
     case AssetDefinitionActionTypes.LoadAssetDefinitions: {
+      if(action.payload.assets.filter(asset => !state.definitions.find(definition => definition.id.equals(asset)))) {
+        return state;
+      }
       return {
         ...state,
         loading: true
