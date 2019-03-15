@@ -180,10 +180,10 @@ export class TransactionComponent implements OnInit, OnChanges {
     const account = SimpleWallet.readFromWLT(wallet.wallet).open(password);
 
     if (account.address.equals(signer.address)) {
-      return account.decryptMessage(message, recipient);
+      return account.decryptMessage(message, recipient).plain();
     }
 
-    return account.decryptMessage(message, signer);
+    return account.decryptMessage(message, signer).plain();
   }
 
   public openSnackBar(type: string) {

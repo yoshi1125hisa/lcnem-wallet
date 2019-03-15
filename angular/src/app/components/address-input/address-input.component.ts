@@ -1,7 +1,7 @@
 import { Component, Input, forwardRef, OnInit, OnDestroy } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, NG_VALIDATORS, Validator, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Observable, of, from, Subject, combineLatest, BehaviorSubject } from 'rxjs';
-import { debounceTime, filter, mergeMap, map, catchError, toArray, first, merge, retry } from 'rxjs/operators';
+import { of, combineLatest, BehaviorSubject } from 'rxjs';
+import { debounceTime, filter, mergeMap, map, catchError, first } from 'rxjs/operators';
 import { NamespaceHttp, AccountHttp, Address } from 'nem-library';
 import { LanguageService } from '../../services/language/language.service';
 import { nodes } from '../../classes/nodes';
@@ -60,7 +60,7 @@ export class AddressInputComponent implements OnInit, OnDestroy, ControlValueAcc
 
   public contacts$ = combineLatest(
     this.filtered$,
-    this.contact$
+    this.contact$.pipe(filter(contact => contact.ids !== undefined))
   ).pipe(
     map(([event, contact]) => Tuple(event, contact.ids.map(id => contact.entities[id].nem).reduce((_, __) => _.concat(__)))),
     map(([event, nem]) => nem.filter(n => n.name.startsWith((<HTMLInputElement>event!.target).value)))
