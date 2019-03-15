@@ -20,7 +20,7 @@ export class HistoryEffects {
       map(state => Tuple(payload, state))
     )),
     filter(([payload, state]) => (!state.lastAddress || !state.lastAddress.equals(payload.address)) || payload.refresh!),
-    map(([payload, state]) => new LoadHistoriesFetch({ address: payload.address })),
+    map(([payload]) => new LoadHistoriesFetch({ address: payload.address })),
     catchError(error => of(new LoadHistoriesError({ error: error })))
   );
 

@@ -3,6 +3,7 @@ import { Address, Asset } from 'nem-library';
 
 export enum BalanceActionTypes {
   LoadBalances = 'LoadBalances',
+  LoadBalancesFetch = 'LoadBalancesFetch',
   LoadBalancesSuccess = 'LoadBalancesSuccess',
   LoadBalancesError = 'LoadBalancesError'
 }
@@ -11,6 +12,12 @@ export class LoadBalances implements Action {
   readonly type = BalanceActionTypes.LoadBalances;
 
   constructor(public payload: { address: Address, refresh?: boolean }) {}
+}
+
+export class LoadBalancesFetch implements Action {
+  readonly type = BalanceActionTypes.LoadBalancesFetch;
+
+  constructor(public payload: { address: Address }) {}
 }
 
 export class LoadBalancesSuccess implements Action {
@@ -26,4 +33,4 @@ export class LoadBalancesError implements Action {
 }
 
 
-export type BalanceActions = LoadBalances | LoadBalancesSuccess | LoadBalancesError;
+export type BalanceActions = LoadBalances | LoadBalancesFetch | LoadBalancesSuccess | LoadBalancesError;
