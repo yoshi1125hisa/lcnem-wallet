@@ -1,10 +1,15 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "xyz.appmaker.hhsatb",
-      "sha256_cert_fingerprints": ["E3:8C:67:A5:AE:2A:8D:FE:54:D5:4D:D2:E2:24:A1:98:9A:A0:05:4A:9A:D6:0F:FA:C9:22:4B:50:78:54:46:B3"]
+      "sha256_cert_fingerprints": [
+        "E3:8C:67:A5:AE:2A:8D:FE:54:D5:4D:D2:E2:24:A1:98:9A:A0:05:4A:9A:D6:0F:FA:C9:22:4B:50:78:54:46:B3",
+        "SHA256: E7:7E:BE:A7:AB:2E:28:28:11:34:E6:38:B4:76:A5:99:08:C7:83:C5:A8:9A:64:F8:8C:28:2C:DE:6A:53:00:CE"
+      ]
     }
   }
 ]
