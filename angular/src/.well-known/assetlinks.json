@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "xyz.appmaker.hhsatb",
+      "sha256_cert_fingerprints": ["E3:8C:67:A5:AE:2A:8D:FE:54:D5:4D:D2:E2:24:A1:98:9A:A0:05:4A:9A:D6:0F:FA:C9:22:4B:50:78:54:46:B3"]
+    }
+  }
+]
