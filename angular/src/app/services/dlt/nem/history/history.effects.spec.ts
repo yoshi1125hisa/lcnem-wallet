@@ -3,7 +3,7 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Observable } from 'rxjs';
 
 import { HistoryEffects } from './history.effects';
-
+/*
 describe('HistoryEffects', () => {
   let actions$: Observable<any>;
   let effects: HistoryEffects;
@@ -23,3 +23,4 @@ describe('HistoryEffects', () => {
     expect(effects).toBeTruthy();
   });
 });
+*/

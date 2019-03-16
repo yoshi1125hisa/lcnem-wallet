@@ -3,7 +3,7 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Observable } from 'rxjs';
 
 import { AssetDefinitionEffects } from './asset-definition.effects';
-
+/*
 describe('AssetDefinitionEffects', () => {
   let actions$: Observable<any>;
   let effects: AssetDefinitionEffects;
@@ -23,3 +23,4 @@ describe('AssetDefinitionEffects', () => {
     expect(effects).toBeTruthy();
   });
 });
+*/
