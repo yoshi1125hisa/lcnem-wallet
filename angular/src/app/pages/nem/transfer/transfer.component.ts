@@ -20,8 +20,6 @@ import { TransferDialogComponent } from '../../../components/transfer-dialog/tra
 import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
 import { NemService } from '../../../services/dlt/nem/nem.service';
 import { Store } from '@ngrx/store';
-import { State as WalletState } from '../../../services/user/wallet/wallet.reducer';
-import { State as BalanceState } from '../../../services/dlt/nem/balance/balance.reducer';
 import { LoadBalances } from '../../../services/dlt/nem/balance/balance.actions';
 import { State } from '../../../services/reducer';
 

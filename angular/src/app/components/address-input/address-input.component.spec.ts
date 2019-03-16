@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AddressInputComponent } from './address-input.component';
-
+/*
 describe('AddressInputComponent', () => {
   let component: AddressInputComponent;
   let fixture: ComponentFixture<AddressInputComponent>;
@@ -23,3 +23,4 @@ describe('AddressInputComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+*/

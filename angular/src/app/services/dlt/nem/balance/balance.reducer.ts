@@ -18,20 +18,20 @@ export const initialState: State = {
 export function reducer(state = initialState, action: BalanceActions): State {
   switch (action.type) {
     case BalanceActionTypes.LoadBalances: {
-      if (state.lastAddress && state.lastAddress.equals(action.payload.address) && !action.payload.refresh) {
-        return state;
-      }
+      return state;
+    }
+    case BalanceActionTypes.LoadBalancesFetch: {
       return {
         ...state,
-        loading: true
+        loading: true,
+        lastAddress: action.payload.address
       };
     }
     case BalanceActionTypes.LoadBalancesSuccess: {
       return {
         ...state,
         loading: false,
-        assets: action.payload.assets,
-        lastAddress: action.payload.address
+        assets: action.payload.assets
       };
     }
     case BalanceActionTypes.LoadBalancesError: {
@@ -41,7 +41,8 @@ export function reducer(state = initialState, action: BalanceActions): State {
         error: action.payload.error
       };
     }
-    default:
+    default: {
       return state;
+    }
   }
 }

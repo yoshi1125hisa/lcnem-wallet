@@ -1,15 +1,15 @@
 import { Component, Input, forwardRef, OnInit, OnDestroy } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, NG_VALIDATORS, Validator, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Observable, of, from, Subject, combineLatest, BehaviorSubject } from 'rxjs';
-import { debounceTime, filter, mergeMap, map, catchError, toArray, first, merge, retry } from 'rxjs/operators';
+import { of, combineLatest, BehaviorSubject } from 'rxjs';
+import { debounceTime, filter, mergeMap, map, catchError, first } from 'rxjs/operators';
 import { NamespaceHttp, AccountHttp, Address } from 'nem-library';
 import { LanguageService } from '../../services/language/language.service';
 import { nodes } from '../../classes/nodes';
 import { AuthService } from '../../services/auth/auth.service';
 import { Tuple } from '../../classes/tuple';
 import { Store } from '@ngrx/store';
-import * as fromContact from '../../services/user/contact/contact.reducer';
 import { LoadContacts } from '../../services/user/contact/contact.actions';
+import { State } from '../../services/reducer';
 
 @Component({
   selector: 'app-address-input',
@@ -34,19 +34,8 @@ export class AddressInputComponent implements OnInit, OnDestroy, ControlValueAcc
   constructor(
     private language: LanguageService,
     private auth: AuthService,
-    private contact$: Store<fromContact.State>
+    private store: Store<State>
   ) { }
-
-  get value(): any {
-    return this._value;
-  }
-  @Input('value')
-  set value(value: any) {
-    if (this._value !== value) {
-      this._value = value;
-      this.onChangeCallback(value);
-    }
-  }
 
   @Input() placeholder?: string;
   @Input() required?: boolean;
@@ -58,9 +47,11 @@ export class AddressInputComponent implements OnInit, OnDestroy, ControlValueAcc
     debounceTime(600)
   );
 
+  private contact$ = this.store.select(state => state.contact);
+
   public contacts$ = combineLatest(
     this.filtered$,
-    this.contact$
+    this.contact$.pipe(filter(contact => contact.ids !== undefined))
   ).pipe(
     map(([event, contact]) => Tuple(event, contact.ids.map(id => contact.entities[id].nem).reduce((_, __) => _.concat(__)))),
     map(([event, nem]) => nem.filter(n => n.name.startsWith((<HTMLInputElement>event!.target).value)))
@@ -91,6 +82,19 @@ export class AddressInputComponent implements OnInit, OnDestroy, ControlValueAcc
   };
 
   // 以下ngModelのため
+  
+  get value(): any {
+    return this._value;
+  }
+
+  @Input('value')
+  set value(value: any) {
+    if (this._value !== value) {
+      this._value = value;
+      this.onChangeCallback(value);
+    }
+  }
+
   public _value: any;
 
   ngOnInit() {
@@ -107,7 +111,7 @@ export class AddressInputComponent implements OnInit, OnDestroy, ControlValueAcc
       first()
     ).subscribe(
       (user) => {
-        this.contact$.dispatch(new LoadContacts({ userId: user!.uid, refresh }));
+        this.store.dispatch(new LoadContacts({ userId: user!.uid, refresh }));
       }
     );
   }
