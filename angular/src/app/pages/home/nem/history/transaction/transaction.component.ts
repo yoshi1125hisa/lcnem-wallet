@@ -145,6 +145,7 @@ export class TransactionComponent implements OnInit, OnChanges {
         if (transferTransaction.message.isPlain()) {
           this.message = (transferTransaction.message as PlainMessage).plain();
         } else if (transferTransaction.message.isEncrypted()) {
+          //空文字になるバグあり
           this.message = await this.decryptMessage(transferTransaction);
         }
 
