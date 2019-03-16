@@ -11,11 +11,12 @@ service cloud.firestore {
       match /wallets/{wallet} {
         allow read, write: if request.auth.uid == user;
       }
-    }
 
-    //match /users/{document=**} {
-    //  allow read, write: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == true
-    //}
+      match /applications/{application} {
+        allow read;
+        allow write: if request.auth.uid == user;
+      }
+    }
 
     match /rates/rate {
       allow read;

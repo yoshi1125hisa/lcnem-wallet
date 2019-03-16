@@ -3,8 +3,9 @@ import { Observable, forkJoin, combineLatest } from 'rxjs';
 import { map, first, filter } from 'rxjs/operators';
 import { Address, Wallet } from 'nem-library';
 import { LanguageService } from '../../../../services/language/language.service';
-import { MultisigService } from '../../../../services/nem/multisig/multisig.service';
-import { WalletService } from '../../../../services/wallet/wallet.service';
+import { Store } from '@ngrx/store';
+import { LoadMultisigs } from '../../../../services/dlt/nem/multisig/multisig.actions';
+import { State } from '../../../../services/reducer';
 
 @Component({
   selector: 'app-multisig',
@@ -12,51 +13,49 @@ import { WalletService } from '../../../../services/wallet/wallet.service';
   styleUrls: ['./multisig.component.css']
 })
 export class MultisigComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter; }
-
-  public loading$ = combineLatest(
-    this.wallet.state$,
-    this.wallet.state$
-  ).pipe(
-    map(fork => fork[0].loading || fork[1].loading)
-  )
-
-  public state$ = this.multisig.state$
+  public get lang() { return this.language.code; }
 
   constructor(
     private language: LanguageService,
-    private wallet: WalletService,
-    private multisig: MultisigService
+    private store: Store<State>
   ) {
   }
+
+  public wallet$ = this.store.select(state => state.wallet);
+  public multisig$ = this.store.select(state => state.multisig);
+
+  public loading$ = combineLatest(
+    this.wallet$,
+    this.multisig$
+  ).pipe(
+    map(fork => fork[0].loading || fork[1].loading)
+  );
+
+  public translation = {
+    cosignatoryOf: {
+      en: 'Multisig addresses you can cosign',
+      ja: '連署名できるマルチシグアドレス'
+    } as any,
+    empty: {
+      en: 'There is no multisig address.',
+      ja: 'マルチシグアドレスはありません。'
+    } as any
+  };
 
   ngOnInit() {
     this.load();
   }
 
-  public load(refresh?: boolean) {
-    this.wallet.state$.pipe(
+  public async load(refresh?: boolean) {
+    const state = await this.wallet$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
-    ).subscribe(
-      (state) => {
-        const address = new Address(state.entities[state.currentWalletId!].nem)
-        this.multisig.loadMultisig(address, refresh)
-      }
-    )
+    ).toPromise();
+
+    const address = new Address(state.entities[state.currentWalletId!].nem);
+    this.store.dispatch(new LoadMultisigs({ address, refresh }));
   }
 
   public onClick(address: string) {
-  }
-
-  public translation = {
-    cosignatoryOf: {
-      en: "Multisig addresses you can cosign",
-      ja: "連署名できるマルチシグアドレス"
-    } as any,
-    empty: {
-      en: "There is no multisig address.",
-      ja: "マルチシグアドレスはありません。"
-    } as any
   }
 }

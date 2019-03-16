@@ -12,7 +12,7 @@
     <div class="mat-typography body-container">
       <mat-spinner *ngIf="loading$ | async; else loaded"></mat-spinner>
       <ng-template #loaded>
-        <ng-container *ngIf="state$ | async as state">
+        <ng-container *ngIf="wallet$ | async as state">
           <ng-container *ngFor="let id of state.ids">
             <mat-card>
               <app-wallet [wallet]="state.entities[id]" (backup)="backupWallet(id)" (delete)="deleteWallet(id)" (enter)="enterWallet(id)"

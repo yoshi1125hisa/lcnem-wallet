@@ -21,7 +21,7 @@
     <mat-icon>refresh</mat-icon>
   </button>
 </div>
-<mat-card *ngIf="state$ | async as state">
+<mat-card *ngIf="balance$ | async as state">
   <mat-spinner [diameter]="60" *ngIf="loading$ | async; else loaded"></mat-spinner>
   <ng-template #loaded>
     <app-assets-list [assets]="state.assets"></app-assets-list>

@@ -40,64 +40,98 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-import { SettingsComponent } from './pages/account/settings/settings.component';
-import { ContactsComponent } from './pages/contacts/contacts.component';
-import { LoginComponent } from './pages/account/login/login.component';
-import { TermsComponent } from './pages/terms/terms.component';
-import { QrScanComponent } from './pages/nem/qr-scan/qr-scan.component';
-import { PrivacyPolicyComponent } from './pages/terms/privacy-policy/privacy-policy.component';
-import { DepositComponent } from './pages/cheque/deposit/deposit.component';
-import { WithdrawComponent } from './pages/cheque/withdraw/withdraw.component';
+// pages
+import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
+//  home
 import { HomeComponent } from './pages/home/home.component';
+//    nem
 import { NemComponent } from './pages/home/nem/nem.component';
-import { HistoryComponent } from './pages/home/nem/history/history.component';
-import { TransactionComponent } from './pages/home/nem/history/transaction/transaction.component';
-import { BalanceComponent } from './pages/home/nem/balance/balance.component';
-import { MultisigComponent } from './pages/home/nem/multisig/multisig.component';
-import { ContactEditDialogComponent } from './pages/contacts/contact-edit-dialog/contact-edit-dialog.component';
-import { LanguageMenuComponent } from './components/language-menu/language-menu.component';
-import { NemAddressInputComponent } from './components/nem-address-input/nem-address-input.component';
+import { HistoryComponent as NemHistoryComponent } from './pages/home/nem/history/history.component';
+import { TransactionComponent as NemTransactionComponent } from './pages/home/nem/history/transaction/transaction.component';
+import { BalanceComponent as NemBalanceComponent } from './pages/home/nem/balance/balance.component';
+import { MultisigComponent as NemMultisigComponent } from './pages/home/nem/multisig/multisig.component';
+import { FaucetComponent } from './pages/home/nem/faucet/faucet.component';
+//    lcnemint
+import { LcnemintComponent } from './pages/home/lcnemint/lcnemint.component';
+//    bitcoin
+import { BitcoinComponent } from './pages/home/bitcoin/bitcoin.component';
+import { BalanceComponent as BitcoinBalanceComponent } from './pages/home/bitcoin/balance/balance.component';
+import { HistoryComponent as BitcoinHistoryComponent } from './pages/home/bitcoin/history/history.component';
+//  account
+import { LoginComponent } from './pages/account/login/login.component';
+//    settings
+import { SettingsComponent } from './pages/account/settings/settings.component';
+//    contacts
+import { ContactsComponent } from './pages/account/contacts/contacts.component';
+import { ContactComponent } from './pages/account/contacts/contact/contact.component';
+import { ContactEditDialogComponent } from './pages/account/contacts/contact-edit-dialog/contact-edit-dialog.component';
+//    wallets
 import { WalletsComponent } from './pages/account/wallets/wallets.component';
-import { ContactComponent } from './pages/contacts/contact/contact.component';
 import { WalletComponent } from './pages/account/wallets/wallet/wallet.component';
 import { WalletCreateDialogComponent } from './pages/account/wallets/wallet-create-dialog/wallet-create-dialog.component';
+//  nem
 import { TransferComponent } from './pages/nem/transfer/transfer.component';
-import { TransferDialogComponent } from './pages/nem/transfer/transfer-dialog/transfer-dialog.component';
+import { QrScanComponent } from './pages/nem/qr-scan/qr-scan.component';
+//  terms
+import { TermsComponent } from './pages/terms/terms.component';
+import { PrivacyPolicyComponent } from './pages/terms/privacy-policy/privacy-policy.component';
+// components
+import { TransferDialogComponent } from './components/transfer-dialog/transfer-dialog.component';
 import { AssetsListComponent } from './components/assets-list/assets-list.component';
-import { PageNotFoundComponent } from './pages/error/page-not-found/page-not-found.component';
-import { RouterService } from './services/router/router.service';
-import { PlanComponent } from './pages/account/settings/plan/plan.component';
+import { LanguageMenuComponent } from './components/language-menu/language-menu.component';
+import { AddressInputComponent } from './components/address-input/address-input.component';
 import { LoadingDialogComponent } from './components/loading-dialog/loading-dialog.component';
+// services
+import { RouterService } from './services/router/router.service';
+import { StoreModule } from '@ngrx/store';
+import { reducers, metaReducers } from './services/reducer';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
+import { effects } from './services/effect';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SettingsComponent,
-    ContactsComponent,
-    LoginComponent,
-    TermsComponent,
-    PrivacyPolicyComponent,
-    QrScanComponent,
-    DepositComponent,
-    WithdrawComponent,
+    // pages
+    PageNotFoundComponent,
+    //  home
     HomeComponent,
+    //    nem
     NemComponent,
-    HistoryComponent,
-    TransactionComponent,
-    BalanceComponent,
-    MultisigComponent,
-    LanguageMenuComponent,
-    NemAddressInputComponent,
-    WalletsComponent,
+    NemHistoryComponent,
+    NemTransactionComponent,
+    NemBalanceComponent,
+    NemMultisigComponent,
+    FaucetComponent,
+    //    lcnemint
+    LcnemintComponent,
+    //    bitcoin
+    BitcoinComponent,
+    BitcoinBalanceComponent,
+    BitcoinHistoryComponent,
+    //  account
+    LoginComponent,
+    //    settings
+    SettingsComponent,
+    //    contacts
+    ContactsComponent,
     ContactComponent,
     ContactEditDialogComponent,
+    //    wallets
+    WalletsComponent,
     WalletComponent,
     WalletCreateDialogComponent,
+    //  nem
     TransferComponent,
+    QrScanComponent,
+    //  terms
+    TermsComponent,
+    PrivacyPolicyComponent,
+    // components
     TransferDialogComponent,
     AssetsListComponent,
-    PageNotFoundComponent,
-    PlanComponent,
+    LanguageMenuComponent,
+    AddressInputComponent,
     LoadingDialogComponent
   ],
   imports: [
@@ -108,6 +142,9 @@ import { LoadingDialogComponent } from './components/loading-dialog/loading-dial
     FormsModule,
     HttpClientModule,
     FlexLayoutModule,
+    StoreModule.forRoot(reducers, { metaReducers }),
+    !environment.production ? StoreDevtoolsModule.instrument() : [],
+    EffectsModule.forRoot(effects),
     ZXingScannerModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,

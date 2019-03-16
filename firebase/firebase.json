@@ -15,12 +15,8 @@
     ],
     "rewrites": [
       {
-        "source": "/api/deposit",
-        "function": "deposit"
-      },
-      {
-        "source": "/api/withdraw",
-        "function": "withdraw"
+        "source": "/api/faucet",
+        "function": "faucet"
       },
       {
         "source": "/api/rate",

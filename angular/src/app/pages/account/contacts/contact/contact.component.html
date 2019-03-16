@@ -1,0 +1,17 @@
+<div fxLayout="row" fxLayoutAlign="center center">
+  <span>{{contact?.name}}</span>
+  <span class="fill-remaining-space"></span>
+  <button mat-icon-button color="warn" (click)="delete.emit()">
+    <mat-icon>delete</mat-icon>
+  </button>
+  <button mat-icon-button color="accent" (click)="edit.emit()">
+    <mat-icon>edit</mat-icon>
+  </button>
+</div>
+<h3>nem</h3>
+<ng-container *ngFor="let nem of contact?.nem">
+  <mat-form-field fxFill>
+    <input matInput placeholder="{{nem.name}}" value="{{nem.address}}" readonly />
+  </mat-form-field>
+</ng-container>
+<p *ngIf="contact?.memo">{{contact?.memo}}</p>

@@ -10,7 +10,7 @@
     </mat-toolbar>
     <div fxLayout="column">
       <mat-nav-list>
-        <mat-list-item routerLink="/contacts">
+        <mat-list-item routerLink="/account/contacts">
           <mat-icon mat-list-icon>contacts</mat-icon>
           {{translation.contacts[lang]}}
         </mat-list-item>
@@ -33,10 +33,14 @@
     </mat-toolbar>
     <div class="mat-typography body-container">
       <mat-tab-group>
-        <mat-tab label="NEM">
+        <mat-tab label="nem">
           <app-nem></app-nem>
         </mat-tab>
-        <mat-tab label="Cosmos Hub" [disabled]="true">
+        <mat-tab label="lcnemint" disabled>
+          <app-lcnemint></app-lcnemint>
+        </mat-tab>
+        <mat-tab label="bitcoin" disabled>
+          <app-bitcoin></app-bitcoin>
         </mat-tab>
       </mat-tab-group>
     </div>

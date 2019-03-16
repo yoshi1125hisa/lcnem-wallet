@@ -3,57 +3,56 @@ import { Address } from 'nem-library';
 import { combineLatest } from 'rxjs';
 import { first, map, filter } from 'rxjs/operators';
 import { LanguageService } from '../../../../services/language/language.service';
-import { WalletService } from '../../../../services/wallet/wallet.service';
-import { HistoryService } from '../../../../services/nem/history/history.service';
+import { Store } from '@ngrx/store';
+import { LoadHistories } from '../../../../services/dlt/nem/history/history.actions';
+import { State } from '../../../../services/reducer';
 
 @Component({
-  selector: 'app-history',
+  selector: 'app-nem-history',
   templateUrl: './history.component.html',
   styleUrls: ['./history.component.css']
 })
 export class HistoryComponent implements OnInit {
-  public get lang() { return this.language.state.twoLetter }
-
-  public loading$ = combineLatest(
-    this.wallet.state$,
-    this.history.state$
-  ).pipe(
-    map(([wallet, history]) => wallet.loading || history.loading)
-  )
-
-  public state$ = this.history.state$
+  public get lang() { return this.language.code; }
 
   constructor(
     private language: LanguageService,
-    private wallet: WalletService,
-    private history: HistoryService
+    private store: Store<State>
   ) {
   }
+
+  public wallet$ = this.store.select(state => state.wallet);
+  public history$ = this.store.select(state => state.history);
+
+  public loading$ = combineLatest(
+    this.wallet$,
+    this.history$
+  ).pipe(
+    map(([wallet, history]) => wallet.loading || history.loading)
+  );
+
+  public translation = {
+    history: {
+      en: 'History',
+      ja: '履歴'
+    } as any,
+    noTransaction: {
+      en: 'There is no transaction.',
+      ja: '取引はありません。'
+    } as any
+  };
 
   ngOnInit() {
     this.load();
   }
 
-  public load(refresh?: boolean) {
-    this.wallet.state$.pipe(
+  public async load(refresh?: boolean) {
+    const state = await this.wallet$.pipe(
       filter(state => state.currentWalletId !== undefined),
       first()
-    ).subscribe(
-      (state) => {
-        const address = new Address(state.entities[state.currentWalletId!].nem)
-        this.history.loadHistories(address, refresh)
-      }
-    )
-  }
+    ).toPromise();
 
-  public translation = {
-    history: {
-      en: "History",
-      ja: "履歴"
-    } as any,
-    noTransaction: {
-      en: "There is no transaction.",
-      ja: "取引はありません。"
-    } as any
-  };
+    const address = new Address(state.entities[state.currentWalletId!].nem);
+    this.store.dispatch(new LoadHistories({ address, refresh }));
+  }
 }

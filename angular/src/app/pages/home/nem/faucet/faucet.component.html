@@ -1,0 +1,9 @@
+<ng-container *ngIf="visible$ | async">
+  <h3>{{translation.faucet[lang]}}</h3>
+  <mat-card class="button">
+    <p>{{translation.faucetBody[lang]}}</p>
+    <button mat-raised-button color="accent" (click)="faucet()">
+      {{translation.receive[lang]}}
+    </button>
+  </mat-card>
+</ng-container>

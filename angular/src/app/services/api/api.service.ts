@@ -10,29 +10,24 @@ export class ApiService {
     private http: HttpClient
   ) { }
 
-  public deposit(
+  public changePlan(
     data: {
-      email: string,
-      nem: string,
-      currency: string,
-      amount: number,
-      method: string,
-      lang: string
+      userId: string
+      plan: string
+      months: number
+      data: string
+      signature: string
     }
   ) {
-    return this.http.post("/api/deposit", data);
+    return this.http.post('/api/change-plan', data);
   }
 
-  public withdraw(
+  public faucet(
     data: {
-      email: string,
-      nem: string,
-      currency: string,
-      amount: number,
-      method: string,
-      lang: string
+      userId: string
+      walletId: string
     }
   ) {
-    return this.http.post("/api/withdraw", data);
+    return this.http.post('/api/faucet', data);
   }
 }

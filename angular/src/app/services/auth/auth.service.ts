@@ -8,18 +8,18 @@ import 'firebase/auth';
   providedIn: 'root'
 })
 export class AuthService {
-  public get user() { return this.auth.auth.currentUser }
-  public get user$() { return this.auth.authState }
+  public get user() { return this.auth.auth.currentUser; }
+  public get user$() { return this.auth.authState; }
 
   constructor(
     private auth: AngularFireAuth
   ) {}
 
   public login() {
-    return this.auth.auth.signInWithPopup(new firebase.auth!.GoogleAuthProvider)
+    return this.auth.auth.signInWithPopup(new firebase.auth!.GoogleAuthProvider);
   }
 
   public logout() {
-    return this.auth.auth.signOut()
+    return this.auth.auth.signOut();
   }
 }

@@ -9,8 +9,7 @@ import { LanguageService } from '../../../services/language/language.service';
   styleUrls: ['./privacy-policy.component.css']
 })
 export class PrivacyPolicyComponent implements OnInit {
-  get lang() { return this.language.state.twoLetter; }
-  public safeSite: SafeResourceUrl;
+  get lang() { return this.language.code; }
 
   constructor(
     private language: LanguageService,
@@ -19,18 +18,19 @@ export class PrivacyPolicyComponent implements OnInit {
   ) {
     this.safeSite = sanitizer.bypassSecurityTrustResourceUrl(`assets/terms/privacy-policy/${this.lang}.txt`);
   }
+  public safeSite: SafeResourceUrl;
+
+  public translation = {
+    privacyPolicy: {
+      en: 'Privacy Policy',
+      ja: 'プライバシーポリシー'
+    } as any
+  };
 
   ngOnInit() {
   }
 
   public back() {
-    this._router.back([""]);
+    this._router.back(['']);
   }
-
-  public translation = {
-    privacyPolicy: {
-      en: "Privacy Policy",
-      ja: "プライバシーポリシー"
-    } as any
-  };
 }
