@@ -145,14 +145,7 @@ export class TransactionComponent implements OnInit, OnChanges {
         if (transferTransaction.message.isPlain()) {
           this.message = (transferTransaction.message as PlainMessage).plain();
         } else if (transferTransaction.message.isEncrypted()) {
-          const accountHttp = new AccountHttp(nodes);
-          accountHttp.getFromAddress(transferTransaction.recipient).pipe(
-            map(meta => meta.publicAccount)
-          ).subscribe(
-            async (recipient) => {
-              this.message = await this.decryptMessage(transferTransaction.message, transferTransaction.signer!, recipient!);
-            }
-          );
+          this.message = await this.decryptMessage(transferTransaction);
         }
 
         if (transferTransaction.containAssets()) {
@@ -166,24 +159,29 @@ export class TransactionComponent implements OnInit, OnChanges {
     }
   }
 
-  private async decryptMessage(message: Message, signer: PublicAccount, recipient: PublicAccount) {
+  private async decryptMessage(transferTransaction: TransferTransaction) {
     const wallet = await this.wallet$.pipe(
       first(),
       map(state => state.entities[state.currentWalletId!])
     ).toPromise();
 
     if (!wallet.wallet) {
-      return this.translation.importRequired[this.lang];
+      return this.translation.importRequired[this.lang] as string;
     }
 
     const password = new Password(this.auth.user!.uid);
     const account = SimpleWallet.readFromWLT(wallet.wallet).open(password);
 
-    if (account.address.equals(signer.address)) {
-      return account.decryptMessage(message, recipient).plain();
+    if (account.address.equals(transferTransaction.signer!.address)) {
+      const accountHttp = new AccountHttp(nodes);
+      const recipient = await accountHttp.getFromAddress(transferTransaction.recipient).pipe(
+        map(meta => meta.publicAccount)
+      ).toPromise();
+      
+      return account.decryptMessage(transferTransaction.message, recipient!).plain();
     }
 
-    return account.decryptMessage(message, signer).plain();
+    return account.decryptMessage(transferTransaction.message, transferTransaction.signer!).plain();
   }
 
   public openSnackBar(type: string) {

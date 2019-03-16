@@ -17,6 +17,7 @@ export class HistoryEffects {
     ofType(HistoryActionTypes.LoadHistories),
     map(action => action.payload),
     concatMap(payload => this.history$.pipe(
+      first(),
       map(state => Tuple(payload, state))
     )),
     filter(([payload, state]) => (!state.lastAddress || !state.lastAddress.equals(payload.address)) || payload.refresh!),

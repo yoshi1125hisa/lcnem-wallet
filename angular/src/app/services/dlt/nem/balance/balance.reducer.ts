@@ -25,7 +25,7 @@ export function reducer(state = initialState, action: BalanceActions): State {
         ...state,
         loading: true,
         lastAddress: action.payload.address
-      }
+      };
     }
     case BalanceActionTypes.LoadBalancesSuccess: {
       return {
@@ -41,7 +41,8 @@ export function reducer(state = initialState, action: BalanceActions): State {
         error: action.payload.error
       };
     }
-    default:
+    default: {
       return state;
+    }
   }
 }
